@@ -1,12 +1,11 @@
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal;
 
-internal partial class FixedContext<T> :
 #if !OBSOLETE_FIXED_INTERFACES
-	IConvertibleDisposable<IFixedContext<T>.IDisposable>
+internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>.IDisposable>
 #else
 #pragma warning disable CS0612
-	IConvertibleDisposable<IObsoleteFixedContext<T>.IDisposable>
+internal partial class FixedContext<T> : IConvertibleDisposable<IObsoleteFixedContext<T>.IDisposable>
 #pragma warning restore CS0612
 #endif
 {
@@ -29,12 +28,11 @@ internal partial class FixedContext<T> :
 	/// <summary>
 	/// Disposable implementation.
 	/// </summary>
-	private sealed class Disposable : Disposable<FixedContext<T>>,
 #if !OBSOLETE_FIXED_INTERFACES
-		IFixedContext<T>.IDisposable
+	private sealed class Disposable : Disposable<FixedContext<T>>, IFixedContext<T>.IDisposable
 #else
 #pragma warning disable CS0612
-		IObsoleteFixedContext<T>.IDisposable
+	private sealed class Disposable : Disposable<FixedContext<T>>, IObsoleteFixedContext<T>.IDisposable
 #pragma warning restore CS0612
 #endif
 	{

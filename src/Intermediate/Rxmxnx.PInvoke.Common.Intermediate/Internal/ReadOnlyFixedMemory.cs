@@ -6,10 +6,7 @@
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-	, IReadOnlyFixedMemory
-#endif
+internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer, IReadOnlyFixedMemory
 {
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedMemory"/> instance using a pointer to a memory block, its size, and
@@ -35,7 +32,6 @@ internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer
 	/// </summary>
 	/// <param name="mem">The <see cref="ReadOnlyFixedMemory"/> instance to copy data from.</param>
 	protected ReadOnlyFixedMemory(ReadOnlyFixedMemory mem) : base(mem) { }
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedMemory"/> instance using another instance as a template and specifying a
 	/// memory offset.
@@ -44,8 +40,22 @@ internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer
 	/// <param name="offset">The offset to be added to the pointer to the memory block.</param>
 	protected ReadOnlyFixedMemory(ReadOnlyFixedMemory mem, Int32 offset) : base(mem, offset) { }
 
-	ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => this.CreateReadOnlyBinarySpan();
-	ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects => this.CreateReadOnlyObjectSpan();
+	ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes
+	{
+#if !PACKAGE && !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
+		[ExcludeFromCodeCoverage]
+#endif
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => this.CreateReadOnlyBinarySpan();
+	}
+	ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects
+	{
+#if !PACKAGE && !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
+		[ExcludeFromCodeCoverage]
+#endif
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => this.CreateReadOnlyObjectSpan();
+	}
 #if OBSOLETE_FIXED_INTERFACES
 	[Obsolete]
 #endif
@@ -69,5 +79,4 @@ internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer
 		this.ValidateUnmanagedOperation();
 		return new ReadOnlyFixedContext<Byte>(this.BinaryOffset, this);
 	}
-#endif
 }

@@ -1,5 +1,4 @@
-﻿#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-namespace Rxmxnx.PInvoke;
+﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Interface representing a context from a read-only block of fixed memory.
@@ -33,4 +32,3 @@ public interface IReadOnlyFixedContext<T> : IReadOnlyFixedMemory<T>
 	// ReSharper disable once PossibleInterfaceMemberAmbiguity
 	public new interface IDisposable : IReadOnlyFixedContext<T>, IReadOnlyFixedMemory<T>.IDisposable;
 }
-#endif

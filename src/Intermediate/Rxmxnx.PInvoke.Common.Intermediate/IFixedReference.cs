@@ -4,10 +4,7 @@
 /// This interface represents a mutable reference to a fixed memory location.
 /// </summary>
 /// <typeparam name="T">Type of the value referenced in memory.</typeparam>
-public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference<T>
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-	, IFixedMemory
-#endif
+public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference<T>, IFixedMemory
 #if NET9_0_OR_GREATER
 	where T : allows ref struct
 #endif
@@ -29,7 +26,6 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 	new IFixedReference<TDestination> Transformation<TDestination>()
 		=> this.Transformation<TDestination>(out IFixedMemory _);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Reinterprets the <typeparamref name="T"/> fixed memory reference as a
 	/// <typeparamref name="TDestination"/> memory reference.
@@ -52,6 +48,7 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 	/// </returns>
 	new IFixedReference<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual);
 
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Interface representing a disposable <see cref="IFixedReference{T}"/> object for a fixed memory
 	/// reference with a specific type.

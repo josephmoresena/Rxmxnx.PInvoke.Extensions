@@ -4,12 +4,7 @@
 /// This interface represents a read-only reference to a fixed memory location.
 /// </summary>
 /// <typeparam name="T">Type of the value referenced in memory.</typeparam>
-public interface IReadOnlyFixedReference<T> : IReadOnlyReferenceable<T>,
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-	IReadOnlyFixedMemory
-#else
-	IFixedPointer
-#endif
+public interface IReadOnlyFixedReference<T> : IReadOnlyReferenceable<T>, IReadOnlyFixedMemory
 #if NET9_0_OR_GREATER
 	where T : allows ref struct
 #endif
@@ -30,7 +25,6 @@ public interface IReadOnlyFixedReference<T> : IReadOnlyReferenceable<T>,
 #endif
 	IReadOnlyFixedReference<TDestination> Transformation<TDestination>() => this.Transformation<TDestination>(out _);
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Reinterprets the read-only <typeparamref name="T"/> fixed memory reference as a
 	/// read-only <typeparamref name="TDestination"/> memory reference.
@@ -42,6 +36,7 @@ public interface IReadOnlyFixedReference<T> : IReadOnlyReferenceable<T>,
 	/// </returns>
 	IReadOnlyFixedReference<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual);
 
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Interface representing a disposable <see cref="IReadOnlyFixedReference{T}"/> object for a read-only
 	/// fixed memory reference with a specific type.

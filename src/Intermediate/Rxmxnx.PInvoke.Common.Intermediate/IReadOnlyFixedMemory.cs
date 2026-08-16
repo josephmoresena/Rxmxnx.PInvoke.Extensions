@@ -1,5 +1,4 @@
-﻿#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-namespace Rxmxnx.PInvoke;
+﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Interface representing a read-only fixed block of memory.
@@ -38,6 +37,7 @@ public interface IReadOnlyFixedMemory : IFixedPointer
 #endif
 	IReadOnlyFixedContext<Object> AsObjectContext();
 
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Interface representing a disposable <see cref="IReadOnlyFixedMemory"/> object for a
 	/// read-only fixed block of memory.
@@ -50,6 +50,7 @@ public interface IReadOnlyFixedMemory : IFixedPointer
 	/// </remarks>
 	// ReSharper disable once PossibleInterfaceMemberAmbiguity
 	public new interface IDisposable : IReadOnlyFixedMemory, IFixedPointer.IDisposable;
+#endif
 }
 
 /// <summary>
@@ -64,12 +65,17 @@ public interface IReadOnlyFixedMemory<T> : IReadOnlyFixedMemory
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	ReadOnlyValPtr<T> ValuePointer => (ReadOnlyValPtr<T>)this.Pointer;
+#else
+	ReadOnlyValPtr<T> ValuePointer { get; }
+#endif
 	/// <summary>
 	/// Gets a read-only <typeparamref name="T"/> span over the fixed block of memory.
 	/// </summary>
 	ReadOnlySpan<T> Values { get; }
 
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Interface representing a disposable <see cref="IReadOnlyFixedMemory{T}"/> object for a
 	/// read-only fixed block of memory with a specific type.
@@ -82,5 +88,5 @@ public interface IReadOnlyFixedMemory<T> : IReadOnlyFixedMemory
 	/// </remarks>
 	// ReSharper disable once PossibleInterfaceMemberAmbiguity
 	public new interface IDisposable : IReadOnlyFixedMemory<T>, IReadOnlyFixedMemory.IDisposable;
-}
 #endif
+}

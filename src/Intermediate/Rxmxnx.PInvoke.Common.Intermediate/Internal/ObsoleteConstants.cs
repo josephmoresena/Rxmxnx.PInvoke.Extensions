@@ -1,4 +1,4 @@
-#if (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER) && (OBSOLETE_FIXED_INTERFACES || OBSOLTE_DELEGATES)
+#if OBSOLETE_FIXED_INTERFACES || OBSOLTE_DELEGATES
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
@@ -6,6 +6,7 @@ namespace Rxmxnx.PInvoke.Internal;
 /// </summary>
 internal static class ObsoleteConstants
 {
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Message for obsolete delegates types.
 	/// </summary>
@@ -18,10 +19,12 @@ internal static class ObsoleteConstants
 	/// Message for obsolete delegates methods.
 	/// </summary>
 	public const String ObsoleteDelegateMethods = "Use functional interface method overloads";
+#endif
 	/// <summary>
 	/// Message for obsolete fixed interfaces types.
 	/// </summary>
 	public const String ObsoleteFixedInterface = "Use fixed ref-struct types";
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Message for obsolete fixed interfaces types.
 	/// </summary>
@@ -41,6 +44,7 @@ internal static class ObsoleteConstants
 	public const Boolean ErrorDelegate = true;
 #else
 	public const Boolean ErrorDelegate = false;
+#endif
 #endif
 	/// <summary>
 	/// Error for obsolete fixed interfaces.

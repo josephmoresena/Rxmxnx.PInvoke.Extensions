@@ -1,5 +1,4 @@
-﻿#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-namespace Rxmxnx.PInvoke;
+﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Interface representing a fixed block of memory.
@@ -34,11 +33,13 @@ public interface IFixedMemory : IReadOnlyFixedMemory
 #endif
 	new IFixedContext<Object> AsObjectContext();
 
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Interface representing a <see cref="IDisposable"/> <see cref="IFixedMemory"/> object.
 	/// </summary>
 	// ReSharper disable once PossibleInterfaceMemberAmbiguity
 	public new interface IDisposable : IFixedMemory, IReadOnlyFixedMemory.IDisposable;
+#endif
 }
 
 /// <summary>
@@ -53,12 +54,17 @@ public interface IFixedMemory<T> : IFixedMemory, IReadOnlyFixedMemory<T>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	new ValPtr<T> ValuePointer => (ValPtr<T>)this.Pointer;
+#else
+	new ValPtr<T> ValuePointer { get; }
+#endif
 	/// <summary>
 	/// Gets a <typeparamref name="T"/> span over the fixed block of memory.
 	/// </summary>
 	new Span<T> Values { get; }
 
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Interface representing a disposable <see cref="IFixedMemory{T}"/> object for a
 	/// fixed block of memory with a specific type.
@@ -71,6 +77,7 @@ public interface IFixedMemory<T> : IFixedMemory, IReadOnlyFixedMemory<T>
 	/// </remarks>
 	// ReSharper disable once PossibleInterfaceMemberAmbiguity
 	public new interface IDisposable : IFixedMemory<T>, IFixedMemory.IDisposable, IReadOnlyFixedMemory<T>.IDisposable;
+#endif
 
 #if NET9_0_OR_GREATER
 	/// <inheritdoc cref="IFixedMemory.AsObjectContext()"/>
@@ -95,4 +102,3 @@ public interface IFixedMemory<T> : IFixedMemory, IReadOnlyFixedMemory<T>
 		=> ctx.AsBinaryContext();
 #endif
 }
-#endif

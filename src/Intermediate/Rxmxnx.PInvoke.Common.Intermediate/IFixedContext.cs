@@ -1,5 +1,4 @@
-﻿#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-namespace Rxmxnx.PInvoke;
+﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Interface representing a context from a block of fixed memory.
@@ -40,6 +39,7 @@ public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T>
 		=> ctx.Transformation<TDestination>(out residual);
 #endif
 
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Interface representing a disposable <see cref="IFixedContext{T}"/> object for a context
 	/// of a fixed memory block with a specific type.
@@ -53,5 +53,5 @@ public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T>
 	// ReSharper disable once PossibleInterfaceMemberAmbiguity
 	public new interface IDisposable : IFixedContext<T>, IFixedMemory<T>.IDisposable,
 		IReadOnlyFixedContext<T>.IDisposable;
-}
 #endif
+}
