@@ -8,8 +8,8 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// Provides a set of extensions for basic operations with <see cref="String"/> instances.
 /// </summary>
-[EditorBrowsable(EditorBrowsableState.Never)]
 [Browsable(false)]
+[EditorBrowsable(EditorBrowsableState.Never)]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
