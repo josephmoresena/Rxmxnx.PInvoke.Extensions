@@ -62,10 +62,10 @@ public interface IReadOnlyFixedMemory<T> : IReadOnlyFixedMemory
 	/// <summary>
 	/// Gets the value pointer to the read-only fixed block of memory.
 	/// </summary>
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	ReadOnlyValPtr<T> ValuePointer => (ReadOnlyValPtr<T>)this.Pointer;
 #else
 	ReadOnlyValPtr<T> ValuePointer { get; }

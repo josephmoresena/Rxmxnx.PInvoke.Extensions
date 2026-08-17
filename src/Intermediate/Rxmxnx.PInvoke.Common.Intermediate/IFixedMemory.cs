@@ -51,10 +51,10 @@ public interface IFixedMemory<T> : IFixedMemory, IReadOnlyFixedMemory<T>
 	/// <summary>
 	/// Gets the value pointer to the fixed block of memory.
 	/// </summary>
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	new ValPtr<T> ValuePointer => (ValPtr<T>)this.Pointer;
 #else
 	new ValPtr<T> ValuePointer { get; }
