@@ -19,6 +19,7 @@ public interface IReadOnlyFixedContext<T> : IReadOnlyFixedMemory<T>
 	/// <returns>An instance of <see cref="IReadOnlyFixedContext{TDestination}"/>.</returns>
 	IReadOnlyFixedContext<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual);
 
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Interface representing a disposable <see cref="IReadOnlyFixedReference{T}"/> object for a context
 	/// of a read-only fixed memory block with a specific type.
@@ -31,4 +32,5 @@ public interface IReadOnlyFixedContext<T> : IReadOnlyFixedMemory<T>
 	/// </remarks>
 	// ReSharper disable once PossibleInterfaceMemberAmbiguity
 	public new interface IDisposable : IReadOnlyFixedContext<T>, IReadOnlyFixedMemory<T>.IDisposable;
+#endif
 }

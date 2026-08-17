@@ -28,17 +28,6 @@ public interface IFixedContext<T> : IReadOnlyFixedContext<T>, IFixedMemory<T>
 	/// <returns>An instance of <see cref="IReadOnlyFixedContext{TDestination}"/>.</returns>
 	new IFixedContext<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual);
 
-#if NET9_0_OR_GREATER
-	/// <inheritdoc cref="IFixedContext{T}.Transformation{TDestination}(out IReadOnlyFixedMemory)"/>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	internal static IFixedContext<TDestination>
-		Transformation<TFixedContext, TDestination>(TFixedContext ctx, out IFixedMemory residual)
-		where TFixedContext : IFixedContext<T>, allows ref struct
-		=> ctx.Transformation<TDestination>(out residual);
-#endif
-
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Interface representing a disposable <see cref="IFixedContext{T}"/> object for a context

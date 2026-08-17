@@ -23,13 +23,4 @@ public interface IManagedBinaryBuffer<T> : IManagedBuffer<T>
 #endif
 public interface
 	IManagedBinaryBuffer<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBuffer,
-		T> : IManagedBinaryBuffer<T> where TBuffer : struct, IManagedBinaryBuffer<TBuffer, T>
-{
-#if NET7_0_OR_GREATER
-	//BufferTypeMetadata<T> IManagedBinaryBuffer<T>.Metadata => IManagedBuffer<T>.GetMetadata<TBuffer>();
-#if !PACKAGE
-	//[ExcludeFromCodeCoverage]
-#endif
-	//BufferTypeMetadata<T> IManagedBuffer<T>.GetStaticTypeMetadata() => IManagedBuffer<T>.GetMetadata<TBuffer>();
-#endif
-}
+		T> : IManagedBinaryBuffer<T> where TBuffer : struct, IManagedBinaryBuffer<TBuffer, T>;

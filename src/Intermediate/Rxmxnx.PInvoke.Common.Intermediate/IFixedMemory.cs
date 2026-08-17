@@ -78,27 +78,4 @@ public interface IFixedMemory<T> : IFixedMemory, IReadOnlyFixedMemory<T>
 	// ReSharper disable once PossibleInterfaceMemberAmbiguity
 	public new interface IDisposable : IFixedMemory<T>, IFixedMemory.IDisposable, IReadOnlyFixedMemory<T>.IDisposable;
 #endif
-
-#if NET9_0_OR_GREATER
-	/// <inheritdoc cref="IFixedMemory.AsObjectContext()"/>
-#if OBSOLETE_FIXED_INTERFACES
-	[Obsolete]
-#endif
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	internal static IFixedContext<Object> AsObjectContext<TFixedContext>(TFixedContext ctx)
-		where TFixedContext : IFixedMemory<T>, allows ref struct
-		=> ctx.AsObjectContext();
-	/// <inheritdoc cref="IFixedMemory.AsObjectContext()"/>
-#if OBSOLETE_FIXED_INTERFACES
-	[Obsolete]
-#endif
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	internal static IFixedContext<Byte> AsBinaryContext<TFixedContext>(TFixedContext ctx)
-		where TFixedContext : IFixedMemory<T>, allows ref struct
-		=> ctx.AsBinaryContext();
-#endif
 }
