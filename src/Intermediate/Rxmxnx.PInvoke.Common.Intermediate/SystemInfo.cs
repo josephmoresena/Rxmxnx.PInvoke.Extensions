@@ -14,9 +14,13 @@ public static unsafe partial class SystemInfo
 	/// Indicates whether the current execution is utilizing the built-in implementation of <see cref="Span{T}"/> and
 	/// <see cref="ReadOnlySpan{T}"/>.
 	/// </summary>
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+	public static Boolean UsesNativeSpan => true;
+#else
 #pragma warning disable CS8500
 	public static Boolean UsesNativeSpan => sizeof(Span<Byte>) <= 2 * sizeof(IntPtr);
 #pragma warning restore CS8500
+#endif
 	/// <summary>
 	/// Indicates whether the current execution is running on a Windows-compatible platform.
 	/// </summary>

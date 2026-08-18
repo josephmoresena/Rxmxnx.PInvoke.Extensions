@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
+
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Provides a set of utilities for exchange data within the P/Invoke context.
@@ -20,6 +24,18 @@ public static unsafe partial class NativeUtilities
 	/// <returns>Size of <typeparamref name="T"/> structure.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Int32 SizeOf<T>() where T : unmanaged => sizeof(T);
+
+	/// <summary>
+	/// Returns an empty array.
+	/// </summary>
+	/// <typeparam name="T">The type of the elements of the array.</typeparam>
+	/// <returns>An empty array.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	// ReSharper disable once UseCollectionExpression
+	public static T[] ArrayEmpty<T>() where T : unmanaged => Array.Empty<T>();
 
 	/// <summary>
 	/// Creates an <see cref="FuncPtr{TDelegate}"/> from a memory reference to a <typeparamref name="TDelegate"/> delegate

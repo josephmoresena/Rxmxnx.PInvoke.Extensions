@@ -49,7 +49,12 @@ public readonly ref partial struct FixedPointerValue
 	/// <summary>
 	/// Indicates whether current memory block is unmanaged.
 	/// </summary>
-	internal Boolean IsUnmanaged { get; init; }
+	internal Boolean IsUnmanaged
+	{
+		// The backing field is intentionally inverted so its default value represents unmanaged memory.
+		get => !field;
+		init => field = !value;
+	}
 	/// <summary>
 	/// Indicates whether the current instance is read-only.
 	/// </summary>

@@ -77,7 +77,7 @@ internal unsafe class FixedValueHandle : IDisposable, IWrapper<Boolean>
 	public static FixedValueHandle CreateFromDisposable<TDisposable>(TDisposable disposable)
 		where TDisposable : IDisposable
 	{
-		if (disposable is FixedValueHandle result) return result; // Avoid re-instantiation.  
+		if (disposable is FixedValueHandle result) return result; // Avoid re-instantiation.
 		return new Generic<TDisposable>(disposable);
 	}
 
