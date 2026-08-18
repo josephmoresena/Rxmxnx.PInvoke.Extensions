@@ -118,7 +118,7 @@ public sealed class ReadOnlyValPtrTests
 			PInvokeAssert.False(ptrI.IsZero);
 			PInvokeAssert.Equal(ptrI.Pointer, (ptrI as IWrapper<IntPtr>).Value);
 
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 			ReadOnlyValPtrTests.ReferenceTest(ptrI, ref Unsafe.AsRef(in span[i]));
 #endif
 
@@ -173,7 +173,7 @@ public sealed class ReadOnlyValPtrTests
 		ReadOnlyValPtrTests.ContextValueTest(valPtr, span);
 		ReadOnlyValPtrTests.NestedContextValueTest(valPtr);
 		ReadOnlyValPtrTests.MultipleContextValueTest(valPtr);
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 		ReadOnlyValPtrTests.ContextTest(valPtr, span);
 #endif
 		ReadOnlyValPtrTests.MarshallerTest(valPtr);
@@ -188,7 +188,9 @@ public sealed class ReadOnlyValPtrTests
 		{
 			PInvokeAssert.True(ctx.Bytes.IsEmpty);
 			if (typeof(T).IsValueType)
+			{
 				PInvokeAssert.True(ctx.Objects.IsEmpty);
+			}
 			else
 			{
 #if !NET10_0_OR_GREATER
@@ -204,7 +206,7 @@ public sealed class ReadOnlyValPtrTests
 #else
 					PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in enumerator.Current),
 #endif
-					                           ref Unsafe.As<Object, T>(ref Unsafe.AsRef(in refObj))));
+					                                  ref Unsafe.As<Object, T>(ref Unsafe.AsRef(in refObj))));
 				}
 				PInvokeAssert.Equal(typeof(T).IsValueType || ctx.IsNullOrEmpty, ctx.Objects.IsEmpty);
 			}
@@ -219,6 +221,8 @@ public sealed class ReadOnlyValPtrTests
 		ReadOnlySpan<T> span2 = ctx.Values;
 		for (Int32 i = 0; i < span.Length; i++)
 			PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in span[i]), ref Unsafe.AsRef(in span2[i])));
+
+		ReadOnlyValPtrTests.UnsafeValueContextTest(valPtr, span);
 	}
 	private static unsafe void NestedContextValueTest<T>(ReadOnlyValPtr<T> valPtr)
 	{
@@ -226,9 +230,7 @@ public sealed class ReadOnlyValPtrTests
 		using IDisposable disposable =
 			new ValPtr<Byte>(bytePtr).GetUnsafeFixedContext(10, out FixedContextValue<Byte> bCtx);
 		using (IDisposable disposable2 = valPtr.GetUnsafeFixedContext(1, disposable, out _))
-		{
 			PInvokeAssert.Same(disposable, disposable2);
-		}
 		ref FixedContextValue<Byte> bCtxRef = ref bCtx;
 		fixed (void* ptr = &bCtxRef)
 		{
@@ -241,7 +243,13 @@ public sealed class ReadOnlyValPtrTests
 		Memory<Byte> value = new Byte[10];
 		using IDisposable disposable = valPtr.GetUnsafeFixedContext(1, value.Pin(), out _);
 	}
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+	private static void UnsafeValueContextTest<T>(ReadOnlyValPtr<T> valPtr, ReadOnlySpan<T> span)
+	{
+		using IDisposable disposable = ReadOnlyValPtr<T>.Zero.GetUnsafeFixedContext(0, out _);
+		PInvokeAssert.Same(disposable, FixedPointerValue.UnsafeDisposable);
+		PInvokeAssert.Same(disposable, valPtr.GetUnsafeFixedContext(span.Length, disposable, out _));
+	}
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 	private static unsafe void ContextTest<T>(ReadOnlyValPtr<T> valPtr, ReadOnlySpan<T> span)
 	{
@@ -274,7 +282,7 @@ public sealed class ReadOnlyValPtrTests
 #else
 					PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in enumerator.Current),
 #endif
-					                           ref Unsafe.As<Object, T>(ref Unsafe.AsRef(in refObj))));
+					                                  ref Unsafe.As<Object, T>(ref Unsafe.AsRef(in refObj))));
 				}
 				PInvokeAssert.Equal(typeof(T).IsValueType || ctx.IsNullOrEmpty, ctx.Objects.IsEmpty);
 			}
@@ -318,8 +326,9 @@ public sealed class ReadOnlyValPtrTests
 #else
 				PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in fixedReference.Reference),
 #endif
-				                           ref Unsafe.As<Object, T>(
-					                           ref Unsafe.AsRef(in fixedReference.AsObjectContext().Values[0]))));
+				                                  ref Unsafe.As<Object, T>(
+					                                  ref Unsafe.AsRef(
+						                                  in fixedReference.AsObjectContext().Values[0]))));
 				PInvokeAssert.Equal(typeof(T).IsValueType || fixedReference.IsNullOrEmpty,
 				                    fixedReference.Objects.IsEmpty);
 			}
@@ -382,7 +391,7 @@ public sealed class ReadOnlyValPtrTests
 		PInvokeAssert.Equal(value, valPtr.Pointer);
 		PInvokeAssert.Equal(valPtr, ptr);
 	}
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 	private static unsafe void ReferenceTransformTest<T, TDestination>(ReadOnlyValPtr<T> ptrI,
 		IReadOnlyFixedReference<T>.IDisposable fRef) where TDestination : unmanaged
 	{

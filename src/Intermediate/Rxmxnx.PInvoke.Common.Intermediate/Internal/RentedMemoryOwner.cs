@@ -7,7 +7,7 @@ namespace Rxmxnx.PInvoke.Internal;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal sealed unsafe class RentedMemoryOwner<T> : FixedValueHandle
+internal sealed unsafe class RentedMemoryOwner<T> : FixedValueHandle.Memory
 {
 	/// <summary>
 	/// Array pool.
@@ -40,10 +40,11 @@ internal sealed unsafe class RentedMemoryOwner<T> : FixedValueHandle
 	}
 
 	/// <inheritdoc/>
-	protected override void Dispose(Boolean disposing)
+	protected override Boolean Dispose(Boolean disposing)
 	{
-		base.Dispose(disposing);
+		if (!base.Dispose(disposing)) return false;
 		this.Release();
+		return true;
 	}
 
 #if !PACKAGE

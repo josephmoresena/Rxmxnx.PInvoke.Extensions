@@ -7,6 +7,14 @@ namespace Rxmxnx.PInvoke;
 public readonly ref partial struct FixedPointerValue
 {
 	/// <summary>
+	/// No-op instance for <see langword="null"/> or <see langword="unsafe"/> fixed instances.
+	/// </summary>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static IDisposable UnsafeDisposable => FixedValueHandle.EmptyDisposable;
+
+	/// <summary>
 	/// Internal pointer.
 	/// </summary>
 	private readonly IntPtr _ptr;
@@ -49,12 +57,7 @@ public readonly ref partial struct FixedPointerValue
 	/// <summary>
 	/// Indicates whether current memory block is unmanaged.
 	/// </summary>
-	internal Boolean IsUnmanaged
-	{
-		// The backing field is intentionally inverted so its default value represents unmanaged memory.
-		get => !field;
-		init => field = !value;
-	}
+	internal Boolean IsUnmanaged { get; init; }
 	/// <summary>
 	/// Indicates whether the current instance is read-only.
 	/// </summary>

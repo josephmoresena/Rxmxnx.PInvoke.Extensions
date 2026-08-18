@@ -49,7 +49,7 @@ public unsafe ref partial struct ReadOnlyFixedContextValue<T>
 		{
 			IsReadOnly = isReadOnly,
 			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
-			Handle = new(handle),
+			Handle = new FixedValueHandle.Memory(handle),
 			Type = typeof(T),
 		};
 		disposable = this._value.Handle;

@@ -27,10 +27,11 @@ internal sealed unsafe class NativeMemoryOwner : FixedValueHandle
 	}
 
 	/// <inheritdoc/>
-	protected override void Dispose(Boolean disposing)
+	protected override Boolean Dispose(Boolean disposing)
 	{
-		base.Dispose(disposing);
+		if (!base.Dispose(disposing)) return false;
 		this.Release();
+		return true;
 	}
 
 #if !PACKAGE

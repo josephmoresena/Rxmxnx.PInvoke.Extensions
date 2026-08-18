@@ -1,6 +1,4 @@
-﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
-// ReSharper disable MemberCanBePrivate.Global
-namespace Rxmxnx.PInvoke;
+﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Represents a list of <see cref="FixedPointerValue"/> instances.
@@ -126,7 +124,7 @@ public readonly ref struct FixedPointerValueList
 		/// <summary>
 		/// Indicates whether current memory block is unmanaged.
 		/// </summary>
-		public Boolean IsUnmanaged => this.Value.IsUnmanaged;
+		public Boolean IsUnmanaged => this.Value.Type is null || this.Value.IsUnmanaged;
 		/// <summary>
 		/// Indicates whether the current instance is read-only.
 		/// </summary>

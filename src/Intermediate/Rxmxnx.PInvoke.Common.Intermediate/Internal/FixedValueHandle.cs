@@ -9,7 +9,7 @@ namespace Rxmxnx.PInvoke;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal unsafe class FixedValueHandle : IDisposable, IWrapper<Boolean>
+internal class FixedValueHandle : IDisposable, IWrapper<Boolean>
 {
 	/// <summary>
 	/// Empty instance.
@@ -17,28 +17,23 @@ internal unsafe class FixedValueHandle : IDisposable, IWrapper<Boolean>
 	public static readonly IDisposable EmptyDisposable = new Empty();
 
 	/// <summary>
-	/// Internal <see cref="MemoryHandle"/> instance.
-	/// </summary>
-	private readonly MemoryHandle? _handle;
-	/// <summary>
 	/// Indicates whether the current instance is disposed.
 	/// </summary>
-	private Boolean _isDisposed;
+	private Boolean? _isDisposed;
 
-	/// <summary>
-	/// Internal pointer.
-	/// </summary>
-	protected void* Pointer => this._handle.HasValue ? this._handle.Value.Pointer : default;
+	/// <inheritdoc cref="IWrapper{T}.Value"/>
+	public Boolean Value => !this._isDisposed.GetValueOrDefault();
 
-	/// <summary>
-	/// Parameterless constructor.
-	/// </summary>
-	public FixedValueHandle() => this._isDisposed = false;
 	/// <summary>
 	/// Constructor.
 	/// </summary>
-	/// <param name="handle">A <see cref="MemoryHandle"/> instance.</param>
-	public FixedValueHandle(MemoryHandle handle) : this() => this._handle = handle;
+	public FixedValueHandle() : this(false) { }
+
+	/// <summary>
+	/// Private constructor.
+	/// </summary>
+	/// <param name="isDisposed">Indicates whether the current instance is disposed.</param>
+	private FixedValueHandle(Boolean? isDisposed) => this._isDisposed = isDisposed;
 
 	/// <inheritdoc/>
 	public void Dispose()
@@ -46,9 +41,6 @@ internal unsafe class FixedValueHandle : IDisposable, IWrapper<Boolean>
 		this.Dispose(true);
 		GC.SuppressFinalize(this);
 	}
-
-	/// <inheritdoc cref="IWrapper{T}.Value"/>
-	public Boolean Value => !this._isDisposed;
 
 	/// <summary>
 	/// Destructor.
@@ -60,11 +52,14 @@ internal unsafe class FixedValueHandle : IDisposable, IWrapper<Boolean>
 	/// <see langword="true"/> to release both managed and unmanaged resources; <see langword="false"/> to release only
 	/// unmanaged resources.
 	/// </param>
-	protected virtual void Dispose(Boolean disposing)
+	/// <returns>
+	/// <see langword="true"/> when the disposing should be performed; otherwise, <see langword="false"/>.
+	/// </returns>
+	protected virtual Boolean Dispose(Boolean disposing)
 	{
-		if (this._isDisposed) return;
+		if (this._isDisposed.GetValueOrDefault()) return false;
 		this._isDisposed = true;
-		this._handle?.Dispose();
+		return true;
 	}
 
 	/// <summary>
@@ -76,10 +71,12 @@ internal unsafe class FixedValueHandle : IDisposable, IWrapper<Boolean>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static FixedValueHandle CreateFromDisposable<TDisposable>(TDisposable disposable)
 		where TDisposable : IDisposable
-	{
-		if (disposable is FixedValueHandle result) return result; // Avoid re-instantiation.
-		return new Generic<TDisposable>(disposable);
-	}
+		=> disposable switch
+		{
+			FixedValueHandle result => result,
+			MemoryHandle handle => new Memory(handle),
+			_ => new Generic<TDisposable>(disposable),
+		};
 
 	/// <summary>
 	/// Internal fixed pointer handle.
@@ -88,11 +85,11 @@ internal unsafe class FixedValueHandle : IDisposable, IWrapper<Boolean>
 	private sealed class Generic<TDisposable>(TDisposable disposable) : FixedValueHandle where TDisposable : IDisposable
 	{
 		/// <inheritdoc/>
-		protected override void Dispose(Boolean disposing)
+		protected override Boolean Dispose(Boolean disposing)
 		{
-			base.Dispose(disposing);
-			if (disposing)
-				disposable.Dispose();
+			if (!base.Dispose(disposing) || !disposing) return false;
+			disposable.Dispose();
+			return true;
 		}
 	}
 
@@ -102,14 +99,42 @@ internal unsafe class FixedValueHandle : IDisposable, IWrapper<Boolean>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	private sealed class Empty : IFixedPointer.IDisposable, IWrapper<Boolean>
+	private sealed class Empty() : FixedValueHandle(null), IFixedPointer.IDisposable
 	{
 		/// <inheritdoc/>
 		public IntPtr Pointer => default;
+	}
+
+	/// <summary>
+	/// An owned memory fixed value handle.
+	/// </summary>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+	public unsafe class Memory : FixedValueHandle
+	{
+		/// <summary>
+		/// Internal <see cref="MemoryHandle"/> instance.
+		/// </summary>
+		private MemoryHandle _handle;
+
+		/// <summary>
+		/// Internal pointer.
+		/// </summary>
+		protected void* Pointer => this._handle.Pointer;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="handle">A <see cref="MemoryHandle"/> instance.</param>
+		public Memory(MemoryHandle handle) => this._handle = handle;
 
 		/// <inheritdoc/>
-		public void Dispose() { }
-		/// <inheritdoc/>
-		public Boolean Value => true;
+		protected override Boolean Dispose(Boolean disposing)
+		{
+			if (!base.Dispose(disposing) || !disposing) return false;
+			this._handle.Dispose();
+			return true;
+		}
 	}
 }

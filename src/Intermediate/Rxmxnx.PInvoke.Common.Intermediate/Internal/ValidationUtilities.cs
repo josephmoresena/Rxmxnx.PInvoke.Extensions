@@ -71,9 +71,19 @@ internal static unsafe class ValidationUtilities
 	/// Thrown if the fixed pointer instance is not guaranteed to be safe.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void ThrowIfInvalidPointer(IWrapper<Boolean> isValid)
+	public static void ThrowIfInvalidPointer(IWrapper<Boolean> isValid) 
+		=> ValidationUtilities.ThrowIfInvalidPointer(isValid.Value);
+	/// <summary>
+	/// Validates if a pointer is fixed in memory and safe to use.
+	/// </summary>
+	/// <param name="isValid">A wrapper that indicates whether the fixed pointer instance is valid.</param>
+	/// <exception cref="InvalidOperationException">
+	/// Thrown if the fixed pointer instance is not guaranteed to be safe.
+	/// </exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfInvalidPointer(Boolean isValid)
 	{
-		if (isValid.Value) return;
+		if (isValid) return;
 		String message = MessageResource.GetInstance().InvalidInstance;
 		throw new InvalidOperationException(message);
 	}
