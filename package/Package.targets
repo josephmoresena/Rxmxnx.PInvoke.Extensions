@@ -5,6 +5,12 @@
         <IsTempPackage Condition="'$(Version)' == '9999.99.99.99-tmp'">true</IsTempPackage>
         <IsTempPackage Condition="'$(Version)' != '9999.99.99.99-tmp'">false</IsTempPackage>
         <DefineConstants Condition="'$(IsTempPackage)' == 'true'">$(DefineConstants);TEMP_PACKAGE</DefineConstants>
+        <NoWarn>$(NoWarn);NU5128</NoWarn>
+    </PropertyGroup>
+
+    <!-- Exclude unnecesary binaries -->
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net470' Or '$(TargetFramework)' == 'net471'">
+        <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
 
     <!-- Package properties -->
@@ -39,13 +45,9 @@
     </Target>
     <Target Name="PrepareUapApiCompatReferences"
             BeforeTargets="GetReferencesForApiCompatValidatePackage" DependsOnTargets="FindReferenceAssembliesForReferences"
-            Condition="'$(TargetFramework)' == 'uap10.0.16299' Or '$(TargetFramework)' == 'uap10.0.10240'">
-        <PropertyGroup Condition="'$(TargetFramework)' == 'uap10.0.16299'">
+            Condition="'$(TargetFramework)' == 'uap10.0.16299'">
+        <PropertyGroup>
             <TargetFrameworkMoniker>UAP,Version=v10.0.16299</TargetFrameworkMoniker>
-            <ApiCompatIgnoreTargetPlatformMoniker>true</ApiCompatIgnoreTargetPlatformMoniker>
-        </PropertyGroup>
-        <PropertyGroup Condition="'$(TargetFramework)' == 'uap10.0.10240'">
-            <TargetFrameworkMoniker>UAP,Version=v10.0.10240.0</TargetFrameworkMoniker>
             <ApiCompatIgnoreTargetPlatformMoniker>true</ApiCompatIgnoreTargetPlatformMoniker>
         </PropertyGroup>
         <ItemGroup Condition="'@(ReferencePathWithRefAssemblies)' == ''">

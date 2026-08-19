@@ -46,14 +46,14 @@
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Runtime.CompilerServices.IsByRefLikeAttribute</Target>
-    <Left>lib/net47/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/net471/Rxmxnx.PInvoke.Extensions.dll</Right>
+    <Left>lib/net462/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net472/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Runtime.CompilerServices.IsReadOnlyAttribute</Target>
-    <Left>lib/net47/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/net471/Rxmxnx.PInvoke.Extensions.dll</Right>
+    <Left>lib/net462/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net472/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>

@@ -7,7 +7,7 @@ public readonly ref partial struct FixedPointerValue
 	/// </summary>
 	/// <param name="binaryContext">Output. Created instance.</param>
 	/// <returns>
-	/// <see langword="true"/> if the current instance was successfully created; otherwise, <see langword="false"/>.
+	/// <see langword="true"/> if the context instance was successfully created; otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean TryGetReadOnlyBinaryContext(out ReadOnlyFixedContextValue<Byte> binaryContext)
 	{
@@ -28,7 +28,7 @@ public readonly ref partial struct FixedPointerValue
 	/// </summary>
 	/// <param name="objectContext">Output. Created instance.</param>
 	/// <returns>
-	/// <see langword="true"/> if the current instance was successfully created; otherwise, <see langword="false"/>.
+	/// <see langword="true"/> if the context instance was successfully created; otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean TryGetReadOnlyObjectContext(out ReadOnlyFixedContextValue<Object> objectContext)
 	{
@@ -49,7 +49,7 @@ public readonly ref partial struct FixedPointerValue
 	/// </summary>
 	/// <param name="binaryContext">Output. Created instance.</param>
 	/// <returns>
-	/// <see langword="true"/> if the current instance was successfully created; otherwise, <see langword="false"/>.
+	/// <see langword="true"/> if the context instance was successfully created; otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean TryGetBinaryContext(out FixedContextValue<Byte> binaryContext)
 	{
@@ -70,7 +70,7 @@ public readonly ref partial struct FixedPointerValue
 	/// </summary>
 	/// <param name="objectContext">Output. Created instance.</param>
 	/// <returns>
-	/// <see langword="true"/> if the current instance was successfully created; otherwise, <see langword="false"/>.
+	/// <see langword="true"/> if the context instance was successfully created; otherwise, <see langword="false"/>.
 	/// </returns>
 	public Boolean TryGetObjectContext(out FixedContextValue<Object> objectContext)
 	{
