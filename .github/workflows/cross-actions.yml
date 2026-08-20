@@ -318,7 +318,9 @@ jobs:
         uses: actions/cache/restore@v5
         if: inputs.build_artifacts == true
         with:
-          path: ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
+          path: |
+            ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
+            ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest.Legacy
           key: internal-monoapp-bin-${{ github.run_id }}
           fail-on-cache-miss: true
           enableCrossOsArchive: true

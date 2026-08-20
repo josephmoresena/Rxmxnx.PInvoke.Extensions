@@ -50,7 +50,7 @@ public static partial class TestCompiler
 		[
 			.. projectDirectory.GetDirectories("*.ApplicationTest", SearchOption.AllDirectories)
 			                   .SelectMany(d => d.GetFiles("*.*proj")),
-			.. projectDirectory.GetDirectories("*.ApplicationTestLegacy", SearchOption.AllDirectories)
+			.. projectDirectory.GetDirectories("*.ApplicationTest.Legacy", SearchOption.AllDirectories)
 			                   .SelectMany(d => d.GetFiles("*.*proj")),
 		];
 		foreach (FileInfo appProjectFile in appProjectFiles)
@@ -74,5 +74,54 @@ public static partial class TestCompiler
 			};
 			await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
 		}
+	}
+	[SupportedOSPlatform("WINDOWS")]
+	public static async Task CompileAppx(String msbuildPath, DirectoryInfo projectDirectory, String outputPath)
+	{
+		String[] appProjectFiles = projectDirectory
+		                           .GetDirectories("*.*ApplicationTest.Windows", SearchOption.AllDirectories)
+		                           .SelectMany(d => d.GetFiles("*.*proj")).Select(f => f.FullName).ToArray();
+		foreach (String appProjectFile in appProjectFiles)
+		{
+			ExecuteState<CompileAppxArgs> state = new()
+			{
+				ExecutablePath = msbuildPath,
+				ArgState = new() { ProjectPath = appProjectFile, OutputPath = outputPath, },
+				AppendArgs = CompileAppxArgs.Append,
+				Notifier = ConsoleNotifier.Notifier,
+			};
+			await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
+			if (Utilities.ShowDiagnostics)
+				ConsoleNotifier.ShowDiskUsage();
+		}
+	}
+	[SupportedOSPlatform("WINDOWS")]
+	public static async Task<String[]> CompileFramework(DirectoryInfo projectDirectory)
+	{
+		String[] appProjectFiles = projectDirectory
+		                           .GetDirectories("*.*ApplicationTest.Legacy", SearchOption.AllDirectories)
+		                           .SelectMany(d => d.GetFiles("*.*proj")).Select(f => f.FullName).ToArray();
+		foreach (String appProjectFile in appProjectFiles)
+		{
+			ExecuteState<String> state = new()
+			{
+				ExecutablePath = "dotnet",
+				ArgState = appProjectFile,
+				AppendArgs = static (p, a) =>
+				{
+					a.Add("build");
+					a.Add(p);
+					a.Add("-c");
+					a.Add("Release");
+					a.Add("/p:UsePackage=true");
+				},
+				Notifier = ConsoleNotifier.Notifier,
+			};
+			await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
+			if (Utilities.ShowDiagnostics)
+				ConsoleNotifier.ShowDiskUsage();
+		}
+		return projectDirectory.GetDirectories("*.*ApplicationTest.Legacy", SearchOption.AllDirectories)
+		                       .SelectMany(d => d.GetFiles("*.exe")).Select(f => f.FullName).ToArray();
 	}
 }

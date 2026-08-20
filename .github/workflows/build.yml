@@ -131,12 +131,14 @@ jobs:
         with:
           path: |
             ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
+            ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest.Legacy
           key: internal-monoapp-bin-${{ github.run_id }}
           enableCrossOsArchive: true
       - name: Cache Compiled Tests
         uses: actions/cache/save@v5
         with:
           path: |
+            ./src/Test/**/bin/Release/netstandard2.0
             ./src/Test/**/bin/Release/netstandard2.1
             ./src/Test/**/bin/Release/net9.0
           key: internal-tests-bin-${{ github.run_id }}

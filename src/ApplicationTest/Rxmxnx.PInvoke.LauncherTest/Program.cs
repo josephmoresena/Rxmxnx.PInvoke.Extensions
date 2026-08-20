@@ -1,4 +1,6 @@
-﻿using Rxmxnx.PInvoke.ApplicationTest;
+﻿using System.Runtime.CompilerServices;
+
+using Rxmxnx.PInvoke.ApplicationTest;
 
 if (args.Length == 0)
 	throw new ArgumentException("Please set project directory.");
@@ -22,6 +24,8 @@ if (compile)
 	if (!launcher.MonoLaunchers.IsEmpty && !noMonoCompilation)
 		await TestCompiler.CompileMono(projectDirectory, launcher.MonoLaunchers[0],
 		                               launcher.MonoOutputDirectory!.FullName);
+	if (OperatingSystem.IsWindows() && launcher is IStrongBox { Value: String msbuildPath, })
+		await TestCompiler.CompileAppx(msbuildPath, projectDirectory, outputDirectory.FullName);
 }
 
 if (run)
@@ -29,4 +33,10 @@ if (run)
 	await launcher.Execute();
 	await launcher.CompileMonoBundle(onlyNativeAot);
 	await launcher.ExecuteMonoBundle();
+	if (!onlyNativeAot && OperatingSystem.IsWindows())
+	{
+		String[] executablePaths = await TestCompiler.CompileFramework(projectDirectory);
+		foreach (String executable in executablePaths)
+			await Utilities.Execute(new() { ExecutablePath = executable, }, ConsoleNotifier.CancellationToken);
+	}
 }

@@ -20,7 +20,7 @@ public partial class Launcher
 			                         .Where(a => a == this.CurrentArch || a is Architecture.X86 ||
 				                                (a is Architecture.X64 && this.CurrentArch is not Architecture.X86))
 			                         .ToArray();
-			initialize = Windows.PrepareCompilers(this._cppCompilers, this.Architectures);
+			initialize = Windows.PrepareCompilers(this._cppCompilers, this.Architectures, this);
 			Windows.AppendMonoLauncher(
 				Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Mono"),
 				Architecture.X64, ref this._monoLaunchers);
