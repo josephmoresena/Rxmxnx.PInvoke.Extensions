@@ -11,7 +11,7 @@
     <PropertyGroup Condition="'$(MultipleFrameworkTest)' == 'true' And '$(OnlySupportedFrameworkTest)' != 'true'">
         <TargetFrameworks>$(TargetFrameworks);net5.0;netcoreapp3.1;netcoreapp3.0;netcoreapp2.1;netcoreapp2.0</TargetFrameworks>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(MultipleFrameworkTest)' == 'true' And ('$(OnlySupportedFrameworkTest)' != 'true' Or $([MSBuild]::IsOSPlatform('WINDOWS')) And $(GITHUB_ACTIONS)' == 'true')">
+    <PropertyGroup Condition="'$(MultipleFrameworkTest)' == 'true' And ('$(OnlySupportedFrameworkTest)' != 'true' Or $([MSBuild]::IsOSPlatform('WINDOWS')) And '$(GITHUB_ACTIONS)' == 'true')">
         <TargetFrameworks>$(TargetFrameworks);net452;net46;net461</TargetFrameworks>
     </PropertyGroup>
 
