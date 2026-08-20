@@ -24,6 +24,11 @@ public abstract class AssemblyPatchTask : MsBuildTask
 	/// </summary>
 	// ReSharper disable once MemberCanBePrivate.Global
 	protected static readonly ReaderParameters ReadParameters = new() { ReadWrite = true, ReadSymbols = true, };
+	/// <summary>
+	/// Reader parameters for ref assembly.
+	/// </summary>
+	// ReSharper disable once MemberCanBePrivate.Global
+	protected static readonly ReaderParameters ReadRefParameters = new() { ReadWrite = true, ReadSymbols = false, };
 
 	/// <summary>
 	/// MSBuild Output path.
@@ -85,12 +90,11 @@ public abstract class AssemblyPatchTask : MsBuildTask
 	// ReSharper disable once MemberCanBePrivate.Global
 	protected void AssemblyPatch(String assemblyPath, String? snkPath, String? documentationPath)
 	{
-		using AssemblyDefinition? assembly =
-			AssemblyDefinition.ReadAssembly(assemblyPath, AssemblyPatchTask.ReadParameters);
+		using AssemblyDefinition assembly = AssemblyPatchTask.ReadAssembly(assemblyPath, out Boolean writeSymbols);
 		using ModuleDefinition? module = assembly.MainModule;
 		WriterParameters writerParameters = !File.Exists(snkPath) ?
-			new() { WriteSymbols = true, } :
-			new() { WriteSymbols = true, StrongNameKeyBlob = File.ReadAllBytes(snkPath!), };
+			new() { WriteSymbols = writeSymbols, } :
+			new() { WriteSymbols = writeSymbols, StrongNameKeyBlob = File.ReadAllBytes(snkPath!), };
 
 		if (this.IlPatch(module))
 			assembly.Write(writerParameters);
@@ -120,4 +124,27 @@ public abstract class AssemblyPatchTask : MsBuildTask
 	/// <see langword="true"/> if <see cref="xmlDocument"/> was modified; otherwise; <see langword="false"/>.
 	/// </returns>
 	protected virtual Boolean DocumentationPatch(XmlDocument xmlDocument) => false;
+
+	/// <summary>
+	/// Reads an assembly from the specified path and determines whether debug symbols should be preserved when the
+	/// assembly is written.
+	/// </summary>
+	/// <param name="assemblyPath">Path to the <c>Rxmxnx.PInvoke.Extensions</c> assembly.</param>
+	/// <param name="writeSymbols">
+	/// Output. <see langword="true"/> if the assembly is an implementation assembly and its symbols should be read and
+	/// written; otherwise, <see langword="false"/>.
+	/// </param>
+	/// <returns>The <see cref="AssemblyDefinition"/> loaded from <paramref name="assemblyPath"/>.</returns>
+	private static AssemblyDefinition ReadAssembly(String assemblyPath, out Boolean writeSymbols)
+	{
+		writeSymbols = false;
+		AssemblyDefinition assembly =
+			AssemblyDefinition.ReadAssembly(assemblyPath, AssemblyPatchTask.ReadRefParameters);
+		if (assembly.CustomAttributes.Any(a => a.AttributeType.FullName ==
+			                                  "System.Runtime.CompilerServices.ReferenceAssemblyAttribute"))
+			return assembly;
+		assembly.Dispose();
+		writeSymbols = true;
+		return AssemblyDefinition.ReadAssembly(assemblyPath, AssemblyPatchTask.ReadParameters);
+	}
 }

@@ -23,9 +23,18 @@
     <ItemGroup>
         <ProjectReference Include="$(MSBuildThisFileDirectory)Rxmxnx.PInvoke.Extensions.IlPatcher\Rxmxnx.PInvoke.Extensions.IlPatcher.csproj">
             <PrivateAssets>all</PrivateAssets>
-            <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+            <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+            <GlobalPropertiesToRemove>
+                ProduceOnlyReferenceAssembly;
+                ProduceReferenceAssembly
+            </GlobalPropertiesToRemove>
             <SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
             <Private>False</Private>
+            <Properties>
+                ProduceOnlyReferenceAssembly=false;
+                ProduceReferenceAssembly=false;
+                TargetFramework=netstandard2.0
+            </Properties>
         </ProjectReference>
     </ItemGroup>
 
