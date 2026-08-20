@@ -5,6 +5,7 @@
         <IsPackable>false</IsPackable>
         <Deterministic>true</Deterministic>
         <DefineConstants>$(DefineConstants);OBSOLETE_FIXED_INTERFACES;OBSOLTE_DELEGATES</DefineConstants>
+        <DefineConstants>$(DefineConstants);EXCLUDE_UNUSED_INTERNALS</DefineConstants>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Version)' == ''">
         <DocumentationFile>./$(AssemblyName).xml</DocumentationFile>

@@ -8,6 +8,7 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 [ExcludeFromCodeCoverage]
 #endif
 [StructLayout(LayoutKind.Sequential)]
+// ReSharper disable once ClassNeverInstantiated.Global
 internal sealed class Pinnable<T>
 {
 	/// <summary>
