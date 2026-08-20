@@ -83,14 +83,20 @@ public static partial class TestCompiler
 		                           .SelectMany(d => d.GetFiles("*.*proj")).Select(f => f.FullName).ToArray();
 		foreach (String appProjectFile in appProjectFiles)
 		{
+			DirectoryInfo tempDirectory = new(Path.Combine(Path.GetTempPath(), $"{Guid.CreateVersion7()}"));
 			ExecuteState<CompileAppxArgs> state = new()
 			{
 				ExecutablePath = msbuildPath,
-				ArgState = new() { ProjectPath = appProjectFile, OutputPath = outputPath, },
+				ArgState = new() { ProjectPath = appProjectFile, OutputPath = tempDirectory.FullName, },
 				AppendArgs = CompileAppxArgs.Append,
 				Notifier = ConsoleNotifier.Notifier,
 			};
+
+			tempDirectory.Create();
 			await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
+			foreach (FileInfo appx in tempDirectory.GetFiles("*.appxbundle", SearchOption.AllDirectories))
+				appx.MoveTo(Path.Combine(outputPath, appx.Name), true);
+			tempDirectory.Delete(true);
 			if (Utilities.ShowDiagnostics)
 				ConsoleNotifier.ShowDiskUsage();
 		}
