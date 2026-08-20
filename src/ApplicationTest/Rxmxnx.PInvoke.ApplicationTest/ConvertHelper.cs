@@ -5,17 +5,12 @@ using System.Text.Json;
 #elif !NETCOREAPP2_1_OR_GREATER && (!NETFRAMEWORK || !MONO && !NET461_OR_GREATER) && !WINDOWS_UWP
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-#if !NETCOREAPP2_0_OR_GREATER && !NET46_OR_GREATER && !WINDOWS_UWP
-using System.Text;
-
-#endif
 #else
 using System.Text.Json;
 #if WINDOWS_UWP
 using System.Collections.Generic;
 using System.Linq;
 #endif
-
 #endif
 
 namespace Rxmxnx.PInvoke.ApplicationTest
@@ -75,13 +70,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			foreach (ReadOnlySpan<Byte> utf8Text in sequence.CreateView())
 			{
 				result[index] = !Unsafe.IsNullRef(ref MemoryMarshal.GetReference(utf8Text)) ?
-#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || WINDOWS_UWP
 					utf8Text.ToUtf16() :
-#elif NET452
-					Encoding.UTF8.GetString(utf8Text.ToArray()) :
-#else
-			        Encoding.UTF8.GetString(utf8Text) :
-#endif
 					default;
 				index++;
 			}

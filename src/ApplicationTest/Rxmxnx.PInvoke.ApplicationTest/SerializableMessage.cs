@@ -1,7 +1,6 @@
 using System;
 #if NETCOREAPP2_1_OR_GREATER || NETFRAMEWORK && (MONO || NET461_OR_GREATER) || WINDOWS_UWP
 using System.Text.Json.Serialization;
-
 #endif
 
 namespace Rxmxnx.PInvoke.ApplicationTest

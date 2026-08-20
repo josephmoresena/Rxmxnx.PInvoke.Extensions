@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 using System.IO;
-#if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
+#if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 using System.Reflection;
 #endif
 using System.Runtime.InteropServices;
@@ -103,7 +103,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		public static void PrintRuntimeInfo(TextWriter writer)
 		{
 			writer.WriteLine("========== Application for " + RuntimeHelper.runtimeName + " ==========");
-#if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
+#if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 			RuntimeHelper.PrintDomainInfo(writer);
 #endif
 			writer.WriteLine("========== Runtime information ==========");
@@ -148,6 +148,10 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			writer.WriteLine("======= Rxmxnx.PInvoke Runtime information =======");
 #if !RELEASE_PACKAGE
 			writer.WriteLine($"Package: {SystemInfo.CompilationFramework}");
+#elif (NETSTANDARD2_1 || NETFRAMEWORK && !NET452_OR_GREATER) && !LEGACY
+			writer.WriteLine($"Package: .NET Standard 2.1");
+#elif (NETSTANDARD2_1 || NETFRAMEWORK && !NET452_OR_GREATER) && LEGACY
+			writer.WriteLine($"Package: .NET Standard 2.0");
 #endif
 			writer.WriteLine($"Fast Span: {SystemInfo.UsesNativeSpan}");
 			writer.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
@@ -181,7 +185,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 		}
 
-#if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
+#if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 		private static void PrintDomainInfo(TextWriter writer)
 		{
 			try
@@ -280,7 +284,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 				_ => $"{architecture}",
 			};
-#if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
+#if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 		private static String GetAssemblyName(this Assembly assembly) => $"{assembly.FullName} {assembly.Location}";
 #endif
 #if !CSHARP9_0
