@@ -9,10 +9,16 @@
         <PackageReference Include="NUnitLite" Version="3.14.0" GeneratePathProperty="true">
             <SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
         </PackageReference>
+        <!-- nss2.0 STJ 5.0.2: copy ValueTask 4.2.0.1 next to the Mono testhost (nss2.1 uses the facade). -->
+        <PackageReference Condition="'$(TargetFramework)' == 'netstandard2.0'" Include="System.Threading.Tasks.Extensions" Version="4.5.4" GeneratePathProperty="true"/>
     </ItemGroup>
 
     <Target Name="CopyNUnitLiteRunner" AfterTargets="Build" Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'netstandard2.1'">
         <Copy SourceFiles="$(PkgNUnitLite)\tools\net45\nunitlite-runner.exe" DestinationFolder="$(OutDir)"/>
+        <Copy Condition="'$(TargetFramework)' == 'netstandard2.0'"
+              SourceFiles="$(PkgSystem_Threading_Tasks_Extensions)\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll"
+              DestinationFolder="$(OutDir)"
+              SkipUnchangedFiles="true"/>
     </Target>
 
 </Project>
