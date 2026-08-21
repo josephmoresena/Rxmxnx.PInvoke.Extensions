@@ -93,7 +93,13 @@ public static unsafe partial class NativeUtilities
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
 			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
 				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+#if NETCOREAPP3_0_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+#else
+			Span<Byte> bytes = stackalloc Byte[sizeof(FixedPointerInfo) * constructors.Length];
+			ref FixedPointerInfo refInfo = ref Unsafe.As<Byte, FixedPointerInfo>(ref MemoryMarshal.GetReference(bytes));
+			Span<FixedPointerInfo> info = MemoryMarshal.CreateSpan(ref refInfo, constructors.Length);
+#endif
 			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
 			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
 #else
@@ -156,7 +162,13 @@ public static unsafe partial class NativeUtilities
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
 			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
 				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+#if NETCOREAPP3_0_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+#else
+			Span<Byte> bytes = stackalloc Byte[sizeof(FixedPointerInfo) * constructors.Length];
+			ref FixedPointerInfo refInfo = ref Unsafe.As<Byte, FixedPointerInfo>(ref MemoryMarshal.GetReference(bytes));
+			Span<FixedPointerInfo> info = MemoryMarshal.CreateSpan(ref refInfo, constructors.Length);
+#endif
 			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
 			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
 #else
@@ -217,7 +229,13 @@ public static unsafe partial class NativeUtilities
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
 			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
 				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+#if NETCOREAPP3_0_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+#else
+			Span<Byte> bytes = stackalloc Byte[sizeof(FixedPointerInfo) * constructors.Length];
+			ref FixedPointerInfo refInfo = ref Unsafe.As<Byte, FixedPointerInfo>(ref MemoryMarshal.GetReference(bytes));
+			Span<FixedPointerInfo> info = MemoryMarshal.CreateSpan(ref refInfo, constructors.Length);
+#endif
 			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
 			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
 			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
@@ -285,7 +303,13 @@ public static unsafe partial class NativeUtilities
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
 			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
 				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+#if NETCOREAPP3_0_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+#else
+			Span<Byte> bytes = stackalloc Byte[sizeof(FixedPointerInfo) * constructors.Length];
+			ref FixedPointerInfo refInfo = ref Unsafe.As<Byte, FixedPointerInfo>(ref MemoryMarshal.GetReference(bytes));
+			Span<FixedPointerInfo> info = MemoryMarshal.CreateSpan(ref refInfo, constructors.Length);
+#endif
 			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
 			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
 			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
@@ -351,7 +375,13 @@ public static unsafe partial class NativeUtilities
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
 			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
 				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+#if NETCOREAPP3_0_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+#else
+			Span<Byte> bytes = stackalloc Byte[sizeof(FixedPointerInfo) * constructors.Length];
+			ref FixedPointerInfo refInfo = ref Unsafe.As<Byte, FixedPointerInfo>(ref MemoryMarshal.GetReference(bytes));
+			Span<FixedPointerInfo> info = MemoryMarshal.CreateSpan(ref refInfo, constructors.Length);
+#endif
 			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
 			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
 			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
@@ -424,7 +454,13 @@ public static unsafe partial class NativeUtilities
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
 			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
 				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+#if NETCOREAPP3_0_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+#else
+			Span<Byte> bytes = stackalloc Byte[sizeof(FixedPointerInfo) * constructors.Length];
+			ref FixedPointerInfo refInfo = ref Unsafe.As<Byte, FixedPointerInfo>(ref MemoryMarshal.GetReference(bytes));
+			Span<FixedPointerInfo> info = MemoryMarshal.CreateSpan(ref refInfo, constructors.Length);
+#endif
 			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
 			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
 			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
@@ -495,7 +531,13 @@ public static unsafe partial class NativeUtilities
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
 			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
 				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+#if NETCOREAPP3_0_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+#else
+			Span<Byte> bytes = stackalloc Byte[sizeof(FixedPointerInfo) * constructors.Length];
+			ref FixedPointerInfo refInfo = ref Unsafe.As<Byte, FixedPointerInfo>(ref MemoryMarshal.GetReference(bytes));
+			Span<FixedPointerInfo> info = MemoryMarshal.CreateSpan(ref refInfo, constructors.Length);
+#endif
 			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
 			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
 			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
@@ -573,7 +615,13 @@ public static unsafe partial class NativeUtilities
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
 			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
 				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+#if NETCOREAPP3_0_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+#else
+			Span<Byte> bytes = stackalloc Byte[sizeof(FixedPointerInfo) * constructors.Length];
+			ref FixedPointerInfo refInfo = ref Unsafe.As<Byte, FixedPointerInfo>(ref MemoryMarshal.GetReference(bytes));
+			Span<FixedPointerInfo> info = MemoryMarshal.CreateSpan(ref refInfo, constructors.Length);
+#endif
 			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
 			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
 			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
@@ -649,7 +697,13 @@ public static unsafe partial class NativeUtilities
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
 			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
 				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+#if NETCOREAPP3_0_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+#else
+			Span<Byte> bytes = stackalloc Byte[sizeof(FixedPointerInfo) * constructors.Length];
+			ref FixedPointerInfo refInfo = ref Unsafe.As<Byte, FixedPointerInfo>(ref MemoryMarshal.GetReference(bytes));
+			Span<FixedPointerInfo> info = MemoryMarshal.CreateSpan(ref refInfo, constructors.Length);
+#endif
 			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
 			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
 			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
@@ -733,7 +787,13 @@ public static unsafe partial class NativeUtilities
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
 			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
 				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+#if NETCOREAPP3_0_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+#else
+			Span<Byte> bytes = stackalloc Byte[sizeof(FixedPointerInfo) * constructors.Length];
+			ref FixedPointerInfo refInfo = ref Unsafe.As<Byte, FixedPointerInfo>(ref MemoryMarshal.GetReference(bytes));
+			Span<FixedPointerInfo> info = MemoryMarshal.CreateSpan(ref refInfo, constructors.Length);
+#endif
 			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
 			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
 			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
@@ -815,7 +875,13 @@ public static unsafe partial class NativeUtilities
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
 			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
 				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+#if NETCOREAPP3_0_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+#else
+			Span<Byte> bytes = stackalloc Byte[sizeof(FixedPointerInfo) * constructors.Length];
+			ref FixedPointerInfo refInfo = ref Unsafe.As<Byte, FixedPointerInfo>(ref MemoryMarshal.GetReference(bytes));
+			Span<FixedPointerInfo> info = MemoryMarshal.CreateSpan(ref refInfo, constructors.Length);
+#endif
 			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
 			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
 			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
@@ -904,7 +970,13 @@ public static unsafe partial class NativeUtilities
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
 			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
 				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+#if NETCOREAPP3_0_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+#else
+			Span<Byte> bytes = stackalloc Byte[sizeof(FixedPointerInfo) * constructors.Length];
+			ref FixedPointerInfo refInfo = ref Unsafe.As<Byte, FixedPointerInfo>(ref MemoryMarshal.GetReference(bytes));
+			Span<FixedPointerInfo> info = MemoryMarshal.CreateSpan(ref refInfo, constructors.Length);
+#endif
 			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
 			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
 			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
@@ -991,7 +1063,13 @@ public static unsafe partial class NativeUtilities
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
 			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
 				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+#if NETCOREAPP3_0_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+#else
+			Span<Byte> bytes = stackalloc Byte[sizeof(FixedPointerInfo) * constructors.Length];
+			ref FixedPointerInfo refInfo = ref Unsafe.As<Byte, FixedPointerInfo>(ref MemoryMarshal.GetReference(bytes));
+			Span<FixedPointerInfo> info = MemoryMarshal.CreateSpan(ref refInfo, constructors.Length);
+#endif
 			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
 			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
 			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
@@ -1085,7 +1163,13 @@ public static unsafe partial class NativeUtilities
 			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
 			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
 				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+#if NETCOREAPP3_0_OR_GREATER
 			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+#else
+			Span<Byte> bytes = stackalloc Byte[sizeof(FixedPointerInfo) * constructors.Length];
+			ref FixedPointerInfo refInfo = ref Unsafe.As<Byte, FixedPointerInfo>(ref MemoryMarshal.GetReference(bytes));
+			Span<FixedPointerInfo> info = MemoryMarshal.CreateSpan(ref refInfo, constructors.Length);
+#endif
 			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
 			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
 			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);

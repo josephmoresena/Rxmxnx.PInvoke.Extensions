@@ -229,13 +229,19 @@ public static unsafe class FixedUtf8Extensions
 			{
 				IsReadOnly = true,
 				Information =
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+#if NETCOREAPP3_0_OR_GREATER
 					FixedUtf8Extensions.InitializeInfo(seq, stackalloc FixedPointerInfo[seq.Count]),
+#elif NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+					FixedUtf8Extensions.InitializeInfo(
+						seq, MemoryMarshal.CreateSpan(
+							ref Unsafe.As<Byte, FixedPointerInfo>(
+								ref MemoryMarshal.GetReference(stackalloc Byte[seq.Count * sizeof(FixedPointerInfo)])),
+							seq.Count)),
 #else
 					FixedUtf8Extensions.InitializeInfo(seq, Unsafe.AsPointer(
 						                                   ref MemoryMarshal.GetReference(
 							                                   stackalloc Byte[seq.Count *
-								                                   sizeof(FixedPointerValue)]))),
+								                                   sizeof(FixedPointerInfo)]))),
 #endif
 			});
 		}
@@ -269,13 +275,19 @@ public static unsafe class FixedUtf8Extensions
 			{
 				IsReadOnly = true,
 				Information =
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+#if NETCOREAPP3_0_OR_GREATER
 					FixedUtf8Extensions.InitializeInfo(seq, stackalloc FixedPointerInfo[seq.Count]),
+#elif NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+					FixedUtf8Extensions.InitializeInfo(
+						seq, MemoryMarshal.CreateSpan(
+							ref Unsafe.As<Byte, FixedPointerInfo>(
+								ref MemoryMarshal.GetReference(stackalloc Byte[seq.Count * sizeof(FixedPointerInfo)])),
+							seq.Count)),
 #else
 					FixedUtf8Extensions.InitializeInfo(seq, Unsafe.AsPointer(
 						                                   ref MemoryMarshal.GetReference(
 							                                   stackalloc Byte[seq.Count *
-								                                   sizeof(FixedPointerValue)]))),
+								                                   sizeof(FixedPointerInfo)]))),
 #endif
 			});
 		}
@@ -313,13 +325,19 @@ public static unsafe class FixedUtf8Extensions
 			{
 				IsReadOnly = true,
 				Information =
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+#if NETCOREAPP3_0_OR_GREATER
 					FixedUtf8Extensions.InitializeInfo(seq, stackalloc FixedPointerInfo[seq.Count]),
+#elif NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+					FixedUtf8Extensions.InitializeInfo(
+						seq, MemoryMarshal.CreateSpan(
+							ref Unsafe.As<Byte, FixedPointerInfo>(
+								ref MemoryMarshal.GetReference(stackalloc Byte[seq.Count * sizeof(FixedPointerInfo)])),
+							seq.Count)),
 #else
 					FixedUtf8Extensions.InitializeInfo(seq, Unsafe.AsPointer(
 						                                   ref MemoryMarshal.GetReference(
 							                                   stackalloc Byte[seq.Count *
-								                                   sizeof(FixedPointerValue)]))),
+								                                   sizeof(FixedPointerInfo)]))),
 #endif
 			});
 		}
@@ -356,13 +374,19 @@ public static unsafe class FixedUtf8Extensions
 			{
 				IsReadOnly = true,
 				Information =
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+#if NETCOREAPP3_0_OR_GREATER
 					FixedUtf8Extensions.InitializeInfo(seq, stackalloc FixedPointerInfo[seq.Count]),
+#elif NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+					FixedUtf8Extensions.InitializeInfo(
+						seq, MemoryMarshal.CreateSpan(
+							ref Unsafe.As<Byte, FixedPointerInfo>(
+								ref MemoryMarshal.GetReference(stackalloc Byte[seq.Count * sizeof(FixedPointerInfo)])),
+							seq.Count)),
 #else
 					FixedUtf8Extensions.InitializeInfo(seq, Unsafe.AsPointer(
 						                                   ref MemoryMarshal.GetReference(
 							                                   stackalloc Byte[seq.Count *
-								                                   sizeof(FixedPointerValue)]))),
+								                                   sizeof(FixedPointerInfo)]))),
 #endif
 			});
 		}
