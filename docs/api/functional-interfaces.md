@@ -1,12 +1,12 @@
 # Functional interfaces
 
-Functional interfaces are **callable structs**. They replace the delegate overloads of `WithSafeFixed`, `BufferManager.Alloc`, and related APIs so that:
+Functional interfaces are **callable structs**. They are this generation’s preferred callback style for `WithSafeFixed`, `BufferManager.Alloc`, and related APIs:
 
 - State lives on the struct, not in a compiler-generated display class.
 - The call can be fully inlined in many cases.
 - On .NET 9+, the operation can accept `ref struct` values (`scoped FixedContextValue<T>`).
 
-This is the preferred callback style in this generation of the package.
+Delegate overloads remain public on .NET Standard 2.1 / .NET Core 3.0 and later. They were not brought to the support assemblies (.NET Framework, .NET Standard 2.0, UWP, and .NET Core 2.1), so on those TFMs the functional-interface form is the only callback style the package compiles.
 
 ## How they look
 
@@ -24,7 +24,7 @@ Actions use `Accept(...)`. Functions use `Apply(...)` and return a value. Some `
 
 ## Fixed-memory operations
 
-| Interface | Replaces | Parameter |
+| Interface | Modern-surface counterpart | Parameter |
 | --- | --- | --- |
 | `IFixedAction` | `FixedAction`, `ReadOnlyFixedAction`, and stateful variants | `scoped FixedPointerValue` |
 | `IFixedFunction<TResult>` | `FixedFunc<TResult>` and variants | `scoped FixedPointerValue` |
@@ -39,7 +39,7 @@ Implementations can store whatever state they need as fields. There is no separa
 
 ## Buffer operations
 
-| Interface | Replaces | Notes |
+| Interface | Modern-surface counterpart | Notes |
 | --- | --- | --- |
 | `IScopedBufferAction<T>` | `ScopedBufferAction<T>` / `ScopedBufferAction<T, TState>` | `Count` is the requested length; `IsMinimalCount` allows a larger allocation whose extra elements are not exposed. |
 | `IScopedBufferFunction<T, TResult>` | `ScopedBufferFunc<T, TResult>` and stateful variant | Same count contract; `Apply` returns `TResult`. |
@@ -59,7 +59,7 @@ BufferManager<Int32>.Alloc(new Fill());
 
 `BufferManager<T>.AllocWithReference` passes the action/function as a managed reference, which helps when the struct is large.
 
-On .NET Standard 2.1, `IsMinimalCount` is a required property. On newer TFMs it has a default of `false`.
+`IsMinimalCount` is a required property on the support surface (.NET Framework, .NET Standard 2.0, UWP, .NET Core 2.1). On .NET Standard 2.1 / .NET Core 3.0+ it has a default of `false`.
 
 ## Other functional contracts
 
@@ -88,16 +88,17 @@ Implemented by buffer structs (`Atomic<T>`, `Composite<…>`, `NonBinarySpace<�
 
 ## When to keep using delegates
 
-Delegates are still the right tool when:
+Delegate overloads are public on **.NET Standard 2.1 / .NET Core 3.0 and later**. They are a good fit when:
 
 - The callback is a one-off lambda and allocation does not matter.
-- You are on an API that has not been duplicated as a functional interface.
-- Visual Basic consumes the API (`Rxmxnx.PInvoke.VisualBasic` delegates).
+- You are maintaining existing call sites that already use `FixedContextAction<T>` and friends.
+- Visual Basic consumes the API (`Rxmxnx.PInvoke.VisualBasic` delegates work on every TFM, including the support assemblies).
 
-On some TFMs the delegate overloads are `[Obsolete]` to steer new code toward structs. The behavior is unchanged.
+They are simply not in the .NET Framework, .NET Standard 2.0, or UWP assemblies. If you multi-target any of those, write the functional-interface form once.
 
 ## See also
 
 - [Fixed memory](fixed-memory.md)
 - [Buffers](buffers.md)
 - [Use case: functional interface pinning](../use-cases.md#pin-managed-memory-only-for-the-native-call)
+- [TFM / API surface](compatibility.md)

@@ -14,29 +14,21 @@ static extern Int32 MessageBox(
     ReadOnlyValPtr<Char> captionPtr,
     UInt32 type);
 
-using IReadOnlyFixedContext<Char>.IDisposable text = "Hello".AsMemory().GetFixedContext();
+using IDisposable pin = "Hello".AsMemory().GetFixedContext(out ReadOnlyFixedContextValue<Char> text);
 _ = MessageBox(IntPtr.Zero, text.ValuePointer, "Greeting".AsSpan().GetUnsafeValPtr(), 0);
 ```
 
-`GetUnsafeValPtr()` is appropriate for string literals and other memory that will not move. For heap memory, pin it first with `GetFixedContext()` or `WithSafeFixed`.
+`GetUnsafeValPtr()` is appropriate for string literals and other memory that will not move. For heap memory, pin it first with `GetFixedContext(out …)` or `WithSafeFixed`.
+
+On .NET Standard 2.1 / .NET Core 3.0+ you can also write `using IReadOnlyFixedContext<Char>.IDisposable text = "Hello".AsMemory().GetFixedContext();`.
 
 ## Pin managed memory only for the native call
 
-`WithSafeFixed` pins a span, runs your callback, and unpins when the callback returns. The pointer is not stored; it cannot outlive the scope.
+`WithSafeFixed` pins a span, runs your callback, and unpins when the callback returns. The pointer is not stored; it cannot outlive the scope. The form that compiles on every TFM is a functional interface:
 
 ```csharp
 Span<Byte> utf8 = "Hello world"u8.ToArray();
 
-utf8.WithSafeFixed(static (in IFixedContext<Byte> ctx) =>
-{
-    String text = Marshal.PtrToStringUTF8(ctx.Pointer);
-    Console.WriteLine(text); // Hello world
-});
-```
-
-This generation also accepts a **functional interface**, which is the preferred form in new code: state lives on the struct, and `ref struct` arguments work on .NET 9+.
-
-```csharp
 readonly struct PrintUtf8 : IFixedContextAction<Byte>
 {
     public void Accept(scoped FixedContextValue<Byte> ctx)
@@ -44,6 +36,15 @@ readonly struct PrintUtf8 : IFixedContextAction<Byte>
 }
 
 utf8.WithSafeFixed(new PrintUtf8());
+```
+
+On .NET Standard 2.1 / .NET Core 3.0+ a delegate lambda is also public:
+
+```csharp
+utf8.WithSafeFixed(static (in IFixedContext<Byte> ctx) =>
+{
+    Console.WriteLine(Marshal.PtrToStringUTF8(ctx.Pointer));
+});
 ```
 
 ## Allocate native memory and free it with Dispose
@@ -57,11 +58,7 @@ buffer.Values.Clear();
 // Dispose frees the block.
 ```
 
-On APIs that still use the interface-based context:
-
-```csharp
-using IFixedContext<Byte>.IDisposable ctx = NativeUtilities.HeapAlloc<Byte>(256);
-```
+On .NET Standard 2.1 / .NET Core 3.0+ there is also `NativeUtilities.HeapAlloc<Byte>(256)` returning `IFixedContext<Byte>.IDisposable`.
 
 ## Build UTF-8 once, marshal many times
 
@@ -73,10 +70,13 @@ CString resource = new(() => "devices/usb0"u8);
 [DllImport("libexample")]
 static extern Int32 OpenResource(ReadOnlyValPtr<Byte> path);
 
-resource.AsSpan().WithSafeFixed(static (in IReadOnlyFixedContext<Byte> ctx) =>
+resource.WithSafeFixed(new Open());
+
+readonly struct Open : IReadOnlyFixedContextAction<Byte>
 {
-    _ = OpenResource(ctx.ValuePointer);
-});
+    public void Accept(scoped ReadOnlyFixedContextValue<Byte> ctx)
+        => OpenResource(ctx.ValuePointer);
+}
 ```
 
 On .NET 7+, `CString` supports source-generated marshalling as a null-terminated UTF-8 string, so a `[LibraryImport]` declaration can take `CString` directly.
@@ -167,7 +167,7 @@ readonly struct CollectNames : IScopedBufferAction<String>
 BufferManager<String>.Alloc(new CollectNames());
 ```
 
-The delegate form still exists for older call sites:
+The delegate form of `BufferManager.Alloc` exists on .NET Standard 2.1 / .NET Core 3.0+ only:
 
 ```csharp
 BufferManager.Alloc<String>(4, static buffer =>
@@ -179,6 +179,8 @@ BufferManager.Alloc<String>(4, static buffer =>
 On Native AOT, register or prepare binary buffer metadata so composition does not rely on runtime reflection. See [Buffers](api/buffers.md#aot-and-registration).
 
 ## Load a native export as a typed function pointer
+
+`NativeLibrary` helpers require **.NET Core 3.0 or later** (`NativeUtilities.LoadNativeLib` / `GetNativeMethod<TDelegate>`). The `FuncPtr<TDelegate>` type itself exists on every TFM.
 
 ```csharp
 delegate Int32 QueryFullProcessPath(
@@ -251,11 +253,13 @@ new CallNative().WithSafeFixed(header, payload);
 ## Wrap a value so an API can hold it without knowing the storage
 
 ```csharp
-IWrapper<Int32> boxed = IWrapper.Create(42);
-IMutableReference<String> slot = IMutableReference.CreateObject("initial");
+IWrapper<Int32> boxed = WrapperFactory.Create(42);
+IMutableReference<String> slot = WrapperFactory.CreateReferenceableObject("initial");
 slot.Value = "updated";
 ref String live = ref slot.Reference;
 ```
+
+On .NET Standard 2.1 / .NET Core 3.0+ you can also write `IWrapper.Create(42)` and `IMutableReference.CreateObject("initial")`. Those static factories are default interface methods and are not on the support TFMs.
 
 Use wrappers when you need a uniform `T` handle across value types, nullables, and reference types — for example, a callback payload or a diagnostic dump.
 

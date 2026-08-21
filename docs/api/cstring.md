@@ -50,10 +50,11 @@ Static fields: `Empty` (empty literal), `Zero` (null pointer), `NewLine` (platfo
 ### Members worth knowing
 
 - Indexer `this[Int32]` → `Byte`
-- `AsSpan()`, `ToArray()`, `ToHexString()`, `TryPin()`, `WithSafeFixed(...)`
+- `AsSpan()`, `ToArray()`, `ToHexString()`, `TryPin()`
+- `WithSafeFixed(TAction)` extension — every TFM. Instance `WithSafeFixed(ReadOnlyFixedAction)` — .NET Standard 2.1 / .NET Core 3.0+ only.
 - `Concat` / `Join` / `Compare` (static), comparison operators with `CString` and `String`
 - `+` with `CString`, `String`, `ReadOnlySpan<Byte>`, `ReadOnlySpan<Char>` — result is a new null-terminated instance when both sides are non-empty
-- `IsNullOrEmpty`, `IsImagePersistent`, `GetAssociatedSequence`, `GetHashCode(ReadOnlySpan<Byte>)`
+- `IsNullOrEmpty`, `IsImagePersistent`, `GetAssociatedSequence`, `GetHashCode(ReadOnlySpan<Byte>)` (.NET Standard 2.1 / .NET Core 3.0+)
 - Repeat constructors: a UTF-8 unit (or 2–4 units) repeated `count` times; UTF-16 `Char` / `ReadOnlySpan<Char>` constructors encode to UTF-8
 
 From .NET 9, `params` uses `ReadOnlySpan<>` instead of arrays.
@@ -61,7 +62,7 @@ From .NET 9, `params` uses `ReadOnlySpan<>` instead of arrays.
 ### Marshalling and JSON
 
 - **.NET 7+:** `[NativeMarshalling]` — P/Invoke sees a null-terminated UTF-8 pointer.
-- **.NET Core 3.0+:** nested `JsonConverter` for `System.Text.Json`. Deserialization produces null-terminated instances; the terminator is not guaranteed to be a single `0x00` byte.
+- **.NET Core or net461+:** nested `JsonConverter` for `System.Text.Json`. Not on .NET Standard 2.0/2.1 or net452/net46. Deserialization produces null-terminated instances; the terminator is not guaranteed to be a single `0x00` byte.
 
 ## `CStringSequence`
 
@@ -94,9 +95,9 @@ CStringSequence.GetUnsafe(spanOfReadOnlyValPtr);    // from native char*[]
 
 `Utf8View` does not pin by default. Pin the source sequence (and `CString.Empty` if empty items are included) if you need a stable address during enumeration.
 
-`CStringSequence.WithSafeFixed` pins the whole buffer and exposes a list of item pointers for native `char*[]`-style APIs.
+`CStringSequence.WithSafeFixed` instance methods that take list delegates are **.NET Standard 2.1 / .NET Core 3.0+**. The functional-interface extensions (`seq.WithSafeFixed(new MyAction())`) exist on every TFM.
 
-Marshalling on .NET 7+: a null-terminated array of null-terminated UTF-8 strings. Empty items are omitted unless a `Utf8View` included them. Nested `JsonConverter` from .NET Core 3.0.
+Marshalling on .NET 7+: a null-terminated array of null-terminated UTF-8 strings. Empty items are omitted unless a `Utf8View` included them. Nested `JsonConverter` on .NET Core or net461+.
 
 `FixedCStringSequence` is the pinned `ref struct` form used when the sequence must be passed to native code as a list of pointers.
 

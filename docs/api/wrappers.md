@@ -17,22 +17,23 @@ These are the “there is a live managed reference here” contracts. Fixed-refe
 
 | Interface | Exposes | Mutability |
 | --- | --- | --- |
-| `IWrapper<T>` | `T Value { get; }` | Immutable wrapper. `IEquatable<T>`. |
+| `IWrapper<T>` | `T Value { get; }` | Immutable wrapper. `IEquatable<T>` on .NET Standard 2.1 / .NET Core 3.0+. |
 | `IReferenceableWrapper<T>` | wrapper + `ref readonly T` | Value plus a live read-only reference. |
 | `IMutableWrapper<T>` | `T Value { get; set; }` | Mutable value. |
 | `IMutableReference<T>` | wrapper + `ref T Reference` | Mutable and referenceable. |
 
-Each generic interface has a **non-generic companion** (`IWrapper`, `IReferenceableWrapper`, `IMutableWrapper`, `IMutableReference`) with static factories:
+Each generic interface has a **non-generic companion** (`IWrapper`, `IReferenceableWrapper`, `IMutableWrapper`, `IMutableReference`) with static factories. Those companions exist only on **.NET Standard 2.1 / .NET Core 3.0+** (default interface methods). On every TFM, including .NET Framework and .NET Standard 2.0, use `WrapperFactory` instead:
 
 | Factory | `T` |
 | --- | --- |
-| `Create<TValue>(TValue)` | `struct` |
-| `CreateNullable<TValue>(TValue?)` | `struct?` |
-| `CreateObject<TObject>(TObject)` | reference type |
+| `WrapperFactory.Create<TValue>(in TValue)` | `struct` |
+| `WrapperFactory.CreateNullable<TValue>(in TValue?)` | `struct?` |
+| `WrapperFactory.CreateObject<TObject>(TObject)` | reference type |
+| `WrapperFactory.CreateReferenceable*` | referenceable / mutable-reference variants |
 
-`IWrapper.IBase<T>` is a covariant view of `Value`. From .NET 9, `T` on that view may be a `ref struct`.
+`IWrapper.IBase<T>` is a covariant view of `Value` on .NET Standard 2.1 / .NET Core 3.0+. From .NET 9, `T` on that view may be a `ref struct`.
 
-Generic `Create(T?)` methods also exist on the generic interfaces themselves.
+Generic `Create(T?)` methods on `IWrapper<T>` itself are also modern-surface only.
 
 Use wrappers when an API should accept “some `T`” without caring whether it is boxed, nullable, or a class — logging, callback payloads, adapter layers.
 
@@ -64,3 +65,4 @@ Nested abstract class `ValueRegion<T>.Memory` lets you build a custom region fro
 
 - [Capabilities: wrappers](../capabilities.md#wrappers-and-references-as-contracts)
 - [UTF-8 text](cstring.md) — `CString` is a `ValueRegion<Byte>` with extra rules
+- [TFM / API surface](compatibility.md)

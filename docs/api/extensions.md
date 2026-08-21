@@ -13,7 +13,7 @@ Work with `Byte`, `Byte[]`, and byte spans.
 | `ToValue<T>(this Byte[] / Span<Byte> / ReadOnlySpan<Byte>)` | Copy bytes into an unmanaged `T`. |
 | `AsValue<T>(this Span<Byte> / ReadOnlySpan<Byte>)` | `ref T` / `ref readonly T` over the same memory. |
 | `AsHexString(this Byte / Byte[])` | Hexadecimal text. |
-| `WithSafeFixed(...)` | Pin the bytes and run a fixed-memory callback. |
+| `WithSafeFixed(...)` | Pin the bytes. Delegate overloads: .NET Standard 2.1 / .NET Core 3.0+. Functional-interface overloads live on `FixedPointerValueExtensions` / `FixedContextValueExtensions` and exist on every TFM. |
 
 `T` is `unmanaged` for the value conversions.
 
@@ -26,7 +26,7 @@ Spans, memories, and arrays of any `T`.
 | Literal detection | `IsLiteral`, `MayBeNonLiteral` |
 | Byte / value views | `AsBytes`, `AsValues<TIn, TOut>` (optional residual `Span<Byte>`) |
 | Multidimensional arrays | `AsSpan`, `AsMemory` |
-| Pinning | `WithSafeFixed`, `WithSafeReadOnlyFixed`, `GetFixedContext`, `GetFixedMemory` |
+| Pinning | `WithSafeFixed` (functional interfaces on every TFM; delegate overloads on .NET Standard 2.1 / .NET Core 3.0+), `WithSafeReadOnlyFixed`, `GetFixedContext` / `GetFixedMemory` (`out` value context on every TFM; nested `IDisposable` return on the modern surface) |
 | Unsafe addresses | `GetUnsafeIntPtr`, `GetUnsafeValPtr`, `GetUnsafeReadOnlyValPtr` (literals / already-fixed memory) |
 
 `AsBytes` / `AsValues` operate on GC-managed references and do not require `unsafe`. They are views, not copies.
@@ -77,7 +77,7 @@ These are unsafe by contract: the pointer must stay valid for as long as the vie
 
 ## Strings (`StringExtensions`)
 
-`WithSafeFixed` overloads that pin a `String` as UTF-16 (`IReadOnlyFixedContext<Char>` / `ReadOnlyFixedContextValue<Char>`). UTF-8 literals are already `ReadOnlySpan<Byte>` and use the memory-block extensions instead.
+`WithSafeFixed` overloads that pin a `String` as UTF-16. Delegate overloads (`StringExtensions`) are **.NET Standard 2.1 / .NET Core 3.0+**. Functional-interface overloads (`ReadOnlyFixedContextValueExtensions`) exist on every TFM.
 
 ## Sequences (`EnumerableSequenceExtensions`)
 
@@ -92,3 +92,4 @@ Helpers for `IEnumerableSequence<T>`: create enumerators and dispose them consis
 - [Fixed memory](fixed-memory.md) — pinning rules
 - [Pointers](pointers.md) — typed pointer types
 - [Use case: reinterpret memory](../use-cases.md#reinterpret-memory-without-copying)
+- [TFM / API surface](compatibility.md)

@@ -31,7 +31,7 @@ readonly struct UseUtf8 : IReadOnlyFixedContextAction<Byte>
 
 Earlier versions already offered typed pointers, UTF-8 strings, and scoped pinning. This generation goes further:
 
-- **Functional interfaces** replace most delegate-based callbacks. State lives on a `readonly struct`, so hot paths avoid extra allocations and work naturally with `ref struct` values.
+- **Functional interfaces** are the preferred callback style in this generation. State lives on a `readonly struct`, so hot paths avoid extra allocations and work naturally with `ref struct` values. Delegate overloads stay public on .NET Standard 2.1 / .NET Core 3.0+; they were not added to .NET Framework, .NET Standard 2.0, or UWP.
 - **Value-type fixed contexts** (`FixedContextValue<T>`, `FixedPointerValue`) keep pinning, spans, and typed pointers in a single scoped value.
 - **Native heap with .NET lifetimes** through `NativeUtilities.HeapAlloc<T>()`, released by `IDisposable` instead of paired alloc/free calls.
 - **First-class UTF-8** with `CString`, `CStringSequence`, and `CStringBuilder` — including source-generated marshalling on .NET 7+.
@@ -53,7 +53,7 @@ If your code talks to native libraries, serializes UTF-8, reinterprets binary la
 dotnet add package Rxmxnx.PInvoke.Extensions
 ```
 
-Officially supported on **.NET 8.0 and later**. Binary and source compatibility is maintained from **.NET Standard 2.1** through **.NET 10.0**, including CoreCLR, Mono, Native AOT, Unity, Xamarin, and Blazor WebAssembly. See [framework and AOT support](docs/getting-started.md#framework-support) for the details.
+Officially supported on **.NET 8.0 and later**. This generation also ships support assemblies for **.NET Standard 2.0**, **.NET Core 2.1**, **.NET Framework 4.5.2–4.7.2**, and **UWP 10.0.16299**, with a narrower public API. See [framework support](docs/getting-started.md#framework-support) and [API surface by TFM](docs/api/compatibility.md).
 
 ## Capabilities at a glance
 
@@ -74,7 +74,7 @@ Use this library when the problem benefits from explicit memory intent, scoped l
 | --- | --- |
 | UTF-8 text for native APIs, JSON, gRPC, or ASP.NET | `CString`, `CStringSequence`, `CStringBuilder` |
 | Typed native pointers without spreading `unsafe` | `ValPtr<T>`, `ReadOnlyValPtr<T>`, `FuncPtr<TDelegate>` |
-| Pin memory only for a callback or `using` scope | `WithSafeFixed`, `IFixedContext<T>`, `FixedContextValue<T>` |
+| Pin memory only for a callback or `using` scope | `WithSafeFixed`, `FixedContextValue<T>` (and `IFixedContext<T>` on .NET Standard 2.1 / .NET Core 3.0+) |
 | Native heap with .NET disposal | `NativeUtilities.HeapAlloc<T>()` |
 | Reinterpret or hash binary layouts | `AsBytes`, `AsValues`, `ToBytes`, `ToValue` |
 | Stack-first temporary storage | `BufferManager`, `ScopedBuffer<T>` |
@@ -92,10 +92,13 @@ CString path = new(() => "/usr/lib/libexample.so"u8);
 [DllImport("libexample", EntryPoint = "open_resource")]
 static extern Int32 OpenResource(ReadOnlyValPtr<Byte> path);
 
-path.AsSpan().WithSafeFixed(static (in IReadOnlyFixedContext<Byte> ctx) =>
+readonly struct Open : IReadOnlyFixedContextAction<Byte>
 {
-    _ = OpenResource(ctx.ValuePointer);
-});
+    public void Accept(scoped ReadOnlyFixedContextValue<Byte> ctx)
+        => OpenResource(ctx.ValuePointer);
+}
+
+path.WithSafeFixed(new Open());
 ```
 
 On .NET 7+, `CString` also supports source-generated marshalling as a null-terminated UTF-8 string, so many P/Invoke declarations can take `CString` directly.
@@ -104,6 +107,7 @@ On .NET 7+, `CString` also supports source-generated marshalling as a null-termi
 
 - [Documentation hub](docs/README.md) — map of every guide
 - [Getting started](docs/getting-started.md) — install, target frameworks, AOT, Visual Basic
+- [API surface by TFM](docs/api/compatibility.md) — modern vs support assemblies
 - [Capabilities](docs/capabilities.md) — what each area of the library is for
 - [Use cases](docs/use-cases.md) — recipes for interop, UTF-8 pipelines, binary views, and AOT
 - [API reference](docs/api/README.md) — types, members, and contracts

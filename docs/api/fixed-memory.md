@@ -2,7 +2,7 @@
 
 Fixed memory APIs pin a managed object (or wrap native memory) and expose it as spans, references, and typed pointers for a **bounded lifetime**. When the callback returns or `Dispose` runs, the pin is released and the pointers must not be used.
 
-This generation introduces value-type contexts (`FixedPointerValue`, `FixedContextValue<T>`) and [functional interfaces](functional-interfaces.md). The older `IFixed*` interfaces remain for compatibility.
+This generation introduces value-type contexts (`FixedPointerValue`, `FixedContextValue<T>`) and [functional interfaces](functional-interfaces.md). The `IFixed*` interfaces remain public on every TFM. Delegate overloads that take those interfaces, and helpers that return nested `IDisposable` memory/context types, exist only on .NET Standard 2.1 / .NET Core 3.0+ — they were not brought to .NET Framework, .NET Standard 2.0, or UWP. See [compatibility](compatibility.md).
 
 ## Contexts you will hold
 
@@ -36,11 +36,11 @@ The historical surface:
 | `IReadOnlyFixedContext<T>` / `IFixedContext<T>` | Adds `Transformation<TDestination>()` and `ValuePointer`. |
 | `IReadOnlyFixedReference<T>` / `IFixedReference<T>` | A single pinned `T` (`Reference`). |
 | `IFixedMethod<TDelegate>` | A pinned / marshalled managed method. |
-| `*.IDisposable` | Same contract, released with `using`. |
+| `*.IDisposable` | Same contract, released with `using`. Nested on `IFixedMemory` / `IFixedContext<T>` / `IReadOnlyFixedContext<T>` **only** on .NET Standard 2.1 / .NET Core 3.0+. `IFixedPointer.IDisposable` and `IFixedMethod<TDelegate>.IDisposable` exist on every TFM. |
 
 `Transformation<TDestination>(out residual)` reinterprets the block as another unmanaged type and returns any leftover bytes as residual memory.
 
-On current TFMs these interfaces may be marked obsolete in favor of the value-type contexts. New code should prefer `FixedContextValue<T>` plus a functional interface.
+New code should prefer `FixedContextValue<T>` plus a functional interface. That combination is what the support TFMs actually ship.
 
 ## Lists of pinned blocks
 
@@ -49,7 +49,7 @@ When several spans must stay pinned together:
 | Type | Contents |
 | --- | --- |
 | `FixedPointerValueList` | Value-type list of `FixedPointerValue` (this generation). |
-| `FixedMemoryList` / `ReadOnlyFixedMemoryList` | Interface-based lists of `IFixedMemory` / `IReadOnlyFixedMemory`. |
+| `FixedMemoryList` / `ReadOnlyFixedMemoryList` | Interface-based lists of `IFixedMemory` / `IReadOnlyFixedMemory`. **Modern surface only** (.NET Standard 2.1 / .NET Core 3.0+). |
 | `FixedCStringSequence` | A `CStringSequence` whose UTF-8 buffer is fixed. |
 
 All list types are `ref struct`s and can be enumerated with `foreach`. `Count`, `IsEmpty`, an indexer, and `ToArray()` are available on the interface-based lists.
@@ -64,20 +64,27 @@ Extension methods on spans, strings, references, delegates, and memory blocks. T
 
 Shapes:
 
-- Action / function delegates (`FixedAction`, `FixedContextAction<T>`, `FixedFunc<TResult>`, …) — compatibility.
-- Functional interfaces (`IFixedAction`, `IFixedContextAction<T>`, …) — preferred.
-- Optional extra argument `TArg` (may be a `ref struct` on .NET 9+).
+- Functional interfaces (`IFixedAction`, `IFixedContextAction<T>`, …) — available on every TFM the package ships.
+- Action / function delegates (`FixedAction`, `FixedContextAction<T>`, `FixedFunc<TResult>`, …) — **.NET Standard 2.1 / .NET Core 3.0+ only**. Not present on .NET Framework, .NET Standard 2.0, .NET Core 2.1, or UWP.
+- Optional extra argument `TArg` on the delegate overloads (may be a `ref struct` on .NET 9+).
 
 There are read-only variants (`WithSafeReadOnlyFixed`) when you want a read-only context from a mutable span.
 
 ### `GetFixedContext` / `GetFixedMemory`
 
-Turns `Memory<T>` / `ReadOnlyMemory<T>` into an `IDisposable` context. Use `using` when the pin must last beyond a single lambda — for example, across several native calls in one method.
+Turns `Memory<T>` / `ReadOnlyMemory<T>` into a pin that lasts beyond a single callback. The form that works on every TFM writes the context to an `out` parameter:
+
+```csharp
+using IDisposable pin = text.AsMemory().GetFixedContext(out ReadOnlyFixedContextValue<Char> ctx);
+CallNative(ctx.ValuePointer);
+CallNativeAgain(ctx.Pointer);
+```
+
+On .NET Standard 2.1 / .NET Core 3.0+ you can also use the nested disposable:
 
 ```csharp
 using IReadOnlyFixedContext<Char>.IDisposable ctx = text.AsMemory().GetFixedContext();
 CallNative(ctx.ValuePointer);
-CallNativeAgain(ctx.Pointer);
 ```
 
 ### `NativeUtilities.HeapAlloc<T>`
@@ -88,22 +95,25 @@ Allocates **unmanaged** memory and exposes it as a fixed context. `Dispose` free
 using IDisposable _ = NativeUtilities.HeapAlloc<Byte>(64, out FixedContextValue<Byte> ctx);
 ```
 
+On .NET Standard 2.1 / .NET Core 3.0+ there is also `HeapAlloc<T>(count)` returning `IFixedContext<T>.IDisposable`.
+
 ### `GetFixedMethod<TDelegate>`
 
 Marshals a managed delegate to a function pointer and keeps it alive until `Dispose`. Prefer this over `GetUnsafeFuncPtr` when the native side will call back later.
 
-## Older delegate families
+## Delegate families (.NET Standard 2.1 / .NET Core 3.0+)
 
-These delegates remain in the public API. Functional interfaces replace them in new code.
+These delegates are public on the **modern** surface. They are not compiled into the .NET Framework, .NET Standard 2.0, .NET Core 2.1, or UWP assemblies. Functional interfaces are the equivalent on every TFM.
 
 | Family | Operates on |
 | --- | --- |
-| `ReadOnlyFixedAction` / `FixedAction` (+ `TArg`, `Func`) | `IReadOnlyFixedMemory` / `IFixedMemory` or `FixedPointerValue` |
-| `ReadOnlyFixedContextAction<T>` / `FixedContextAction<T>` | Typed contexts |
+| `ReadOnlyFixedAction` / `FixedAction` (+ `TArg`, `Func`) | `IReadOnlyFixedMemory` / `IFixedMemory` |
+| `ReadOnlyFixedContextAction<T>` / `FixedContextAction<T>` | Typed interface contexts |
 | `ReadOnlyFixedReferenceAction<T>` / `FixedReferenceAction<T>` | A single reference |
 | `FixedMethodAction<TDelegate>` / `FixedMethodFunc<…>` | A pinned method |
 | `ReadOnlyFixedListAction` / `FixedListAction` | Lists of pinned spans |
-| `ReadOnlySpanFunc<T>` / `ReadOnlySpanFunc<T, TState>` | Span-returning factories (used by `CString` and `ValueRegion<T>`) |
+
+`ReadOnlySpanFunc<T>` / `ReadOnlySpanFunc<T, TState>` are **not** in that set — they exist on every TFM and back `CString` / `ValueRegion<T>`.
 
 From .NET 9, `TArg` / `TState` on many of these may be a `ref struct`.
 
@@ -120,3 +130,4 @@ From .NET 9, `TArg` / `TState` on many of these may be a `ref struct`.
 - [Pointers](pointers.md)
 - [Use case: pin for a native call](../use-cases.md#pin-managed-memory-only-for-the-native-call)
 - [Use case: several buffers](../use-cases.md#pin-several-buffers-for-one-native-call)
+- [TFM / API surface](compatibility.md)

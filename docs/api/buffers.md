@@ -17,14 +17,14 @@ More composition detail lives in the [buffers intermediate README](../../src/Int
 
 ### Allocation
 
-Delegate form (compatibility):
+Delegate form (.NET Standard 2.1 / .NET Core 3.0+ only):
 
 ```csharp
 BufferManager.Alloc<String>(4, static buffer => { /* buffer.Span */ });
 TResult result = BufferManager.Alloc<String, TResult>(4, static buffer => default);
 ```
 
-Functional form (preferred):
+Functional form (every TFM):
 
 ```csharp
 BufferManager<String>.Alloc(new MyAction());                       // IScopedBufferAction<String>
@@ -105,9 +105,10 @@ Default on .NET 8+ is still the storage system **not** based on managed-buffer b
 
 ## Buffer delegates
 
-`ScopedBufferAction<T>`, `ScopedBufferAction<T, TState>`, `ScopedBufferFunc<T, TResult>`, `ScopedBufferFunc<T, TState, TResult>` — superseded by [functional interfaces](functional-interfaces.md#buffer-operations) in new code. `TState` may be a `ref struct` from .NET 9.
+`ScopedBufferAction<T>`, `ScopedBufferAction<T, TState>`, `ScopedBufferFunc<T, TResult>`, `ScopedBufferFunc<T, TState, TResult>` exist on **.NET Standard 2.1 / .NET Core 3.0+** only. On every TFM, including .NET Framework and .NET Standard 2.0, use [functional interfaces](functional-interfaces.md#buffer-operations). `TState` may be a `ref struct` from .NET 9.
 
 ## See also
 
 - [Capabilities: stack buffers](../capabilities.md#stack-first-temporary-buffers)
 - [Use case: hot parser](../use-cases.md#use-a-stack-buffer-in-a-hot-parser)
+- [TFM / API surface](compatibility.md)

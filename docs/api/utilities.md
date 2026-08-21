@@ -54,8 +54,8 @@ From .NET 9, `T` on the `ValPtr` helpers may be a `ref struct`.
 | Method | Role |
 | --- | --- |
 | `GetFixedMethod<TDelegate>(TDelegate?)` | Marshalled method with `IDisposable` lifetime. |
-| `HeapAlloc<T>(Int32)` | Native heap as `IFixedContext<T>.IDisposable`. |
-| `HeapAlloc<T>(Int32, out FixedContextValue<T>)` | Native heap as a value context plus `IDisposable`. |
+| `HeapAlloc<T>(Int32)` | Native heap as `IFixedContext<T>.IDisposable` — **.NET Standard 2.1 / .NET Core 3.0+**. |
+| `HeapAlloc<T>(Int32, out FixedContextValue<T>)` | Native heap as a value context plus `IDisposable` — every TFM. |
 
 `T` on `HeapAlloc` is `unmanaged`. Count `0` yields an empty/null context. Negative counts throw.
 
@@ -97,3 +97,4 @@ Facts about the runtime and OS. Several properties are written so the trimmer ca
 - [Getting started: AOT](../getting-started.md#aot-support)
 - [Use case: AOT branching](../use-cases.md#adapt-behavior-for-native-aot-or-mono)
 - [Use case: HeapAlloc](../use-cases.md#allocate-native-memory-and-free-it-with-dispose)
+- [TFM / API surface](compatibility.md)

@@ -14,7 +14,7 @@ What you can do:
 - Know whether the instance is null-terminated, a slice, a function, or a null pointer (`IsNullTerminated`, `IsSegmented`, `IsFunction`, `IsZero`).
 - Concatenate, compare, and hash with `String`-compatible hash codes.
 - Marshal as a null-terminated UTF-8 pointer on .NET 7+ via source-generated P/Invoke.
-- Serialize with `System.Text.Json` from .NET Core 3.0 onward without re-encoding on every write.
+- Serialize with `System.Text.Json` on .NET Core and on .NET Framework 4.6.1+ without re-encoding on every write (not on .NET Standard 2.0/2.1 or net452/net46).
 
 `CStringSequence` stores several null-terminated UTF-8 strings in one contiguous buffer — the shape native code expects for `argv`, environment blocks, and similar lists. `CStringBuilder` is the mutable UTF-8 counterpart of `StringBuilder`.
 
@@ -45,16 +45,16 @@ What you can do:
 - Pin a `Span<T>`, `ReadOnlySpan<T>`, `String`, array, or single reference for the duration of an action or function.
 - Read `Pointer`, `ValuePointer`, `Values`, and `Bytes` from the same context.
 - Reinterpret the block as another unmanaged type with `Transformation<TDestination>()`.
-- Pin several spans at once (up to eight) and walk them as a `FixedMemoryList` / `FixedPointerValueList`.
+- Pin several spans at once (up to eight) and walk them as a `FixedPointerValueList` (every TFM) or `FixedMemoryList` (.NET Standard 2.1 / .NET Core 3.0+).
 - Prefer **functional interfaces** (`IFixedContextAction<T>`, `IFixedAction`, …) so the callback is a `readonly struct` that already holds its state.
 
-This generation prefers value-type contexts (`FixedContextValue<T>`, `FixedPointerValue`) over the older interface-based `IFixedContext<T>` in new code. The interfaces remain for compatibility.
+This generation prefers value-type contexts (`FixedContextValue<T>`, `FixedPointerValue`) and functional interfaces. The `IFixed*` interfaces remain public on every TFM. Delegate overloads that take those interfaces, and helpers that return nested `IFixedContext<T>.IDisposable`, exist only on .NET Standard 2.1 / .NET Core 3.0+ — they were not brought to .NET Framework, .NET Standard 2.0, or UWP. See [compatibility](api/compatibility.md).
 
 Deep dive: [Fixed memory](api/fixed-memory.md) and [Functional interfaces](api/functional-interfaces.md).
 
 ## Native heap with Dispose, not with pairing
 
-`NativeUtilities.HeapAlloc<T>(count)` allocates unmanaged memory and returns an `IDisposable` that frees it. You get a `FixedContextValue<T>` (or `IFixedContext<T>.IDisposable` on older APIs) for the lifetime of the allocation.
+`NativeUtilities.HeapAlloc<T>(count, out FixedContextValue<T>)` allocates unmanaged memory and returns an `IDisposable` that frees it. On .NET Standard 2.1 / .NET Core 3.0+ there is also `HeapAlloc<T>(count)` returning `IFixedContext<T>.IDisposable`.
 
 Use this when the buffer must outlive a single callback — for example, a native API that writes into a buffer you later read from managed code — without dropping to `Marshal.AllocHGlobal` and a `try/finally`.
 
@@ -106,7 +106,7 @@ Deep dive: [Utilities](api/utilities.md) and [Getting started](getting-started.m
 
 ## Wrappers and references as contracts
 
-Sometimes you need to pass a value, a mutable slot, or a managed reference across an API without exposing the storage. `IWrapper<T>`, `IMutableWrapper<T>`, `IReferenceable<T>`, and `IMutableReference<T>` are small contracts for that. Factory methods on the non-generic `IWrapper` / `IMutableWrapper` / `IMutableReference` types create the right implementation for structs, nullables, and reference types.
+Sometimes you need to pass a value, a mutable slot, or a managed reference across an API without exposing the storage. `IWrapper<T>`, `IMutableWrapper<T>`, `IReferenceable<T>`, and `IMutableReference<T>` are small contracts for that. Factory methods on `WrapperFactory` create the right implementation for structs, nullables, and reference types on every TFM. On .NET Standard 2.1 / .NET Core 3.0+ the same factories also live on the non-generic `IWrapper` / `IMutableWrapper` / `IMutableReference` interfaces.
 
 `ValueRegion<T>` is the backing abstraction behind `CString`: an array, a native pointer, or a span-returning function, with slicing and optional pinning.
 

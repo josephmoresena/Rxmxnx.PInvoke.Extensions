@@ -18,28 +18,31 @@ Then:
 using Rxmxnx.PInvoke;
 ```
 
-A first program:
+A first program (this shape compiles on every TFM the package ships, including .NET Framework and .NET Standard 2.0):
 
 ```csharp
 CString hello = new(() => "Hello"u8);
 Console.WriteLine(hello);                // Hello
 Console.WriteLine(hello.IsNullTerminated); // True
 
-Span<Int32> numbers = stackalloc Int32[] { 1, 2, 3, 4 };
-numbers.WithSafeFixed(static (in IFixedContext<Int32> ctx) =>
+readonly struct PrintLength : IFixedContextAction<Int32>
 {
-    Console.WriteLine(ctx.Values.Length); // 4
-    Console.WriteLine(ctx.Pointer != IntPtr.Zero);
-});
+    public void Accept(scoped FixedContextValue<Int32> ctx)
+    {
+        Console.WriteLine(ctx.Values.Length); // 4
+        Console.WriteLine(ctx.Pointer != IntPtr.Zero);
+    }
+}
+
+Span<Int32> numbers = stackalloc Int32[] { 1, 2, 3, 4 };
+numbers.WithSafeFixed(new PrintLength());
 ```
 
-Next: [Capabilities](capabilities.md) for a tour, [Use cases](use-cases.md) for recipes, [API reference](api/README.md) for types.
-
-The lambda passed to `WithSafeFixed` is the compatibility form. New code often uses a `readonly struct` that implements `IFixedContextAction<T>` (or a read-only counterpart) so the callback can hold state without allocating. See [Functional interfaces](api/functional-interfaces.md).
+Next: [Capabilities](capabilities.md) for a tour, [Use cases](use-cases.md) for recipes, [API reference](api/README.md) for types. Which members exist on which TFM is spelled out in [Target frameworks and public API surface](api/compatibility.md).
 
 ## Support policy
 
-This package **officially supports .NET 8.0 and later**. It also ships assemblies for older frameworks so existing projects keep compiling:
+This package **officially supports .NET 8.0 and later**. It also ships assemblies for older and additional frameworks so existing projects keep compiling.
 
 | Target | Support |
 | --- | --- |
@@ -48,10 +51,16 @@ This package **officially supports .NET 8.0 and later**. It also ships assemblie
 | .NET 8.0 | LTS — no extra package dependencies |
 | .NET 7.0 | Extended — static virtual members, source-generated marshalling |
 | .NET 6.0 | Extended LTS |
-| .NET 5.0 / .NET Core 3.x | Legacy |
-| .NET Standard 2.1 | Limited — shims for newer APIs, extra dependencies |
+| .NET 5.0 / .NET Core 3.x | Legacy — full modern API surface |
+| .NET Standard 2.1 | Limited — modern API surface, shims, `Unsafe` 5.0 |
+| .NET Core 2.1 | Limited legacy — **support** API surface (no delegate pinning helpers) |
+| .NET Standard 2.0 | Limited portable — **support** API surface |
+| .NET Framework 4.5.2–4.7.2 | Limited / framework support — **support** API surface; `net470`/`net471` have no unique `lib/` assembly |
+| UWP (`uap10.0.16299`) | UWP support — **support** API surface |
 
-The package guarantees **binary and source compatibility** across those targets. Newer TFMs inherit the older surface and add features; they do not break existing call sites.
+“Modern” vs “support” is defined in [compatibility](api/compatibility.md). In short: .NET Standard 2.1 and .NET Core 3.0+ keep the historical delegate overloads and nested `IFixedMemory` / `IFixedContext<T>` `IDisposable` helpers. The new .NET Framework, .NET Standard 2.0, .NET Core 2.1, and UWP assemblies do not include those helpers. They use functional interfaces and `FixedContextValue<T>` instead. The `IFixed*` interfaces themselves are still public on every TFM.
+
+Among modern TFMs, newer frameworks inherit the older surface and add members; they do not break existing call sites. The support TFMs are a **narrower** public API by design.
 
 ## Framework support
 
@@ -64,7 +73,7 @@ The package guarantees **binary and source compatibility** across those targets.
 - Rune shims: `EncodeToUtf8`, `DecodeFromUtf8`, `DecodeFromUtf16` (CoreCLR implementations from .NET 6.0; simpler alternatives may be substituted).
 - Enum shim: `Enum.GetName<T>` internally uses `Enum.GetName(Type, Object)`.
 - Convert shim: `ToHexString`.
-- Dependencies: `System.Runtime.CompilerServices.Unsafe` 5.0, `System.Collections.Immutable` 5.0.
+- Dependencies: `System.Runtime.CompilerServices.Unsafe` 5.0.
 
 </details>
 
@@ -82,7 +91,7 @@ The package guarantees **binary and source compatibility** across those targets.
 <summary><strong>.NET Core 3.1</strong> — Legacy</summary>
 
 - Inherits from .NET Core 3.0.
-- Updated dependencies: `System.Runtime.CompilerServices.Unsafe` 6.0, `System.Collections.Immutable` 6.0, `System.Text.Json` 6.0.11.
+- Updated dependencies: `System.Runtime.CompilerServices.Unsafe` 6.0, `System.Text.Json` 6.0.11.
 
 </details>
 
@@ -98,7 +107,7 @@ The package guarantees **binary and source compatibility** across those targets.
 <summary><strong>.NET 6.0</strong> — LTS (Extended)</summary>
 
 - Inherits from .NET 5.0.
-- Updated dependencies: `System.Runtime.CompilerServices.Unsafe` 6.1.2, `System.Collections.Immutable` 8.0, `System.Text.Json` 8.0.5.
+- Updated dependencies: `System.Runtime.CompilerServices.Unsafe` 6.1.2, `System.Text.Json` 8.0.6.
 
 </details>
 
@@ -135,6 +144,60 @@ The package guarantees **binary and source compatibility** across those targets.
 
 </details>
 
+<details>
+<summary><strong>.NET Standard 2.0</strong> — Limited portable (this generation)</summary>
+
+- Support API surface only: functional interfaces and `FixedContextValue<T>`, not delegate `WithSafeFixed` / nested `IFixed*.IDisposable`.
+- Dependencies: `System.Memory` 4.5.5, `System.Runtime.CompilerServices.Unsafe` 5.0, `System.Reflection.Emit.Lightweight` 4.7.0.
+
+</details>
+
+<details>
+<summary><strong>.NET Core 2.1</strong> — Limited legacy (this generation)</summary>
+
+- Support API surface (same callback gap as .NET Standard 2.0).
+- Adds `System.Text.Json` 5.0.2. No `NativeLibrary` (that arrives in .NET Core 3.0).
+- Dependencies: `Microsoft.NETCore.App` 2.1.30 (private), `Unsafe` 5.0, `System.Text.Json` 5.0.2.
+
+</details>
+
+<details>
+<summary><strong>.NET Framework 4.5.2 / 4.6</strong> — Limited portable (this generation)</summary>
+
+- Support API surface.
+- Dependencies: `System.Memory` 4.5.5, `Unsafe` 5.0, `System.Runtime.InteropServices.RuntimeInformation` 4.3.0, `System.ValueTuple` 4.5.0.
+- No built-in `CString` JSON converter (`[JsonConverter]` starts at net461 / .NET Core).
+
+</details>
+
+<details>
+<summary><strong>.NET Framework 4.6.1</strong> — Legacy (this generation)</summary>
+
+- Support API surface.
+- Adds `System.Text.Json` 6.0.11 and the `CString` JSON converter.
+- Dependencies: `Microsoft.Bcl.AsyncInterfaces` 6.0.0, `System.Memory` 4.5.5, `Unsafe` 6.0, `RuntimeInformation` 4.3.0, `ValueTuple` 4.5.0.
+
+</details>
+
+<details>
+<summary><strong>.NET Framework 4.6.2 / 4.7 / 4.7.1 / 4.7.2</strong> — Framework support (this generation)</summary>
+
+- Support API surface.
+- Dependencies: `Microsoft.Bcl.Memory` 10.0.11, `Microsoft.Bcl.HashCode` 6.0.0, `System.Text.Json` 10.0.11. net462 also has `ValueTuple` 4.6.2; net462/net470 also have `RuntimeInformation` 4.3.0.
+- `net470` and `net471` are package target frameworks only — they do not ship a unique assembly.
+
+</details>
+
+<details>
+<summary><strong>UWP 10.0.16299</strong> — UWP support (this generation)</summary>
+
+- Support API surface.
+- Dependencies: `Microsoft.Bcl.Memory` 9.0.19, `Microsoft.Bcl.HashCode` 6.0.0, `System.Text.Json` 6.0.11, plus private UWP compiler packs.
+
+</details>
+
+The full member-level split is in [Target frameworks and public API surface](api/compatibility.md).
+
 ### Runtimes and platforms
 
 <details>
@@ -152,7 +215,7 @@ Guaranteed runtimes:
 <details>
 <summary><strong>Unity</strong></summary>
 
-Use the .NET Standard 2.1 assembly. It adapts to the internal Mono runtime and supported platforms.
+Use the .NET Standard 2.1 assembly. It adapts to the internal Mono runtime and supported platforms. This generation also ships a .NET Standard 2.0 assembly if the player is constrained to that TFM; that assembly uses the **support** API surface.
 
 Requirement: `System.Runtime.CompilerServices.Unsafe` **6.0 or later**. The .NET Standard 2.0 build of that package is recommended.
 
@@ -186,7 +249,7 @@ The .NET Standard 2.1 assembly runs on the original WASM Mono runtime. Add the N
 <details>
 <summary><strong>Mono Framework</strong></summary>
 
-Compatible via .NET Standard 2.1, using .NET Framework 4.5 facades and `System.Runtime.CompilerServices.Unsafe` 5.0. See [`src/MonoFacades/README.md`](../src/MonoFacades/README.md) if you need `System.Text.Json` on classic Mono without mixing netstandard2.0 dependencies into the core package.
+Compatible via .NET Standard 2.1 (modern surface) or the .NET Standard 2.0 / net452 assemblies (support surface), using .NET Framework 4.5 facades and `System.Runtime.CompilerServices.Unsafe` 5.0. See [`src/MonoFacades/README.md`](../src/MonoFacades/README.md) if you need `System.Text.Json` on classic Mono without mixing netstandard2.0 dependencies into the core package.
 
 </details>
 
@@ -287,5 +350,6 @@ On .NET 8.0 and later the default storage is still the mechanism that is **not**
 ## Next steps
 
 1. Skim [Capabilities](capabilities.md) to match your problem to an area of the library.
-2. Copy a recipe from [Use cases](use-cases.md).
-3. Keep the [API map](api/README.md) open while you type.
+2. If you target .NET Framework, UWP, or .NET Standard 2.0, read [compatibility](api/compatibility.md) before copying a modern-only sample.
+3. Copy a recipe from [Use cases](use-cases.md).
+4. Keep the [API map](api/README.md) open while you type.
