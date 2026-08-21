@@ -4,22 +4,27 @@
 
 # Description
 
-`Rxmxnx.PInvoke.Extensions` is a comprehensive library designed to streamline and enhance the interaction between .NET
-and native P/Invoke methods.
+`Rxmxnx.PInvoke.Extensions` is a library for safe, typed, and allocation-conscious interop on .NET — from Native AOT to Mono, Unity, and WebAssembly.
+
+Work with UTF-8 the way native APIs already do, keep pointer intent in your signatures, and pin memory only for as long as a callback or `using` scope lasts.
 
 ## Features
 
-- **UTF-8/ASCII String Handling**: Seamlessly work with UTF-8 encoded strings in interop contexts.
-- **Managed Buffers**: Dynamically allocate object references on the stack with minimal effort.
-- **Safe Memory Manipulation**: Eliminate direct pointer manipulation and unsafe code requirements.
+- **UTF-8 / ASCII strings** — `CString`, `CStringSequence`, and `CStringBuilder` for interop and binary pipelines.
+- **Typed pointers** — `ValPtr<T>`, `ReadOnlyValPtr<T>`, and `FuncPtr<TDelegate>` without spreading `unsafe`.
+- **Scoped fixed memory** — pin spans and references for a callback, including struct-based functional interfaces.
+- **Managed buffers** — stack-first temporary storage for values and object references.
+- **Runtime awareness** — `AotInfo` and `SystemInfo` for Native AOT, Mono, and OS checks.
 
 ---
 
 # Documentation
 
-API documentation can be found in the source code in documentation comments.
+The repository README is a short landing page. Guides for **capabilities**, **use cases**, and **APIs** live in the `docs/` folder:
 
-Learn more from [README on GitHub](https://github.com/josephmoresena/Rxmxnx.PInvoke.Extensions#readme).
+[Documentation hub on GitHub](https://github.com/josephmoresena/Rxmxnx.PInvoke.Extensions#documentation)
+
+XML comments in the source remain the complete member-level reference.
 
 ---
 

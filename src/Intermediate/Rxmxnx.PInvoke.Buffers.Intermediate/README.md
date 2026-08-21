@@ -1,6 +1,10 @@
 ﻿`Rxmxnx.PInvoke.Extensions` supports the use of two types of buffers: binary and non-binary. The maximum capacity of any
 buffer is limited to 2<sup>15</sup> elements. However, this maximum capacity may not always be allocatable at runtime.
 
+For the capability overview, recipes, and API map, see the [buffers guide](../../../docs/api/buffers.md),
+[use cases](../../../docs/use-cases.md#use-a-stack-buffer-in-a-hot-parser), and
+[documentation hub](../../../docs/README.md).
+
 Internally, all reference types utilize buffers of type `Object`. Only not unmanaged value types require the use of
 buffers specific to their type, the unmanaged ones uses stackalloc.
 
