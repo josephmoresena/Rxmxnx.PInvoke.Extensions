@@ -39,6 +39,7 @@ public static unsafe class FixedContextValueExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IDisposable GetFixedContext<T>(this Memory<T> mem, out FixedContextValue<T> fixedContext)
 	{
+		ValidationUtilities.ThrowIfManagedMemory<T>();
 		MemoryHandle handle = mem.Pin();
 		fixedContext = new(handle, mem.Length, out IDisposable result);
 		return result;

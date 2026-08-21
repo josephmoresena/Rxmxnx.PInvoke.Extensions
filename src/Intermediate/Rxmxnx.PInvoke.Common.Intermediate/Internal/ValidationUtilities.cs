@@ -4,6 +4,9 @@ using Enum = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
 #if !NET6_0_OR_GREATER
 using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
+#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
 #if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP && !NETFRAMEWORK && !UAP10_0_16299
 using InsufficientMemoryException = System.OutOfMemoryException;
 #endif
@@ -550,6 +553,22 @@ internal static unsafe class ValidationUtilities
 #endif
 		String message = MessageResource.GetInstance().NotUnmanagedType(type);
 		throw new InvalidOperationException(message);
+	}
+	/// <summary>
+	/// Throws an exception if <typeparamref name="T"/> is a reference type or contains references, so it cannot be
+	/// pinned as a binary memory block.
+	/// </summary>
+	/// <typeparam name="T">Type of items in the memory to pin.</typeparam>
+	/// <exception cref="ArgumentException">Thrown if <typeparamref name="T"/> is not an unmanaged type.</exception>
+	/// <remarks>
+	/// <see cref="Memory{T}.Pin"/> enforces this on CoreCLR. Mono does not. The library owns the contract so every
+	/// host rejects the same <typeparamref name="T"/>.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfManagedMemory<T>()
+	{
+		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
+		throw new ArgumentException(MessageResource.GetInstance().NotUnmanagedType(typeof(T)));
 	}
 	/// <summary>
 	/// Throws an exception if <paramref name="type"/> is not reference type.

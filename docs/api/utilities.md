@@ -12,7 +12,8 @@ Interop glue. `PointerSize` is `sizeof(IntPtr)`.
 | --- | --- |
 | `LoadNativeLib(String?, DllImportSearchPath?)` | Load a library. |
 | `LoadNativeLib(String?, ref EventHandler?, …)` | Same, with an unload event. |
-| `GetNativeMethod<TDelegate>(IntPtr, String?)` | Exported symbol as a managed delegate **or** as `FuncPtr<TDelegate>` (overloads). |
+| `GetNativeMethod<TDelegate>(IntPtr, String?)` | Exported symbol as a managed delegate. |
+| `GetNativeMethodPtr<TDelegate>(IntPtr, String?)` | Same export as `FuncPtr<TDelegate>`. |
 
 ### Addresses
 

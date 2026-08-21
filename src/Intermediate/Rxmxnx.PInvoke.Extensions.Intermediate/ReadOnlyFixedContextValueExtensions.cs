@@ -37,6 +37,7 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	public static IDisposable GetFixedContext<T>(this ReadOnlyMemory<T> mem,
 		out ReadOnlyFixedContextValue<T> fixedContext)
 	{
+		ValidationUtilities.ThrowIfManagedMemory<T>();
 		MemoryHandle handle = mem.Pin();
 		Boolean isReadOnly = !MemoryMarshal.TryGetMemoryManager<T, MemoryManager<T>>(mem, out _) &&
 			!MemoryMarshal.TryGetArray(mem, out _);

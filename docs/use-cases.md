@@ -18,7 +18,9 @@ using IDisposable pin = "Hello".AsMemory().GetFixedContext(out ReadOnlyFixedCont
 _ = MessageBox(IntPtr.Zero, text.ValuePointer, "Greeting".AsSpan().GetUnsafeValPtr(), 0);
 ```
 
-`GetUnsafeValPtr()` is appropriate for string literals and other memory that will not move. For heap memory, pin it first with `GetFixedContext(out …)` or `WithSafeFixed`.
+The sample shows both styles in one call. `GetUnsafeValPtr()` does **not** pin: it takes the address of memory you already treat as stable for this call. A UTF-16 `String` literal is still a GC object. Interning and compile-time constants make it cheap to emit; at run time it is one more object the GC can move. For a native method that returns quickly on the same thread and does not store the pointer (`MessageBoxW` here), that window is short enough that the GC **would** not move the object while native code is reading it. That is a convenience, not a contract.
+
+If the native method can block, run asynchronously, keep the pointer, or otherwise outlive this stack frame, pin first. Call `AsMemory()` and then `GetFixedContext(out …)`, or use `WithSafeFixed`, so the address is valid for the whole scope. UTF-8 `u8` literals live in PE data; they are a different case from UTF-16 `String`.
 
 On .NET Standard 2.1 / .NET Core 3.0+ you can also write `using IReadOnlyFixedContext<Char>.IDisposable text = "Hello".AsMemory().GetFixedContext();`.
 
