@@ -111,6 +111,10 @@ jobs:
           sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
           rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 
+          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
+          sudo dpkg -i libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
+          rm libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
+
           sudo apt update 
           sudo apt-get install clang llvm zlib1g-dev libkrb5-dev libssl-dev \
             qemu-user qemu-user-static binfmt-support libicu74:arm64 libicu74:armhf \
