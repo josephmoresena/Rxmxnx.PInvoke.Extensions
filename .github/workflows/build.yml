@@ -145,8 +145,8 @@ jobs:
 
           dotnet test src `
             /p:MultipleFrameworkTest=true `
+            /p:CollectXPlatCoverage=true `
             --verbosity normal `
-            --collect:"XPlat Code Coverage" `
             --results-directory TestResults/ `
             --logger "trx;verbosity=detailed" `
             --no-build `

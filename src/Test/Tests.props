@@ -26,6 +26,8 @@
         <NoWarn Condition="'$(TargetFramework)' == 'netstandard2.1'">$(NoWarn);MSB3243</NoWarn>
         <NoWarn Condition="'$(TargetFramework)' == 'netcoreapp2.0'">$(NoWarn);NU1902;NU1903;NETSDK1023</NoWarn>
         <SuppressTfmSupportBuildWarnings Condition="'$(TargetFramework)' == 'netcoreapp2.0'">true</SuppressTfmSupportBuildWarnings>
+        <!-- Coverlet's XPlat collector cannot load on netcoreapp2.0 testhost. -->
+        <VSTestCollect Condition="'$(CollectXPlatCoverage)' == 'true' And '$(TargetFramework)' != 'netcoreapp2.0'">XPlat Code Coverage</VSTestCollect>
     </PropertyGroup>
 
     <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework' And '$(TargetFramework)' != 'netcoreapp2.0' And '$(TargetFramework)' != 'netstandard2.0'">
