@@ -31,7 +31,7 @@
         <NuGetTargetMoniker>UAP,Version=v10.0.16299</NuGetTargetMoniker>
         <DefineConstants>$(DefineConstants);UAP10_0_16299</DefineConstants>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'uap10.0.16299'">
+    <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0' Or '$(TargetFramework)' == 'netcoreapp2.1' Or '$(TargetFramework)' == 'uap10.0.16299'">
         <NoWarn>$(NoWarn);NETSDK1023</NoWarn>
     </PropertyGroup>
 
