@@ -10,7 +10,7 @@ Safe, typed, and allocation-conscious interop for .NET — from Native AOT to Mo
 
 `Rxmxnx.PInvoke.Extensions` makes native memory, UTF-8 text, and P/Invoke feel like regular .NET code. You keep pointer intent in your signatures, pin memory only for as long as a callback or `using` scope lasts, and work with UTF-8 the way native APIs already do.
 
-The goal is simple: **interop without spreading `unsafe`**, and **performance without giving up lifetime safety**.
+The goal is simple: **interop without spreading `unsafe`**, **performance without giving up lifetime safety**, and a **clean transition** when you change framework or runtime.
 
 ```csharp
 CString message = new(() => "Hello from .NET"u8);
@@ -31,9 +31,9 @@ readonly struct UseUtf8 : IReadOnlyFixedContextAction<Byte>
 
 2.9.5 already offered typed pointers, UTF-8 strings, scoped pinning, buffers, and native heap helpers. The next major — likely 3.0 — adds:
 
-- **Functional interfaces.** The preferred callback style: state lives on a `readonly struct`, so hot paths avoid extra allocations and work naturally with `ref struct` values. Delegate overloads stay public on the **2.9.5 surface** (.NET Standard 2.1 / .NET Core 3.0+).
+- **Functional interfaces.** The preferred callback style: state lives on a `readonly struct`, so hot paths avoid extra allocations and work naturally with `ref struct` values. Delegate overloads stay public on **2.9.5 targets** (.NET Standard 2.1 / .NET Core 3.0+).
 - **Value-type fixed contexts.** `FixedContextValue<T>` and `FixedPointerValue` keep pinning, spans, and typed pointers in a single scoped value.
-- **Reach.** A compatibility extension that takes the package to **.NET Standard 2.0**, **.NET Core 2.1**, **.NET Framework 4.5.2–4.7.2**, and **UWP 10.0.16299**, with a narrower public API (functional interfaces and value contexts; not the 2.9.5 delegate helpers).
+- **Mature multi-TFM coverage.** Dedicated binaries for .NET / .NET Core, UWP, and .NET Framework; portable .NET Standard 2.0/2.1 for Xamarin, Unity, and Mono; transition assemblies for netfx 4.5.2/4.6 (no `System.Text.Json`). The 2.9.5 delegate helpers are not on those later TFMs.
 
 If your code talks to native libraries, serializes UTF-8, reinterprets binary layouts, or has to stay trim/AOT-friendly, this package is built for that job.
 
@@ -51,7 +51,7 @@ If your code talks to native libraries, serializes UTF-8, reinterprets binary la
 dotnet add package Rxmxnx.PInvoke.Extensions
 ```
 
-Officially supported on **.NET 8.0 and later**. **Reach** also ships assemblies for **.NET Standard 2.0**, **.NET Core 2.1**, **.NET Framework 4.5.2–4.7.2**, and **UWP 10.0.16299**, with a narrower public API. See [framework support](docs/getting-started.md#framework-support) and [API surface by TFM](docs/api/compatibility.md).
+Officially supported on **.NET 8.0 and later**. After 2.9.5 the package also ships **.NET Standard 2.0**, **.NET Core 2.1**, **.NET Framework 4.5.2–4.7.2**, and **UWP 10.0.16299** so you can move between frameworks and runtimes without leaving the library. See [framework support](docs/getting-started.md#framework-support) and [API surface by TFM](docs/api/compatibility.md).
 
 ## Capabilities at a glance
 
@@ -105,7 +105,7 @@ On .NET 7+, `CString` also supports source-generated marshalling as a null-termi
 
 - [Documentation hub](docs/README.md) — map of every guide
 - [Getting started](docs/getting-started.md) — install, target frameworks, AOT, Visual Basic
-- [API surface by TFM](docs/api/compatibility.md) — 2.9.5 vs Reach
+- [API surface by TFM](docs/api/compatibility.md) — 2.9.5 vs later package targets
 - [Capabilities](docs/capabilities.md) — what each area of the library is for
 - [Use cases](docs/use-cases.md) — recipes for interop, UTF-8 pipelines, binary views, and AOT
 - [API reference](docs/api/README.md) — types, members, and contracts

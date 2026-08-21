@@ -48,7 +48,7 @@ What you can do:
 - Pin several spans at once (up to eight) and walk them as a `FixedPointerValueList` (every TFM) or `FixedMemoryList` (.NET Standard 2.1 / .NET Core 3.0+).
 - Prefer **functional interfaces** (`IFixedContextAction<T>`, `IFixedAction`, …) so the callback is a `readonly struct` that already holds its state.
 
-Prefer value-type contexts (`FixedContextValue<T>`, `FixedPointerValue`) and functional interfaces. The `IFixed*` interfaces remain public on every TFM. Delegate overloads that take those interfaces, and helpers that return nested `IFixedContext<T>.IDisposable`, exist only on the 2.9.5 surface (.NET Standard 2.1 / .NET Core 3.0+) — they were not brought to **Reach** (.NET Framework, .NET Standard 2.0, or UWP). See [compatibility](api/compatibility.md).
+Prefer value-type contexts (`FixedContextValue<T>`, `FixedPointerValue`) and functional interfaces. The `IFixed*` interfaces remain public on every TFM. Delegate overloads that take those interfaces, and helpers that return nested `IFixedContext<T>.IDisposable`, exist only on 2.9.5 targets (.NET Standard 2.1 / .NET Core 3.0+) — they were not brought to .NET Framework, .NET Standard 2.0, or UWP. See [compatibility](api/compatibility.md).
 
 Deep dive: [Fixed memory](api/fixed-memory.md) and [Functional interfaces](api/functional-interfaces.md).
 
@@ -111,6 +111,17 @@ Sometimes you need to pass a value, a mutable slot, or a managed reference acros
 `ValueRegion<T>` is the backing abstraction behind `CString`: an array, a native pointer, or a span-returning function, with slicing and optional pinning.
 
 Deep dive: [Wrappers and regions](api/wrappers.md).
+
+## Transitions between frameworks and runtimes
+
+A second job of the library is to stay with you while the **host** changes: Framework to Standard, Standard to .NET, desktop CLR to Mono, Unity or Xamarin player TFMs, and so on.
+
+- **Portable** `netstandard2.0` / `netstandard2.1` cover Xamarin, Unity, and Mono with one binary each.
+- **Dedicated** `lib/` assemblies exist for .NET / .NET Core, UWP, and netfx so those runtimes are not forced through Standard.
+- **netfx 4.5.2 / 4.6** are a transition step from before Standard 2.0 (no `System.Text.Json` in the core package). **4.6.1** already takes JSON and sits closer to the netstandard2.0 extras.
+- Span work follows the **runtime**: UWP and Mono can use fast span even when the TFM’s public `Span<T>` surface looks older.
+
+The map is in [Target frameworks and public API surface](api/compatibility.md).
 
 ## Visual Basic access
 

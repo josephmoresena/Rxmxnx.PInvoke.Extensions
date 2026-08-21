@@ -15,7 +15,7 @@ This section describes the public surface of `Rxmxnx.PInvoke.Extensions` by area
 | [Extensions](extensions.md) | Span, pointer, string, binary, and delegate helpers |
 | [Utilities](utilities.md) | `NativeUtilities`, `AotInfo`, `SystemInfo` |
 | [Enums](enums.md) | `Iso639P1` |
-| [TFM / API surface](compatibility.md) | 2.9.5 vs Reach: what exists on .NET Framework, UWP, and .NET Standard 2.0 |
+| [TFM / API surface](compatibility.md) | 2.9.5 vs later targets; portable vs dedicated binaries |
 
 ## Design conventions
 
@@ -34,8 +34,8 @@ Almost everything lives in `Rxmxnx.PInvoke`. Visual Basic helpers live in `Rxmxn
 
 ## Compatibility notes you will see often
 
-- **Reach.** .NET Standard 2.0, .NET Core 2.1, .NET Framework 4.5.2–4.7.2, and UWP 10.0.16299 expose functional interfaces and value-type contexts. They do **not** include the 2.9.5 delegate `WithSafeFixed` / `BufferManager.Alloc(delegate)` or nested `IFixedContext<T>.IDisposable` helpers.
-- **2.9.5 surface (.NET Standard 2.1 / .NET Core 3.0+).** Full 2.9.5 API plus the new types. Static factories on non-generic `IWrapper` (default interface methods).
+- **After 2.9.5.** .NET Standard 2.0, .NET Core 2.1, .NET Framework 4.5.2–4.7.2, and UWP 10.0.16299 expose functional interfaces and value-type contexts. They do **not** include the 2.9.5 delegate `WithSafeFixed` / `BufferManager.Alloc(delegate)` or nested `IFixedContext<T>.IDisposable` helpers.
+- **2.9.5 targets (.NET Standard 2.1 / .NET Core 3.0+).** Full 2.9.5 API plus the new types. Static factories on non-generic `IWrapper` (default interface methods).
 - **.NET 7+.** Static virtual members (`IUtf8FunctionState<TSelf>`), `[NativeMarshalling]`, and `LibraryImport`.
 - **.NET 9+.** `params ReadOnlySpan<T>` instead of arrays; `allows ref struct` on pointers, wrappers, and many callbacks.
 

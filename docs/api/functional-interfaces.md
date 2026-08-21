@@ -6,7 +6,7 @@ Functional interfaces are **callable structs**. They are the preferred callback 
 - The call can be fully inlined in many cases.
 - On .NET 9+, the operation can accept `ref struct` values (`scoped FixedContextValue<T>`).
 
-Delegate overloads remain public on the 2.9.5 surface (.NET Standard 2.1 / .NET Core 3.0 and later). They were not brought to **Reach** (.NET Framework, .NET Standard 2.0, UWP, and .NET Core 2.1), so on those TFMs the functional-interface form is the only callback style the package compiles.
+Delegate overloads remain public on 2.9.5 targets (.NET Standard 2.1 / .NET Core 3.0 and later). They were not brought to .NET Framework, .NET Standard 2.0, UWP, or .NET Core 2.1, so on those TFMs the functional-interface form is the only callback style the package compiles.
 
 ## How they look
 
@@ -59,7 +59,7 @@ BufferManager<Int32>.Alloc(new Fill());
 
 `BufferManager<T>.AllocWithReference` passes the action/function as a managed reference, which helps when the struct is large.
 
-`IsMinimalCount` is a required property on Reach (.NET Framework, .NET Standard 2.0, UWP, .NET Core 2.1). On the 2.9.5 surface it has a default of `false`.
+`IsMinimalCount` is a required property on TFMs added after 2.9.5 (.NET Framework, .NET Standard 2.0, UWP, .NET Core 2.1). On 2.9.5 targets it has a default of `false`.
 
 ## Other functional contracts
 
@@ -92,9 +92,9 @@ Delegate overloads are public on **.NET Standard 2.1 / .NET Core 3.0 and later**
 
 - The callback is a one-off lambda and allocation does not matter.
 - You are maintaining existing call sites that already use `FixedContextAction<T>` and friends.
-- Visual Basic consumes the API (`Rxmxnx.PInvoke.VisualBasic` delegates work on every TFM, including Reach).
+- Visual Basic consumes the API (`Rxmxnx.PInvoke.VisualBasic` delegates work on every TFM, including netfx and netstandard2.0).
 
-They are simply not in Reach (.NET Framework, .NET Standard 2.0, or UWP). If you multi-target any of those, write the functional-interface form once.
+They are simply not in the .NET Framework, .NET Standard 2.0, or UWP assemblies. If you multi-target any of those, write the functional-interface form once.
 
 ## See also
 

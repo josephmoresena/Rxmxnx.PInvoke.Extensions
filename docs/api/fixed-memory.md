@@ -2,7 +2,7 @@
 
 Fixed memory APIs pin a managed object (or wrap native memory) and expose it as spans, references, and typed pointers for a **bounded lifetime**. When the callback returns or `Dispose` runs, the pin is released and the pointers must not be used.
 
-After 2.9.5 the package adds value-type contexts (`FixedPointerValue`, `FixedContextValue<T>`) and [functional interfaces](functional-interfaces.md). The `IFixed*` interfaces remain public on every TFM. Delegate overloads that take those interfaces, and helpers that return nested `IDisposable` memory/context types, exist only on the 2.9.5 surface (.NET Standard 2.1 / .NET Core 3.0+) — they were not brought to **Reach** (.NET Framework, .NET Standard 2.0, or UWP). See [compatibility](compatibility.md).
+After 2.9.5 the package adds value-type contexts (`FixedPointerValue`, `FixedContextValue<T>`) and [functional interfaces](functional-interfaces.md). The `IFixed*` interfaces remain public on every TFM. Delegate overloads that take those interfaces, and helpers that return nested `IDisposable` memory/context types, exist only on 2.9.5 targets (.NET Standard 2.1 / .NET Core 3.0+) — they were not brought to .NET Framework, .NET Standard 2.0, or UWP. See [compatibility](compatibility.md).
 
 ## Contexts you will hold
 
@@ -40,7 +40,7 @@ The historical surface:
 
 `Transformation<TDestination>(out residual)` reinterprets the block as another unmanaged type and returns any leftover bytes as residual memory.
 
-New code should prefer `FixedContextValue<T>` plus a functional interface. That combination is what Reach actually ships.
+New code should prefer `FixedContextValue<T>` plus a functional interface. That combination is what the TFMs added after 2.9.5 actually ship.
 
 ## Lists of pinned blocks
 
@@ -103,7 +103,7 @@ Marshals a managed delegate to a function pointer and keeps it alive until `Disp
 
 ## Delegate families (.NET Standard 2.1 / .NET Core 3.0+)
 
-These delegates are public on the **2.9.5** surface. They are not compiled into Reach (.NET Framework, .NET Standard 2.0, .NET Core 2.1, or UWP). Functional interfaces are the equivalent on every TFM.
+These delegates are public on **2.9.5 targets**. They are not compiled into .NET Framework, .NET Standard 2.0, .NET Core 2.1, or UWP. Functional interfaces are the equivalent on every TFM.
 
 | Family | Operates on |
 | --- | --- |
