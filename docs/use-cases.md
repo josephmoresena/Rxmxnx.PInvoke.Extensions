@@ -1,6 +1,6 @@
 # Use cases
 
-Short recipes for the problems this library is meant to solve. Each example is complete enough to copy; names and signatures match the public API. For the “why”, see [Capabilities](capabilities.md). For members, see the [API reference](api/README.md).
+Short recipes for the problems this library is meant to solve. Each example is complete enough to copy; names and signatures match the public API. Snippets use **C# 11** (`u8`, `scoped`); the library’s floor is **C# 7.3**, and **.NET 9+** consumers should use **C# 13**. For the “why”, see [Capabilities](capabilities.md). For members, see the [API reference](api/README.md).
 
 ## Call a native function with a typed pointer
 
@@ -143,7 +143,7 @@ foreach (ref Byte b in bytes)
 Console.WriteLine(chars.ToString());
 ```
 
-`AsBytes` / `AsValues` are views. `ToBytes` / `ToValue` make a copy when you need a snapshot that outlives the source.
+`AsBytes` / `AsValues` are views. `ToBytes` / `ToValue` make a copy when you need a snapshot that outlives the source. On desktop .NET Framework these span views can be slower than on modern .NET; `SystemInfo.UsesNativeSpan` tells you whether the process is on the fast layout.
 
 ## Use a stack buffer in a hot parser
 

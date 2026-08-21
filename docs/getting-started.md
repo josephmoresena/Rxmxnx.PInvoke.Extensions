@@ -18,7 +18,7 @@ Then:
 using Rxmxnx.PInvoke;
 ```
 
-A first program (this shape compiles on every TFM the package ships, including .NET Framework and .NET Standard 2.0):
+A first program in the **portable callback style** (this API shape compiles on every TFM the package ships). The snippet uses **C# 11** (`u8`, `scoped`); see [language versions](#language-versions) if your project is older:
 
 ```csharp
 CString hello = new(() => "Hello"u8);
@@ -38,40 +38,54 @@ Span<Int32> numbers = stackalloc Int32[] { 1, 2, 3, 4 };
 numbers.WithSafeFixed(new PrintLength());
 ```
 
+Without C# 11, build UTF-8 from a `Byte[]` or `ReadOnlySpan<Byte>` and omit `scoped` on `Accept` — that is how the sample apps stay on C# 9 for Mono/Xamarin SDKs.
+
 Next: [Capabilities](capabilities.md) for a tour, [Use cases](use-cases.md) for recipes, [API reference](api/README.md) for types. Which members exist on which TFM is spelled out in [Target frameworks and public API surface](api/compatibility.md).
+
+## Language versions
+
+Public APIs use generic constraints that older C# cannot express (`unmanaged`, `Enum`, `Delegate`, and related combinations). That — not the package version — is the language floor.
+
+| When | Language | Why |
+| --- | --- | --- |
+| Any TFM | **C# 7.3** minimum | `where T : unmanaged`, `where TEnum : unmanaged, Enum`, and similar constraints appear on public members. |
+| Preferred on every TFM | **C# 11** | UTF-8 `u8` literals (`new CString(() => "Hi"u8)`), `scoped` parameters on `ref struct` callbacks. |
+| **.NET 9.0 and later** | **C# 13** | Many generics `allows ref struct` (`ValPtr<T>`, wrappers, callbacks). |
+
+The package is a C# library and also stays usable from **Visual Basic .NET**, with the smallest surface that language can consume. See [Visual Basic .NET support](#visual-basic-net-support).
+
+Samples in these guides assume C# 11 unless a snippet is marked otherwise.
 
 ## Support policy
 
-This package **officially supports .NET 8.0 and later**. It also ships assemblies for older and additional frameworks so existing projects keep compiling.
+This package **officially supports .NET 8.0 and later**. Until **2.9.5**, compatibility was limited to modern runtimes that support **.NET Standard 2.1**. Later versions still include that baseline and add assemblies so existing products on older hosts keep compiling — as **modern, retrocompatible code**, not as a second-class mode.
 
 | Target | Support |
 | --- | --- |
 | .NET 10.0 | Current LTS |
-| .NET 9.0 | Current — generic `ref struct` on pointers and many APIs |
+| .NET 9.0 | Current — generic `ref struct` on pointers and many APIs; consumers should use **C# 13** |
 | .NET 8.0 | LTS — no extra package dependencies |
 | .NET 7.0 | Extended — static virtual members, source-generated marshalling |
 | .NET 6.0 | Extended LTS |
-| .NET 5.0 / .NET Core 3.x | Legacy — dedicated Core binaries, 2.9.5 API |
-| .NET Standard 2.1 | Portable — Xamarin, Unity, Mono; 2.9.5 API; shims, `Unsafe` 5.0 |
-| .NET Core 2.1 | Dedicated Core binary after 2.9.5 (no delegate pinning helpers) |
-| .NET Standard 2.0 | Portable — same hosts as 2.1 when the SDK is still Standard 2.0 |
+| .NET 5.0 / .NET Core 3.x | Legacy — dedicated Core binaries; original modern API (until 2.9.5) |
+| .NET Standard 2.1 | Portable — Xamarin, Unity, Mono; original modern API; shims, `Unsafe` 5.0 |
+| .NET Core 2.1 | Dedicated Core binary from versions after 2.9.5 (no delegate pinning helpers) |
+| .NET Standard 2.0 | Portable — **only when the engine cannot target 2.1** |
 | .NET Framework 4.5.2 / 4.6 | Transition netfx (pre-Standard 2.0); no `System.Text.Json` |
-| .NET Framework 4.6.1–4.7.2 | Dedicated netfx binaries; 4.6.1 already has JSON and aligns with netstandard2.0 APIs; `net470`/`net471` have no unique `lib/` |
-| UWP (`uap10.0.16299`) | Dedicated UWP binary; runtime may use fast span |
+| .NET Framework 4.6.1–4.7.2 | Dedicated netfx binaries for production Framework apps; 4.6.1 already has JSON; `net470`/`net471` have no unique `lib/` |
+| UWP (`uap10.0.16299`) | Dedicated UWP binary for production UWP apps; runtime may use fast span |
 
-**2.9.5** vs **later targets** is defined in [compatibility](api/compatibility.md). .NET Standard 2.1 and .NET Core 3.0+ keep the 2.9.5 delegate overloads and nested `IFixedMemory` / `IFixedContext<T>` `IDisposable` helpers. TFMs added after 2.9.5 do not; they use functional interfaces and `FixedContextValue<T>`. The `IFixed*` interfaces themselves are still public on every TFM.
+Until 2.9.5 the TFMs were .NET Standard 2.1 and .NET Core 3.0+. Those assemblies keep the historical delegate overloads and nested `IFixedMemory` / `IFixedContext<T>` `IDisposable` helpers. TFMs added after that ceiling do not; they use functional interfaces and `FixedContextValue<T>`. The `IFixed*` interfaces themselves are still public on every TFM. Details: [compatibility](api/compatibility.md).
 
-Among 2.9.5 targets, newer frameworks inherit the older surface and add members; they do not break existing call sites. The later TFMs are a **narrower** public API on purpose: the 2.9.5 helpers were not retrofitted onto netfx, netstandard2.0, or UWP.
-
-The package is also meant to **help you change framework or runtime** — portable Standard for Xamarin/Unity/Mono, dedicated binaries where the runtime has its own `lib/`, transition netfx 4.5.2/4.6 until you can take JSON and Standard 2.0.
+Among the original modern TFMs, newer frameworks inherit the older surface and add members; they do not break existing call sites. The extended TFMs are a **narrower** public API on purpose: those helpers were not retrofitted onto netfx, netstandard2.0, or UWP.
 
 ## Framework support
 
 <details>
 <summary><strong>.NET Standard 2.1</strong> — Portable (Xamarin, Unity, Mono)</summary>
 
+- Prefer this portable TFM whenever the engine supports it.
 - Static virtual members: No. AOT detection should be performed via reflection.
-- Portable binary for **Xamarin, Unity, and Mono**.
 - Generic `ref struct`: No.
 - MemoryMarshal shims: `CreateReadOnlySpanFromNullTerminated`, `GetArrayDataReference`. Retrieving references to multidimensional array data should use static delegates; managed buffer registration should use buffer binding.
 - Rune shims: `EncodeToUtf8`, `DecodeFromUtf8`, `DecodeFromUtf16` (CoreCLR implementations from .NET 6.0; simpler alternatives may be substituted).
@@ -138,6 +152,7 @@ The package is also meant to **help you change framework or runtime** — portab
 - Inherits from .NET 8.0.
 - Generic `ref struct` (`allows ref struct`) on value-type pointers and many generic APIs.
 - Value-type pointers support `ref struct` generics; some methods are implemented in IL because of C# compiler restrictions.
+- Consumers should use **C# 13**.
 
 </details>
 
@@ -149,18 +164,18 @@ The package is also meant to **help you change framework or runtime** — portab
 </details>
 
 <details>
-<summary><strong>.NET Standard 2.0</strong> — Portable (after 2.9.5)</summary>
+<summary><strong>.NET Standard 2.0</strong> — Portable (only if 2.1 is unavailable)</summary>
 
-- Same job as netstandard2.1: **Xamarin, Unity, Mono** when the player or SDK is still Standard 2.0.
+- Same job as netstandard2.1 for **Xamarin, Unity, Mono** when the player or SDK cannot target Standard 2.1. **Do not use this TFM on an engine that already supports 2.1.**
 - Functional interfaces and `FixedContextValue<T>`, not delegate `WithSafeFixed` / nested `IFixed*.IDisposable`.
 - Dependencies: `System.Memory` 4.5.5, `System.Runtime.CompilerServices.Unsafe` 5.0, `System.Reflection.Emit.Lightweight` 4.7.0.
 
 </details>
 
 <details>
-<summary><strong>.NET Core 2.1</strong> — Dedicated Core binary (after 2.9.5)</summary>
+<summary><strong>.NET Core 2.1</strong> — Dedicated Core binary</summary>
 
-- Own `lib/`; same callback gap as netstandard2.0.
+- Own `lib/` from versions after 2.9.5; same callback gap as netstandard2.0.
 - Adds `System.Text.Json` 5.0.2. No `NativeLibrary` (that arrives in .NET Core 3.0).
 - Dependencies: `Microsoft.NETCore.App` 2.1.30 (private), `Unsafe` 5.0, `System.Text.Json` 5.0.2.
 
@@ -169,16 +184,18 @@ The package is also meant to **help you change framework or runtime** — portab
 <details>
 <summary><strong>.NET Framework 4.5.2 / 4.6</strong> — Transition (pre-Standard 2.0)</summary>
 
-- Dedicated netfx binaries. Public API stays on that TFM; fast-span operations run when the **runtime** has them (typically Mono hosting the app).
-- No built-in `System.Text.Json` — that is the point of this step, so a 4.5-era Mono story is not mixed with Standard 2.0 JSON.
+- Dedicated netfx binaries for Framework before it implemented .NET Standard 2.0.
+- Public API stays on that TFM; span operations follow the **runtime** layout. On desktop CLR they are typically the slower three-field span; on Mono hosting the same TFM they can be the fast path. See [span efficiency](api/compatibility.md#span-efficiency).
+- No built-in `System.Text.Json` — so a 4.5-era Mono story is not mixed with Standard 2.0 JSON.
 - Dependencies: `System.Memory` 4.5.5, `Unsafe` 5.0, `System.Runtime.InteropServices.RuntimeInformation` 4.3.0, `System.ValueTuple` 4.5.0.
 - No built-in `CString` JSON converter (`[JsonConverter]` starts at net461 / .NET Core).
 
 </details>
 
 <details>
-<summary><strong>.NET Framework 4.6.1</strong> — Dedicated netfx (JSON)</summary>
+<summary><strong>.NET Framework 4.6.1</strong> — Dedicated netfx</summary>
 
+- A production Framework target, not a stopgap. Also a natural step toward Mono or current .NET with the same APIs.
 - `System.Text.Json` 6.0.11 and the `CString` JSON converter. Closer to the **netstandard2.0** extras than 4.5.2/4.6.
 - Dependencies: `Microsoft.Bcl.AsyncInterfaces` 6.0.0, `System.Memory` 4.5.5, `Unsafe` 6.0, `RuntimeInformation` 4.3.0, `ValueTuple` 4.5.0.
 
@@ -187,7 +204,8 @@ The package is also meant to **help you change framework or runtime** — portab
 <details>
 <summary><strong>.NET Framework 4.6.2 / 4.7 / 4.7.1 / 4.7.2</strong> — Dedicated netfx</summary>
 
-- Functional-interface surface (2.9.5 delegates were not brought over).
+- Production Framework binaries. Functional-interface surface (the until-2.9.5 delegates were not brought over).
+- Span work is still slower on desktop CLR than on modern .NET; cheaper when the process is Mono.
 - Dependencies: `Microsoft.Bcl.Memory` 10.0.11, `Microsoft.Bcl.HashCode` 6.0.0, `System.Text.Json` 10.0.11. net462 also has `ValueTuple` 4.6.2; net462/net470 also have `RuntimeInformation` 4.3.0.
 - `net470` and `net471` are package target frameworks only — they do not ship a unique assembly.
 
@@ -196,8 +214,8 @@ The package is also meant to **help you change framework or runtime** — portab
 <details>
 <summary><strong>UWP 10.0.16299</strong> — Dedicated UWP binary</summary>
 
-- Aimed at the UWP runtime. The public API may look like `System.Memory` / `Microsoft.Bcl.Memory`; the runtime can still use **fast span**.
-- Functional-interface surface (2.9.5 delegates were not brought over).
+- Aimed at production UWP apps. The public API may look like `System.Memory` / `Microsoft.Bcl.Memory`; the runtime can still use **fast span**.
+- Functional-interface surface (the until-2.9.5 delegates were not brought over).
 - Dependencies: `Microsoft.Bcl.Memory` 9.0.19, `Microsoft.Bcl.HashCode` 6.0.0, `System.Text.Json` 6.0.11, plus private UWP compiler packs.
 
 </details>
@@ -221,7 +239,7 @@ Guaranteed runtimes:
 <details>
 <summary><strong>Unity</strong></summary>
 
-Use the .NET Standard 2.1 assembly. It adapts to the internal Mono runtime and supported platforms. After 2.9.5 there is also a .NET Standard 2.0 assembly if the player is still on that TFM.
+Use the .NET Standard **2.1** assembly whenever the player supports it. It adapts to the internal Mono runtime and supported platforms. Use the .NET Standard **2.0** assembly only if the player is still on that TFM.
 
 Requirement: `System.Runtime.CompilerServices.Unsafe` **6.0 or later**. The .NET Standard 2.0 build of that package is recommended.
 
@@ -232,7 +250,7 @@ See [AOT support](#unity-il2cpp) if you publish with IL2CPP.
 <details>
 <summary><strong>Xamarin (Android, iOS, macOS)</strong></summary>
 
-Add the NuGet package to a legacy Xamarin project. That also references `System.Runtime.CompilerServices.Unsafe` 5.0 (assembly version 6.0). For new projects, use **6.1.2**.
+Add the NuGet package to a legacy Xamarin project. That also references `System.Runtime.CompilerServices.Unsafe` 5.0 (assembly version 6.0). For new projects, use **6.1.2**. Prefer targeting **.NET Standard 2.1**.
 
 Building Xamarin apps requires Visual Studio 2019 or Visual Studio 2019 for Mac.
 
@@ -255,7 +273,7 @@ The .NET Standard 2.1 assembly runs on the original WASM Mono runtime. Add the N
 <details>
 <summary><strong>Mono Framework</strong></summary>
 
-Compatible via .NET Standard 2.1 (2.9.5) or netstandard2.0 / net452 (after 2.9.5), using .NET Framework 4.5 facades and `System.Runtime.CompilerServices.Unsafe` 5.0. See [`src/MonoFacades/README.md`](../src/MonoFacades/README.md) if you need `System.Text.Json` on classic Mono without mixing netstandard2.0 dependencies into the core package.
+Compatible via .NET Standard 2.1 (prefer this) or, when 2.1 is unavailable, netstandard2.0 / net452, using .NET Framework 4.5 facades and `System.Runtime.CompilerServices.Unsafe` 5.0. See [`src/MonoFacades/README.md`](../src/MonoFacades/README.md) if you need `System.Text.Json` on classic Mono without mixing netstandard2.0 dependencies into the core package.
 
 </details>
 
@@ -339,7 +357,12 @@ foreach (String sourceCodeFile in new DirectoryInfo(args[0]).GetFiles("*.cpp").S
 
 ## Visual Basic .NET support
 
-Some APIs are not directly usable from Visual Basic because of language limitations around `ref`/`span`. The `Rxmxnx.PInvoke.VisualBasic` namespace provides equivalent delegates. `BufferManager.VisualBasic` exposes `Alloc` methods with a small overhead; they are intended for VB only.
+The package is written for C#, but it still tries to remain usable from Visual Basic .NET. VB cannot express most `ref` / `Span<T>` APIs, so that support is **the smallest practical surface**, not a second language port:
+
+- `Rxmxnx.PInvoke.VisualBasic` redeclares buffer delegates (`VbScopedBufferAction<T>`, `VbScopedBufferFunc<…>`).
+- `BufferManager.VisualBasic` exposes `Alloc` methods that wrap those delegates. They add a small overhead and are intended for VB only.
+
+Prefer C# for new interop code. Use the VB helpers only where the language cannot call the C# surface.
 
 ## Feature switches (.NET 8+)
 
@@ -356,6 +379,6 @@ On .NET 8.0 and later the default storage is still the mechanism that is **not**
 ## Next steps
 
 1. Skim [Capabilities](capabilities.md) to match your problem to an area of the library.
-2. If you target .NET Framework, UWP, or .NET Standard 2.0, read [compatibility](api/compatibility.md) before copying a 2.9.5-only sample.
+2. If you target .NET Framework, UWP, or .NET Standard 2.0, read [compatibility](api/compatibility.md) before copying a sample that uses delegate `WithSafeFixed`.
 3. Copy a recipe from [Use cases](use-cases.md).
 4. Keep the [API map](api/README.md) open while you type.

@@ -15,7 +15,7 @@ Instances can be **fixed** (the library pins the backing) but not **GCHandle-pin
 | Kind | How you get it | Notes |
 | --- | --- | --- |
 | Managed buffer | implicit `Byte[]`, `new CString(span)`, `Create(span)` | Copies into a managed buffer when needed. |
-| Function / literal | `new CString(() => "Hi"u8)`, `Create(ReadOnlySpanFunc<Byte>)` | Preferred for UTF-8 literals; memory stays in the image. |
+| Function / literal | `new CString(() => "Hi"u8)`, `Create(ReadOnlySpanFunc<Byte>)` | Preferred for UTF-8 literals (**C# 11**); memory stays in the image. Without `u8`, pass a `Byte[]` or a span-returning method. |
 | Unmanaged pointer | `CreateUnsafe(ptr, length)`, `CreateNullTerminatedUnsafe(ptr)` | You keep the address valid. |
 
 There is also `CString.Backing`, an abstract type you can subclass to plug in a custom store.

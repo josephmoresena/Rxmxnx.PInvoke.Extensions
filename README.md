@@ -10,7 +10,7 @@ Safe, typed, and allocation-conscious interop for .NET — from Native AOT to Mo
 
 `Rxmxnx.PInvoke.Extensions` makes native memory, UTF-8 text, and P/Invoke feel like regular .NET code. You keep pointer intent in your signatures, pin memory only for as long as a callback or `using` scope lasts, and work with UTF-8 the way native APIs already do.
 
-The goal is simple: **interop without spreading `unsafe`**, **performance without giving up lifetime safety**, and a **clean transition** when you change framework or runtime.
+The goal is **interop without spreading `unsafe`**, **performance without giving up lifetime safety**, and **modern code that stays retrocompatible** when the framework or the runtime changes.
 
 ```csharp
 CString message = new(() => "Hello from .NET"u8);
@@ -27,13 +27,17 @@ readonly struct UseUtf8 : IReadOnlyFixedContextAction<Byte>
 }
 ```
 
-## What's new after 2.9.5
+Snippets in these guides use **C# 11** (`u8` literals, `scoped`). The library itself requires at least **C# 7.3**. On **.NET 9.0 and later**, use **C# 13**. See [language versions](docs/getting-started.md#language-versions).
 
-2.9.5 already offered typed pointers, UTF-8 strings, scoped pinning, buffers, and native heap helpers. The next major — likely 3.0 — adds:
+## Until 2.9.5 — and what later versions add
 
-- **Functional interfaces.** The preferred callback style: state lives on a `readonly struct`, so hot paths avoid extra allocations and work naturally with `ref struct` values. Delegate overloads stay public on **2.9.5 targets** (.NET Standard 2.1 / .NET Core 3.0+).
+Until version **2.9.5**, package compatibility was limited to modern runtimes that support **.NET Standard 2.1**. That remains the baseline in every later version.
+
+From versions after 2.9.5 the package also ships:
+
+- **Functional interfaces.** The preferred callback style on every TFM: state lives on a `readonly struct`, so hot paths avoid extra allocations and work naturally with `ref struct` values. Delegate overloads stay public on the original modern TFMs (.NET Standard 2.1 / .NET Core 3.0+).
 - **Value-type fixed contexts.** `FixedContextValue<T>` and `FixedPointerValue` keep pinning, spans, and typed pointers in a single scoped value.
-- **Mature multi-TFM coverage.** Dedicated binaries for .NET / .NET Core, UWP, and .NET Framework; portable .NET Standard 2.0/2.1 for Xamarin, Unity, and Mono; transition assemblies for netfx 4.5.2/4.6 (no `System.Text.Json`). The 2.9.5 delegate helpers are not on those later TFMs.
+- **Dedicated and portable extra TFMs.** Binaries for .NET Framework, UWP, .NET Core 2.1, and .NET Standard 2.0 — **modern APIs on older hosts**, including production apps. Use **netstandard2.1** whenever the engine supports it; use **netstandard2.0 only when it does not**.
 
 If your code talks to native libraries, serializes UTF-8, reinterprets binary layouts, or has to stay trim/AOT-friendly, this package is built for that job.
 
@@ -51,14 +55,14 @@ If your code talks to native libraries, serializes UTF-8, reinterprets binary la
 dotnet add package Rxmxnx.PInvoke.Extensions
 ```
 
-Officially supported on **.NET 8.0 and later**. After 2.9.5 the package also ships **.NET Standard 2.0**, **.NET Core 2.1**, **.NET Framework 4.5.2–4.7.2**, and **UWP 10.0.16299** so you can move between frameworks and runtimes without leaving the library. See [framework support](docs/getting-started.md#framework-support) and [API surface by TFM](docs/api/compatibility.md).
+Officially supported on **.NET 8.0 and later**. Until 2.9.5 the package targeted .NET Standard 2.1 and .NET Core 3.0+. Later versions also ship **.NET Standard 2.0**, **.NET Core 2.1**, **.NET Framework 4.5.2–4.7.2**, and **UWP 10.0.16299** so the same modern style can run on those hosts. See [framework support](docs/getting-started.md#framework-support) and [API surface by TFM](docs/api/compatibility.md).
 
 ## Capabilities at a glance
 
 - **UTF-8 that matches native APIs.** `CString` wraps managed buffers, UTF-8 literals, or unmanaged pointers. `CStringSequence` stores null-terminated argument/environment lists. `CStringBuilder` is the UTF-8 counterpart of `StringBuilder`.
 - **Typed pointers without `unsafe`.** `ValPtr<T>`, `ReadOnlyValPtr<T>`, and `FuncPtr<TDelegate>` keep pointer meaning visible in P/Invoke signatures.
 - **Scoped fixed memory.** `WithSafeFixed` pins spans, strings, and references only for the duration of a callback or `using` block, then exposes them as spans, pointers, or typed contexts.
-- **Binary views with no extra copies.** `AsBytes`, `AsValues`, `ToBytes`, and `ToValue` reinterpret memory you already own.
+- **Binary views with no extra copies.** `AsBytes`, `AsValues`, `ToBytes`, and `ToValue` reinterpret memory you already own. On desktop .NET Framework those span operations may be slower than on modern .NET; they follow the fast path when the **runtime** has it (current .NET, UWP, Mono).
 - **Stack-backed references.** `BufferManager` allocates object or value buffers on the stack when possible, falling back to the heap only when needed.
 - **Runtime awareness.** `AotInfo` and `SystemInfo` help you adapt to Native AOT, Mono, WebAssembly, and OS differences without scattering `#if` everywhere.
 
@@ -104,8 +108,8 @@ On .NET 7+, `CString` also supports source-generated marshalling as a null-termi
 ## Documentation
 
 - [Documentation hub](docs/README.md) — map of every guide
-- [Getting started](docs/getting-started.md) — install, target frameworks, AOT, Visual Basic
-- [API surface by TFM](docs/api/compatibility.md) — 2.9.5 vs later package targets
+- [Getting started](docs/getting-started.md) — install, language versions, target frameworks, AOT, Visual Basic
+- [API surface by TFM](docs/api/compatibility.md) — until 2.9.5 vs later package targets
 - [Capabilities](docs/capabilities.md) — what each area of the library is for
 - [Use cases](docs/use-cases.md) — recipes for interop, UTF-8 pipelines, binary views, and AOT
 - [API reference](docs/api/README.md) — types, members, and contracts

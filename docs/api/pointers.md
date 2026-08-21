@@ -10,7 +10,7 @@ A pointer to a mutable `T`.
 
 **Implements:** `IWrapper<IntPtr>`, `IEquatable<ValPtr<T>>`, plus `IComparable`, `ISpanFormattable`, `ISerializable`, and (from .NET 7) `IParsable<ValPtr<T>>`.
 
-**From .NET 9:** `T` may be a `ref struct`.
+**From .NET 9:** `T` may be a `ref struct`. Consumers targeting .NET 9+ should use **C# 13**.
 
 | Member | Meaning |
 | --- | --- |

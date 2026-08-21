@@ -8,11 +8,11 @@ Start with a short README, then come here when you need depth.
 
 | Goal | Guide |
 | --- | --- |
-| Install the package, pick a target framework, and check AOT support | [Getting started](getting-started.md) |
+| Install the package, pick a language version and target framework, and check AOT support | [Getting started](getting-started.md) |
 | Understand the library by capability, not by type list | [Capabilities](capabilities.md) |
 | Copy a pattern for a real problem | [Use cases](use-cases.md) |
 | Look up a type, interface, or helper | [API reference](api/README.md) |
-| See which APIs exist after 2.9.5 (.NET Framework / UWP / netstandard2.0) | [Target frameworks and public API surface](api/compatibility.md) |
+| See which APIs existed until 2.9.5 vs later TFMs (.NET Framework / UWP / netstandard2.0) | [Target frameworks and public API surface](api/compatibility.md) |
 
 ## How the documentation is organized
 

@@ -26,10 +26,10 @@ Spans, memories, and arrays of any `T`.
 | Literal detection | `IsLiteral`, `MayBeNonLiteral` |
 | Byte / value views | `AsBytes`, `AsValues<TIn, TOut>` (optional residual `Span<Byte>`) |
 | Multidimensional arrays | `AsSpan`, `AsMemory` |
-| Pinning | `WithSafeFixed` (functional interfaces on every TFM; delegate overloads on the 2.9.5 surface), `WithSafeReadOnlyFixed`, `GetFixedContext` / `GetFixedMemory` (`out` value context on every TFM; nested `IDisposable` return on 2.9.5) |
+| Pinning | `WithSafeFixed` (functional interfaces on every TFM; delegate overloads on .NET Standard 2.1 / .NET Core 3.0+), `WithSafeReadOnlyFixed`, `GetFixedContext` / `GetFixedMemory` (`out` value context on every TFM; nested `IDisposable` return on those same original modern TFMs) |
 | Unsafe addresses | `GetUnsafeIntPtr`, `GetUnsafeValPtr`, `GetUnsafeReadOnlyValPtr` (literals / already-fixed memory) |
 
-`AsBytes` / `AsValues` operate on GC-managed references and do not require `unsafe`. They are views, not copies.
+`AsBytes` / `AsValues` operate on GC-managed references and do not require `unsafe`. They are views, not copies. On desktop .NET Framework they may be slower than on modern .NET; see [span efficiency](compatibility.md#span-efficiency).
 
 ## Unmanaged values (`UnmanagedValueExtensions`)
 
@@ -85,7 +85,7 @@ Helpers for `IEnumerableSequence<T>`: create enumerators and dispose them consis
 
 ## Visual Basic
 
-`Rxmxnx.PInvoke.VisualBasic` redeclares selected delegates so VB can call APIs that C# expresses with `ref`/`span` in a way VB cannot spell.
+`Rxmxnx.PInvoke.VisualBasic` redeclares the smallest set of buffer delegates that Visual Basic can call. Prefer the C# surface; use the VB helpers only where the language cannot spell `ref`/`span`.
 
 ## See also
 

@@ -10,7 +10,7 @@ Native APIs, HTTP, JSON, and many binary protocols speak UTF-8. `System.String` 
 
 What you can do:
 
-- Build UTF-8 from literals (`new CString(() => "Hello"u8)`), byte arrays, spans, or pointers.
+- Build UTF-8 from literals (`new CString(() => "Hello"u8)`, **C# 11**), byte arrays, spans, or pointers.
 - Know whether the instance is null-terminated, a slice, a function, or a null pointer (`IsNullTerminated`, `IsSegmented`, `IsFunction`, `IsZero`).
 - Concatenate, compare, and hash with `String`-compatible hash codes.
 - Marshal as a null-terminated UTF-8 pointer on .NET 7+ via source-generated P/Invoke.
@@ -29,7 +29,7 @@ What you can do:
 - Declare P/Invoke parameters as `ValPtr<Char>`, `ReadOnlyValPtr<Byte>`, or `FuncPtr<MyNativeCallback>`.
 - Convert to and from `IntPtr` when a host API still uses untyped pointers.
 - Read or write through `.Reference` without an `unsafe` block in your own code.
-- On .NET 9+, use `T` that is a `ref struct` on `ValPtr<T>` / `ReadOnlyValPtr<T>`.
+- On .NET 9+, use `T` that is a `ref struct` on `ValPtr<T>` / `ReadOnlyValPtr<T>` (consumers should use **C# 13**).
 - Invoke a native function pointer through `FuncPtr<TDelegate>.Invoke`.
 
 The library never pretends a typed pointer is “safe” in the GC sense. It makes the contract visible so mistakes are harder to ship.
@@ -48,7 +48,7 @@ What you can do:
 - Pin several spans at once (up to eight) and walk them as a `FixedPointerValueList` (every TFM) or `FixedMemoryList` (.NET Standard 2.1 / .NET Core 3.0+).
 - Prefer **functional interfaces** (`IFixedContextAction<T>`, `IFixedAction`, …) so the callback is a `readonly struct` that already holds its state.
 
-Prefer value-type contexts (`FixedContextValue<T>`, `FixedPointerValue`) and functional interfaces. The `IFixed*` interfaces remain public on every TFM. Delegate overloads that take those interfaces, and helpers that return nested `IFixedContext<T>.IDisposable`, exist only on 2.9.5 targets (.NET Standard 2.1 / .NET Core 3.0+) — they were not brought to .NET Framework, .NET Standard 2.0, or UWP. See [compatibility](api/compatibility.md).
+Prefer value-type contexts (`FixedContextValue<T>`, `FixedPointerValue`) and functional interfaces. The `IFixed*` interfaces remain public on every TFM. Delegate overloads that take those interfaces, and helpers that return nested `IFixedContext<T>.IDisposable`, exist only on the original modern TFMs (.NET Standard 2.1 / .NET Core 3.0+, the set that existed until 2.9.5) — they were not brought to .NET Framework, .NET Standard 2.0, or UWP. See [compatibility](api/compatibility.md).
 
 Deep dive: [Fixed memory](api/fixed-memory.md) and [Functional interfaces](api/functional-interfaces.md).
 
@@ -71,6 +71,8 @@ What you can do:
 - Detect whether a span points at a UTF-8/UTF-16 literal (`IsLiteral`) so you can skip pinning or copying.
 
 These helpers operate on GC-managed references internally. They are the “safe” side of the library. Pointer-based counterparts exist for constants, stackalloc, and already-fixed native memory; those are marked unsafe in both name and documentation.
+
+On desktop .NET Framework, `Span<T>` is often the slower three-field layout, so the same views can cost more than they do on current .NET. UWP and Mono can still take the **fast** path even when the TFM’s public `Span<T>` surface looks older. `SystemInfo.UsesNativeSpan` reports which layout the process is using.
 
 Deep dive: [Extensions](api/extensions.md) and the [memory extension notes](../src/Intermediate/Rxmxnx.PInvoke.Extensions.Intermediate/README.md).
 
@@ -112,20 +114,22 @@ Sometimes you need to pass a value, a mutable slot, or a managed reference acros
 
 Deep dive: [Wrappers and regions](api/wrappers.md).
 
-## Transitions between frameworks and runtimes
+## Modern code on older hosts
 
-A second job of the library is to stay with you while the **host** changes: Framework to Standard, Standard to .NET, desktop CLR to Mono, Unity or Xamarin player TFMs, and so on.
+Until version **2.9.5**, package compatibility was limited to modern runtimes that support .NET Standard 2.1. Later versions keep that baseline and add more TFMs so the **same modern APIs** can run on Framework, UWP, Standard 2.0 engines, and .NET Core 2.1.
 
-- **Portable** `netstandard2.0` / `netstandard2.1` cover Xamarin, Unity, and Mono with one binary each.
+That is not a hint that those hosts are invalid. A production product on .NET Framework 4.6.1+, UWP, Mono, Unity, or Xamarin is a first-class use of the library. The idea is **modern, retrocompatible code** — and, when you eventually move, a path toward Mono or current .NET without rewriting the interop layer.
+
+- **Portable** `netstandard2.1` covers Xamarin, Unity, and Mono. Use **`netstandard2.0` only when the engine cannot target 2.1**.
 - **Dedicated** `lib/` assemblies exist for .NET / .NET Core, UWP, and netfx so those runtimes are not forced through Standard.
-- **netfx 4.5.2 / 4.6** are a transition step from before Standard 2.0 (no `System.Text.Json` in the core package). **4.6.1** already takes JSON and sits closer to the netstandard2.0 extras.
-- Span work follows the **runtime**: UWP and Mono can use fast span even when the TFM’s public `Span<T>` surface looks older.
+- **netfx 4.5.2 / 4.6** are a transition step from before Standard 2.0 (no `System.Text.Json` in the core package). **4.6.1 and later** are dedicated Framework binaries for products that still run there.
+- Span work follows the **runtime**: cheaper on modern .NET (and often on UWP/Mono) than on desktop Framework.
 
-The map is in [Target frameworks and public API surface](api/compatibility.md).
+The map is in [Target frameworks and public API surface](api/compatibility.md). Language floors (C# 7.3, preferred C# 11, C# 13 on .NET 9+) are in [Getting started](getting-started.md#language-versions).
 
 ## Visual Basic access
 
-Some span- and ref-based APIs are awkward or impossible in Visual Basic .NET. The `Rxmxnx.PInvoke.VisualBasic` namespace (and `BufferManager.VisualBasic`) exposes equivalent delegates so VB projects can call the same capabilities.
+The package is C#-first. Visual Basic .NET can still call a **minimal** helper surface: `Rxmxnx.PInvoke.VisualBasic` and `BufferManager.VisualBasic`. VB cannot express most `ref`/`span` APIs, so that is the smallest set that still works, not a full VB port.
 
 ## What this library is not
 

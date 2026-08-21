@@ -88,6 +88,7 @@ Facts about the runtime and OS. Several properties are written so the trimmer ca
 | --- | --- |
 | `IsMonoRuntime` | The runtime is Mono. |
 | `IsWebRuntime` | The runtime is Web (from .NET 8 this enables trimming). |
+| `UsesNativeSpan` | Whether the process uses the built-in (fast, two-field) `Span<T>` layout. Always `true` on .NET Standard 2.1 / .NET Core 2.1+. On desktop .NET Framework this is typically `false`, so span views and casts can be slower than on modern .NET. |
 | `IsWindows` / `IsLinux` / `IsMac` / `IsFreeBsd` / `IsNetBsd` / `IsSolaris` | OS. Windows/Linux/FreeBSD hint the trimmer from .NET 5; macOS from .NET 6. |
 
 `IsOsPlatform(String?)` and params/span overloads test one or more platform names. From .NET 9, `params` is `ReadOnlySpan<String?>`.
