@@ -8,8 +8,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Mono.ILLink.Descriptors.xml">
+        <EmbeddedResource Include="$(MSBuildThisFileDirectory)Rxmxnx.PInvoke.ApplicationTest\Mono.ILLink.Descriptors.xml">
             <LogicalName>$(AssemblyName).xml</LogicalName>
+            <Link>Mono.ILLink.Descriptors.xml</Link>
         </EmbeddedResource>
     </ItemGroup>
 
