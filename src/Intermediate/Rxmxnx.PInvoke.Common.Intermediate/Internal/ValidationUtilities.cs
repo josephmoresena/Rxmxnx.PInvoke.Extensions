@@ -559,16 +559,22 @@ internal static unsafe class ValidationUtilities
 	/// pinned as a binary memory block.
 	/// </summary>
 	/// <typeparam name="T">Type of items in the memory to pin.</typeparam>
+	/// <param name="length">Number of items in the memory. Empty memory is not rejected.</param>
 	/// <exception cref="ArgumentException">Thrown if <typeparamref name="T"/> is not an unmanaged type.</exception>
 	/// <remarks>
-	/// <see cref="Memory{T}.Pin"/> enforces this on CoreCLR. Mono does not. The library owns the contract so every
-	/// host rejects the same <typeparamref name="T"/>.
+	/// On .NET Core 2.1 and later, <see cref="Memory{T}.Pin"/> already rejects managed <typeparamref name="T"/>.
+	/// This check fills that gap on the other assemblies (netstandard, netfx, UWP), and only when there is a buffer
+	/// to pin.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void ThrowIfManagedMemory<T>()
+	public static void ThrowIfManagedMemory<T>(Int32 length)
 	{
-		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
+#if NETCOREAPP2_1_OR_GREATER
+		_ = length;
+#else
+		if (length <= 0 || !RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
 		throw new ArgumentException(MessageResource.GetInstance().NotUnmanagedType(typeof(T)));
+#endif
 	}
 	/// <summary>
 	/// Throws an exception if <paramref name="type"/> is not reference type.

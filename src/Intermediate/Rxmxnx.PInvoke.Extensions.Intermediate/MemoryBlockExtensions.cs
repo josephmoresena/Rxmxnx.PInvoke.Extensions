@@ -398,7 +398,7 @@ public static unsafe partial class MemoryBlockExtensions
 #endif
 	public static IReadOnlyFixedContext<T>.IDisposable GetFixedContext<T>(this ReadOnlyMemory<T> mem)
 	{
-		ValidationUtilities.ThrowIfManagedMemory<T>();
+		ValidationUtilities.ThrowIfManagedMemory<T>(mem.Length);
 		MemoryHandle handle = mem.Pin();
 		if (handle.Pointer == default)
 			return ReadOnlyFixedContext<T>.EmptyDisposable;
@@ -433,7 +433,7 @@ public static unsafe partial class MemoryBlockExtensions
 #endif
 	public static IFixedContext<T>.IDisposable GetFixedContext<T>(this Memory<T> mem)
 	{
-		ValidationUtilities.ThrowIfManagedMemory<T>();
+		ValidationUtilities.ThrowIfManagedMemory<T>(mem.Length);
 		MemoryHandle handle = mem.Pin();
 		return handle.Pointer == default ?
 			FixedContext<T>.EmptyDisposable :
