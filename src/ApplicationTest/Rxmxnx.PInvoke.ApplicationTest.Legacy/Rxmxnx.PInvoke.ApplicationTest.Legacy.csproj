@@ -24,6 +24,7 @@
     <Import Project="..\..\PackageReference.props"/>
 
     <ItemGroup>
+        <None Remove="Mono.ILLink.Descriptors.xml"/>
         <Compile Include="$(MSBuildThisFileDirectory)\..\Rxmxnx.PInvoke.ApplicationTest\**\*.cs"
                  Exclude="$(MSBuildThisFileDirectory)\..\Rxmxnx.PInvoke.ApplicationTest\obj\**\*.cs"/>
         <Compile Include="$(MSBuildThisFileDirectory)\..\..\MonoFacades\Rxmxnx.PInvoke.Json\*.cs"/>
