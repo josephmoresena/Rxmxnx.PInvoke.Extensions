@@ -55,6 +55,7 @@
     <!-- NETFRAMEWORK_SUPPORT -->
     <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.3"/>
+        <PackageReference Condition="!$([MSBuild]::IsOSPlatform('WINDOWS'))" Include="Microsoft.TestPlatform.ObjectModel" Version="17.3.3" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
