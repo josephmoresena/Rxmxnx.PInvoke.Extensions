@@ -12,7 +12,7 @@ Work with UTF-8 the way native APIs already do, keep pointer intent in your sign
 
 - **UTF-8 / ASCII strings** — `CString`, `CStringSequence`, and `CStringBuilder` for interop and binary pipelines.
 - **Typed pointers** — `ValPtr<T>`, `ReadOnlyValPtr<T>`, and `FuncPtr<TDelegate>` without spreading `unsafe`.
-- **Scoped fixed memory** — pin spans and references for a callback, including struct-based functional interfaces (the surface used on .NET Framework, .NET Standard 2.0, and UWP). Delegate overloads remain on .NET Standard 2.1 / .NET Core 3.0+.
+- **Scoped fixed memory** — pin spans and references for a callback, including struct-based functional interfaces (the **Reach** surface on .NET Framework, .NET Standard 2.0, and UWP). Delegate overloads remain on the 2.9.5 surface (.NET Standard 2.1 / .NET Core 3.0+).
 - **Managed buffers** — stack-first temporary storage for values and object references.
 - **Runtime awareness** — `AotInfo` and `SystemInfo` for Native AOT, Mono, and OS checks.
 

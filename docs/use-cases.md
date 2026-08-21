@@ -259,7 +259,7 @@ slot.Value = "updated";
 ref String live = ref slot.Reference;
 ```
 
-On .NET Standard 2.1 / .NET Core 3.0+ you can also write `IWrapper.Create(42)` and `IMutableReference.CreateObject("initial")`. Those static factories are default interface methods and are not on the support TFMs.
+On .NET Standard 2.1 / .NET Core 3.0+ you can also write `IWrapper.Create(42)` and `IMutableReference.CreateObject("initial")`. Those static factories are default interface methods and are not on Reach.
 
 Use wrappers when you need a uniform `T` handle across value types, nullables, and reference types — for example, a callback payload or a diagnostic dump.
 

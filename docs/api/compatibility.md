@@ -1,14 +1,16 @@
 # Target frameworks and public API surface
 
-This generation of the package ships **more target frameworks** than before. The extra TFMs are support assemblies for **.NET Framework**, **.NET Standard 2.0**, and **UWP** (`uap10.0.16299`), plus .NET Core 2.1. They compile, pack, and run, but they do **not** expose the full historical callback surface.
+Version **2.9.5** is the current published surface: .NET Standard 2.1, .NET Core 3.0, and later, with the historical delegate and `IFixed*` helpers. The next major — likely 3.0 — keeps that surface, adds functional interfaces and value-type contexts on every TFM, and introduces **Reach**.
+
+**Reach** is the compatibility extension that takes the package to **.NET Framework**, **.NET Standard 2.0**, and **UWP** (`uap10.0.16299`), plus .NET Core 2.1. Reach assemblies compile, pack, and run, but they do **not** ship the full 2.9.5 callback surface.
 
 Officially supported for new work: **.NET 8.0 and later**. Everything else is compatibility.
 
 ## What the published package exposes
 
-Delegate-based `WithSafeFixed` / `BufferManager.Alloc` overloads and the `IFixed*` fixed-memory interfaces are **public and supported** on the TFMs that have always had them. Prefer functional interfaces and `FixedContextValue<T>` in new code, especially if you also target a support TFM. The older overloads remain part of the public API on .NET Standard 2.1 / .NET Core 3.0 and later.
+Delegate-based `WithSafeFixed` / `BufferManager.Alloc` overloads and the `IFixed*` fixed-memory interfaces are **public and supported** on the 2.9.5 TFMs. Prefer functional interfaces and `FixedContextValue<T>` in new code, especially if you also target a Reach TFM. The older overloads remain part of the public API on .NET Standard 2.1 / .NET Core 3.0 and later.
 
-Those historical helpers were **not** made retrocompatible with the support branches: .NET Framework, .NET Standard 2.0, and UWP. .NET Core 2.1 shares the same narrower surface.
+Those 2.9.5 helpers were **not** made retrocompatible with Reach: .NET Framework, .NET Standard 2.0, and UWP. .NET Core 2.1 shares the same narrower surface.
 
 ## Two public surfaces
 
@@ -16,18 +18,18 @@ Most of the difference is one preprocessor gate: `NETSTANDARD2_1 || NETCOREAPP3_
 
 | Surface | TFMs | What you get |
 | --- | --- | --- |
-| **Modern** | `netstandard2.1`, `netcoreapp3.0`, `netcoreapp3.1`, `net5.0`–`net10.0` | Full historical API **plus** this generation’s value-type contexts and functional interfaces. |
-| **Support** (new in this generation) | `netstandard2.0`, `netcoreapp2.1`, `net452`, `net46`, `net461`, `net462`, `net470`, `net471`, `net472`, `uap10.0.16299` | Value-type contexts and functional interfaces. Delegate pinning/buffer APIs and nested `IFixedMemory` / `IFixedContext<T>` `IDisposable` helpers were **not** brought over. |
+| **2.9.5** | `netstandard2.1`, `netcoreapp3.0`, `netcoreapp3.1`, `net5.0`–`net10.0` | Full 2.9.5 API **plus** value-type contexts and functional interfaces. |
+| **Reach** | `netstandard2.0`, `netcoreapp2.1`, `net452`, `net46`, `net461`, `net462`, `net470`, `net471`, `net472`, `uap10.0.16299` | Value-type contexts and functional interfaces. Delegate pinning/buffer APIs and nested `IFixedMemory` / `IFixedContext<T>` `IDisposable` helpers were **not** brought over. |
 
 `net470` and `net471` are listed as package targets so those projects restore cleanly. They do **not** ship their own `lib/` assemblies (`IncludeBuildOutput=false`); NuGet falls back to a nearby framework.
 
 There is also a **.NET Framework 4.5** Mono path used with facades. It is not one of the Library.props TFMs.
 
-## APIs on the modern surface only
+## APIs on the 2.9.5 surface only
 
-These types and overloads exist on .NET Standard 2.1, .NET Core 3.0, and later. They are absent from .NET Standard 2.0, .NET Core 2.1, .NET Framework, and UWP:
+These types and overloads exist on .NET Standard 2.1, .NET Core 3.0, and later. They are absent from Reach (.NET Standard 2.0, .NET Core 2.1, .NET Framework, and UWP):
 
-| Area | Modern-only API |
+| Area | 2.9.5-only API |
 | --- | --- |
 | Pinning delegates | `FixedAction`, `ReadOnlyFixedAction`, `FixedFunc<TResult>`, `FixedContextAction<T>`, `ReadOnlyFixedContextAction<T>`, `FixedReferenceAction<T>`, `FixedMethodAction<TDelegate>`, `FixedListAction`, and the corresponding `Func` variants, including stateful `TArg` overloads |
 | Buffer delegates | `ScopedBufferAction<T>`, `ScopedBufferFunc<T, TResult>`, and stateful variants; `BufferManager.Alloc(... delegate ...)` |
@@ -35,12 +37,12 @@ These types and overloads exist on .NET Standard 2.1, .NET Core 3.0, and later. 
 | String pinning (delegate) | `StringExtensions.WithSafeFixed` delegate overloads |
 | Nested disposables | `IFixedMemory.IDisposable`, `IFixedContext<T>.IDisposable`, `IReadOnlyFixedMemory.IDisposable`, `IReadOnlyFixedContext<T>.IDisposable`, `IFixedReference<T>.IDisposable`, `IReadOnlyFixedReference<T>.IDisposable` |
 | Interface-returning helpers | `Memory<T>.GetFixedContext()` → `IFixedContext<T>.IDisposable`; `NativeUtilities.HeapAlloc<T>(count)` → `IFixedContext<T>.IDisposable`; `GetValuesFixedContext<TEnum>()` without an `out` context |
-| Lists | `FixedMemoryList`, `ReadOnlyFixedMemoryList` (use `FixedPointerValueList` on the support surface) |
+| Lists | `FixedMemoryList`, `ReadOnlyFixedMemoryList` (use `FixedPointerValueList` on Reach) |
 | Wrapper factories | Non-generic `IWrapper` / `IMutableWrapper` / `IMutableReference` / `IReferenceableWrapper` with static `Create*` methods (default interface methods). Use `WrapperFactory` instead. |
 | UTF-8 hashing | `CString.GetHashCode(ReadOnlySpan<Byte>)` |
 | Native libraries | `NativeUtilities.LoadNativeLib`, `GetNativeMethod<TDelegate>` (.NET Core 3.0+ only, not on .NET Standard 2.1) |
 
-The `IFixed*` interfaces themselves exist on every TFM. What the support assemblies omit is the **helpers that return nested `IDisposable` contexts** and the **delegate types that take those interfaces**. On those TFMs, call the APIs this generation added:
+The `IFixed*` interfaces themselves exist on every TFM. What Reach omits is the **helpers that return nested `IDisposable` contexts** and the **delegate types that take those interfaces**. On Reach TFMs, call:
 
 ```csharp
 utf8.WithSafeFixed(new PrintUtf8());                              // IFixedContextAction<Byte>
@@ -64,7 +66,7 @@ These are available from .NET Standard 2.0 / .NET Framework / UWP through .NET 1
 - `NativeUtilities.HeapAlloc<T>(count, out FixedContextValue<T>)`
 - `IWrapper<T>`, `ValueRegion<T>`, `AotInfo`, `SystemInfo`
 
-`IScopedBufferAction<T>.IsMinimalCount` is a required property on the support surface. On .NET Standard 2.1 / .NET Core 3.0+ it has a default of `false`. The same pattern applies to a few other members that are default interface methods on the modern surface and required on support: `IFixedMemory<T>.ValuePointer`, `IReadOnlyFixedMemory<T>.ValuePointer`, and `IFixedReference<T>.Transformation<TDestination>()` without a residual. Callers do not need to distinguish those; only custom interface implementations do.
+`IScopedBufferAction<T>.IsMinimalCount` is a required property on Reach. On the 2.9.5 surface it has a default of `false`. The same pattern applies to a few other members that are default interface methods on 2.9.5 and required on Reach: `IFixedMemory<T>.ValuePointer`, `IReadOnlyFixedMemory<T>.ValuePointer`, and `IFixedReference<T>.Transformation<TDestination>()` without a residual. Callers do not need to distinguish those; only custom interface implementations do.
 
 ## Other TFM differences (all surfaces)
 
@@ -98,7 +100,7 @@ On Mono with a .NET Framework TFM, `System.Runtime.CompilerServices.Unsafe` 5.0 
 ## Choosing an API when you target several TFMs
 
 1. If every TFM is .NET Standard 2.1 / .NET Core 3.0 or later, either callback style compiles. Functional interfaces still avoid an extra heap delegate.
-2. If any TFM is .NET Standard 2.0, .NET Core 2.1, .NET Framework, or UWP, write to the **support** surface: functional interfaces, `out FixedContextValue<T>`, `WrapperFactory`.
-3. Delegate overloads remain valid on the modern surface. Use them when you already have that call site; do not `#if` them into a multi-target project that includes a support TFM.
+2. If any TFM is a Reach TFM (.NET Standard 2.0, .NET Core 2.1, .NET Framework, or UWP), write to the **Reach** surface: functional interfaces, `out FixedContextValue<T>`, `WrapperFactory`.
+3. Delegate overloads remain valid on the 2.9.5 surface. Use them when you already have that call site; do not `#if` them into a multi-target project that includes a Reach TFM.
 
 See [Getting started](../getting-started.md) for install and AOT notes, and [Functional interfaces](functional-interfaces.md) for the callback contracts.

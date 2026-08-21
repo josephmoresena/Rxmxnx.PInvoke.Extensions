@@ -33,7 +33,7 @@ Each generic interface has a **non-generic companion** (`IWrapper`, `IReferencea
 
 `IWrapper.IBase<T>` is a covariant view of `Value` on .NET Standard 2.1 / .NET Core 3.0+. From .NET 9, `T` on that view may be a `ref struct`.
 
-Generic `Create(T?)` methods on `IWrapper<T>` itself are also modern-surface only.
+Generic `Create(T?)` methods on `IWrapper<T>` itself are also 2.9.5-only.
 
 Use wrappers when an API should accept “some `T`” without caring whether it is boxed, nullable, or a class — logging, callback payloads, adapter layers.
 

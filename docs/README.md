@@ -12,7 +12,7 @@ Start with a short README, then come here when you need depth.
 | Understand the library by capability, not by type list | [Capabilities](capabilities.md) |
 | Copy a pattern for a real problem | [Use cases](use-cases.md) |
 | Look up a type, interface, or helper | [API reference](api/README.md) |
-| See which APIs exist on .NET Framework / UWP / netstandard2.0 | [Target frameworks and public API surface](api/compatibility.md) |
+| See which APIs exist on Reach (.NET Framework / UWP / netstandard2.0) | [Target frameworks and public API surface](api/compatibility.md) |
 
 ## How the documentation is organized
 

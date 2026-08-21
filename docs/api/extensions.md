@@ -26,7 +26,7 @@ Spans, memories, and arrays of any `T`.
 | Literal detection | `IsLiteral`, `MayBeNonLiteral` |
 | Byte / value views | `AsBytes`, `AsValues<TIn, TOut>` (optional residual `Span<Byte>`) |
 | Multidimensional arrays | `AsSpan`, `AsMemory` |
-| Pinning | `WithSafeFixed` (functional interfaces on every TFM; delegate overloads on .NET Standard 2.1 / .NET Core 3.0+), `WithSafeReadOnlyFixed`, `GetFixedContext` / `GetFixedMemory` (`out` value context on every TFM; nested `IDisposable` return on the modern surface) |
+| Pinning | `WithSafeFixed` (functional interfaces on every TFM; delegate overloads on the 2.9.5 surface), `WithSafeReadOnlyFixed`, `GetFixedContext` / `GetFixedMemory` (`out` value context on every TFM; nested `IDisposable` return on 2.9.5) |
 | Unsafe addresses | `GetUnsafeIntPtr`, `GetUnsafeValPtr`, `GetUnsafeReadOnlyValPtr` (literals / already-fixed memory) |
 
 `AsBytes` / `AsValues` operate on GC-managed references and do not require `unsafe`. They are views, not copies.

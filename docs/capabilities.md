@@ -48,7 +48,7 @@ What you can do:
 - Pin several spans at once (up to eight) and walk them as a `FixedPointerValueList` (every TFM) or `FixedMemoryList` (.NET Standard 2.1 / .NET Core 3.0+).
 - Prefer **functional interfaces** (`IFixedContextAction<T>`, `IFixedAction`, …) so the callback is a `readonly struct` that already holds its state.
 
-This generation prefers value-type contexts (`FixedContextValue<T>`, `FixedPointerValue`) and functional interfaces. The `IFixed*` interfaces remain public on every TFM. Delegate overloads that take those interfaces, and helpers that return nested `IFixedContext<T>.IDisposable`, exist only on .NET Standard 2.1 / .NET Core 3.0+ — they were not brought to .NET Framework, .NET Standard 2.0, or UWP. See [compatibility](api/compatibility.md).
+Prefer value-type contexts (`FixedContextValue<T>`, `FixedPointerValue`) and functional interfaces. The `IFixed*` interfaces remain public on every TFM. Delegate overloads that take those interfaces, and helpers that return nested `IFixedContext<T>.IDisposable`, exist only on the 2.9.5 surface (.NET Standard 2.1 / .NET Core 3.0+) — they were not brought to **Reach** (.NET Framework, .NET Standard 2.0, or UWP). See [compatibility](api/compatibility.md).
 
 Deep dive: [Fixed memory](api/fixed-memory.md) and [Functional interfaces](api/functional-interfaces.md).
 
