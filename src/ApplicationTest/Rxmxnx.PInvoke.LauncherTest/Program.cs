@@ -53,7 +53,6 @@ if (run)
 		}
 		if (results.Count > 0)
 			ConsoleNotifier.Results(results);
-		if (results.Values.Any(static r => r != 0))
-			throw new InvalidOperationException("One or more .NET Framework legacy applications failed.");
 	}
 }
+

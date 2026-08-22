@@ -9,7 +9,7 @@
         <AssemblyName Condition="$(AssemblyName.StartsWith('System')) And ('$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'net452')">$(AssemblyName).Empty</AssemblyName>
     </PropertyGroup>
 
-    <Import Condition="'$(MSBuildRuntimeType)' == 'Mono'" Project=" ..\MonoProject.props"/>
+    <Import Condition="'$(MSBuildRuntimeType)' == 'Mono'" Project="..\MonoProject.props"/>
 
     <PropertyGroup Condition="$(FacadeVersion) != ''">
         <Version>$(FacadeVersion)</Version>

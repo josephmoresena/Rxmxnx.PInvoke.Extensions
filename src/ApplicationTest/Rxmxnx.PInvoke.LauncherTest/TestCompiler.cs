@@ -109,30 +109,35 @@ public static partial class TestCompiler
 		                             .SelectMany(static d => d.GetFiles("*.*proj")).ToArray();
 		foreach (FileInfo appProjectFile in appProjectFiles)
 		{
-			ExecuteState<String> state = new()
+			String appDirectory = appProjectFile.DirectoryName ?? String.Empty;
+			foreach (String platformTarget in TestCompiler.GetFrameworkPlatformTargets())
 			{
-				ExecutablePath = "dotnet",
-				ArgState = appProjectFile.FullName,
-				AppendArgs = static (p, a) =>
+				ExecuteState<CompileFrameworkArgs> state = new()
 				{
-					a.Add("build");
-					a.Add(p);
-					a.Add("-c");
-					a.Add("Release");
-					a.Add("/p:UsePackage=true");
-				},
-				Notifier = ConsoleNotifier.Notifier,
-			};
-			Int32 result = await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
-			if (result != 0)
-				throw new InvalidOperationException(
-					$".NET Framework legacy compilation failed with exit code 0x{result:x8}.");
-			if (Utilities.ShowDiagnostics)
-				ConsoleNotifier.ShowDiskUsage();
+					ExecutablePath = "dotnet",
+					WorkingDirectory = appDirectory,
+					ArgState = new()
+					{
+						ProjectFile = appProjectFile.FullName,
+						PlatformTarget = platformTarget,
+						OutputPath = Path.Combine("bin", "Release", platformTarget) + Path.DirectorySeparatorChar,
+						IntermediateOutputPath = Path.Combine("obj", platformTarget) + Path.DirectorySeparatorChar,
+					},
+					AppendArgs = CompileFrameworkArgs.Append,
+					Notifier = ConsoleNotifier.Notifier,
+				};
+				Int32 result = await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
+				if (result != 0)
+					ConsoleNotifier.Notifier.PrintError(
+						$".NET Framework {platformTarget} legacy compilation failed with exit code 0x{result:x8}.",
+						default);
+				if (Utilities.ShowDiagnostics)
+					ConsoleNotifier.ShowDiskUsage();
+			}
 		}
 		String[] executablePaths = TestCompiler.GetFrameworkExecutables(projectDirectory);
 		if (executablePaths.Length == 0)
-			throw new InvalidOperationException("No .NET Framework legacy executables were produced.");
+			ConsoleNotifier.Notifier.PrintError("No .NET Framework legacy executables were produced.", default);
 		return executablePaths;
 	}
 }

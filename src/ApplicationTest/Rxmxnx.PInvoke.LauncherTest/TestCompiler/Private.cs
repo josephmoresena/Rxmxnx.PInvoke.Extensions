@@ -2,6 +2,28 @@ namespace Rxmxnx.PInvoke.ApplicationTest;
 
 public partial class TestCompiler
 {
+	private static String[] GetFrameworkPlatformTargets()
+		=> Environment.Is64BitOperatingSystem ? ["x86", "x64",] : ["x86",];
+	private static String[] GetFrameworkExecutables(DirectoryInfo projectDirectory)
+		=> projectDirectory.GetDirectories("*.ApplicationTest.Legacy", SearchOption.AllDirectories)
+		                   .SelectMany(static d => d.GetDirectories("bin", SearchOption.TopDirectoryOnly))
+		                   .SelectMany(static bin => bin.GetFiles("*.exe", SearchOption.AllDirectories))
+		                   .Where(static f => TestCompiler.IsFrameworkExecutable(f)).Select(static f => f.FullName)
+		                   .ToArray();
+	private static Boolean IsFrameworkExecutable(FileInfo file)
+	{
+		if (!file.Name.Contains("ApplicationTest", StringComparison.OrdinalIgnoreCase) ||
+		    file.Name.Contains("mono", StringComparison.OrdinalIgnoreCase))
+			return false;
+		for (DirectoryInfo? directory = file.Directory; directory is not null; directory = directory.Parent)
+		{
+			if (directory.Name.StartsWith("net4", StringComparison.OrdinalIgnoreCase))
+				return true;
+			if (directory.Name.Equals("bin", StringComparison.OrdinalIgnoreCase))
+				break;
+		}
+		return false;
+	}
 	private static async Task CompileNetApp(Boolean onlyNativeAot, RestoreNetArgs restoreArgs, Architecture arch,
 		String outputPath)
 	{
@@ -117,18 +139,6 @@ public partial class TestCompiler
 			_ => !OperatingSystem.IsFreeBSD(),
 		};
 	}
-	private static String[] GetFrameworkExecutables(DirectoryInfo projectDirectory)
-		=> projectDirectory.GetDirectories("*.ApplicationTest.Legacy", SearchOption.AllDirectories)
-		                   .SelectMany(static d => d.GetDirectories("bin", SearchOption.TopDirectoryOnly))
-		                   .SelectMany(static bin => bin.GetFiles("*.exe", SearchOption.AllDirectories))
-		                   .Where(static f =>
-		                   {
-			                   String? tfmDirectory = f.Directory?.Name;
-			                   return tfmDirectory is not null &&
-				                   tfmDirectory.StartsWith("net4", StringComparison.OrdinalIgnoreCase) &&
-				                   f.Name.Contains("ApplicationTest", StringComparison.OrdinalIgnoreCase) &&
-				                   !f.Name.Contains("mono", StringComparison.OrdinalIgnoreCase);
-		                   }).Select(static f => f.FullName).ToArray();
 	private static void NetCleanUp(RestoreNetArgs restoreArgs)
 	{
 		try

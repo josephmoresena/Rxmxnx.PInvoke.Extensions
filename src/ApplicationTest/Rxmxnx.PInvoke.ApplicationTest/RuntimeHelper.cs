@@ -65,6 +65,10 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				".NET Framework 4.6.2"
 #elif NET461_OR_GREATER
 				".NET Framework 4.6.1"
+#elif NET46_OR_GREATER
+				".NET Framework 4.6.0"
+#elif NET452_OR_GREATER
+				".NET Framework 4.5.2"
 #elif WINDOWS_UWP
 				".NET for Windows Universal"
 #else
