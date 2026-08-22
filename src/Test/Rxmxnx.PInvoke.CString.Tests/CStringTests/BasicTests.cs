@@ -203,7 +203,7 @@ public sealed class BasicTests
 		}
 	}
 
-#if NETCOREAPP
+#if NETCOREAPP2_1_OR_GREATER
 	[Fact]
 	public void LiteralTest()
 	{

@@ -76,6 +76,8 @@
     <!-- NETCOREAPP2.X_SUPPORT -->
     <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0' Or '$(TargetFramework)' == 'netcoreapp2.1'">
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.3"/>
+        <PackageReference Condition="'$(TargetFramework)' == 'netcoreapp2.0'" Include="Microsoft.NETCore.App" Version="2.0.9"/>
+        <PackageReference Condition="'$(TargetFramework)' == 'netcoreapp2.1'" Include="Microsoft.NETCore.App" Version="2.1.30"/>
         <PackageReference Condition="'$(TargetFramework)' == 'netcoreapp2.1'" Include="xunit.runner.visualstudio" Version="2.4.3">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>

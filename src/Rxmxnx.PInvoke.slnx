@@ -20,6 +20,25 @@
         <File Path="ApplicationTest\README.md" />
         <File Path="ApplicationTest\Rxmxnx.PInvoke.ApplicationTest\Mono.ILLink.Descriptors.xml" />
     </Folder>
+    <Folder Name="/Documentation/">
+        <File Path="..\docs\README.md" />
+        <File Path="..\docs\getting-started.md" />
+        <File Path="..\docs\capabilities.md" />
+        <File Path="..\docs\use-cases.md" />
+    </Folder>
+    <Folder Name="/Documentation/API/">
+        <File Path="..\docs\api\README.md" />
+        <File Path="..\docs\api\compatibility.md" />
+        <File Path="..\docs\api\pointers.md" />
+        <File Path="..\docs\api\fixed-memory.md" />
+        <File Path="..\docs\api\functional-interfaces.md" />
+        <File Path="..\docs\api\cstring.md" />
+        <File Path="..\docs\api\buffers.md" />
+        <File Path="..\docs\api\wrappers.md" />
+        <File Path="..\docs\api\extensions.md" />
+        <File Path="..\docs\api\utilities.md" />
+        <File Path="..\docs\api\enums.md" />
+    </Folder>
     <Folder Name="/Global/">
         <File Path="..\.github\workflows\build.yml" />
         <File Path="..\.github\workflows\cross-actions.yml" />

@@ -39,6 +39,10 @@ jobs:
           wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
           sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
           rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+
+          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
+          sudo dpkg -i libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
+          rm libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
@@ -69,6 +73,10 @@ jobs:
           wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
           sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
           rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
+
+          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
+          sudo dpkg -i libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
+          rm libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
 
           sudo apt install mono-complete mono-vbnc mono-dbg gdb libssl3
           mv ./ApplicationTest src/ApplicationTest
@@ -145,8 +153,8 @@ jobs:
 
           dotnet test src `
             /p:MultipleFrameworkTest=true `
+            /p:CollectXPlatCoverage=true `
             --verbosity normal `
-            --collect:"XPlat Code Coverage" `
             --results-directory TestResults/ `
             --logger "trx;verbosity=detailed" `
             --no-build `

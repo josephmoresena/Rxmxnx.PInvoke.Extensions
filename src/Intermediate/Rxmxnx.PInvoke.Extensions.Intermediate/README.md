@@ -1,6 +1,10 @@
 ﻿The `Rxmxnx.PInvoke.Extensions` library provides various methods and extensions to simplify working with unmanaged
 pointers and managed memory handling.
 
+For the capability overview, recipes, and API map, see the [extensions guide](../../../docs/api/extensions.md),
+[fixed memory](../../../docs/api/fixed-memory.md), [pointers](../../../docs/api/pointers.md), and
+[documentation hub](../../../docs/README.md).
+
 ---
 
 ## Managed Memory Handling

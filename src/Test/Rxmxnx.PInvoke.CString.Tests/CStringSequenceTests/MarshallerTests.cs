@@ -48,7 +48,7 @@ public sealed unsafe class MarshallerTests
 		IntPtr ptr = marshaller.ToUnmanaged();
 		try
 		{
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			ReadOnlySpan<ReadOnlyValPtr<Byte>> values = new(ptr.ToPointer(), seq.NonEmptyCount);
 #else
 			ReadOnlySpan<ReadOnlyValPtr<Byte>> values =
@@ -96,7 +96,7 @@ public sealed unsafe class MarshallerTests
 		IntPtr ptr = marshaller.ToUnmanaged();
 		try
 		{
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			ReadOnlySpan<ReadOnlyValPtr<Byte>> values = new(ptr.ToPointer(), seq.Count);
 #else
 			ReadOnlySpan<ReadOnlyValPtr<Byte>> values =
@@ -136,7 +136,7 @@ public sealed unsafe class MarshallerTests
 		IntPtr ptr = marshaller.ToUnmanaged();
 		try
 		{
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			ReadOnlySpan<ReadOnlyValPtr<Byte>> values = new(ptr.ToPointer(), seq.NonEmptyCount);
 #else
 			ReadOnlySpan<ReadOnlyValPtr<Byte>> values =

@@ -16,25 +16,27 @@
         <RootNamespace>Rxmxnx.PInvoke.ApplicationTest</RootNamespace>
     </PropertyGroup>
     <PropertyGroup Condition="'$(MSBuildRuntimeType)' != 'Mono'" >
-        <TargetFrameworks>netcoreapp2.1;net452;net46;net461;net462;net470;net471;net472</TargetFrameworks>
+        <TargetFrameworks>net452;net46;net461;net462;net470;net471;net472</TargetFrameworks>
+        <TargetFrameworks Condition="'$(FrameworkLegacyOnly)' != 'true'">netcoreapp2.1;$(TargetFrameworks)</TargetFrameworks>
     </PropertyGroup>
 
-    <Import Project="..\..\..\Packages.props"/>
-    <Import Condition="'$(MSBuildRuntimeType)' == 'Mono'" Project="..\MonoApp.props"/>
     <Import Project="..\..\PackageReference.props"/>
+    <Import Condition="'$(MSBuildRuntimeType)' == 'Mono'" Project="..\MonoApp.props"/>
 
     <ItemGroup>
+        <None Remove="Mono.ILLink.Descriptors.xml"/>
         <Compile Include="$(MSBuildThisFileDirectory)\..\Rxmxnx.PInvoke.ApplicationTest\**\*.cs"
                  Exclude="$(MSBuildThisFileDirectory)\..\Rxmxnx.PInvoke.ApplicationTest\obj\**\*.cs"/>
         <Compile Include="$(MSBuildThisFileDirectory)\..\..\MonoFacades\Rxmxnx.PInvoke.Json\*.cs"/>
     </ItemGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
+    <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
         <PackageReference Include="System.Memory" Version="4.5.5"/>
         <PackageReference Include="System.Buffers" Version="4.5.1"/>
         <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4"/>
     </ItemGroup>
-    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' And '$(TargetFrameworkVersion)' == 'v4.6.1'">
+    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' And $([MSBuild]::VersionLessThan('$(TargetFrameworkVersion)', 'v4.6.2'))">
+        <PackageReference Include="System.Memory" Version="4.5.5"/>
         <PackageReference Include="System.Buffers" Version="4.5.1"/>
         <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4"/>
     </ItemGroup>

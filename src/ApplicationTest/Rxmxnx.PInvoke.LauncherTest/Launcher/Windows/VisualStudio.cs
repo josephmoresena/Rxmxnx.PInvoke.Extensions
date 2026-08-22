@@ -93,7 +93,7 @@ public partial class Launcher
 			VisualStudioInfo info = await Windows.GetVisualCppPath();
 			String kitPath = Windows.GetWindowsKitLibPath();
 			foreach (Architecture arch in architectures)
-				cppCompilers.Add(arch, new(info.VcBuildPath, info.MsBuildPath, kitPath, arch));
+				cppCompilers.Add(arch, new(info.VcBuildPath, info.MsVcPath, kitPath, arch));
 			msbuild.Value = info.MsBuildPath;
 		}
 		private static async Task<VisualStudioInfo> GetVisualCppPath()
@@ -141,7 +141,7 @@ public partial class Launcher
 				String vcBuildPath = Path.Combine(vsPath, "VC", "Auxiliary", "Build");
 				String vcVersionText = await File.ReadAllTextAsync(
 					Path.Combine(vcBuildPath, "Microsoft.VCToolsVersion.default.txt"));
-				Version vcVersion = Version.Parse(vcVersionText);
+				Version vcVersion = Version.Parse(vcVersionText.Trim());
 				ConsoleNotifier.Notifier.Print($"Visual C++ {vcVersion} found.");
 				return new()
 				{

@@ -122,10 +122,16 @@ public sealed class GetFixedMemoryTest
 
 		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
 		{
+			PInvokeAssert.PinIfHostAllows(() =>
+			{
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
-			Assert.Throws<ArgumentException>(() => mem.GetFixedMemory());
-			Assert.Throws<ArgumentException>(() => rMem.GetFixedMemory());
+				using IFixedMemory.IDisposable fMem = mem.GetFixedMemory();
+				using IReadOnlyFixedMemory.IDisposable frMem = rMem.GetFixedMemory();
+				PInvokeAssert.NotSame(fMem, frMem);
 #endif
+				using IDisposable d2 = mem.GetFixedMemory(out FixedPointerValue _);
+				using IDisposable d3 = rMem.GetFixedMemory(out FixedPointerValue _);
+			});
 			return;
 		}
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER

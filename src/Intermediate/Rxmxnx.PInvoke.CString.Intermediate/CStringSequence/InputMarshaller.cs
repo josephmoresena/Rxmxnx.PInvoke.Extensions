@@ -95,7 +95,7 @@ public unsafe partial class CStringSequence
 		private static IntPtr CreateUtf8Memory(CStringSequence source, Boolean includeEmpty)
 		{
 			IntPtr ptr = InputMarshaller.Alloc(source, includeEmpty, out Int32 length);
-#if NETSTANDARD2_1 || NETCOREAPP
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			Span<ReadOnlyValPtr<Byte>> output = new(ptr.ToPointer(), length);
 #else
 			Span<ReadOnlyValPtr<Byte>> output =

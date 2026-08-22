@@ -235,7 +235,7 @@ public static unsafe class FixedUtf8Extensions
 					FixedUtf8Extensions.InitializeInfo(seq, Unsafe.AsPointer(
 						                                   ref MemoryMarshal.GetReference(
 							                                   stackalloc Byte[seq.Count *
-								                                   sizeof(FixedPointerValue)]))),
+								                                   sizeof(FixedPointerInfo)]))),
 #endif
 			});
 		}
@@ -275,7 +275,7 @@ public static unsafe class FixedUtf8Extensions
 					FixedUtf8Extensions.InitializeInfo(seq, Unsafe.AsPointer(
 						                                   ref MemoryMarshal.GetReference(
 							                                   stackalloc Byte[seq.Count *
-								                                   sizeof(FixedPointerValue)]))),
+								                                   sizeof(FixedPointerInfo)]))),
 #endif
 			});
 		}
@@ -319,7 +319,7 @@ public static unsafe class FixedUtf8Extensions
 					FixedUtf8Extensions.InitializeInfo(seq, Unsafe.AsPointer(
 						                                   ref MemoryMarshal.GetReference(
 							                                   stackalloc Byte[seq.Count *
-								                                   sizeof(FixedPointerValue)]))),
+								                                   sizeof(FixedPointerInfo)]))),
 #endif
 			});
 		}
@@ -362,7 +362,7 @@ public static unsafe class FixedUtf8Extensions
 					FixedUtf8Extensions.InitializeInfo(seq, Unsafe.AsPointer(
 						                                   ref MemoryMarshal.GetReference(
 							                                   stackalloc Byte[seq.Count *
-								                                   sizeof(FixedPointerValue)]))),
+								                                   sizeof(FixedPointerInfo)]))),
 #endif
 			});
 		}

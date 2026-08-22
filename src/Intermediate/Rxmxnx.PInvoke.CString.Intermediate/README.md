@@ -1,6 +1,10 @@
 ﻿`Rxmxnx.PInvoke.Extensions` supports UTF-8/ASCII text handling through the `CString` class, inspired by C-style strings.
 These strings provide a simple and safe way to access UTF-8/ASCII units, regardless of their nature.
 
+For the capability overview, recipes, and API map, see the [UTF-8 guide](../../../docs/api/cstring.md),
+[use cases](../../../docs/use-cases.md#build-utf-8-once-marshal-many-times), and
+[documentation hub](../../../docs/README.md).
+
 There are three types of `CString`:
 
 1. **Managed Buffer-Based**: This type is based on a managed buffer containing UTF-8/ASCII units.

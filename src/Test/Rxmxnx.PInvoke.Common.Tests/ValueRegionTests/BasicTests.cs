@@ -140,7 +140,8 @@ public sealed class BasicTests : ValueRegionTestBase
 		PInvokeAssert.Equal(values, newArray);
 		if (values.Length > 0)
 			PInvokeAssert.NotSame(values, newArray);
-		else if (!SystemInfo.CompilationFramework.Contains("Framework"))
+		else if (!SystemInfo.CompilationFramework.Contains("Framework") &&
+		         !SystemInfo.CompilationFramework.Contains("2.0"))
 			PInvokeAssert.Same(Array.Empty<T>(), newArray);
 		else
 			PInvokeAssert.Equal(Array.Empty<T>(), newArray);

@@ -249,7 +249,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 			BufferHelper.CollectGarbage(writer);
 			ref Guid refU = ref uuid.Reference;
-#if !NET461_OR_GREATER && !WINDOWS_UWP && !LEGACY || NETCOREAPP2_1_OR_GREATER
+#if !LEGACY && (NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER || (NETFRAMEWORK && !NET46_OR_GREATER))
 #if NET5_0_OR_GREATER
 			writer.WriteLine(
 				$"Address: 0x{refU.AsBytes().GetUnsafeIntPtr():X}\tWrapper: {uuid.Value}\tRef: {uuid.Reference}");

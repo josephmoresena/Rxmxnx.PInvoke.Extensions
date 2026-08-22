@@ -14,7 +14,7 @@ internal static class ArrayCompat
 	/// </summary>
 	/// <typeparam name="T">The type of the elements of the array.</typeparam>
 	/// <returns>Returns an empty <see cref="Array" />.</returns>
-#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER && !UAP
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

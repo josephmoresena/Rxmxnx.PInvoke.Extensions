@@ -17,7 +17,7 @@
     <PropertyGroup Condition="'$(IsTempPackage)' == 'true' And '$(UseEmbeddedDebugSymbols)' == 'true' And ('$(TargetFramework)' == 'netstandard2.1')">
         <DebugSymbols>true</DebugSymbols>
         <DebugType>embedded</DebugType>
-        <EmbededAllSources>true</EmbededAllSources>
+        <EmbedAllSources>true</EmbedAllSources>
     </PropertyGroup>
 
     <ItemGroup>

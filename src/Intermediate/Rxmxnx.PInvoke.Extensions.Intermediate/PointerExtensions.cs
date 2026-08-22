@@ -274,7 +274,6 @@ public static unsafe class PointerExtensions
 	/// <param name="length">The number of <typeparamref name="T"/> values to include in the span.</param>
 	/// <returns>A <see cref="Span{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
-	/// <exception cref="ArgumentException"><see cref="MemoryHandle"/> cannot be obtained from a non-unmanaged memory.</exception>
 	/// <remarks>
 	/// The reliability of the obtained span depends on the lifetime and validity of the handle during the usage of
 	/// the span.
