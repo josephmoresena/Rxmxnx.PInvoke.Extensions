@@ -253,8 +253,9 @@ jobs:
         run: |
           $versions = 6..10
           $latestVersion = ($versions | Measure-Object -Maximum).Maximum
+          $previousVersion = $latestVersion - 1
           foreach ($v in $versions) {
-            if ($v -eq $latestVersion) {
+            if ($v -eq $latestVersion -or $v -eq $previousVersion) {
                 continue
             }
             winget uninstall "Microsoft.DotNet.SDK.$v" `

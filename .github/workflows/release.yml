@@ -47,6 +47,8 @@ jobs:
     name: Build Mono Application Test
     needs: [ build ]
     runs-on: ubuntu-latest
+    env:
+      PackageVersion: ${{ github.event.release.tag_name }}
     steps:
       - uses: actions/checkout@v5
       - name: Setup .NET
@@ -76,14 +78,22 @@ jobs:
         working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest
         shell: bash
         run: |
-          msbuild -restore /p:Configuration=Release /p:UsePackage=true /p:PackageVersion=${{ github.event.release.tag_name }} \
+          msbuild -restore /p:Configuration=Release /p:UsePackage=true \
             /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
+          rm -rf ./obj
+      - name: Compile ApplicationTest (Mono-Build) Legacy
+        working-directory: ./src/ApplicationTest/Rxmxnx.PInvoke.ApplicationTest.Legacy
+        shell: bash
+        run: |
+          msbuild -restore /p:Configuration=Release /p:UsePackage=true \
+            /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest.Legacy
           rm -rf ./obj
       - name: Cache Compiled ApplicationTest (Mono-Build)
         uses: actions/cache/save@v5
         with:
           path: |
             ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
+            ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest.Legacy
           key: internal-monoapp-bin-${{ github.run_id }}
           enableCrossOsArchive: true
 

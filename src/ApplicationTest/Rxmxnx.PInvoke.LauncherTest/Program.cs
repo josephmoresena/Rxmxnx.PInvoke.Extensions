@@ -36,7 +36,24 @@ if (run)
 	if (!onlyNativeAot && OperatingSystem.IsWindows())
 	{
 		String[] executablePaths = await TestCompiler.CompileFramework(projectDirectory);
+		Dictionary<String, Int32> results = new();
 		foreach (String executable in executablePaths)
-			await Utilities.Execute(new() { ExecutablePath = executable, }, ConsoleNotifier.CancellationToken);
+		{
+			FileInfo executableFile = new(executable);
+			String executionName = Path.GetRelativePath(projectDirectory.FullName, executable);
+			Int32 result = await Utilities.Execute(
+				new()
+				{
+					ExecutablePath = executable,
+					WorkingDirectory = executableFile.DirectoryName,
+					Notifier = ConsoleNotifier.Notifier,
+				}, ConsoleNotifier.CancellationToken);
+			ConsoleNotifier.Notifier.Result(result, executionName);
+			results.Add(executionName, result);
+		}
+		if (results.Count > 0)
+			ConsoleNotifier.Results(results);
+		if (results.Values.Any(static r => r != 0))
+			throw new InvalidOperationException("One or more .NET Framework legacy applications failed.");
 	}
 }

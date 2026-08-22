@@ -13,8 +13,8 @@
     </ItemGroup>
     <ItemGroup Condition="'$(UsePackage)' == 'true'">
         <PackageReference Include="Rxmxnx.PInvoke.Extensions" Version="$(PackageVersion)">
-            <PrivateAssets Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">All</PrivateAssets>
-            <ExcludeAssets Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">compile;runtime</ExcludeAssets>
+            <PrivateAssets Condition="'$(MSBuildRuntimeType)' == 'Mono' And '$(TargetFrameworkIdentifier)' == '.NETFramework'">All</PrivateAssets>
+            <ExcludeAssets Condition="'$(MSBuildRuntimeType)' == 'Mono' And '$(TargetFrameworkIdentifier)' == '.NETFramework'">compile;runtime</ExcludeAssets>
         </PackageReference>
     </ItemGroup>
     <ItemGroup Condition="'$(UsePackage)' == 'true' And '$(MSBuildRuntimeType)' == 'Mono' And '$(TargetFrameworkIdentifier)' == '.NETFramework'">

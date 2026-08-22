@@ -104,15 +104,15 @@ public static partial class TestCompiler
 	[SupportedOSPlatform("WINDOWS")]
 	public static async Task<String[]> CompileFramework(DirectoryInfo projectDirectory)
 	{
-		String[] appProjectFiles = projectDirectory
-		                           .GetDirectories("*.*ApplicationTest.Legacy", SearchOption.AllDirectories)
-		                           .SelectMany(d => d.GetFiles("*.*proj")).Select(f => f.FullName).ToArray();
-		foreach (String appProjectFile in appProjectFiles)
+		FileInfo[] appProjectFiles = projectDirectory
+		                             .GetDirectories("*.ApplicationTest.Legacy", SearchOption.AllDirectories)
+		                             .SelectMany(static d => d.GetFiles("*.*proj")).ToArray();
+		foreach (FileInfo appProjectFile in appProjectFiles)
 		{
 			ExecuteState<String> state = new()
 			{
 				ExecutablePath = "dotnet",
-				ArgState = appProjectFile,
+				ArgState = appProjectFile.FullName,
 				AppendArgs = static (p, a) =>
 				{
 					a.Add("build");
@@ -123,11 +123,16 @@ public static partial class TestCompiler
 				},
 				Notifier = ConsoleNotifier.Notifier,
 			};
-			await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
+			Int32 result = await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
+			if (result != 0)
+				throw new InvalidOperationException(
+					$".NET Framework legacy compilation failed with exit code 0x{result:x8}.");
 			if (Utilities.ShowDiagnostics)
 				ConsoleNotifier.ShowDiskUsage();
 		}
-		return projectDirectory.GetDirectories("*.*ApplicationTest.Legacy", SearchOption.AllDirectories)
-		                       .SelectMany(d => d.GetFiles("*.exe")).Select(f => f.FullName).ToArray();
+		String[] executablePaths = TestCompiler.GetFrameworkExecutables(projectDirectory);
+		if (executablePaths.Length == 0)
+			throw new InvalidOperationException("No .NET Framework legacy executables were produced.");
+		return executablePaths;
 	}
 }

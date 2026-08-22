@@ -117,6 +117,18 @@ public partial class TestCompiler
 			_ => !OperatingSystem.IsFreeBSD(),
 		};
 	}
+	private static String[] GetFrameworkExecutables(DirectoryInfo projectDirectory)
+		=> projectDirectory.GetDirectories("*.ApplicationTest.Legacy", SearchOption.AllDirectories)
+		                   .SelectMany(static d => d.GetDirectories("bin", SearchOption.TopDirectoryOnly))
+		                   .SelectMany(static bin => bin.GetFiles("*.exe", SearchOption.AllDirectories))
+		                   .Where(static f =>
+		                   {
+			                   String? tfmDirectory = f.Directory?.Name;
+			                   return tfmDirectory is not null &&
+				                   tfmDirectory.StartsWith("net4", StringComparison.OrdinalIgnoreCase) &&
+				                   f.Name.Contains("ApplicationTest", StringComparison.OrdinalIgnoreCase) &&
+				                   !f.Name.Contains("mono", StringComparison.OrdinalIgnoreCase);
+		                   }).Select(static f => f.FullName).ToArray();
 	private static void NetCleanUp(RestoreNetArgs restoreArgs)
 	{
 		try
