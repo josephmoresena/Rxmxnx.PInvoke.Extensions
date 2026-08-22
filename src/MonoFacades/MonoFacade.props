@@ -11,7 +11,7 @@
 
     <Import Condition="'$(MSBuildRuntimeType)' == 'Mono'" Project="..\MonoProject.props"/>
 
-    <PropertyGroup Condition="$(FacadeVersion) != ''">
+    <PropertyGroup Condition="'$(FacadeVersion)' != ''">
         <Version>$(FacadeVersion)</Version>
         <AssemblyVersion>$(FacadeVersion)</AssemblyVersion>
         <Company>Mono development team</Company>
