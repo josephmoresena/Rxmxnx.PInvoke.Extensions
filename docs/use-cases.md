@@ -1,6 +1,6 @@
 # Use cases
 
-Short recipes for the problems this library is meant to solve. Each example is complete enough to copy; names and signatures match the public API. Snippets use **C# 11** (`u8`, `scoped`); the library’s floor is **C# 7.3**, and **.NET 9+** consumers should use **C# 13**. For the “why”, see [Capabilities](capabilities.md). For members, see the [API reference](api/README.md).
+Short recipes for the problems this library is meant to solve. Each example is complete enough to copy; names and signatures match the public API. Snippets use **C# 11** (`u8`, `scoped`); the library’s floor is **C# 7.3**, and **.NET 9.0+** consumers should use **C# 13**. For the “why”, see [Capabilities](capabilities.md). For members, see the [API reference](api/README.md).
 
 ## Call a native function with a typed pointer
 
@@ -81,7 +81,7 @@ readonly struct Open : IReadOnlyFixedContextAction<Byte>
 }
 ```
 
-On .NET 7+, `CString` supports source-generated marshalling as a null-terminated UTF-8 string, so a `[LibraryImport]` declaration can take `CString` directly.
+On .NET 7.0+, `CString` supports source-generated marshalling as a null-terminated UTF-8 string, so a `[LibraryImport]` declaration can take `CString` directly.
 
 Creating a `CString` from a `String` with the explicit operator encodes to UTF-8 and always null-terminates. Prefer the literal constructor for constants; it does not copy.
 
@@ -102,7 +102,7 @@ CStringSequence env = CStringSequence.CreateBuilder()
     .Build();
 ```
 
-On .NET 7+, marshalling a `CStringSequence` produces a null-terminated array of null-terminated UTF-8 strings. Empty items are omitted. `CStringSequence.Utf8View` enumerates items as `ReadOnlySpan<Byte>` without allocating `CString` wrappers.
+On .NET 7.0+, marshalling a `CStringSequence` produces a null-terminated array of null-terminated UTF-8 strings. Empty items are omitted. `CStringSequence.Utf8View` enumerates items as `ReadOnlySpan<Byte>` without allocating `CString` wrappers.
 
 Hardcoded sequences can skip a copy when the UTF-16 string already contains the UTF-8 bytes:
 
@@ -147,9 +147,21 @@ Console.WriteLine(chars.ToString());
 
 `AsBytes` / `AsValues` are views. `ToBytes` / `ToValue` make a copy when you need a snapshot that outlives the source. On desktop .NET Framework these span views can be slower than on modern .NET; `SystemInfo.UsesNativeSpan` tells you whether the process is on the fast layout.
 
+## Flatten a multidimensional array
+
+The BCL stops at rank-1 `AsSpan`. This library flattens `T[,]`, `T[,,]`, and higher ranks to a contiguous `Span<T>` / `Memory<T>` on **every TFM** — including slow span and hosts older than .NET 5.0.
+
+```csharp
+Int32[,] matrix = { { 1, 2 }, { 3, 4 } };
+Span<Int32> flat = matrix.AsSpan();     // length 4, same storage
+Memory<Int32> mem = matrix.AsMemory();
+```
+
+No extra copy. Pinning and `AsBytes` then apply to that view. On Unity IL2CPP, ranks above 17 may need the identifier rewrite in [Getting started](getting-started.md#unity-il2cpp).
+
 ## Use a stack buffer in a hot parser
 
-`BufferManager` allocates a scoped buffer for a callback. Unmanaged values can live in `stackalloc`; reference types use managed buffer structs placed on the stack when possible.
+`BufferManager` allocates a scoped buffer for a callback. **Unmanaged** values do not need a managed buffer: `ScopedBuffer<T>` is a view and the allocation uses `stackalloc`. Reference types use managed buffer structs placed on the stack when possible.
 
 ```csharp
 readonly struct CollectNames : IScopedBufferAction<String>
@@ -261,7 +273,7 @@ slot.Value = "updated";
 ref String live = ref slot.Reference;
 ```
 
-On .NET Standard 2.1 / .NET Core 3.0+ you can also write `IWrapper.Create(42)` and `IMutableReference.CreateObject("initial")`. Those static factories are default interface methods and are not on netfx, UWP, or netstandard2.0.
+On .NET Standard 2.1 / .NET Core 3.0+ you can also write `IWrapper.Create(42)` and `IMutableReference.CreateObject("initial")`. Those static factories are default interface methods and are not on .NET Framework, UWP, or netstandard2.0.
 
 Use wrappers when you need a uniform `T` handle across value types, nullables, and reference types — for example, a callback payload or a diagnostic dump.
 
@@ -276,5 +288,6 @@ Use wrappers when you need a uniform `T` handle across value types, nullables, a
 | A pointer that dies with the callback | `WithSafeFixed` + functional interface |
 | A native buffer with `using` | `NativeUtilities.HeapAlloc<T>` |
 | A byte view of existing memory | `AsBytes` / `AsValues` |
+| A rank-1 view of a multidimensional array | `AsSpan` / `AsMemory` |
 | Temporary stack storage | `BufferManager` / `IScopedBufferAction<T>` |
 | AOT or OS branching | `AotInfo` / `SystemInfo` |

@@ -26,7 +26,10 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	/// Output. The <see cref="ReadOnlyFixedContextValue{T}"/> instance representing the pinned memory.
 	/// </param>
 	/// <returns>The <see cref="IDisposable"/> instance to release memory pinning.</returns>
-	/// <exception cref="ArgumentException">A read-only memory with non-unmanaged items cannot be pinned.</exception>
+	/// <exception cref="ArgumentException">
+	/// The executing runtime may throw if it cannot pin this memory. Whether a given <typeparamref name="T"/> can be
+	/// pinned is a host policy; this library does not reject managed types.
+	/// </exception>
 	/// <remarks>
 	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
 	/// operations on unmanaged memory.
@@ -37,7 +40,6 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	public static IDisposable GetFixedContext<T>(this ReadOnlyMemory<T> mem,
 		out ReadOnlyFixedContextValue<T> fixedContext)
 	{
-		ValidationUtilities.ThrowIfManagedMemory<T>(mem.Length);
 		MemoryHandle handle = mem.Pin();
 		Boolean isReadOnly = !MemoryMarshal.TryGetMemoryManager<T, MemoryManager<T>>(mem, out _) &&
 			!MemoryMarshal.TryGetArray(mem, out _);

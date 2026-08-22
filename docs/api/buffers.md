@@ -2,7 +2,15 @@
 
 Managed buffers let you place a **known number of values or object references on the stack**. `BufferManager` picks a buffer type, allocates it for a callback, and falls back to the heap when the stack cannot hold it.
 
-Maximum capacity of any buffer is 2¹⁵ elements. The runtime may offer less. Unmanaged values often use `stackalloc`; reference types and managed structs use the buffer types below.
+Limits:
+
+| Bound | Size |
+| --- | --- |
+| Theoretical maximum **managed** buffer | (2¹⁶) − 1 elements |
+| Maximum **binary** buffer | 2¹⁵ elements |
+| All maximum binary spaces combined | still (2¹⁶) − 1 elements |
+
+The runtime may offer less. **Unmanaged** `T` does not use a managed buffer: `ScopedBuffer<T>` is a **view**; the allocation uses `stackalloc`. Reference types and managed structs use the buffer types below.
 
 More composition detail lives in the [buffers intermediate README](../../src/Intermediate/Rxmxnx.PInvoke.Buffers.Intermediate/README.md).
 
@@ -13,7 +21,7 @@ More composition detail lives in the [buffers intermediate README](../../src/Int
 | Member | Meaning |
 | --- | --- |
 | `BufferAutoCompositionEnabled` | Whether missing binary metadata can be composed at runtime. Always `false` if `IlcDisableReflection=true` or `PInvoke.DisableBufferAutoComposition` is on. |
-| `MaxBinarySize` | Largest binary buffer that can be composed. `UInt16.MaxValue` when the platform has no cap. On .NET 8+ this follows the `PInvoke.BootstrapBufferStorage.*` switches. |
+| `MaxBinarySize` | Composition / preload cap for binary metadata. When the platform has no cap this is (2¹⁶) − 1, the combined managed maximum — not a single binary space of that size. On .NET 8.0+ this follows the `PInvoke.BootstrapBufferStorage.*` switches. |
 
 ### Allocation
 
@@ -52,7 +60,7 @@ Registration is static and AOT-friendly. Preparation always uses reflection and 
 
 ## `ScopedBuffer<T>`
 
-The value passed into an alloc callback. A `ref struct` view over the allocated space:
+The value passed into an alloc callback. A `ref struct` **view** over the allocated space (not the storage itself):
 
 | Member | Meaning |
 | --- | --- |
@@ -92,7 +100,7 @@ On Native AOT:
 2. If you rely on auto-composition, preserve the composite types in a runtime directives file and keep reflection enabled.
 3. `PrepareBinaryBuffer` is a JIT-friendly cache warmer; it is the wrong tool when reflection is trimmed away.
 
-Feature switches on .NET 8+:
+Feature switches on .NET 8.0+:
 
 | Switch | Cap | Space |
 | --- | --- | --- |
@@ -101,11 +109,11 @@ Feature switches on .NET 8+:
 | `PInvoke.BootstrapBufferStorage.Limited` | 2047 | 2¹⁰+…+2⁰ |
 | `PInvoke.BootstrapBufferStorage.Extended` | 2047, extendable | managed-buffer-based space |
 
-Default on .NET 8+ is still the storage system **not** based on managed-buffer binary spaces. Systems that use a 2ᴺ−1 binary space preload `2N−1` object-buffer metadata entries, which helps AOT.
+Default on .NET 8.0+ is still the storage system **not** based on managed-buffer binary spaces. Systems that use a 2ᴺ−1 binary space preload `2N−1` object-buffer metadata entries, which helps AOT.
 
 ## Buffer delegates
 
-`ScopedBufferAction<T>`, `ScopedBufferAction<T, TState>`, `ScopedBufferFunc<T, TResult>`, `ScopedBufferFunc<T, TState, TResult>` exist on **.NET Standard 2.1 / .NET Core 3.0+** only. On every TFM, including .NET Framework and .NET Standard 2.0, use [functional interfaces](functional-interfaces.md#buffer-operations). `TState` may be a `ref struct` from .NET 9.
+`ScopedBufferAction<T>`, `ScopedBufferAction<T, TState>`, `ScopedBufferFunc<T, TResult>`, `ScopedBufferFunc<T, TState, TResult>` exist on **.NET Standard 2.1 / .NET Core 3.0+** only. On every TFM, including .NET Framework and .NET Standard 2.0, use [functional interfaces](functional-interfaces.md#buffer-operations). `TState` may be a `ref struct` from .NET 9.0.
 
 ## See also
 

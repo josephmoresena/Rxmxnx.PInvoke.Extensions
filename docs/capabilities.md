@@ -13,7 +13,7 @@ What you can do:
 - Build UTF-8 from literals (`new CString(() => "Hello"u8)`, **C# 11**), byte arrays, spans, or pointers.
 - Know whether the instance is null-terminated, a slice, a function, or a null pointer (`IsNullTerminated`, `IsSegmented`, `IsFunction`, `IsZero`).
 - Concatenate, compare, and hash with `String`-compatible hash codes.
-- Marshal as a null-terminated UTF-8 pointer on .NET 7+ via source-generated P/Invoke.
+- Marshal as a null-terminated UTF-8 pointer on .NET 7.0+ via source-generated P/Invoke.
 - Serialize with `System.Text.Json` on .NET Core and on .NET Framework 4.6.1+ without re-encoding on every write (not on .NET Standard 2.0/2.1 or net452/net46).
 
 `CStringSequence` stores several null-terminated UTF-8 strings in one contiguous buffer — the shape native code expects for `argv`, environment blocks, and similar lists. `CStringBuilder` is the mutable UTF-8 counterpart of `StringBuilder`.
@@ -29,8 +29,10 @@ What you can do:
 - Declare P/Invoke parameters as `ValPtr<Char>`, `ReadOnlyValPtr<Byte>`, or `FuncPtr<MyNativeCallback>`.
 - Convert to and from `IntPtr` when a host API still uses untyped pointers.
 - Read or write through `.Reference` without an `unsafe` block in your own code.
-- On .NET 9+, use `T` that is a `ref struct` on `ValPtr<T>` / `ReadOnlyValPtr<T>` (consumers should use **C# 13**).
+- On .NET 9.0+, use `T` that is a `ref struct` on `ValPtr<T>` / `ReadOnlyValPtr<T>` (consumers should use **C# 13**).
 - Invoke a native function pointer through `FuncPtr<TDelegate>.Invoke`.
+
+A pointer to a `ref struct`, or a pointer obtained from a `TDelegate`, is typically meaningful in **managed** code or under **Native AOT**. Classic native P/Invoke already has an unmanaged function pointer; those extra shapes exist for the managed / Native AOT side of the same APIs.
 
 The library never pretends a typed pointer is “safe” in the GC sense. It makes the contract visible so mistakes are harder to ship.
 
@@ -50,6 +52,8 @@ What you can do:
 
 Prefer value-type contexts (`FixedContextValue<T>`, `FixedPointerValue`) and functional interfaces. The `IFixed*` interfaces remain public on every TFM. Delegate overloads that take those interfaces, and helpers that return nested `IFixedContext<T>.IDisposable`, exist only on the original modern TFMs (.NET Standard 2.1 / .NET Core 3.0+, the set that existed until 2.9.5) — they were not brought to .NET Framework, .NET Standard 2.0, or UWP. See [compatibility](api/compatibility.md).
 
+Whether `Memory<T>` whose `T` contains references can be pinned is a **host** decision. If the runtime allows pinning `String[]` or `String[,,,]`, the library does too; it does not reject managed types up front. `Memory.Pin()` may still throw on runtimes that refuse that pin.
+
 Deep dive: [Fixed memory](api/fixed-memory.md) and [Functional interfaces](api/functional-interfaces.md).
 
 ## Native heap with Dispose, not with pairing
@@ -67,7 +71,6 @@ What you can do:
 - View any unmanaged value or span as `Span<Byte>` / `ReadOnlySpan<Byte>` (`AsBytes`, `AsBinarySpan`).
 - View bytes as `Span<T>` (`AsValues`, `AsValue`).
 - Copy a value to a new byte array only when you actually need a snapshot (`ToBytes`, `ToValue`).
-- Flatten multidimensional arrays to `Span<T>` / `Memory<T>` without an extra copy.
 - Detect whether a span points at a UTF-8/UTF-16 literal (`IsLiteral`) so you can skip pinning or copying.
 
 These helpers operate on GC-managed references internally. They are the “safe” side of the library. Pointer-based counterparts exist for constants, stackalloc, and already-fixed native memory; those are marked unsafe in both name and documentation.
@@ -76,9 +79,27 @@ On desktop .NET Framework, `Span<T>` is often the slower three-field layout, so 
 
 Deep dive: [Extensions](api/extensions.md) and the [memory extension notes](../src/Intermediate/Rxmxnx.PInvoke.Extensions.Intermediate/README.md).
 
+## Flatten multidimensional arrays without copying
+
+The BCL `AsSpan` / `AsMemory` helpers stop at rank-1 arrays. This library exposes the **contiguous backing** of a multidimensional array as `Span<T>` / `Memory<T>` on **every TFM**, including slow (non-fast) span and runtimes older than .NET 5.0.
+
+That is a differential feature, not a convenience wrapper. Getting a correct view over `T[,]`, `T[,,]`, … through `T[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]` (ranks 2 through 32) had to work on desktop .NET Framework’s three-field span as well as on modern two-field span. The public API is the same; the implementation follows each runtime’s array layout.
+
+```csharp
+Int32[,] matrix = { { 1, 2 }, { 3, 4 } };
+Span<Int32> flat = matrix.AsSpan();   // length 4, same storage
+Memory<Int32> mem = matrix.AsMemory();
+```
+
+No extra copy. The span is a view over the array’s existing data. Pinning, `AsBytes`, and the rest of the memory helpers then apply to that view.
+
+On Unity IL2CPP, flattening is compiled in statically. Indices greater than 17 can produce invalid C++ identifiers if the linker does not remove those members; [Getting started](getting-started.md#unity-il2cpp) has the rewrite utility.
+
+Deep dive: [Extensions](api/extensions.md).
+
 ## Stack-first temporary buffers
 
-Heap allocations in a parser or serializer show up in traces. `BufferManager.Alloc` gives you a `ScopedBuffer<T>` that lives on the stack when the runtime can place it there.
+Heap allocations in a parser or serializer show up in traces. `BufferManager.Alloc` gives you a `ScopedBuffer<T>` for the duration of a callback.
 
 What you can do:
 
@@ -87,7 +108,9 @@ What you can do:
 - Use `Atomic<T>`, `Composite<TBufferA, TBufferB, T>`, and `NonBinarySpace<TArray, T>` when you need an explicit stack layout.
 - Prefer `IScopedBufferAction<T>` / `IScopedBufferFunction<T, TResult>` so the work is a struct, not a delegate.
 
-Maximum binary capacity is 2¹⁵ elements; the actual runtime limit can be lower, and feature switches (`PInvoke.BootstrapBufferStorage.*`) control how much metadata is preloaded on .NET 8+.
+**Unmanaged** `T` does not need a managed buffer. `ScopedBuffer<T>` is a **view** over the allocated space; the allocation itself uses `stackalloc`.
+
+**Managed** buffers (reference types and managed structs) have a theoretical maximum of **(2¹⁶) − 1** elements. A single **binary** buffer is at most **2¹⁵** elements. Combining the maximum binary spaces still cannot exceed **(2¹⁶) − 1**. The runtime may offer less, and feature switches (`PInvoke.BootstrapBufferStorage.*`) control how much metadata is preloaded on .NET 8.0+.
 
 Deep dive: [Buffers](api/buffers.md) and the [buffer intermediate notes](../src/Intermediate/Rxmxnx.PInvoke.Buffers.Intermediate/README.md).
 
@@ -121,11 +144,12 @@ Until version **2.9.5**, package compatibility was limited to modern runtimes th
 That is not a hint that those hosts are invalid. A production product on .NET Framework 4.6.1+, UWP, Mono, Unity, or Xamarin is a first-class use of the library. The idea is **modern, retrocompatible code** — and, when you eventually move, a path toward Mono or current .NET without rewriting the interop layer.
 
 - **Portable** `netstandard2.1` covers Xamarin, Unity, and Mono. Use **`netstandard2.0` only when the engine cannot target 2.1**.
-- **Dedicated** `lib/` assemblies exist for .NET / .NET Core, UWP, and netfx so those runtimes are not forced through Standard.
-- **netfx 4.5.2 / 4.6** are a transition step from before Standard 2.0 (no `System.Text.Json` in the core package). **4.6.1 and later** are dedicated Framework binaries for products that still run there.
+- **Dedicated** `lib/` assemblies exist for .NET / .NET Core, UWP, and .NET Framework so those runtimes are not forced through Standard.
+- **.NET Framework 4.5.2 / 4.6** are a transition step from before Standard 2.0 (no `System.Text.Json` in the core package). **4.6.1 and later** are dedicated Framework binaries for products that still run there.
 - Span work follows the **runtime**: cheaper on modern .NET (and often on UWP/Mono) than on desktop Framework.
+- Each TFM binary **adapts to internal BCL and runtime changes** of that target. You write to the public API; the library absorbs layout and helper differences.
 
-The map is in [Target frameworks and public API surface](api/compatibility.md). Language floors (C# 7.3, preferred C# 11, C# 13 on .NET 9+) are in [Getting started](getting-started.md#language-versions).
+The map is in [Target frameworks and public API surface](api/compatibility.md). Language floors (C# 7.3, preferred C# 11, C# 13 on .NET 9.0+) are in [Getting started](getting-started.md#language-versions).
 
 ## Visual Basic access
 

@@ -385,7 +385,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// </typeparam>
 	/// <param name="mem">A <see cref="ReadOnlyMemory{T}"/> instance.</param>
 	/// <returns>An <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance representing the pinned memory.</returns>
-	/// <exception cref="ArgumentException">A read-only memory with non-unmanaged items cannot be pinned.</exception>
+	/// <exception cref="ArgumentException">
+	/// The executing runtime may throw if it cannot pin this memory. Whether a given <typeparamref name="T"/> can be
+	/// pinned is a host policy; this library does not reject managed types.
+	/// </exception>
 	/// <remarks>
 	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
 	/// operations on unmanaged memory.
@@ -398,7 +401,6 @@ public static unsafe partial class MemoryBlockExtensions
 #endif
 	public static IReadOnlyFixedContext<T>.IDisposable GetFixedContext<T>(this ReadOnlyMemory<T> mem)
 	{
-		ValidationUtilities.ThrowIfManagedMemory<T>(mem.Length);
 		MemoryHandle handle = mem.Pin();
 		if (handle.Pointer == default)
 			return ReadOnlyFixedContext<T>.EmptyDisposable;
@@ -420,7 +422,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// </typeparam>
 	/// <param name="mem">A <see cref="Memory{T}"/> instance.</param>
 	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance representing the pinned memory.</returns>
-	/// <exception cref="ArgumentException">A memory with non-unmanaged items cannot be pinned.</exception>
+	/// <exception cref="ArgumentException">
+	/// The executing runtime may throw if it cannot pin this memory. Whether a given <typeparamref name="T"/> can be
+	/// pinned is a host policy; this library does not reject managed types.
+	/// </exception>
 	/// <remarks>
 	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
 	/// operations on unmanaged memory.
@@ -433,7 +438,6 @@ public static unsafe partial class MemoryBlockExtensions
 #endif
 	public static IFixedContext<T>.IDisposable GetFixedContext<T>(this Memory<T> mem)
 	{
-		ValidationUtilities.ThrowIfManagedMemory<T>(mem.Length);
 		MemoryHandle handle = mem.Pin();
 		return handle.Pointer == default ?
 			FixedContext<T>.EmptyDisposable :
@@ -449,7 +453,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// </typeparam>
 	/// <param name="mem">A <see cref="ReadOnlyMemory{T}"/> instance.</param>
 	/// <returns>An <see cref="IReadOnlyFixedMemory.IDisposable"/> instance representing the pinned memory.</returns>
-	/// <exception cref="ArgumentException">A read-only memory with non-unmanaged items cannot be pinned.</exception>
+	/// <exception cref="ArgumentException">
+	/// The executing runtime may throw if it cannot pin this memory. Whether a given <typeparamref name="T"/> can be
+	/// pinned is a host policy; this library does not reject managed types.
+	/// </exception>
 	/// <remarks>
 	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
 	/// operations on unmanaged memory.
@@ -471,7 +478,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// </typeparam>
 	/// <param name="mem">A <see cref="Memory{T}"/> instance.</param>
 	/// <returns>An <see cref="IFixedMemory.IDisposable"/> instance representing the pinned memory.</returns>
-	/// <exception cref="ArgumentException">A memory with non-unmanaged items cannot be pinned.</exception>
+	/// <exception cref="ArgumentException">
+	/// The executing runtime may throw if it cannot pin this memory. Whether a given <typeparamref name="T"/> can be
+	/// pinned is a host policy; this library does not reject managed types.
+	/// </exception>
 	/// <remarks>
 	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
 	/// operations on unmanaged memory.

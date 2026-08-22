@@ -63,7 +63,8 @@ Officially supported on **.NET 8.0 and later**. Until 2.9.5 the package targeted
 - **Typed pointers without `unsafe`.** `ValPtr<T>`, `ReadOnlyValPtr<T>`, and `FuncPtr<TDelegate>` keep pointer meaning visible in P/Invoke signatures.
 - **Scoped fixed memory.** `WithSafeFixed` pins spans, strings, and references only for the duration of a callback or `using` block, then exposes them as spans, pointers, or typed contexts.
 - **Binary views with no extra copies.** `AsBytes`, `AsValues`, `ToBytes`, and `ToValue` reinterpret memory you already own. On desktop .NET Framework those span operations may be slower than on modern .NET; they follow the fast path when the **runtime** has it (current .NET, UWP, Mono).
-- **Stack-backed references.** `BufferManager` allocates object or value buffers on the stack when possible, falling back to the heap only when needed.
+- **Multidimensional arrays as a rank-1 view.** `AsSpan` / `AsMemory` flatten `T[,]`, `T[,,]`, … without copying, on every TFM — including slow span and pre-.NET 5.0 hosts.
+- **Stack-backed references.** `BufferManager` allocates object or value buffers on the stack when possible, falling back to the heap only when needed. Unmanaged `T` uses `stackalloc`; `ScopedBuffer<T>` is a view.
 - **Runtime awareness.** `AotInfo` and `SystemInfo` help you adapt to Native AOT, Mono, WebAssembly, and OS differences without scattering `#if` everywhere.
 
 A longer tour lives in [Capabilities](docs/capabilities.md). Concrete recipes live in [Use cases](docs/use-cases.md).
@@ -79,6 +80,7 @@ Use this library when the problem benefits from explicit memory intent, scoped l
 | Pin memory only for a callback or `using` scope | `WithSafeFixed`, `FixedContextValue<T>` (and `IFixedContext<T>` on .NET Standard 2.1 / .NET Core 3.0+) |
 | Native heap with .NET disposal | `NativeUtilities.HeapAlloc<T>()` |
 | Reinterpret or hash binary layouts | `AsBytes`, `AsValues`, `ToBytes`, `ToValue` |
+| Flatten a multidimensional array without copying | `AsSpan`, `AsMemory` |
 | Stack-first temporary storage | `BufferManager`, `ScopedBuffer<T>` |
 | AOT / Mono / platform checks | `AotInfo`, `SystemInfo`, `IsImageMethod`, `IsLiteral` |
 
@@ -103,7 +105,7 @@ readonly struct Open : IReadOnlyFixedContextAction<Byte>
 path.WithSafeFixed(new Open());
 ```
 
-On .NET 7+, `CString` also supports source-generated marshalling as a null-terminated UTF-8 string, so many P/Invoke declarations can take `CString` directly.
+On .NET 7.0+, `CString` also supports source-generated marshalling as a null-terminated UTF-8 string, so many P/Invoke declarations can take `CString` directly.
 
 ## Documentation
 

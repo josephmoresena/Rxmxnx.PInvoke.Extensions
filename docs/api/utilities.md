@@ -24,7 +24,7 @@ Interop glue. `PointerSize` is `sizeof(IntPtr)`.
 | `GetUnsafeValPtrFromRef<T>(ref T)` | `ValPtr<T>` |
 | `GetUnsafeIntPtr<T>(in T)` / `GetUnsafeUIntPtr<T>(in T)` | Untyped address of an unmanaged value |
 
-From .NET 9, `T` on the `ValPtr` helpers may be a `ref struct`.
+From .NET 9.0, `T` on the `ValPtr` helpers may be a `ref struct`.
 
 ### Layout
 
@@ -68,7 +68,7 @@ Facts about ahead-of-time compilation.
 | --- | --- |
 | `IsReflectionDisabled` | Runtime reflection is off. |
 | `IsCodeGenerationSupported` | Dynamic IL emission is allowed. |
-| `IsPlatformTrimmed` | The runtime is trimmed for this platform. From .NET 5 this helps the linker drop unreachable code. |
+| `IsPlatformTrimmed` | The runtime is trimmed for this platform. From .NET 5.0 this helps the linker drop unreachable code. |
 | `IsNativeAot` | The process is Native AOT. |
 
 `IsNativeAot` details:
@@ -77,9 +77,9 @@ Facts about ahead-of-time compilation.
 - On Mono it may depend on when the property is first read, because Mono AOT does not compile the whole assembly at once.
 - On Blazor WebAssembly it is generally not possible to distinguish AOT from JIT; the property may only be `true` when IL generation is disallowed.
 - On mobile XNU platforms the property is treated as `true`.
-- From .NET 6, reading it helps the linker on desktop and mobile XNU.
+- From .NET 6.0, reading it helps the linker on desktop and mobile XNU.
 
-On .NET 5.0 and earlier, AOT detection uses reflection. On .NET 7+ it still may on web and mobile.
+On .NET 5.0 and earlier, AOT detection uses reflection. On .NET 7.0+ it still may on web and mobile.
 
 ## `SystemInfo`
 
@@ -88,11 +88,11 @@ Facts about the runtime and OS. Several properties are written so the trimmer ca
 | Property | Meaning |
 | --- | --- |
 | `IsMonoRuntime` | The runtime is Mono. |
-| `IsWebRuntime` | The runtime is Web (from .NET 8 this enables trimming). |
+| `IsWebRuntime` | The runtime is Web (from .NET 8.0 this enables trimming). |
 | `UsesNativeSpan` | Whether the process uses the built-in (fast, two-field) `Span<T>` layout. Always `true` on .NET Standard 2.1 / .NET Core 2.1+. On desktop .NET Framework this is typically `false`, so span views and casts can be slower than on modern .NET. |
-| `IsWindows` / `IsLinux` / `IsMac` / `IsFreeBsd` / `IsNetBsd` / `IsSolaris` | OS. Windows/Linux/FreeBSD hint the trimmer from .NET 5; macOS from .NET 6. |
+| `IsWindows` / `IsLinux` / `IsMac` / `IsFreeBsd` / `IsNetBsd` / `IsSolaris` | OS. Windows/Linux/FreeBSD hint the trimmer from .NET 5.0; macOS from .NET 6.0. |
 
-`IsOsPlatform(String?)` and params/span overloads test one or more platform names. From .NET 9, `params` is `ReadOnlySpan<String?>`.
+`IsOsPlatform(String?)` and params/span overloads test one or more platform names. From .NET 9.0, `params` is `ReadOnlySpan<String?>`.
 
 ## See also
 

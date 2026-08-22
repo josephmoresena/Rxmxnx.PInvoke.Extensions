@@ -8,9 +8,9 @@ They are **not** GC-safe by themselves. Pair them with [fixed memory](fixed-memo
 
 A pointer to a mutable `T`.
 
-**Implements:** `IWrapper<IntPtr>`, `IEquatable<ValPtr<T>>`, plus `IComparable`, `ISpanFormattable`, `ISerializable`, and (from .NET 7) `IParsable<ValPtr<T>>`.
+**Implements:** `IWrapper<IntPtr>`, `IEquatable<ValPtr<T>>`, plus `IComparable`, `ISpanFormattable`, `ISerializable`, and (from .NET 7.0) `IParsable<ValPtr<T>>`.
 
-**From .NET 9:** `T` may be a `ref struct`. Consumers targeting .NET 9+ should use **C# 13**.
+**From .NET 9.0:** `T` may be a `ref struct`. Consumers targeting .NET 9.0+ should use **C# 13**. A `ValPtr<T>` whose `T` is a `ref struct` is typically meaningful in **managed** code or under **Native AOT** — it names an address those runtimes already understand, not a general-purpose native pointer on every host.
 
 | Member | Meaning |
 | --- | --- |
@@ -22,7 +22,7 @@ A pointer to a mutable `T`.
 
 Use `Reference` to read or write without an `unsafe` block in your code. The write is as dangerous as any native store: the address must be valid and writable.
 
-On .NET 7+, `[NativeMarshalling]` sends this type across P/Invoke as a pointer to `T`.
+On .NET 7.0+, `[NativeMarshalling]` sends this type across P/Invoke as a pointer to `T`.
 
 ## `ReadOnlyValPtr<T>`
 
@@ -38,6 +38,8 @@ A pointer to a native function that can be invoked as `TDelegate`.
 
 **Constraint:** `TDelegate` must be a non-generic `Delegate`. Invocation uses `Marshal.GetDelegateForFunctionPointer<TDelegate>`.
 
+Obtaining a function pointer from a managed `TDelegate` (`GetUnsafeFuncPtr`, `NativeUtilities.GetUnsafeFuncPtr`) is typically meaningful in **managed** code or under **Native AOT**, where the runtime can keep the delegate alive and produce a callable stub. On a classic native-only boundary you already have an unmanaged function pointer; keep the managed delegate alive if you round-trip through one of these helpers.
+
 | Member | Meaning |
 | --- | --- |
 | `Zero` | Null function pointer. |
@@ -52,7 +54,7 @@ FuncPtr<QueryFullProcessPath> query =
 Int32 result = query.Invoke(hProcess, 0, pathPtr, lengthPtr);
 ```
 
-On .NET 7+, this type also participates in source-generated marshalling.
+On .NET 7.0+, this type also participates in source-generated marshalling.
 
 ## Creating pointers
 
@@ -68,7 +70,7 @@ If the method name contains `Unsafe`, nothing is pinning the target. For heap me
 
 ## Formatting and parsing
 
-All three pointer types format like `IntPtr` (`ISpanFormattable`). From .NET 7 they also parse from strings (`IParsable<T>`), which is useful in logs and diagnostics, not as a security boundary.
+All three pointer types format like `IntPtr` (`ISpanFormattable`). From .NET 7.0 they also parse from strings (`IParsable<T>`), which is useful in logs and diagnostics, not as a security boundary.
 
 ## See also
 

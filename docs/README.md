@@ -16,7 +16,7 @@ Start with a short README, then come here when you need depth.
 
 ## How the documentation is organized
 
-- **Capabilities** answer “what can I do?” They group features by outcome: UTF-8 text, typed pointers, scoped pinning, binary views, stack buffers, and runtime detection.
+- **Capabilities** answer “what can I do?” They group features by outcome: UTF-8 text, typed pointers, scoped pinning, binary views, multidimensional flattening, stack buffers, and runtime detection.
 - **Use cases** answer “how do I do this?” They are short recipes with working snippets.
 - **API reference** answers “what is this type?” It is split by area so you can jump to pointers, fixed memory, functional interfaces, UTF-8, buffers, wrappers, extensions, or utilities.
 

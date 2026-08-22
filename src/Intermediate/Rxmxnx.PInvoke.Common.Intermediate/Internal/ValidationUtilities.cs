@@ -4,12 +4,6 @@ using Enum = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
 #if !NET6_0_OR_GREATER
 using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
-#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
-using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
-#endif
-#if NETFRAMEWORK && !NET46_OR_GREATER
-using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
-#endif
 #if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP && !NETFRAMEWORK && !UAP10_0_16299
 using InsufficientMemoryException = System.OutOfMemoryException;
 #endif
@@ -556,31 +550,6 @@ internal static unsafe class ValidationUtilities
 #endif
 		String message = MessageResource.GetInstance().NotUnmanagedType(type);
 		throw new InvalidOperationException(message);
-	}
-	/// <summary>
-	/// Throws an exception if <typeparamref name="T"/> cannot be pinned as a binary memory block.
-	/// </summary>
-	/// <typeparam name="T">Type of items in the memory to pin.</typeparam>
-	/// <param name="length">Number of items in the memory. Empty memory is not rejected.</param>
-	/// <exception cref="ArgumentException">Thrown if <typeparamref name="T"/> is not an unmanaged type.</exception>
-	/// <remarks>
-	/// Probes <see cref="GCHandle.Alloc(Object, GCHandleType)"/> with an empty array of <typeparamref name="T"/>.
-	/// Desktop CLR and .NET Core reject managed <typeparamref name="T"/> there. Mono may succeed, so on non-Core
-	/// assemblies a second check uses <see cref="RuntimeHelpers.IsReferenceOrContainsReferences{T}"/>.
-	/// </remarks>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void ThrowIfManagedMemory<T>(Int32 length)
-	{
-#if NETCOREAPP2_1_OR_GREATER
-		_ = length;
-#else
-		if (length <= 0) return;
-		GCHandle.Alloc(Array.Empty<T>(), GCHandleType.Pinned).Free();
-#if !NETCOREAPP
-		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
-			throw new ArgumentException(MessageResource.GetInstance().NotUnmanagedType(typeof(T)));
-#endif
-#endif
 	}
 	/// <summary>
 	/// Throws an exception if <paramref name="type"/> is not reference type.

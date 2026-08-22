@@ -25,7 +25,7 @@ Spans, memories, and arrays of any `T`.
 | --- | --- |
 | Literal detection | `IsLiteral`, `MayBeNonLiteral` |
 | Byte / value views | `AsBytes`, `AsValues<TIn, TOut>` (optional residual `Span<Byte>`) |
-| Multidimensional arrays | `AsSpan`, `AsMemory` |
+| Multidimensional arrays | `AsSpan`, `AsMemory` — flatten ranks 2–32 to a contiguous view on **every TFM**, including slow span and runtimes older than .NET 5.0. See [Capabilities](../capabilities.md#flatten-multidimensional-arrays-without-copying). |
 | Pinning | `WithSafeFixed` (functional interfaces on every TFM; delegate overloads on .NET Standard 2.1 / .NET Core 3.0+), `WithSafeReadOnlyFixed`, `GetFixedContext` / `GetFixedMemory` (`out` value context on every TFM; nested `IDisposable` return on those same original modern TFMs) |
 | Unsafe addresses | `GetUnsafeIntPtr`, `GetUnsafeValPtr`, `GetUnsafeReadOnlyValPtr` (literals / already-fixed memory) |
 
@@ -46,7 +46,7 @@ Single values and small sequences of unmanaged `T`.
 
 `in T` / `ref T` helpers: `Transform` / `TransformReference` to another unmanaged type, `WithSafeFixed` for a single reference, `GetUnsafeValPtr` / `GetUnsafeIntPtr`.
 
-From .NET 9, `T` may be a `ref struct` on several of these.
+From .NET 9.0, `T` may be a `ref struct` on several of these.
 
 ## Pointers (`PointerExtensions` / `ValuePointerExtensions`)
 

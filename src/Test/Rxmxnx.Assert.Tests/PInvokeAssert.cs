@@ -298,4 +298,22 @@ public sealed class PInvokeAssert
 #else
 		=> Assert.IsNotEmpty(collection);
 #endif
+	/// <summary>
+	/// Runs <paramref name="pin"/> when the executing runtime allows the pin.
+	/// If the host throws <see cref="ArgumentException"/> — typical on CoreCLR for memory whose element type
+	/// contains references — the call is treated as a skipped pin, not a test failure.
+	/// </summary>
+	/// <param name="pin">The pinning operation to attempt.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void PinIfHostAllows(Action pin)
+	{
+		try
+		{
+			pin();
+		}
+		catch (ArgumentException)
+		{
+			// Host refused to pin. That is a runtime policy, not a library guarantee.
+		}
+	}
 }

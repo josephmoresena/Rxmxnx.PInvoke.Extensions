@@ -70,9 +70,10 @@ Delegate `WithSafeFixed` / nested `IFixed*.IDisposable` helpers remain on the or
 
 Official support for **new** work is **.NET 8.0 and later**. Extra TFMs are justified when they change what the
 **declared contract** or the **executing runtime** can do — not merely because a framework number exists. `net470` and
-`net471` already restore without their own `lib/`. A future TFM (for example .NET 11) is worth a dedicated `lib/` when
-the implementation or the public surface must differ: `CString` async (`Task` vs `ValueTask` / span-based
-`Stream.Write`), UTF-8 APIs in the BCL, or generic constraints the older binary cannot express.
+`net471` already restore without their own `lib/`. A later runtime is worth a dedicated `lib/` when the implementation
+or the public surface must differ: BCL or runtime internals that the library already special-cases per TFM, APIs that
+simply do not exist yet, or generic constraints the older binary cannot express. The library adapts to those internal
+changes; do not treat a new framework number as an automatic extra assembly.
 
 Which members exist on which TFM: [`docs/api/compatibility.md`](docs/api/compatibility.md).
 
@@ -85,19 +86,19 @@ Rules that are easy to break:
 
 - **The modern portable assembly (`netstandard2.1`) must not reference `System.Text.Json`.** JSON packages target
   .NET Standard 2.0. Mixing 2.0 and 2.1 in one library fights **Mono Framework**’s long-term .NET Framework 4.5
-  compatibility model. Dedicated Core / netfx TFMs that can take JSON do so in `Packages.props`. Mono Framework JSON
+  compatibility model. Dedicated Core / .NET Framework TFMs that can take JSON do so in `Packages.props`. Mono Framework JSON
   for `CString` lives in the optional facade [`src/MonoFacades`](src/MonoFacades/README.md)
   (`Rxmxnx.PInvoke.Json`), not in the core package.
 - **`netstandard2.0` is the engine-cannot-target-2.1 portable binary.** It is the one that pulls `System.Memory`,
   `System.Reflection.Emit.Lightweight`, and `Unsafe`. Do not choose 2.0 on a host that already supports 2.1.
-- **.NET 8+ has no extra package dependencies** on the official path. Older dedicated TFMs pin `Unsafe`, `Memory`,
+- **.NET 8.0+ has no extra package dependencies** on the official path. Older dedicated TFMs pin `Unsafe`, `Memory`,
   `ValueTuple`, `Microsoft.Bcl.Memory`, and JSON at versions that match that host. Bump a pin only after restoring
   **and running** tests on that TFM: a newer `System.Memory` can change span layout or reject pointer-containing `T` in
   `Span<T>(void*, int)`.
 - **Test hosts are not library TFMs.** `netcoreapp2.0` appears in test props so the **netstandard2.0** assembly is
   exercised on that runtime (OpenSSL 1.0, empty-array identity, `Span<T>` over pointer types). The package does not
   ship `netcoreapp2.0`.
-- **Mono Framework 4.5-era references** use `ExcludeAssets` / `PrivateAssets` so a netfx compile does not pull a Core
+- **Mono Framework 4.5-era references** use `ExcludeAssets` / `PrivateAssets` so a .NET Framework compile does not pull a Core
   implementation of `Unsafe` into a 4.5 process. [`src/PackageReference.props`](src/PackageReference.props) is how
   sample and test apps consume either the four intermediates (`UsePackage` unset) or the packed DLL (GitHub Actions).
 
@@ -126,7 +127,7 @@ or every other module reimplements them. Treat new types as: does this belong to
 consumer of the package”? Only the last group goes in Common.
 
 Intermediate projects compile with `InternalsVisibleTo` toward each other and toward the test assemblies. They define
-`PACKAGE` **unset**, so `#if !PACKAGE` members (test helpers, extra coverage exclusions, net9 extension methods that the
+`PACKAGE` **unset**, so `#if !PACKAGE` members (test helpers, extra coverage exclusions, .NET 9.0 extension methods that the
 package later patches as instance methods) exist in the development build.
 
 ### How they become one DLL
@@ -155,8 +156,8 @@ share is gated with `#if` (`NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER` for the 
 `NET9_0_OR_GREATER` for `allows ref struct`, `NET7_0_OR_GREATER` for marshalling, and the FrameworkCompat types in
 Common for APIs that simply do not exist yet).
 
-That is not enough. **Declared** TFM surface and **executing** runtime diverge: desktop netfx `Span<T>` is the slow
-three-field layout; Mono executing a netfx TFM can still be fast span; `System.Memory` on netcoreapp2.0 rejects
+That is not enough. **Declared** TFM surface and **executing** runtime diverge: desktop .NET Framework `Span<T>` is the slow
+three-field layout; Mono executing a .NET Framework TFM can still be fast span; `System.Memory` on netcoreapp2.0 rejects
 pointer-containing `T` in `Span<T>(void*, int)` even though the same source is valid on 2.1. Unit tests therefore run
 on each .NET / .NET Core host they can (`dotnet test /p:MultipleFrameworkTest=true`). Failures on an “obsolete” host
 are how the portable implementation is proven, not a distraction from the modern line.
@@ -165,24 +166,24 @@ Application and Native AOT / Mono / WASM paths are a second net: [`src/Applicati
 and [`src/LegacyAppTest`](src/LegacyAppTest/README.md). Locally they reference intermediates; CI packs the branch and
 consumes the NuGet so the IL patcher, substitutions, and package assets are what those apps actually load.
 
-## Why .NET 9+ IL is patched
+## Why .NET 9.0+ IL is patched
 
-Starting with .NET 9, `ValPtr<T>` and `ReadOnlyValPtr<T>` declare `where T : allows ref struct`. That is a real product
+Starting with .NET 9.0, `ValPtr<T>` and `ReadOnlyValPtr<T>` declare `where T : allows ref struct`. That is a real product
 feature: a typed pointer to a `ref struct` is valid IL and valid C# 13.
 
 `IFixedContext<T>.IDisposable` is a **class-based** nested interface. It cannot represent a context whose `T` is a
-`ref struct`. If the instance method `ValPtr<T>.GetUnsafeFixedContext(int, IDisposable)` stayed in C# on net9, the
-compiler would have to emit a method whose return type is illegal for some `T` the type now allows. On net8 and earlier
+`ref struct`. If the instance method `ValPtr<T>.GetUnsafeFixedContext(int, IDisposable)` stayed in C# on .NET 9.0, the
+compiler would have to emit a method whose return type is illegal for some `T` the type now allows. On .NET 8.0 and earlier
 the method is ordinary C# (`#if !NET9_0_OR_GREATER` in `ValPtr.cs` / `ReadOnlyValPtr.cs`).
 
-The package still needs that method on net9+ **for non-ref-struct `T`**, so existing callers and the historical
-`IFixed*` surface keep working. After the net9+ assembly is compiled,
+The package still needs that method on .NET 9.0+ **for non-ref-struct `T`**, so existing callers and the historical
+`IFixed*` surface keep working. After the .NET 9.0+ assembly is compiled,
 [`package/Rxmxnx.PInvoke.Extensions.IlPatcher`](package/Rxmxnx.PInvoke.Extensions.IlPatcher) (`ValuePointerPatchTask`)
 runs from [`package/Package.targets`](package/Package.targets):
 
 - Mono.Cecil injects `GetUnsafeFixedContext(int, IDisposable)` on `ValPtr<T>` and `ReadOnlyValPtr<T>`.
 - The method body calls `FixedContext<T>.CreateDisposable` / `ReadOnlyFixedContext<T>.CreateDisposable` — the same as
-  the C# that net8 still compiles.
+  the C# that .NET 8.0 still compiles.
 - XML documentation for those members is inserted into the packed `.xml`.
 - Using the method with a `ref struct` `T` is a **runtime** `TypeLoadException`, which the remarks already state.
 

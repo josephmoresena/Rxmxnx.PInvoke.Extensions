@@ -8,7 +8,7 @@ Officially supported for new work: **.NET 8.0 and later**. The other assemblies 
 
 ## Why the extra targets exist
 
-They are what the package can ship once the implementation is mature enough to honor each TFM’s **declared surface** and still use what the **executing runtime** actually provides.
+They are what the package can ship once the implementation is mature enough to honor each TFM’s **declared surface** and still use what the **executing runtime** actually provides. Each binary **adapts to BCL and runtime internals** of that target; you write to the public API.
 
 | Kind of assembly | TFMs | Role |
 | --- | --- | --- |
@@ -44,9 +44,9 @@ UWP follows the same idea: a dedicated, production-valid binary that can still u
 - **Fast span** is the compact two-field layout (byref + length). Current .NET, UWP Fall Creators, and Mono with Standard 2.1-class runtimes use it — even if the compile-time reference looks like `System.Memory`.
 - **Slow span** is the three-field layout (pinnable object + offset + length) used by desktop .NET Framework plus `System.Memory` 4.5.x.
 
-The netfx and UWP assemblies compile to their TFM contracts, then detect the runtime layout. If the process is Mono executing a netfx TFM — or UWP with fast span — casts, views, and pinning follow the fast path. The public API does not change; the operations get cheaper when the runtime allows it.
+The .NET Framework and UWP assemblies compile to their TFM contracts, then detect the runtime layout. If the process is Mono executing a .NET Framework TFM — or UWP with fast span — casts, views, and pinning follow the fast path. The public API does not change; the operations get cheaper when the runtime allows it.
 
-`SystemInfo.UsesNativeSpan` is the public property for that fact. On .NET Standard 2.1 / .NET Core 2.1+ it is always `true`. On netfx and UWP it reflects the executing layout.
+`SystemInfo.UsesNativeSpan` is the public property for that fact. On .NET Standard 2.1 / .NET Core 2.1+ it is always `true`. On .NET Framework and UWP it reflects the executing layout.
 
 That is the same idea as the rest of the package: **modern code that stays retrocompatible**, without pretending every host is CoreCLR.
 
@@ -109,12 +109,12 @@ These are available from .NET Standard 2.0 / .NET Framework / UWP through curren
 | Gate | Effect |
 | --- | --- |
 | .NET Core 3.0+ | `NativeLibrary` helpers; `System.Text.Json` on Core (3.0 uses 5.0.2, 3.1+ uses later versions) |
-| .NET 5+ | Native `Enum.GetName<T>`, `Convert.ToHexString` |
-| .NET 7+ | `[NativeMarshalling]` for `CString`, `CStringSequence`, `ValPtr<T>`, `ReadOnlyValPtr<T>`, `FuncPtr<TDelegate>`; `IUtf8FunctionState<TSelf>`; `IParsable` on pointers |
-| .NET 8+ | No extra package dependencies; buffer storage feature switches |
-| .NET 9+ | `allows ref struct` on many generics; `params ReadOnlySpan<T>`; some pointer helpers patched in IL. Consumers should use **C# 13**. |
+| .NET 5.0+ | Native `Enum.GetName<T>`, `Convert.ToHexString` |
+| .NET 7.0+ | `[NativeMarshalling]` for `CString`, `CStringSequence`, `ValPtr<T>`, `ReadOnlyValPtr<T>`, `FuncPtr<TDelegate>`; `IUtf8FunctionState<TSelf>`; `IParsable` on pointers |
+| .NET 8.0+ | No extra package dependencies; buffer storage feature switches |
+| .NET 9.0+ | `allows ref struct` on many generics; `params ReadOnlySpan<T>`; some pointer helpers patched in IL. Consumers should use **C# 13**. |
 | .NET Core **or** net461+ | `[JsonConverter]` on `CString` / `CStringSequence`. Not on .NET Standard 2.0/2.1 (portable Mono/Xamarin/Unity story) or on the net452/net46 transition assemblies. Classic Mono can use [`Rxmxnx.PInvoke.Json`](../../src/MonoFacades/README.md). |
-| netfx / UWP dedicated binaries | `System.Memory` or `Microsoft.Bcl.Memory`; span helpers adapt to fast vs slow layout at runtime |
+| .NET Framework / UWP dedicated binaries | `System.Memory` or `Microsoft.Bcl.Memory`; span helpers adapt to fast vs slow layout at runtime |
 
 ## Language versions (consumers)
 
@@ -136,7 +136,7 @@ From the package’s own `Packages.props`:
 
 | Family | TFMs | Extra dependencies |
 | --- | --- | --- |
-| Transition netfx | `net452`, `net46` | `System.Memory` 4.5.5, `Unsafe` 5.0, `RuntimeInformation` 4.3.0, `ValueTuple` 4.5.0 — no `System.Text.Json` |
+| Transition .NET Framework | `net452`, `net46` | `System.Memory` 4.5.5, `Unsafe` 5.0, `RuntimeInformation` 4.3.0, `ValueTuple` 4.5.0 — no `System.Text.Json` |
 | Portable 2.0 | `netstandard2.0` | `System.Memory` 4.5.5, `Unsafe` 5.0, `System.Reflection.Emit.Lightweight` 4.7.0 |
 | Portable 2.1 | `netstandard2.1` | `Unsafe` 5.0 |
 | Limited Core | `netcoreapp2.1`, `netcoreapp3.0` | `System.Text.Json` 5.0.2, `Unsafe` 5.0; netcoreapp2.1 also pins `Microsoft.NETCore.App` 2.1.30 |
@@ -152,7 +152,7 @@ On Mono with a .NET Framework TFM, `System.Runtime.CompilerServices.Unsafe` 5.0 
 
 1. If every TFM is an original modern target (.NET Standard 2.1 / .NET Core 3.0 or later), either callback style compiles. Functional interfaces still avoid an extra heap delegate.
 2. If any TFM was added after 2.9.5, write to that narrower surface: functional interfaces, `out FixedContextValue<T>`, `WrapperFactory`.
-3. Delegate overloads remain valid on the original modern TFMs. Use them when you already have that call site; do not `#if` them into a multi-target project that includes netfx, UWP, or netstandard2.0.
+3. Delegate overloads remain valid on the original modern TFMs. Use them when you already have that call site; do not `#if` them into a multi-target project that includes .NET Framework, UWP, or netstandard2.0.
 4. Prefer **netstandard2.1** over **netstandard2.0** whenever the engine allows it.
 
 See [Getting started](../getting-started.md) for install, language, and AOT notes, and [Functional interfaces](functional-interfaces.md) for the callback contracts.

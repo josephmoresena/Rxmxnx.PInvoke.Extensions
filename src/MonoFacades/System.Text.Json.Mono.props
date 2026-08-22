@@ -22,7 +22,6 @@
             <PrivateAssets Condition="'$(IsMDK)' == 'True'">All</PrivateAssets>
             <ExcludeAssets Condition="'$(IsMDK)' == 'True'">compile;runtime</ExcludeAssets>
         </PackageReference>
-        <PackageReference Condition="'$(TargetFramework)' == 'netstandard2.0'" Include="System.Threading.Tasks.Extensions" Version="4.5.4"/>
         <PackageReference Condition="'$(IsMDK)' == 'True'" Include="NETStandard.Library.Ref" Version="2.1.0">
             <PrivateAssets>All</PrivateAssets>
             <ExcludeAssets>compile;runtime</ExcludeAssets>

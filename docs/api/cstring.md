@@ -42,7 +42,7 @@ Static fields: `Empty` (empty literal), `Zero` (null pointer), `NewLine` (platfo
 | `new CString(ReadOnlySpan<Byte>)` | Always `true` (appends a null) | Copy |
 | `CString.Create(ReadOnlySpan<Byte>)` | Always `false` | Copy, no terminator check |
 | `new CString(ReadOnlySpanFunc<Byte>)` | Depends on the span | No copy |
-| `CString.Create<TState>(state)` | From `IUtf8FunctionState<TSelf>` (.NET 7+) | No copy |
+| `CString.Create<TState>(state)` | From `IUtf8FunctionState<TSelf>` (.NET 7.0+) | No copy |
 | `CreateUnsafe(IntPtr, Int32, useFullLength)` | `false` if `useFullLength` is true | No copy |
 
 `CString.Unescape` builds from escaped UTF-8 (`\\n`, `\\t`, …).
@@ -57,11 +57,11 @@ Static fields: `Empty` (empty literal), `Zero` (null pointer), `NewLine` (platfo
 - `IsNullOrEmpty`, `IsImagePersistent`, `GetAssociatedSequence`, `GetHashCode(ReadOnlySpan<Byte>)` (.NET Standard 2.1 / .NET Core 3.0+)
 - Repeat constructors: a UTF-8 unit (or 2–4 units) repeated `count` times; UTF-16 `Char` / `ReadOnlySpan<Char>` constructors encode to UTF-8
 
-From .NET 9, `params` uses `ReadOnlySpan<>` instead of arrays.
+From .NET 9.0, `params` uses `ReadOnlySpan<>` instead of arrays.
 
 ### Marshalling and JSON
 
-- **.NET 7+:** `[NativeMarshalling]` — P/Invoke sees a null-terminated UTF-8 pointer.
+- **.NET 7.0+:** `[NativeMarshalling]` — P/Invoke sees a null-terminated UTF-8 pointer.
 - **.NET Core or net461+:** nested `JsonConverter` for `System.Text.Json`. Not on .NET Standard 2.0/2.1 or net452/net46. Deserialization produces null-terminated instances; the terminator is not guaranteed to be a single `0x00` byte.
 
 ## `CStringSequence`
@@ -97,7 +97,7 @@ CStringSequence.GetUnsafe(spanOfReadOnlyValPtr);    // from native char*[]
 
 `CStringSequence.WithSafeFixed` instance methods that take list delegates are **.NET Standard 2.1 / .NET Core 3.0+**. The functional-interface extensions (`seq.WithSafeFixed(new MyAction())`) exist on every TFM.
 
-Marshalling on .NET 7+: a null-terminated array of null-terminated UTF-8 strings. Empty items are omitted unless a `Utf8View` included them. Nested `JsonConverter` on .NET Core or net461+.
+Marshalling on .NET 7.0+: a null-terminated array of null-terminated UTF-8 strings. Empty items are omitted unless a `Utf8View` included them. Nested `JsonConverter` on .NET Core or net461+.
 
 `FixedCStringSequence` is the pinned `ref struct` form used when the sequence must be passed to native code as a list of pointers.
 
@@ -121,7 +121,7 @@ Default capacity is 32 UTF-8 units. Construction from `String`, `CString`, or sp
 ## Delegates used by UTF-8 types
 
 - `ReadOnlySpanFunc<Byte>` / `ReadOnlySpanFunc<Byte, TState>` — function-backed `CString`
-- `IUtf8FunctionState<TSelf>` — .NET 7+ typed state ([functional interfaces](functional-interfaces.md))
+- `IUtf8FunctionState<TSelf>` — .NET 7.0+ typed state ([functional interfaces](functional-interfaces.md))
 
 ## See also
 

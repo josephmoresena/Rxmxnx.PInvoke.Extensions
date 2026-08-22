@@ -93,7 +93,7 @@ public partial class Launcher
 			VisualStudioInfo info = await Windows.GetVisualCppPath();
 			String kitPath = Windows.GetWindowsKitLibPath();
 			foreach (Architecture arch in architectures)
-				cppCompilers.Add(arch, new(info.VcBuildPath, info.MsBuildPath, kitPath, arch));
+				cppCompilers.Add(arch, new(info.VcBuildPath, info.MsVcPath, kitPath, arch));
 			msbuild.Value = info.MsBuildPath;
 		}
 		private static async Task<VisualStudioInfo> GetVisualCppPath()

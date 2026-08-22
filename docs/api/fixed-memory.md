@@ -66,7 +66,7 @@ Shapes:
 
 - Functional interfaces (`IFixedAction`, `IFixedContextAction<T>`, …) — available on every TFM the package ships.
 - Action / function delegates (`FixedAction`, `FixedContextAction<T>`, `FixedFunc<TResult>`, …) — **.NET Standard 2.1 / .NET Core 3.0+ only**. Not present on .NET Framework, .NET Standard 2.0, .NET Core 2.1, or UWP.
-- Optional extra argument `TArg` on the delegate overloads (may be a `ref struct` on .NET 9+).
+- Optional extra argument `TArg` on the delegate overloads (may be a `ref struct` on .NET 9.0+).
 
 There are read-only variants (`WithSafeReadOnlyFixed`) when you want a read-only context from a mutable span.
 
@@ -115,7 +115,7 @@ These delegates are public on the **original modern TFMs** (.NET Standard 2.1 / 
 
 `ReadOnlySpanFunc<T>` / `ReadOnlySpanFunc<T, TState>` are **not** in that set — they exist on every TFM and back `CString` / `ValueRegion<T>`.
 
-From .NET 9, `TArg` / `TState` on many of these may be a `ref struct`.
+From .NET 9.0, `TArg` / `TState` on many of these may be a `ref struct`.
 
 ## Validity rules
 

@@ -9,7 +9,7 @@ Small contracts for “a value I can pass around” and “a block of `T` that m
 | `IReadOnlyReferenceable<T>` | `ref readonly T Reference` | `IEquatable<IReadOnlyReferenceable<T>>`. Publicly implementable. |
 | `IReferenceable<T>` | `ref T Reference` | Extends the read-only interface. Publicly implementable. |
 
-From .NET 9, `T` may be a `ref struct`.
+From .NET 9.0, `T` may be a `ref struct`.
 
 These are the “there is a live managed reference here” contracts. Fixed-reference contexts implement them.
 
@@ -31,7 +31,7 @@ Each generic interface has a **non-generic companion** (`IWrapper`, `IReferencea
 | `WrapperFactory.CreateObject<TObject>(TObject)` | reference type |
 | `WrapperFactory.CreateReferenceable*` | referenceable / mutable-reference variants |
 
-`IWrapper.IBase<T>` is a covariant view of `Value` on .NET Standard 2.1 / .NET Core 3.0+. From .NET 9, `T` on that view may be a `ref struct`.
+`IWrapper.IBase<T>` is a covariant view of `Value` on .NET Standard 2.1 / .NET Core 3.0+. From .NET 9.0, `T` on that view may be a `ref struct`.
 
 Generic `Create(T?)` methods on `IWrapper<T>` itself exist only on the original modern TFMs (.NET Standard 2.1 / .NET Core 3.0+).
 

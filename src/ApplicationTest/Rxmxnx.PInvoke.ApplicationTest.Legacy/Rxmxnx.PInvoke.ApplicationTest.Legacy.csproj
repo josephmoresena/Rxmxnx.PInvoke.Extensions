@@ -19,9 +19,9 @@
         <TargetFrameworks>netcoreapp2.1;net452;net46;net461;net462;net470;net471;net472</TargetFrameworks>
     </PropertyGroup>
 
-    <Import Project="..\..\..\Packages.props"/>
-    <Import Condition="'$(MSBuildRuntimeType)' == 'Mono'" Project="..\MonoApp.props"/>
     <Import Project="..\..\PackageReference.props"/>
+    <Import Condition="'$(MSBuildRuntimeType)' == 'Mono'" Project="..\MonoApp.props"/>
+    <Import Condition="'$(MSBuildRuntimeType)' == 'Mono'" Project="..\..\..\Packages.props"/>
 
     <ItemGroup>
         <None Remove="Mono.ILLink.Descriptors.xml"/>
