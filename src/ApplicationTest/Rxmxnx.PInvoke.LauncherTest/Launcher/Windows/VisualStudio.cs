@@ -141,7 +141,7 @@ public partial class Launcher
 				String vcBuildPath = Path.Combine(vsPath, "VC", "Auxiliary", "Build");
 				String vcVersionText = await File.ReadAllTextAsync(
 					Path.Combine(vcBuildPath, "Microsoft.VCToolsVersion.default.txt"));
-				Version vcVersion = Version.Parse(vcVersionText);
+				Version vcVersion = Version.Parse(vcVersionText.Trim());
 				ConsoleNotifier.Notifier.Print($"Visual C++ {vcVersion} found.");
 				return new()
 				{
