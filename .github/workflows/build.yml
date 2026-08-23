@@ -132,9 +132,7 @@ jobs:
           # ----------------------------------------
           Write-Host "Restoring..."
 
-          $sonarAnalysisProperty = "/p:SonarAnalysis=$sonarStarted"
-
-          dotnet restore src $sonarAnalysisProperty
+          dotnet restore src
 
           if ($LASTEXITCODE -ne 0) {
             throw "dotnet restore failed with exit code $LASTEXITCODE"
@@ -147,7 +145,6 @@ jobs:
 
           dotnet build src `
             /p:MultipleFrameworkTest=true `
-            $sonarAnalysisProperty `
             --configuration Release `
             --disable-build-servers `
             /nr:false `

@@ -34,10 +34,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1"/>
-        <!-- NU1510 on net8+: System.Net.Http is inbox and must not be referenced during Sonar restore. -->
+        <!-- AutoFixture 4.x → Fare → NETStandard.Library 1.6.1 still resolves Regex 4.3.0 / Http 4.3.0
+             on TFMs without package pruning. Pin the patched packages there. net8+ ships both inbox (NU1510). -->
+        <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1"
+                          Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))"/>
         <PackageReference Include="System.Net.Http" Version="4.3.4"
-                          Condition="'$(SonarAnalysis)' != 'true' Or ('$(TargetFramework)' != 'net8.0' And '$(TargetFramework)' != 'net9.0' And '$(TargetFramework)' != 'net10.0')"/>
+                          Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))"/>
         <PackageReference Include="AutoFixture" Version="4.18.1"/>
         <PackageReference Condition="'$(TargetFramework)' == 'netstandard2.0'" Include="System.Threading.Tasks.Extensions" Version="4.5.4"/>
         <ProjectReference Include="$(MSBuildThisFileDirectory)Rxmxnx.Assert.Tests\Rxmxnx.Assert.Tests.csproj"/>
