@@ -21,18 +21,25 @@ public unsafe partial class BufferTypeMetadata
 	private static Span<T> CreateSpan<T, TBuffer>(ref TBuffer buffer, Int32 spanLength)
 		=> MemoryMarshalCompat.CreateUnsafeSpan<T>(Unsafe.AsPointer(ref buffer), spanLength);
 	/// <summary>
-	/// Clears two elements from reference buffer.
+	/// Touches the first and last buffer elements so <typeparamref name="TBuffer"/> stays in scope.
 	/// </summary>
 	/// <typeparam name="T">The type of items in the buffer.</typeparam>
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 	/// <param name="buffer">A managed <typeparamref name="TBuffer"/> reference.</param>
 	/// <param name="spanLength">Required span length.</param>
+	/// <remarks>
+	/// This is not a full span clear. When <paramref name="spanLength"/> is 1, both writes hit the same
+	/// element. A zero-length span still writes the first element of the allocated buffer.
+	/// </remarks>
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	private static void Clear<T, TBuffer>(ref TBuffer buffer, Int32 spanLength) where TBuffer : struct
 	{
+		Debug.Assert(spanLength > 0);
 		ref T r0 = ref Unsafe.As<TBuffer, T>(ref buffer);
-		ref T r = ref Unsafe.Add(ref Unsafe.As<TBuffer, T>(ref buffer), spanLength - 1);
 		r0 = default!; // First element.
+		if (spanLength <= 0)
+			return;
+		ref T r = ref Unsafe.Add(ref r0, spanLength - 1);
 		r = default!; // Last element.
 	}
 #pragma warning restore CS8500

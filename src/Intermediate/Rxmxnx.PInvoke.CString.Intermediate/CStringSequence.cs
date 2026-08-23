@@ -247,7 +247,7 @@ public sealed partial class CStringSequence : IEquatable<CStringSequence>
 	/// <remarks>
 	/// This method does not perform any encoding conversion. The input is interpreted as a UTF-8 buffer.
 	/// </remarks>
-#if PACKAGE && !GITHUB_ACTIONS
+#if PACKAGE
 	[Obsolete("Obsolete to avoid encoding confusion. Use Create(ReadOnlySpan<byte> value) instead.", true)]
 #endif
 	public static CStringSequence Create(ReadOnlySpan<Char> value)
