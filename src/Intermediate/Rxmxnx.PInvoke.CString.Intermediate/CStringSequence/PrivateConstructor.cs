@@ -6,13 +6,6 @@ namespace Rxmxnx.PInvoke;
 
 public partial class CStringSequence
 {
-#if !NETSTANDARD1_3_OR_GREATER && !NETCOREAPP && !NET46_OR_GREATER && !UAP
-	/// <summary>
-	/// Internal empty array.
-	/// </summary>
-	private static readonly CString?[] emptyArray = [];
-#endif
-
 	/// <summary>
 	/// Private constructor.
 	/// </summary>
@@ -20,11 +13,7 @@ public partial class CStringSequence
 	{
 		this._lengths = [];
 		this._value = String.Empty;
-#if !NETSTANDARD1_3_OR_GREATER && !NETCOREAPP && !NET46_OR_GREATER && !UAP
-		this._cache = CStringSequence.emptyArray;
-#else
 		this._cache = Array.Empty<CString?>();
-#endif
 	}
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class by making a deep copy of
