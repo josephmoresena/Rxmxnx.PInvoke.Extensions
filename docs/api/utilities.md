@@ -41,27 +41,20 @@ From .NET 9.0, `T` on the `ValPtr` helpers may be a `ref struct`.
 
 ### Fast vs slow span
 
-`MemoryMarshal.CreateSpan` / `CreateReadOnlySpan` assume the **fast** (native, two-field) `Span<T>` layout. Desktop .NET Framework plus `System.Memory` often uses the **slow** (three-field: pinnable + offset + length) layout. A two-field view built from a raw address is the wrong fallback there.
+Fast (native, two-field) and slow (three-field) `Span<T>` are different optimization problems. The library exposes **two** keys; they answer different questions.
 
-`TryCreateSpan` / `TryCreateReadOnlySpan` are the transition helpers. They compile on every TFM and **separate** the two runtimes at the call site:
+`SystemInfo.UsesNativeSpan` is the process fact: is this runtime on the built-in two-field layout? That is the right question when you still choose **storage** — array versus span, a `T[]` hot path versus a `Span<T>` hot path. On desktop .NET Framework a span view is often the slower three-field layout; staying on arrays can be the cheaper strategy. On modern .NET (and often on UWP / Mono) the span path is the one that pays off. See [span efficiency](compatibility.md#span-efficiency).
+
+`TryCreateSpan` / `TryCreateReadOnlySpan` are a different moment: you **already have a `ref` / `in`** to a regular managed object (the first element of a contiguous region). The question is no longer “array or span?”. It is “do I take a span the JIT can optimize, or do I stay on `unsafe` + a loop over that ref?”
 
 | Method | Role |
 | --- | --- |
-| `TryCreateSpan<T>(ref T, Int32, out Span<T>)` | Fast-span view over a mutable reference. |
-| `TryCreateReadOnlySpan<T>(in T, Int32, out ReadOnlySpan<T>)` | Fast-span view over a read-only reference. |
+| `TryCreateSpan<T>(ref T, Int32, out Span<T>)` | Optimized span over a mutable `ref`. |
+| `TryCreateReadOnlySpan<T>(in T, Int32, out ReadOnlySpan<T>)` | Same for `in` / `ref readonly`. |
 
-They return `true` and fill the `out` span when the **executing** runtime can host that view:
+They return `true` and fill the `out` span when the **executing** runtime can host that optimized view (`MemoryMarshal.CreateSpan` on .NET Standard 2.1 / .NET Core 2.1+; Framework / UWP only when the process is already native span — Mono hosting a Framework TFM, modern UWP). They return `false` on slow span. The `else` is `unsafe` and a pointer walk, not an array copy and not a synthesized two-field span.
 
-- Always on .NET Standard 2.1 / .NET Core 2.1 and later (`MemoryMarshal.CreateSpan` / `CreateReadOnlySpan`).
-- On .NET Framework and UWP, only when the process is already on native span (Mono hosting a Framework TFM, modern UWP). Desktop CLR typically returns `false` and a default span.
-
-Prefer these over reading `SystemInfo.UsesNativeSpan` and then calling `MemoryMarshal` yourself:
-
-- One call site. You do not `#if` around `CreateSpan` or around `CreateReadOnlySpan(in T)` (.NET 8.0+ only).
-- Success **is** the fast path: the span is already in the `out` argument.
-- Failure **is** the slow path: keep array copies, pinning helpers, or other APIs that already understand three-field span. Do not invent a two-field span from a raw address.
-
-`UsesNativeSpan` stays useful for diagnostics, logging, and a one-time strategy. It is not the API to thread through every view. See [span efficiency](compatibility.md#span-efficiency) and the [use case](../use-cases.md#create-a-span-only-when-the-runtime-is-fast-span).
+`UsesNativeSpan` stays the key for the array-versus-span choice. `TryCreate*` is the key once you are already holding a `ref`. Recipe: [use case](../use-cases.md#take-an-optimized-span-from-a-ref-or-stay-on-unsafe).
 
 ### Enums and cultures
 
@@ -113,7 +106,7 @@ Facts about the runtime and OS. Several properties are written so the trimmer ca
 | --- | --- |
 | `IsMonoRuntime` | The runtime is Mono. |
 | `IsWebRuntime` | The runtime is Web (from .NET 8.0 this enables trimming). |
-| `UsesNativeSpan` | Whether the process uses the built-in (fast, two-field) `Span<T>` layout. Always `true` on .NET Standard 2.1 / .NET Core 2.1+. On desktop .NET Framework this is typically `false`. A fact about the process — prefer `TryCreateSpan` / `TryCreateReadOnlySpan` when you need a span, not a boolean. |
+| `UsesNativeSpan` | Whether the process uses the built-in (fast, two-field) `Span<T>` layout. Always `true` on .NET Standard 2.1 / .NET Core 2.1+. On desktop .NET Framework this is typically `false`. The key when you choose array versus span; not the same question as `TryCreateSpan` (already have a `ref`). |
 | `IsWindows` / `IsLinux` / `IsMac` / `IsFreeBsd` / `IsNetBsd` / `IsSolaris` | OS. Windows/Linux/FreeBSD hint the trimmer from .NET 5.0; macOS from .NET 6.0. |
 
 `IsOsPlatform(String?)` and params/span overloads test one or more platform names. From .NET 9.0, `params` is `ReadOnlySpan<String?>`.
@@ -123,5 +116,5 @@ Facts about the runtime and OS. Several properties are written so the trimmer ca
 - [Getting started: AOT](../getting-started.md#aot-support)
 - [Use case: AOT branching](../use-cases.md#adapt-behavior-for-native-aot-or-mono)
 - [Use case: HeapAlloc](../use-cases.md#allocate-native-memory-and-free-it-with-dispose)
-- [Use case: TryCreateSpan](../use-cases.md#create-a-span-only-when-the-runtime-is-fast-span)
+- [Use case: span from a ref](../use-cases.md#take-an-optimized-span-from-a-ref-or-stay-on-unsafe)
 - [TFM / API surface](compatibility.md)

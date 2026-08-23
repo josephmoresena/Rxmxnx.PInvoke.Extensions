@@ -112,7 +112,7 @@ The list below is ordered so the gaps are visible: .NET Standard 2.1 versus 2.0,
 <summary><strong>.NET Framework 4.5.2 / 4.6</strong> — Transition (pre-Standard 2.0)</summary>
 
 - Dedicated .NET Framework binaries for Framework before it implemented .NET Standard 2.0.
-- Public API stays on that TFM; span operations follow the **runtime** layout. On desktop CLR they are typically the slower three-field span; on Mono hosting the same TFM they can be the fast path. Branch your own `MemoryMarshal.CreateSpan` ports with `TryCreateSpan` / `TryCreateReadOnlySpan`, not with `UsesNativeSpan` alone. See [span efficiency](api/compatibility.md#span-efficiency).
+- Public API stays on that TFM; span operations follow the **runtime** layout. On desktop CLR they are typically the slower three-field span; on Mono hosting the same TFM they can be the fast path. See [span efficiency](api/compatibility.md#span-efficiency).
 - No built-in `System.Text.Json` — so a 4.5-era Mono story is not mixed with Standard 2.0 JSON.
 - Dependencies: `System.Memory` 4.5.5, `Unsafe` 5.0, `System.Runtime.InteropServices.RuntimeInformation` 4.3.0, `System.ValueTuple` 4.5.0.
 - No built-in `CString` JSON converter (`[JsonConverter]` starts at .NET Framework 4.6.1 / .NET Core).

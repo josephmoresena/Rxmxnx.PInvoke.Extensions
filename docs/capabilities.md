@@ -75,7 +75,7 @@ What you can do:
 
 These helpers operate on GC-managed references internally. They are the “safe” side of the library. Pointer-based counterparts exist for constants, stackalloc, and already-fixed native memory; those are marked unsafe in both name and documentation.
 
-On desktop .NET Framework, `Span<T>` is often the slower three-field layout, so the same views can cost more than they do on current .NET. UWP and Mono can still take the **fast** path even when the TFM’s public `Span<T>` surface looks older. `SystemInfo.UsesNativeSpan` reports which layout the process is using. When you are porting `MemoryMarshal.CreateSpan` onto those hosts, `NativeUtilities.TryCreateSpan` / `TryCreateReadOnlySpan` are the branch: they either give you a fast-span view or they fail closed, so you do not reconstruct `MemoryMarshal` after reading the boolean.
+On desktop .NET Framework, `Span<T>` is often the slower three-field layout, so the same views can cost more than they do on current .NET. UWP and Mono can still take the **fast** path even when the TFM’s public `Span<T>` surface looks older. `SystemInfo.UsesNativeSpan` is the check when you choose array versus span. Once you already have a `ref`, `NativeUtilities.TryCreateSpan` / `TryCreateReadOnlySpan` decide between an optimized span and an `unsafe` loop.
 
 Deep dive: [Extensions](api/extensions.md) and the [memory extension notes](../src/Intermediate/Rxmxnx.PInvoke.Extensions.Intermediate/README.md).
 
@@ -146,7 +146,7 @@ That is not a hint that those hosts are invalid. A production product on .NET Fr
 - **Portable** `netstandard2.1` covers Xamarin, Unity, and Mono. Use **`netstandard2.0` only when the engine cannot target 2.1**.
 - **Dedicated** `lib/` assemblies exist for .NET / .NET Core, UWP, and .NET Framework so those runtimes are not forced through Standard.
 - **.NET Framework 4.5.2 / 4.6** are a transition step from before Standard 2.0 (no `System.Text.Json` in the core package). **4.6.1 and later** are dedicated Framework binaries for products that still run there.
-- Span work follows the **runtime**: cheaper on modern .NET (and often on UWP/Mono) than on desktop Framework. `TryCreateSpan` / `TryCreateReadOnlySpan` are how you split fast-span versus slow-span in *your* code; `UsesNativeSpan` is the diagnostic behind them.
+- Span work follows the **runtime**: cheaper on modern .NET (and often on UWP/Mono) than on desktop Framework. `UsesNativeSpan` is the array-versus-span key; `TryCreateSpan` / `TryCreateReadOnlySpan` are the key once you already hold a `ref`.
 - Each TFM binary **adapts to internal BCL and runtime changes** of that target. You write to the public API; the library absorbs layout and helper differences.
 
 The map is in [Target frameworks and public API surface](api/compatibility.md). Language floors (C# 7.3, preferred C# 11, C# 13 on .NET 9.0+) are in [Getting started](getting-started.md#language-versions).

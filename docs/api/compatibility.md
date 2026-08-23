@@ -46,9 +46,9 @@ UWP follows the same idea: a dedicated, production-valid binary that can still u
 
 The .NET Framework and UWP assemblies compile to their TFM contracts, then detect the runtime layout. If the process is Mono executing a .NET Framework TFM — or UWP with fast span — casts, views, and pinning follow the fast path. The public API does not change; the operations get cheaper when the runtime allows it.
 
-`SystemInfo.UsesNativeSpan` is the public property for that fact. On .NET Standard 2.1 / .NET Core 2.1+ it is always `true`. On .NET Framework and UWP it reflects the executing layout.
+`SystemInfo.UsesNativeSpan` is the public property for that fact. On .NET Standard 2.1 / .NET Core 2.1+ it is always `true`. On .NET Framework and UWP it reflects the executing layout. Use it when you still choose **array versus span**.
 
-When **your** code must branch — modern `MemoryMarshal.CreateSpan` on one host, a three-field-safe fallback on another — do not start from that boolean. `NativeUtilities.TryCreateSpan` / `TryCreateReadOnlySpan` are the transition APIs: they either produce a fast-span view over a regular managed object or they fail closed. Success and failure *are* the two paths. `UsesNativeSpan` remains a diagnostic; threading it through every view re-creates the `#if` / `MemoryMarshal` split these helpers already hide. Details: [Utilities: fast vs slow span](utilities.md#fast-vs-slow-span).
+When you already have a `ref` / `in` to a managed object, the question changes: optimized span versus `unsafe` + a loop over that ref. That is `NativeUtilities.TryCreateSpan` / `TryCreateReadOnlySpan`. Details: [Utilities: fast vs slow span](utilities.md#fast-vs-slow-span).
 
 That is the same idea as the rest of the package: **modern code that stays retrocompatible**, without pretending every host is CoreCLR.
 
@@ -102,7 +102,7 @@ These are available from .NET Standard 2.0 / .NET Framework / UWP through curren
 - `WithSafeFixed` / `GetFixedContext` / `GetFixedMemory` overloads that take a functional interface or an `out` value context
 - `BufferManager<T>.Alloc` / `AllocWithReference` with functional interfaces; `BufferManager.VisualBasic` (every TFM)
 - `NativeUtilities.HeapAlloc<T>(count, out FixedContextValue<T>)`
-- `NativeUtilities.TryCreateSpan<T>` / `TryCreateReadOnlySpan<T>` (fast-span view over a managed object, or `false` on slow span)
+- `NativeUtilities.TryCreateSpan<T>` / `TryCreateReadOnlySpan<T>` (optimized span from a `ref`, or `false` so you stay on `unsafe`)
 - `IWrapper<T>`, `ValueRegion<T>`, `AotInfo`, `SystemInfo`
 
 `IScopedBufferAction<T>.IsMinimalCount` is a required property on the TFMs added after 2.9.5. On the original modern TFMs it has a default of `false`. The same pattern applies to a few other members that are default interface methods until 2.9.5 and required later: `IFixedMemory<T>.ValuePointer`, `IReadOnlyFixedMemory<T>.ValuePointer`, and `IFixedReference<T>.Transformation<TDestination>()` without a residual. Callers do not need to distinguish those; only custom interface implementations do.
