@@ -406,6 +406,9 @@ internal struct HashCode
 	//   implementation has to change in the future we don't want to worry
 	//   about people who might have incorrectly used this type.
 
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1133)]
+#endif
 	[Obsolete(
 		"HashCode is a mutable struct and should not be compared with other HashCodes. Use ToHashCode to retrieve the computed hash code.",
 		true)]
@@ -414,6 +417,9 @@ internal struct HashCode
 		=> throw new NotSupportedException(
 			"HashCode is a mutable struct and should not be compared with other HashCodes. Use ToHashCode to retrieve the computed hash code.");
 
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1133)]
+#endif
 	[Obsolete("HashCode is a mutable struct and should not be compared with other HashCodes.", true)]
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public override Boolean Equals(Object? obj)
