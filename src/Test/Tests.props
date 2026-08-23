@@ -34,15 +34,16 @@
     </ItemGroup>
 
     <ItemGroup>
-        <!-- AutoFixture 4.x → Fare → NETStandard.Library 1.6.1 still resolves Regex 4.3.0 / Http 4.3.0
-             on TFMs without package pruning. Pin the patched packages there. net8+ ships both inbox (NU1510). -->
-        <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1"
-                          Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))"/>
-        <PackageReference Include="System.Net.Http" Version="4.3.4"
-                          Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))"/>
         <PackageReference Include="AutoFixture" Version="4.18.1"/>
         <PackageReference Condition="'$(TargetFramework)' == 'netstandard2.0'" Include="System.Threading.Tasks.Extensions" Version="4.5.4"/>
         <ProjectReference Include="$(MSBuildThisFileDirectory)Rxmxnx.Assert.Tests\Rxmxnx.Assert.Tests.csproj"/>
+    </ItemGroup>
+    <ItemGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+        <!-- AutoFixture 4.x → Fare → NETStandard.Library 1.6.1 still resolves Regex 4.3.0 / Http 4.3.0
+             on TFMs without package pruning. Pin the patched packages there. net8+ ships both inbox (NU1510). -->
+        <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1"/>
+        <PackageReference Include="System.Net.Http" Version="4.3.4"
+                          Condition="'$(TargetFramework)' != ''"/>
     </ItemGroup>
 
     <Import Condition="'$(TargetFrameworkIdentifier)' != '.NETStandard'" Project="DotnetCoreAppTests.props"/>
