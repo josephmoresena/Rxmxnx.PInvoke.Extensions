@@ -72,10 +72,10 @@ public readonly ref struct FixedMemoryList
 
 		IFixedMemory[] result = new IFixedMemory[this._values.Instances.Length];
 		ref IFixedMemory refI = ref MemoryMarshal.GetReference(result.AsSpan());
-		ref ReadOnlyFixedMemory refRo = ref Unsafe.As<IFixedMemory, ReadOnlyFixedMemory>(ref refI);
-		Span<ReadOnlyFixedMemory> span = MemoryMarshal.CreateSpan(ref refRo, result.Length);
+		ref ReadOnlyFixedMemory? refRo = ref Unsafe.As<IFixedMemory, ReadOnlyFixedMemory?>(ref refI);
+		Span<ReadOnlyFixedMemory?> span = MemoryMarshal.CreateSpan(ref refRo, result.Length);
 		this._values.InitializeInstances();
-		this._values.Instances.CopyTo(span!);
+		this._values.Instances.CopyTo(span);
 		return result;
 	}
 	/// <summary>

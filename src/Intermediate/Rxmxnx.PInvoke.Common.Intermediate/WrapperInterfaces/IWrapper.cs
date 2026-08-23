@@ -43,6 +43,9 @@ public interface IWrapper
 /// </summary>
 /// <typeparam name="T">The type of value to be wrapped.</typeparam>
 // ReSharper disable once TypeParameterCanBeVariant
+#if !PACKAGE
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3246)]
+#endif
 public interface IWrapper<T>
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	: IWrapper.IBase<T>, IEquatable<T>

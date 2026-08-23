@@ -20,6 +20,7 @@ public partial class NativeUtilities
 	/// </remarks>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3267)]
 #endif
 	public static Boolean IsImageMethod<TDelegate>(TDelegate? method) where TDelegate : Delegate
 	{

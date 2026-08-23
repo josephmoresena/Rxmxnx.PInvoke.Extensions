@@ -5,6 +5,9 @@
 /// allowing the object to be used without modification.
 /// </summary>
 /// <typeparam name="T">The type of the object that the reference points to.</typeparam>
+#if !PACKAGE
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3246)]
+#endif
 public interface IReadOnlyReferenceable<T>
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	: IEquatable<IReadOnlyReferenceable<T>>
