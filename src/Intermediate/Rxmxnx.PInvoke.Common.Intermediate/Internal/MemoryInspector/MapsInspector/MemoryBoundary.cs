@@ -11,6 +11,9 @@ internal partial class MemoryInspector
 		[Preserve(AllMembers = true, Conditional = true)]
 		private protected readonly unsafe struct MemoryBoundary : IEquatable<MemoryBoundary>,
 			IComparable<MemoryBoundary>, IWrapper<UIntPtr>
+#if !NETSTANDARD2_1 && !NETCOREAPP
+			, IEquatable<UIntPtr>
+#endif
 		{
 			/// <summary>
 			/// Internal value.

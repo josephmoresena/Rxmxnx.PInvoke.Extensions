@@ -19,7 +19,10 @@ internal static class SuppressMessageConstants
 	public const String CheckIdS3881 = "S3881";
 	public const String CheckIdS3877 = "S3877";
 	public const String CheckIdS3776 = "S3776";
+	public const String CheckIdS3459 = "S3459";
+	public const String CheckIdS3427 = "S3427";
 	public const String CheckIdS3400 = "S3400";
+	public const String CheckIdS3398 = "S3398";
 	public const String CheckIdS3358 = "S3358";
 	public const String CheckIdS3267 = "S3267";
 	public const String CheckIdS3261 = "S3261";
@@ -45,6 +48,7 @@ internal static class SuppressMessageConstants
 	public const String CheckIdS1133 = "S1133";
 	public const String CheckIdS1066 = "S1066";
 	public const String CheckIdS1006 = "S1006";
+	public const String CheckIdS927 = "S927";
 	public const String CheckIdS907 = "S907";
 	public const String CheckIdS107 = "S107";
 }

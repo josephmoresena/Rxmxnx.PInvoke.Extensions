@@ -50,6 +50,9 @@ internal readonly struct Index : IEquatable<Index>
 	/// If the Index constructed from the end, index value 1 means pointing at the last element and index value 0 means
 	/// pointing at beyond last element.
 	/// </remarks>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3427)]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Index(Int32 value, Boolean fromEnd = false)
 	{
@@ -114,6 +117,9 @@ internal readonly struct Index : IEquatable<Index>
 	/// <inheritdoc/>
 	public Boolean Equals(Index other) => this._value == other._value;
 	/// <inheritdoc/>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS927)]
+#endif
 	public override Boolean Equals([NotNullWhen(true)] Object? value)
 		=> value is Index index && this._value == index._value;
 	/// <inheritdoc/>

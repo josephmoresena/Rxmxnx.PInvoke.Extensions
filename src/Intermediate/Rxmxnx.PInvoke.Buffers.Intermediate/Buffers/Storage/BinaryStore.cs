@@ -5,6 +5,9 @@ namespace Rxmxnx.PInvoke.Buffers.Storage;
 /// </summary>
 /// <typeparam name="TMain">Type of main storage.</typeparam>
 /// <typeparam name="T">Type of items in the buffer.</typeparam>
+#if !PACKAGE
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2743)]
+#endif
 internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinaryStore<T>
 {
 	/// <summary>
@@ -13,9 +16,9 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// <remarks>
 	/// Cannot be readonly because constrained interface calls on generic value types are treated as potentially mutating.
 	/// </remarks>
-#pragma warning disable CS0649
+#pragma warning disable CS0649, S2743, S3459
 	private static TMain initial;
-#pragma warning restore CS0649
+#pragma warning restore CS0649, S2743, S3459
 	/// <summary>
 	/// Additional slots.
 	/// </summary>
@@ -38,6 +41,9 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// <summary>
 	/// Static constructor.
 	/// </summary>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3963)]
+#endif
 	static BinaryStore()
 	{
 		BinaryStore<TMain, T>.initial = new();
@@ -147,7 +153,6 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 			result = result.Double(storage);
 			if (result is null) break;
 			// Double already calls SetBinaryValue().
-			//BinaryStore<TMain, T>.SetBinaryValue(result);
 		}
 		return result;
 	}
@@ -204,7 +209,6 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 					// Unable to create composed metadata. Use minimal.
 					return default;
 				// Compose already calls SetBinaryValue().
-				//BinaryStore<TMain, T>.SetBinaryValue(result);
 			}
 		}
 		return result;

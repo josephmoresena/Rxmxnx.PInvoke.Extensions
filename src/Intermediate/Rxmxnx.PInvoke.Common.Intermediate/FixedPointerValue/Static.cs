@@ -13,6 +13,7 @@ public readonly ref partial struct FixedPointerValue
 	/// </returns>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1066)]
 #endif
 	public static Boolean operator ==(FixedPointerValue value1, FixedPointerValue value2)
 	{

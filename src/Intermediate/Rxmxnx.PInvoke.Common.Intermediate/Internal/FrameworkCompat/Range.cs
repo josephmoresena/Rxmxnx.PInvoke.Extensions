@@ -43,6 +43,9 @@ internal readonly struct Range : IEquatable<Range>
 	}
 
 	/// <inheritdoc/>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS927)]
+#endif
 	public override Boolean Equals([NotNullWhen(true)] Object? value)
 		=> value is Range r && r.Start.Equals(this.Start) && r.End.Equals(this.End);
 	/// <inheritdoc/>

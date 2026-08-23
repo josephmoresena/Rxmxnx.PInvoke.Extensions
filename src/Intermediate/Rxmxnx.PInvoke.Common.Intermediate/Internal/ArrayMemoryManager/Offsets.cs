@@ -2,6 +2,9 @@
 namespace Rxmxnx.PInvoke.Internal;
 
 // ReSharper disable once ClassCannotBeInstantiated
+#if !PACKAGE
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2743)]
+#endif
 internal partial class ArrayMemoryManager<T>
 {
 	/// <summary>
@@ -11,7 +14,9 @@ internal partial class ArrayMemoryManager<T>
 	[FixedAddressValueType]
 #endif
 	// ReSharper disable once StaticMemberInGenericType
+#pragma warning disable S2743
 	private static ArrayOffsets arrayOffsets = ArrayOffsets.Create();
+#pragma warning restore S2743
 
 	/// <summary>
 	/// Retrieves the array offset for given array.

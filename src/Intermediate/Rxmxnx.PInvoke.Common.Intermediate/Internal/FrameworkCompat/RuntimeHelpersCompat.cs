@@ -30,6 +30,9 @@ internal static class RuntimeHelpersCompat
 	/// <see langword="true"/> if the given type is reference type or value type that contains references; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3398)]
+#endif
 	private static Boolean IsReferenceOrContainsReferences(Type type)
 	{
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299

@@ -36,9 +36,9 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 	/// <remarks>
 	/// Cannot be readonly because constrained interface calls on generic value types are treated as potentially mutating.
 	/// </remarks>
-#pragma warning disable CS0649
+#pragma warning disable CS0649, S3459
 	private TBackend _backend;
-#pragma warning restore CS0649
+#pragma warning restore CS0649, S3459
 
 	/// <inheritdoc/>
 	public override Boolean TryAdd<T>(BufferTypeMetadata<T> component) => this._backend.TryAdd(component);
@@ -125,6 +125,7 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 	{
 		if (!trace) return;
 		Int32 count = 0;
+#pragma warning disable S6670
 		foreach (BufferTypeMetadata<T>? m in this._backend.GetInitial<T>())
 		{
 			if (m is null) continue;
@@ -133,15 +134,18 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 			count++;
 		}
 		foreach (BufferTypeMetadata<T>?[]? a in this._backend.GetSlots<T>())
-		foreach (BufferTypeMetadata<T>? m in a.AsSpan())
 		{
-			if (m is null) continue;
-			// ReSharper disable once HeapView.BoxingAllocation
-			Trace.WriteLine($"{typeof(T)} {m.Size}({String.Join(", ", m.Components.ToArray().Select(k => k.Size))})");
-			count++;
+			foreach (BufferTypeMetadata<T>? m in a.AsSpan())
+			{
+				if (m is null) continue;
+				// ReSharper disable once HeapView.BoxingAllocation
+				Trace.WriteLine($"{typeof(T)} {m.Size}({String.Join(", ", m.Components.ToArray().Select(k => k.Size))})");
+				count++;
+			}
 		}
 		// ReSharper disable once HeapView.BoxingAllocation
 		Trace.WriteLine($"{typeof(T)}: {count}");
+#pragma warning restore S6670
 	}
 #endif
 }
