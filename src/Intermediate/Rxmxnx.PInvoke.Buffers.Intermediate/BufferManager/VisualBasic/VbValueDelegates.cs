@@ -130,6 +130,9 @@ public static partial class BufferManager
 		/// <typeparam name="TResult">The type of the result.</typeparam>
 		/// <param name="func">A <see cref="VbScopedBufferFunc{T, TState, TResult}"/> delegate.</param>
 		/// <param name="state">State object.</param>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
+#endif
 		private readonly struct VbFunctionValue<T, TState, TResult>(
 			VbScopedBufferFunc<T, TState, TResult> func,
 			TState state) : IScopedBufferFunction<T, TResult>

@@ -104,39 +104,6 @@ internal static unsafe partial class MemoryMarshalCompat
 		}
 	}
 	/// <summary>
-	/// Determines the byte offset of the <c>_pinnable</c> field in the runtime representation of
-	/// <see cref="Span{T}"/>.
-	/// </summary>
-	/// <returns>
-	/// The byte offset of the <c>_pinnable</c> field, or <c>-1</c> if the runtime uses the compact two-field
-	/// span representation.
-	/// </returns>
-	/// <exception cref="PlatformNotSupportedException">
-	/// The runtime uses a non-compact span representation whose <c>_pinnable</c> field cannot be identified.
-	/// </exception>
-	private static Int32 ComputeReadOnlyPinnableOffset()
-	{
-		B2 buffer = new();
-		Span<Object> arrays = MemoryMarshalCompat.CreateUnsafeSpan<Object>(&buffer, 2);
-
-		arrays[0] = Array.Empty<Byte>();
-		arrays[1] = Array.Empty<SByte>();
-
-		GCHandle firstHandle = GCHandle.Alloc(arrays[0], GCHandleType.Pinned);
-		GCHandle secondHandle = GCHandle.Alloc(arrays[1], GCHandleType.Pinned);
-		try
-		{
-			ReadOnlySpan<Byte> span0 = new(Unsafe.As<Object, Byte[]>(ref arrays[0]));
-			ReadOnlySpan<Byte> span1 = new(Unsafe.As<Object, Byte[]>(ref arrays[1]));
-			return MemoryMarshalCompat.ComputePinnableOffset(arrays, in span0, in span1);
-		}
-		finally
-		{
-			secondHandle.Free();
-			firstHandle.Free();
-		}
-	}
-	/// <summary>
 	/// Locates the <c>_pinnable</c> field by comparing the runtime memory representations of two spans backed by
 	/// distinct pinned arrays.
 	/// </summary>
@@ -206,6 +173,39 @@ internal static unsafe partial class MemoryMarshalCompat
 		if (result >= 0) return result;
 		IMessageResource resource = MessageResource.GetInstance();
 		throw new PlatformNotSupportedException(resource.InvalidSpanLayout);
+	}
+	/// <summary>
+	/// Determines the byte offset of the <c>_pinnable</c> field in the runtime representation of
+	/// <see cref="Span{T}"/>.
+	/// </summary>
+	/// <returns>
+	/// The byte offset of the <c>_pinnable</c> field, or <c>-1</c> if the runtime uses the compact two-field
+	/// span representation.
+	/// </returns>
+	/// <exception cref="PlatformNotSupportedException">
+	/// The runtime uses a non-compact span representation whose <c>_pinnable</c> field cannot be identified.
+	/// </exception>
+	private static Int32 ComputeReadOnlyPinnableOffset()
+	{
+		B2 buffer = new();
+		Span<Object> arrays = MemoryMarshalCompat.CreateUnsafeSpan<Object>(&buffer, 2);
+
+		arrays[0] = Array.Empty<Byte>();
+		arrays[1] = Array.Empty<SByte>();
+
+		GCHandle firstHandle = GCHandle.Alloc(arrays[0], GCHandleType.Pinned);
+		GCHandle secondHandle = GCHandle.Alloc(arrays[1], GCHandleType.Pinned);
+		try
+		{
+			ReadOnlySpan<Byte> span0 = new(Unsafe.As<Object, Byte[]>(ref arrays[0]));
+			ReadOnlySpan<Byte> span1 = new(Unsafe.As<Object, Byte[]>(ref arrays[1]));
+			return MemoryMarshalCompat.ComputePinnableOffset(arrays, in span0, in span1);
+		}
+		finally
+		{
+			secondHandle.Free();
+			firstHandle.Free();
+		}
 	}
 	/// <summary>
 	/// Computes the bytewise exclusive OR of two span memory representations.

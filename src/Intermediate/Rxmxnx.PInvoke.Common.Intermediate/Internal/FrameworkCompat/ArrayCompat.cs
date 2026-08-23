@@ -20,7 +20,7 @@ internal static class ArrayCompat
 #endif
 	public static T[] Empty<T>() => [];
 #else
-	public static T[] Empty<T>() => Generic<T>.Empty;
+	public static T[] Empty<T>() => Generic<T>.EmptyArray;
 
 	/// <summary>
 	/// Generic class.
@@ -31,7 +31,7 @@ internal static class ArrayCompat
 		/// <summary>
 		/// Internal empty array.
 		/// </summary>
-		public static readonly T[] Empty = [];
+		public static readonly T[] EmptyArray = [];
 	}
 #endif
 }

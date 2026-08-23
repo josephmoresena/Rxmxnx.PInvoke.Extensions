@@ -77,6 +77,9 @@ public partial class BufferTypeMetadata
 	/// <param name="metadata">A <see cref="BufferTypeMetadata"/> instance.</param>
 	/// <param name="spanLength">Required span length.</param>
 	/// <returns><paramref name="func"/> result.</returns>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private protected static TResult Execute<T, TBuffer, TFunction, TResult>(in TFunction func,
 		BufferTypeMetadata metadata, Int32 spanLength) where TBuffer : struct

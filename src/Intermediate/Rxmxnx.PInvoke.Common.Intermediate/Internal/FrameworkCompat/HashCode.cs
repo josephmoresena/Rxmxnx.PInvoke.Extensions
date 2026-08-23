@@ -49,6 +49,11 @@ namespace System;
 // xxHash32 is used for the hash code.
 // https://github.com/Cyan4973/xxHash
 
+#if !PACKAGE
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS107)]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3877)]
+#endif
 internal struct HashCode
 {
 	private static readonly UInt32 sSeed = HashCode.GenerateGlobalSeed();
@@ -408,6 +413,7 @@ internal struct HashCode
 
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1133)]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3877)]
 #endif
 	[Obsolete(
 		"HashCode is a mutable struct and should not be compared with other HashCodes. Use ToHashCode to retrieve the computed hash code.",
@@ -419,6 +425,7 @@ internal struct HashCode
 
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1133)]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3877)]
 #endif
 	[Obsolete("HashCode is a mutable struct and should not be compared with other HashCodes.", true)]
 	[EditorBrowsable(EditorBrowsableState.Never)]

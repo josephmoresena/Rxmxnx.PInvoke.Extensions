@@ -15,6 +15,7 @@ namespace Rxmxnx.PInvoke;
 #endif
 [EditorBrowsable(EditorBrowsableState.Never)]
 #if !PACKAGE
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 public static unsafe class FixedContextValueExtensions
@@ -401,6 +402,9 @@ public static unsafe class FixedContextValueExtensions
 	/// <typeparam name="TResult">The type of the value returned by the function.</typeparam>
 	/// <typeparam name="TFunction">Type of <see cref="IFixedContextFunction{T,TResult}"/>.</typeparam>
 	[Preserve(AllMembers = true, Conditional = true)]
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
+#endif
 	private readonly ref struct FixedFunction<T, TResult, TFunction> where TFunction : IFixedContextFunction<T, TResult>
 	{
 		/// <summary>

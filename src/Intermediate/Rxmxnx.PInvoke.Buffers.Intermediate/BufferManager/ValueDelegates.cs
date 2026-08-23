@@ -106,6 +106,9 @@ public static partial class BufferManager
 #if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
+#endif
 #if !NET9_0_OR_GREATER
 	private readonly struct FunctionValue<T, TState, TResult>(ScopedBufferFunc<T, TState, TResult> func, TState state)
 		: IScopedBufferFunction<T, TResult>
