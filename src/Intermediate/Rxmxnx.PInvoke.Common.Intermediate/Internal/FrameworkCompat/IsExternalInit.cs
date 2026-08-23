@@ -2,6 +2,7 @@
 namespace System.Runtime.CompilerServices;
 
 #if !PACKAGE
+[ExcludeFromCodeCoverage]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2094)]
 #endif
 // ReSharper disable once UnusedType.Global

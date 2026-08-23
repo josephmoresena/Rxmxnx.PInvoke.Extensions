@@ -35,6 +35,7 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 /// <see cref="Convert"/> compatibility utilities for internal use.
 /// </summary>
 #if !PACKAGE
+[ExcludeFromCodeCoverage]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 internal static class ConvertCompat

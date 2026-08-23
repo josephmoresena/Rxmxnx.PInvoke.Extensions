@@ -17,6 +17,9 @@ namespace System;
 /// int[] subArray2 = someArray[1..^0]; // { 2, 3, 4, 5 }
 /// </code>
 /// </remarks>
+#if !PACKAGE
+[ExcludeFromCodeCoverage]
+#endif
 internal readonly struct Range : IEquatable<Range>
 {
 	/// <summary>

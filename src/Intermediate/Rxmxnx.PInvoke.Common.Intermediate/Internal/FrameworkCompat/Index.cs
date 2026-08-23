@@ -16,6 +16,9 @@ namespace System;
 /// int lastElement = someArray[^1]; // lastElement = 5
 /// </code>
 /// </remarks>
+#if !PACKAGE
+[ExcludeFromCodeCoverage]
+#endif
 internal readonly struct Index : IEquatable<Index>
 {
 	/// <summary>

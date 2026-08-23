@@ -34,6 +34,9 @@ namespace System.Text.Unicode;
 /// <summary>
 /// Provides static methods for UTF-8 encoding.
 /// </summary>
+#if !PACKAGE
+[ExcludeFromCodeCoverage]
+#endif
 internal static partial class Utf8Utility
 {
 	/// <summary>

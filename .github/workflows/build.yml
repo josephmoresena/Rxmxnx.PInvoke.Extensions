@@ -116,7 +116,7 @@ jobs:
               /d:sonar.coverage.exclusions="**Test.cs,**Tests.cs,**test.cs,**tests.cs,**.SourceGenerator/*.cs" `
               /d:sonar.cs.vstest.reportsPaths="TestResults/*.trx" `
               /d:sonar.cs.opencover.reportsPaths="TestResults/*/coverage.opencover.xml" `
-              /d:sonar.cpd.exclusions="**/NativeUtilities/**FixedAction.cs,**/NativeUtilities/**FixedFunc.cs,**/IManagedBinaryBuffer/StaticCompose.cs,**Test/**Tests**/**.cs,**/Localization/**MessageResource.cs,**/FrameworkCompat/MarvinCompat.cs,**/Fixed*ValueExtensions.cs"
+              /d:sonar.cpd.exclusions="**/NativeUtilities/**FixedAction.cs,**/NativeUtilities/**FixedFunc.cs,**/IManagedBinaryBuffer/StaticCompose.cs,**Test/**Tests**/**.cs,**/Localization/**MessageResource.cs,**/FrameworkCompat/MarvinCompat.cs,**/Fixed*ValueExtensions.cs,**/BootstrapTypes.cs,**/FixedCStringSequence.cs"
 
             if ($LASTEXITCODE -eq 0 -and (Test-Path ".sonarqube/conf/SonarQubeAnalysisConfig.xml")) {
               $sonarStarted = $true

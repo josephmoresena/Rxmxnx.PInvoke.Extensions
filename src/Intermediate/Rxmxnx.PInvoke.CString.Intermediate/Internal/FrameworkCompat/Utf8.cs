@@ -36,6 +36,7 @@ namespace System.Text.Unicode;
 /// Provides static methods that convert chunked data between UTF-8 and UTF-16 encodings.
 /// </summary>
 #if !PACKAGE
+[ExcludeFromCodeCoverage]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 internal static unsafe class Utf8

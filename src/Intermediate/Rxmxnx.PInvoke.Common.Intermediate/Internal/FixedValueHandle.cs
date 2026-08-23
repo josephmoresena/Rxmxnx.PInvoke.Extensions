@@ -82,6 +82,9 @@ internal class FixedValueHandle : IDisposable, IWrapper<Boolean>
 	/// Internal fixed pointer handle.
 	/// </summary>
 	/// <typeparam name="TDisposable">Type of <see cref="IDisposable"/> instance.</typeparam>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	private sealed class Generic<TDisposable>(TDisposable disposable) : FixedValueHandle where TDisposable : IDisposable
 	{
 		/// <inheritdoc/>

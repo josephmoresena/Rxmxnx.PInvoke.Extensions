@@ -3,6 +3,9 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 /// <summary>
 /// <see cref="Enum"/> compatibility utilities for internal use.
 /// </summary>
+#if !PACKAGE
+[ExcludeFromCodeCoverage]
+#endif
 internal static class EnumCompat
 {
 	/// <inheritdoc cref="Enum.GetName(Type, Object)"/>

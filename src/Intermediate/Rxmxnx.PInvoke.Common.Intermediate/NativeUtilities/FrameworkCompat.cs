@@ -32,6 +32,9 @@ public partial class NativeUtilities
 	/// <returns>
 	/// <see langword="true"/> if the span was successfully created; otherwise, <see langword="false"/>.
 	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public static Boolean TryCreateSpan<T>(ref T reference, Int32 length, out Span<T> span)
 	{
 #if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
@@ -60,7 +63,10 @@ public partial class NativeUtilities
 	/// <returns>
 	/// <see langword="true"/> if the read-only span was successfully created; otherwise, <see langword="false"/>.
 	/// </returns>
-	public static Boolean TryCreateSpan<T>(in T reference, Int32 length, out ReadOnlySpan<T> span)
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static Boolean TryCreateReadOnlySpan<T>(in T reference, Int32 length, out ReadOnlySpan<T> span)
 	{
 #if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 		if (!SystemInfo.UsesNativeSpan)
