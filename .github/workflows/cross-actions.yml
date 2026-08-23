@@ -410,6 +410,7 @@ jobs:
         with:
           name: ${{ runner.os }}-Artifact
           path: |
+            ./artifacts/*.appxbundle
             ./artifacts/*NAOT*
             ./artifacts/*RFM*
             ./artifacts/Mono/X86/*
@@ -449,3 +450,10 @@ jobs:
         shell: bash
         run: |
           gh release upload ${{ github.ref_name }} ./*-Assets*.zip --clobber
+      - name: Upload Release Assets
+        if: inputs.build_artifacts == true && inputs.package_version != '' && runner.os == 'Windows'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          gh release upload ${{ github.ref_name }} ./artifacts/*.appxbundle --clobber
