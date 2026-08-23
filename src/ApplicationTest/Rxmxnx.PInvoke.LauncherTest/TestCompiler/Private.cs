@@ -5,8 +5,7 @@ public partial class TestCompiler
 	private static String[] GetFrameworkPlatformTargets()
 		=> Environment.Is64BitOperatingSystem ? ["x86", "x64",] : ["x86",];
 	private static FileInfo[] GetUwpBundles(DirectoryInfo directory)
-		=> directory.GetFiles("*", SearchOption.AllDirectories)
-		            .Where(static file => file.Extension is ".appxbundle" or ".msixbundle").ToArray();
+		=> directory.GetFiles("*.appxbundle", SearchOption.AllDirectories);
 	private static String? GetInstalledUapPlatformVersion()
 	{
 		const String preferredVersion = "10.0.16299.0";

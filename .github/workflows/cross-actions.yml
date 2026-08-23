@@ -411,7 +411,6 @@ jobs:
           name: ${{ runner.os }}-Artifact
           path: |
             ./artifacts/*.appxbundle
-            ./artifacts/*.msixbundle
             ./artifacts/*NAOT*
             ./artifacts/*RFM*
             ./artifacts/Mono/X86/*
@@ -458,9 +457,9 @@ jobs:
         shell: bash
         run: |
           shopt -s nullglob
-          bundles=(./artifacts/*.appxbundle ./artifacts/*.msixbundle)
+          bundles=(./artifacts/*.appxbundle)
           if ((${#bundles[@]} == 0)); then
-            echo "No AppX/MSIX bundles found under ./artifacts; skipping bundle upload."
+            echo "No .appxbundle files found under ./artifacts; skipping bundle upload."
             exit 0
           fi
           gh release upload ${{ github.ref_name }} "${bundles[@]}" --clobber

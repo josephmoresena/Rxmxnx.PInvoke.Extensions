@@ -128,8 +128,8 @@ public static partial class TestCompiler
 			if (bundles.Length == 0)
 			{
 				ConsoleNotifier.Notifier.PrintError(
-					$"UWP compilation produced no .appxbundle/.msixbundle for {appProjectFile}.", default);
-				throw new InvalidOperationException("No UWP bundle artifact was produced.");
+					$"UWP compilation produced no .appxbundle for {appProjectFile}.", default);
+				throw new InvalidOperationException("No .appxbundle artifact was produced.");
 			}
 			if (Utilities.ShowDiagnostics)
 				ConsoleNotifier.ShowDiskUsage();
