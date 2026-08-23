@@ -6,7 +6,6 @@ public partial class TestCompiler
 	{
 		public String ProjectPath { get; init; }
 		public String OutputPath { get; init; }
-		public String? PlatformVersion { get; init; }
 
 		public static void Append(CompileAppxArgs appxArgs, Collection<String> args)
 		{
@@ -22,8 +21,6 @@ public partial class TestCompiler
 			args.Add("/p:GenerateAppxPackageOnBuild=true");
 			args.Add("/p:AppxPackageSigningEnabled=false");
 			args.Add($"/p:AppxPackageDir={packageDir}");
-			if (!String.IsNullOrWhiteSpace(appxArgs.PlatformVersion))
-				args.Add($"/p:TargetPlatformVersion={appxArgs.PlatformVersion}");
 		}
 	}
 }
