@@ -32,6 +32,28 @@ public partial class NativeUtilities
 	/// <returns>
 	/// <see langword="true"/> if the span was successfully created; otherwise, <see langword="false"/>.
 	/// </returns>
+	/// <remarks>
+	/// <para>
+	/// This is the portable stand-in for <c>MemoryMarshal.CreateSpan</c> when the same source must run on
+	/// fast (native, two-field) and slow (three-field) <see cref="Span{T}"/> layouts.
+	/// </para>
+	/// <para>
+	/// On .NET Standard 2.1 / .NET Core 2.1 and later the call always succeeds and wraps
+	/// <c>MemoryMarshal.CreateSpan</c>. On .NET Framework and UWP it succeeds only when the
+	/// <em>executing</em> runtime uses native span (for example Mono hosting a Framework TFM, or
+	/// modern UWP). Desktop .NET Framework typically returns <see langword="false"/> and a default
+	/// <paramref name="span"/>.
+	/// </para>
+	/// <para>
+	/// Prefer this over reading <see cref="SystemInfo.UsesNativeSpan"/> and then calling
+	/// <c>MemoryMarshal.CreateSpan</c> yourself. Success <em>is</em> the fast-span path (the view is
+	/// already in <paramref name="span"/>). Failure <em>is</em> the slow-span path: keep array copies,
+	/// pinning helpers, or other APIs that already understand the three-field layout. Do not invent a
+	/// two-field span from a raw address when this method returns <see langword="false"/>.
+	/// </para>
+	/// </remarks>
+	/// <seealso cref="TryCreateReadOnlySpan{T}"/>
+	/// <seealso cref="SystemInfo.UsesNativeSpan"/>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -63,6 +85,20 @@ public partial class NativeUtilities
 	/// <returns>
 	/// <see langword="true"/> if the read-only span was successfully created; otherwise, <see langword="false"/>.
 	/// </returns>
+	/// <remarks>
+	/// <para>
+	/// Read-only counterpart of <see cref="TryCreateSpan{T}"/>. Use this when the source is
+	/// <see langword="in"/> / <see langword="ref readonly"/> and you want a
+	/// <see cref="ReadOnlySpan{T}"/> on the fast-span path.
+	/// </para>
+	/// <para>
+	/// On modern TFMs this hides the <c>CreateReadOnlySpan(in T)</c> versus
+	/// <c>CreateReadOnlySpan(ref T)</c> split (.NET 8.0+). On slow-span runtimes it returns
+	/// <see langword="false"/> instead of synthesizing an invalid two-field view.
+	/// </para>
+	/// </remarks>
+	/// <seealso cref="TryCreateSpan{T}"/>
+	/// <seealso cref="SystemInfo.UsesNativeSpan"/>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

@@ -145,7 +145,39 @@ foreach (ref Byte b in bytes)
 Console.WriteLine(chars.ToString());
 ```
 
-`AsBytes` / `AsValues` are views. `ToBytes` / `ToValue` make a copy when you need a snapshot that outlives the source. On desktop .NET Framework these span views can be slower than on modern .NET; `SystemInfo.UsesNativeSpan` tells you whether the process is on the fast layout.
+`AsBytes` / `AsValues` are views. `ToBytes` / `ToValue` make a copy when you need a snapshot that outlives the source. On desktop .NET Framework these span views can be slower than on modern .NET. When you are porting `MemoryMarshal.CreateSpan` itself, branch with `TryCreateSpan` / `TryCreateReadOnlySpan` rather than reading `SystemInfo.UsesNativeSpan` — see [Create a span only when the runtime is fast span](#create-a-span-only-when-the-runtime-is-fast-span).
+
+## Create a span only when the runtime is fast span
+
+`MemoryMarshal.CreateSpan(ref item, length)` is the modern way to view a regular managed object as a span. That API assumes **fast** (native, two-field) `Span<T>`. On desktop .NET Framework the process often uses **slow** (three-field) span; building a two-field view from a raw address is the wrong fallback.
+
+`TryCreateSpan` / `TryCreateReadOnlySpan` are the portable replacement. They compile on every TFM. Success is the fast path; failure is where you keep slow-span-safe code.
+
+```csharp
+static void ProcessHeader(ref Byte first, Int32 count)
+{
+    if (NativeUtilities.TryCreateSpan(ref first, count, out Span<Byte> span))
+    {
+        // Fast span: same view MemoryMarshal.CreateSpan would give on modern .NET.
+        span.Clear();
+        return;
+    }
+
+    // Slow span (typically desktop .NET Framework + System.Memory).
+    // Use an array, a copy, or a helper that already understands pinnable + offset.
+    Byte[] buffer = new Byte[count];
+    // Fill buffer from the object, then work on buffer.AsSpan().
+}
+```
+
+The read-only form is the one to reach for when the source is `in` / `ref readonly`. On modern TFMs it also hides the `CreateReadOnlySpan(in T)` versus `CreateReadOnlySpan(ref T)` split (.NET 8.0+):
+
+```csharp
+static Boolean TryView<T>(in T first, Int32 count, out ReadOnlySpan<T> span)
+    => NativeUtilities.TryCreateReadOnlySpan(in first, count, out span);
+```
+
+Do not write `if (SystemInfo.UsesNativeSpan) span = MemoryMarshal.CreateSpan(...)`. That re-opens the TFM `#if` these helpers already close. `UsesNativeSpan` is for diagnostics and one-time strategy, not for every view. Details: [Utilities: fast vs slow span](api/utilities.md#fast-vs-slow-span) and [span efficiency](api/compatibility.md#span-efficiency).
 
 ## Flatten a multidimensional array
 
@@ -288,6 +320,7 @@ Use wrappers when you need a uniform `T` handle across value types, nullables, a
 | A pointer that dies with the callback | `WithSafeFixed` + functional interface |
 | A native buffer with `using` | `NativeUtilities.HeapAlloc<T>` |
 | A byte view of existing memory | `AsBytes` / `AsValues` |
+| `MemoryMarshal.CreateSpan` that must also run on slow span | `NativeUtilities.TryCreateSpan` / `TryCreateReadOnlySpan` |
 | A rank-1 view of a multidimensional array | `AsSpan` / `AsMemory` |
 | Temporary stack storage | `BufferManager` / `IScopedBufferAction<T>` |
 | AOT or OS branching | `AotInfo` / `SystemInfo` |

@@ -14,6 +14,14 @@ public static unsafe partial class SystemInfo
 	/// Indicates whether the current execution is utilizing the built-in implementation of <see cref="Span{T}"/> and
 	/// <see cref="ReadOnlySpan{T}"/>.
 	/// </summary>
+	/// <remarks>
+	/// Reports the process layout (fast two-field versus slow three-field span). Always
+	/// <see langword="true"/> on .NET Standard 2.1 / .NET Core 2.1 and later. Useful for diagnostics
+	/// and one-time strategy. When you need a span over a managed object, prefer
+	/// <see cref="NativeUtilities.TryCreateSpan{T}"/> /
+	/// <see cref="NativeUtilities.TryCreateReadOnlySpan{T}"/> so the fast-span and slow-span paths
+	/// stay separate without reconstructing <c>MemoryMarshal.CreateSpan</c>.
+	/// </remarks>
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	public static Boolean UsesNativeSpan => true;
 #else

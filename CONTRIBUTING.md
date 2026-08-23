@@ -158,7 +158,9 @@ Common for APIs that simply do not exist yet).
 
 That is not enough. **Declared** TFM surface and **executing** runtime diverge: desktop .NET Framework `Span<T>` is the slow
 three-field layout; Mono executing a .NET Framework TFM can still be fast span; `System.Memory` on netcoreapp2.0 rejects
-pointer-containing `T` in `Span<T>(void*, int)` even though the same source is valid on 2.1. Unit tests therefore run
+pointer-containing `T` in `Span<T>(void*, int)` even though the same source is valid on 2.1. Public code that must
+split those layouts should call `NativeUtilities.TryCreateSpan` / `TryCreateReadOnlySpan` rather than reading
+`SystemInfo.UsesNativeSpan` and reconstructing `MemoryMarshal.CreateSpan`. Unit tests therefore run
 on each .NET / .NET Core host they can (`dotnet test /p:MultipleFrameworkTest=true`). Failures on an “obsolete” host
 are how the portable implementation is proven, not a distraction from the modern line.
 

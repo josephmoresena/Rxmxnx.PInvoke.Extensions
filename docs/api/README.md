@@ -13,7 +13,7 @@ This section describes the public surface of `Rxmxnx.PInvoke.Extensions` by area
 | [Buffers](buffers.md) | `BufferManager`, `ScopedBuffer<T>`, binary and non-binary spaces |
 | [Wrappers and regions](wrappers.md) | `IWrapper<T>`, `IReferenceable<T>`, `ValueRegion<T>` |
 | [Extensions](extensions.md) | Span, pointer, string, binary, and delegate helpers |
-| [Utilities](utilities.md) | `NativeUtilities`, `AotInfo`, `SystemInfo` |
+| [Utilities](utilities.md) | `NativeUtilities`, `AotInfo`, `SystemInfo`, `TryCreateSpan` / `TryCreateReadOnlySpan` |
 | [Enums](enums.md) | `Iso639P1` |
 | [TFM / API surface](compatibility.md) | Until 2.9.5 vs later targets; portable vs dedicated binaries |
 
