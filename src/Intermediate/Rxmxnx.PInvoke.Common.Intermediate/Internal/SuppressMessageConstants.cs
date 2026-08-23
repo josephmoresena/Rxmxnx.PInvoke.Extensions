@@ -7,6 +7,7 @@ namespace Rxmxnx.PInvoke.Internal;
 internal static class SuppressMessageConstants
 {
 	public const String CSharpSquid = "csharpsquid";
+	public const String CheckIdS7133 = "S7133";
 	public const String CheckIdS6670 = "S6670";
 	public const String CheckIdS6640 = "S6640";
 	public const String CheckIdS4487 = "S4487";

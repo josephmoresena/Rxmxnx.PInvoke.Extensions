@@ -18,6 +18,9 @@ internal struct ReadScope : IDisposable
 	/// Constructor.
 	/// </summary>
 	/// <param name="rwLock">A <see cref="ReaderWriterLockSlim"/> instance.</param>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS7133)]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private ReadScope(ReaderWriterLockSlim rwLock)
 	{
