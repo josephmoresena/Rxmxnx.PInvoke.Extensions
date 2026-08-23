@@ -21,26 +21,27 @@ public unsafe partial class BufferTypeMetadata
 	private static Span<T> CreateSpan<T, TBuffer>(ref TBuffer buffer, Int32 spanLength)
 		=> MemoryMarshalCompat.CreateUnsafeSpan<T>(Unsafe.AsPointer(ref buffer), spanLength);
 	/// <summary>
-	/// Touches the first and last buffer elements so <typeparamref name="TBuffer"/> stays in scope.
+	/// Touches buffer elements so <typeparamref name="TBuffer"/> stays on the stack.
 	/// </summary>
 	/// <typeparam name="T">The type of items in the buffer.</typeparam>
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 	/// <param name="buffer">A managed <typeparamref name="TBuffer"/> reference.</param>
 	/// <param name="spanLength">Required span length.</param>
 	/// <remarks>
-	/// This is not a full span clear. When <paramref name="spanLength"/> is 1, both writes hit the same
-	/// element. A zero-length span still writes the first element of the allocated buffer.
+	/// Old JIT can drop the unused local struct. This is a stack keep-alive (not
+	/// <see cref="GC.KeepAlive"/>, which is for objects). Always writes the first element; writes
+	/// the last only when <paramref name="spanLength"/> is greater than 1.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	private static void Clear<T, TBuffer>(ref TBuffer buffer, Int32 spanLength) where TBuffer : struct
 	{
-		Debug.Assert(spanLength > 0);
 		ref T r0 = ref Unsafe.As<TBuffer, T>(ref buffer);
 		r0 = default!; // First element.
-		if (spanLength <= 0)
-			return;
-		ref T r = ref Unsafe.Add(ref r0, spanLength - 1);
-		r = default!; // Last element.
+		if (spanLength > 1)
+		{
+			ref T r = ref Unsafe.Add(ref r0, spanLength - 1);
+			r = default!; // Last element.
+		}
 	}
 #pragma warning restore CS8500
 }
