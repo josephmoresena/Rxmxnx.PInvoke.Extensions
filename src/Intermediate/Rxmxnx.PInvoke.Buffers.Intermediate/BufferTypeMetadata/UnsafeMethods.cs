@@ -37,11 +37,10 @@ public unsafe partial class BufferTypeMetadata
 	{
 		ref T r0 = ref Unsafe.As<TBuffer, T>(ref buffer);
 		r0 = default!; // First element.
-		if (spanLength > 1)
-		{
-			ref T r = ref Unsafe.Add(ref r0, spanLength - 1);
-			r = default!; // Last element.
-		}
+		if (spanLength <= 1)
+			return;
+		ref T r = ref Unsafe.Add(ref r0, spanLength - 1);
+		r = default!; // Last element.
 	}
 #pragma warning restore CS8500
 }
