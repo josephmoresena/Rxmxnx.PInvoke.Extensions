@@ -234,6 +234,7 @@ public sealed partial class CStringSequence : IEquatable<CStringSequence>
 #endif
 		return new(buffer, lengthsArray);
 	}
+#if !PACKAGE || NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Creates a new <see cref="CStringSequence"/> instance from a UTF-8 buffer.
 	/// </summary>
@@ -252,6 +253,7 @@ public sealed partial class CStringSequence : IEquatable<CStringSequence>
 #endif
 	public static CStringSequence Create(ReadOnlySpan<Char> value)
 		=> CStringSequence.Create(MemoryMarshal.AsBytes(value));
+#endif
 	/// <summary>
 	/// Creates a new <see cref="CStringSequence"/> instance from a UTF-8 buffer.
 	/// </summary>
