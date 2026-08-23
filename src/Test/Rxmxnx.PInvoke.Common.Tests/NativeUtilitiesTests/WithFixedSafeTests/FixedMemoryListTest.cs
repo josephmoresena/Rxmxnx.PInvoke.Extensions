@@ -11,6 +11,7 @@ public sealed class FixedMemoryListTest
 	private readonly Array[] _array = FixedMemoryListTest.GetArray();
 
 	[Fact]
+#pragma warning disable CA1041
 	[Obsolete]
 	public void EmptyTest()
 	{
@@ -23,6 +24,7 @@ public sealed class FixedMemoryListTest
 	}
 
 	[Fact]
+#pragma warning disable CA1041
 	[Obsolete]
 	public void Test()
 	{

@@ -8,6 +8,7 @@ public sealed class WithSafeFixedTest
 
 	[Theory]
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#pragma warning disable CA1041
 	[Obsolete]
 #endif
 	[InlineData(true)]
@@ -29,6 +30,7 @@ public sealed class WithSafeFixedTest
 
 	[Fact]
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#pragma warning disable CA1041
 	[Obsolete]
 #endif
 	public void NormalTest()

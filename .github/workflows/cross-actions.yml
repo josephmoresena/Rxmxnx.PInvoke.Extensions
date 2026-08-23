@@ -145,7 +145,11 @@ jobs:
         if: runner.os == 'MacOS'
         run: |
           sudo rm -rf /Users/runner/Library/Android
-          
+
+          # GitHub-hosted images ship aws/tap. Homebrew 6 requires tap trust and
+          # warns on every brew command until the unused tap is removed.
+          brew untap aws/tap || true
+
           brew install --cask mono-mdk
           brew install --overwrite mono
           mono --version

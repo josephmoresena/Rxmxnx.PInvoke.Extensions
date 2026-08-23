@@ -72,6 +72,7 @@ public sealed class WithSafeTransformTest
 	}
 
 	[Fact]
+#pragma warning disable CA1041
 	[Obsolete]
 	public void EmptyTest()
 	{
@@ -92,6 +93,7 @@ public sealed class WithSafeTransformTest
 	}
 
 	[Fact]
+#pragma warning disable CA1041
 	[Obsolete]
 	public void BasicTest()
 	{
@@ -106,6 +108,7 @@ public sealed class WithSafeTransformTest
 	}
 
 	[Theory]
+#pragma warning disable CA1041
 	[Obsolete]
 	[InlineData(true)]
 	[InlineData(false)]
