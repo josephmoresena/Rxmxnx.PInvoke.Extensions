@@ -29,7 +29,7 @@ Spans, memories, and arrays of any `T`.
 | Pinning | `WithSafeFixed` (functional interfaces on every TFM; delegate overloads on .NET Standard 2.1 / .NET Core 3.0+), `WithSafeReadOnlyFixed`, `GetFixedContext` / `GetFixedMemory` (`out` value context on every TFM; nested `IDisposable` return on those same original modern TFMs) |
 | Unsafe addresses | `GetUnsafeIntPtr`, `GetUnsafeValPtr`, `GetUnsafeReadOnlyValPtr` (literals / already-fixed memory) |
 
-`AsBytes` / `AsValues` operate on GC-managed references and do not require `unsafe`. They are views, not copies. On desktop .NET Framework they may be slower than on modern .NET; see [span efficiency](compatibility.md#span-efficiency). Once you already have a `ref`, [TryCreateSpan](utilities.md#fast-vs-slow-span) chooses an optimized span versus an `unsafe` loop.
+`AsBytes` / `AsValues` operate on GC-managed references and do not require `unsafe`. They are views, not copies. On desktop .NET Framework they may be slower than on modern .NET; see [span efficiency](compatibility.md#span-efficiency). Fast span versus your own path: `UsesNativeSpan` while you still choose how to work; [TryCreateSpan](utilities.md#fast-vs-slow-span) once you already have a `ref`.
 
 ## Unmanaged values (`UnmanagedValueExtensions`)
 

@@ -46,9 +46,9 @@ UWP follows the same idea: a dedicated, production-valid binary that can still u
 
 The .NET Framework and UWP assemblies compile to their TFM contracts, then detect the runtime layout. If the process is Mono executing a .NET Framework TFM — or UWP with fast span — casts, views, and pinning follow the fast path. The public API does not change; the operations get cheaper when the runtime allows it.
 
-`SystemInfo.UsesNativeSpan` is the public property for that fact. On .NET Standard 2.1 / .NET Core 2.1+ it is always `true`. On .NET Framework and UWP it reflects the executing layout. Use it when you still choose **array versus span**.
+`SystemInfo.UsesNativeSpan` is the public property for that fact. On .NET Standard 2.1 / .NET Core 2.1+ it is always `true`. On .NET Framework and UWP it reflects the executing layout. Use it when you still choose **fast span (runtime optimizations)** versus **your own / older code** — usually array versus span.
 
-When you already have a `ref` / `in` to a managed object, the question changes: optimized span versus `unsafe` + a loop over that ref. That is `NativeUtilities.TryCreateSpan` / `TryCreateReadOnlySpan`. Details: [Utilities: fast vs slow span](utilities.md#fast-vs-slow-span).
+When you already have a `ref` / `in`, the same choice is `NativeUtilities.TryCreateSpan` / `TryCreateReadOnlySpan`: the fast-span view, or whatever path you already have for that ref. Details: [Utilities: fast vs slow span](utilities.md#fast-vs-slow-span).
 
 That is the same idea as the rest of the package: **modern code that stays retrocompatible**, without pretending every host is CoreCLR.
 
@@ -102,7 +102,7 @@ These are available from .NET Standard 2.0 / .NET Framework / UWP through curren
 - `WithSafeFixed` / `GetFixedContext` / `GetFixedMemory` overloads that take a functional interface or an `out` value context
 - `BufferManager<T>.Alloc` / `AllocWithReference` with functional interfaces; `BufferManager.VisualBasic` (every TFM)
 - `NativeUtilities.HeapAlloc<T>(count, out FixedContextValue<T>)`
-- `NativeUtilities.TryCreateSpan<T>` / `TryCreateReadOnlySpan<T>` (optimized span from a `ref`, or `false` so you stay on `unsafe`)
+- `NativeUtilities.TryCreateSpan<T>` / `TryCreateReadOnlySpan<T>` (fast-span view from a `ref`, or `false` so you keep your own path)
 - `IWrapper<T>`, `ValueRegion<T>`, `AotInfo`, `SystemInfo`
 
 `IScopedBufferAction<T>.IsMinimalCount` is a required property on the TFMs added after 2.9.5. On the original modern TFMs it has a default of `false`. The same pattern applies to a few other members that are default interface methods until 2.9.5 and required later: `IFixedMemory<T>.ValuePointer`, `IReadOnlyFixedMemory<T>.ValuePointer`, and `IFixedReference<T>.Transformation<TDestination>()` without a residual. Callers do not need to distinguish those; only custom interface implementations do.

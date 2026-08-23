@@ -145,28 +145,24 @@ foreach (ref Byte b in bytes)
 Console.WriteLine(chars.ToString());
 ```
 
-`AsBytes` / `AsValues` are views. `ToBytes` / `ToValue` make a copy when you need a snapshot that outlives the source. On desktop .NET Framework these span views can be slower than on modern .NET; `SystemInfo.UsesNativeSpan` is the check when you still choose array versus span. Once you already have a `ref`, that is a different question — see [Take an optimized span from a ref, or stay on unsafe](#take-an-optimized-span-from-a-ref-or-stay-on-unsafe).
+`AsBytes` / `AsValues` are views. `ToBytes` / `ToValue` make a copy when you need a snapshot that outlives the source. On desktop .NET Framework these span views can be slower than on modern .NET; `SystemInfo.UsesNativeSpan` is the check when you still choose fast span versus your own / older path (usually array versus span). Once you already have a `ref`, that is [Take a fast span from a ref, or keep your own path](#take-a-fast-span-from-a-ref-or-keep-your-own-path).
 
-## Take an optimized span from a ref, or stay on unsafe
+## Take a fast span from a ref, or keep your own path
 
-`UsesNativeSpan` answers “is span work worth it versus arrays?” `TryCreateSpan` answers a later question: you **already have a `ref`** (the first element of a contiguous region). Do you take a span the JIT can optimize, or do you walk that ref with `unsafe`?
+Both keys ask: **fast span and the runtime’s optimizations**, or **my own / older code**?
+
+`UsesNativeSpan` is that question while you still choose how to work (array versus span is the usual case). `TryCreateSpan` is the same question later: you **already have a `ref`**. `true` is the native-span view. `false` is whatever you already do without it — a loop, an array, an older helper. The library does not pick the `else`.
 
 ```csharp
-static unsafe void ClearBytes(ref Byte first, Int32 count)
+static void ClearBytes(ref Byte first, Int32 count)
 {
     if (NativeUtilities.TryCreateSpan(ref first, count, out Span<Byte> span))
     {
-        // Fast span: the view MemoryMarshal.CreateSpan would give. The JIT can optimize it.
-        span.Clear();
+        span.Clear(); // Fast span: MemoryMarshal.CreateSpan, runtime optimizations.
         return;
     }
 
-    // Slow span: stay on the ref. Do not invent a two-field span from a raw address.
-    fixed (Byte* ptr = &first)
-    {
-        for (Int32 i = 0; i < count; i++)
-            ptr[i] = 0;
-    }
+    ClearBytesManually(ref first, count); // Your path.
 }
 ```
 
@@ -313,8 +309,8 @@ Use wrappers when you need a uniform `T` handle across value types, nullables, a
 | A pointer that dies with the callback | `WithSafeFixed` + functional interface |
 | A native buffer with `using` | `NativeUtilities.HeapAlloc<T>` |
 | A byte view of existing memory | `AsBytes` / `AsValues` |
-| Whether span work is worth it versus arrays | `SystemInfo.UsesNativeSpan` |
-| A `ref` that might become an optimized span or an unsafe loop | `NativeUtilities.TryCreateSpan` / `TryCreateReadOnlySpan` |
+| Fast span (runtime optimizations) versus your own / older path | `SystemInfo.UsesNativeSpan` (usually array versus span) |
+| The same choice once you already have a `ref` | `NativeUtilities.TryCreateSpan` / `TryCreateReadOnlySpan` |
 | A rank-1 view of a multidimensional array | `AsSpan` / `AsMemory` |
 | Temporary stack storage | `BufferManager` / `IScopedBufferAction<T>` |
 | AOT or OS branching | `AotInfo` / `SystemInfo` |
