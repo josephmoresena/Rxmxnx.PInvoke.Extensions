@@ -4,6 +4,32 @@ public partial class TestCompiler
 {
 	private static String[] GetFrameworkPlatformTargets()
 		=> Environment.Is64BitOperatingSystem ? ["x86", "x64",] : ["x86",];
+	private static FileInfo[] GetUwpBundles(DirectoryInfo directory)
+		=> directory.GetFiles("*", SearchOption.AllDirectories)
+		            .Where(static file => file.Extension is ".appxbundle" or ".msixbundle").ToArray();
+	private static String? GetInstalledUapPlatformVersion()
+	{
+		const String preferredVersion = "10.0.16299.0";
+		String unionMetadata = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
+		                                    "Windows Kits", "10", "UnionMetadata");
+		if (!Directory.Exists(unionMetadata))
+			return null;
+		if (File.Exists(Path.Combine(unionMetadata, preferredVersion, "Windows.winmd")))
+			return preferredVersion;
+
+		String? latestName = null;
+		Version? latest = null;
+		foreach (DirectoryInfo directory in new DirectoryInfo(unionMetadata).GetDirectories())
+		{
+			if (!Version.TryParse(directory.Name, out Version? version) ||
+			    !File.Exists(Path.Combine(directory.FullName, "Windows.winmd")))
+				continue;
+			if (latest is not null && version <= latest) continue;
+			latest = version;
+			latestName = directory.Name;
+		}
+		return latestName;
+	}
 	private static String[] GetFrameworkExecutables(DirectoryInfo projectDirectory)
 		=> projectDirectory.GetDirectories("*.ApplicationTest.Legacy", SearchOption.AllDirectories)
 		                   .SelectMany(static d => d.GetDirectories("bin", SearchOption.TopDirectoryOnly))

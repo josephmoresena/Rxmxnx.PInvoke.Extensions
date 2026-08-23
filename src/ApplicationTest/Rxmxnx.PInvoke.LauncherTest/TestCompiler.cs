@@ -78,25 +78,59 @@ public static partial class TestCompiler
 	[SupportedOSPlatform("WINDOWS")]
 	public static async Task CompileAppx(String msbuildPath, DirectoryInfo projectDirectory, String outputPath)
 	{
+		String? platformVersion = TestCompiler.GetInstalledUapPlatformVersion();
+		if (platformVersion is null)
+		{
+			ConsoleNotifier.Notifier.PrintError(
+				"No Windows SDK UnionMetadata\\*\\Windows.winmd was found. UWP AppX compilation cannot proceed.",
+				default);
+			throw new InvalidOperationException("Windows SDK metadata for UWP is not installed.");
+		}
+		ConsoleNotifier.Notifier.Print($"Using UWP TargetPlatformVersion {platformVersion}.");
+
 		String[] appProjectFiles = projectDirectory
 		                           .GetDirectories("*.*ApplicationTest.Windows", SearchOption.AllDirectories)
 		                           .SelectMany(d => d.GetFiles("*.*proj")).Select(f => f.FullName).ToArray();
+		if (appProjectFiles.Length == 0)
+		{
+			ConsoleNotifier.Notifier.PrintError("No UWP ApplicationTest.Windows project was found.", default);
+			throw new InvalidOperationException("UWP ApplicationTest.Windows project not found.");
+		}
+
 		foreach (String appProjectFile in appProjectFiles)
 		{
 			DirectoryInfo tempDirectory = new(Path.Combine(Path.GetTempPath(), $"{Guid.CreateVersion7()}"));
 			ExecuteState<CompileAppxArgs> state = new()
 			{
 				ExecutablePath = msbuildPath,
-				ArgState = new() { ProjectPath = appProjectFile, OutputPath = tempDirectory.FullName, },
+				ArgState = new()
+				{
+					ProjectPath = appProjectFile,
+					OutputPath = tempDirectory.FullName,
+					PlatformVersion = platformVersion,
+				},
 				AppendArgs = CompileAppxArgs.Append,
 				Notifier = ConsoleNotifier.Notifier,
 			};
 
 			tempDirectory.Create();
-			await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
-			foreach (FileInfo appx in tempDirectory.GetFiles("*.appxbundle", SearchOption.AllDirectories))
-				appx.MoveTo(Path.Combine(outputPath, appx.Name), true);
+			Int32 result = await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
+			FileInfo[] bundles = TestCompiler.GetUwpBundles(tempDirectory);
+			foreach (FileInfo bundle in bundles)
+				bundle.MoveTo(Path.Combine(outputPath, bundle.Name), true);
 			tempDirectory.Delete(true);
+			if (result != 0)
+			{
+				ConsoleNotifier.Notifier.PrintError(
+					$"UWP compilation failed with exit code 0x{result:x8}.", default);
+				throw new InvalidOperationException($"MSBuild failed for {appProjectFile} (0x{result:x8}).");
+			}
+			if (bundles.Length == 0)
+			{
+				ConsoleNotifier.Notifier.PrintError(
+					$"UWP compilation produced no .appxbundle/.msixbundle for {appProjectFile}.", default);
+				throw new InvalidOperationException("No UWP bundle artifact was produced.");
+			}
 			if (Utilities.ShowDiagnostics)
 				ConsoleNotifier.ShowDiskUsage();
 		}
