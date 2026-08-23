@@ -77,7 +77,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span1">2nd read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -137,7 +137,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -200,7 +200,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span2">3rd read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -265,7 +265,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -333,7 +333,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span3">4th read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -403,7 +403,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -476,7 +476,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span4">5th read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -551,7 +551,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -630,7 +630,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span5">6th read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -711,7 +711,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -795,7 +795,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span6">7th read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -881,7 +881,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -970,7 +970,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span7">8th read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -1061,7 +1061,7 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif

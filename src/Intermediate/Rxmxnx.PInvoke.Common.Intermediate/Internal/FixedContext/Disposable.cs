@@ -13,7 +13,9 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IObsoleteFixedCo
 #if !OBSOLETE_FIXED_INTERFACES
 	public IFixedContext<T>.IDisposable ToDisposable(IDisposable? disposable)
 #else
+#if !GITHUB_ACTIONS
 	[Obsolete]
+#endif
 	public IObsoleteFixedContext<T>.IDisposable ToDisposable(IDisposable? disposable)
 #endif
 		=> this.CreateDisposable(disposable);
@@ -54,21 +56,21 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IObsoleteFixedCo
 		ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects
 			=> this.GetValue<IReadOnlyFixedMemory>() is { } val ? val.Objects : default;
 
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 		[Obsolete]
 #endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
 		IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 		[Obsolete]
 #endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
 		IReadOnlyFixedContext<Object> IReadOnlyFixedMemory.AsObjectContext() => this.AsObjectContext();
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 		[Obsolete]
 #endif
 #if !PACKAGE
@@ -82,7 +84,7 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IObsoleteFixedCo
 				this.Transformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual));
 			return result;
 		}
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 		[Obsolete]
 #endif
 #if !PACKAGE
@@ -97,7 +99,7 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IObsoleteFixedCo
 		}
 
 		/// <inheritdoc/>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 		[Obsolete]
 #endif
 		public IFixedContext<Byte> AsBinaryContext()
@@ -108,7 +110,7 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IObsoleteFixedCo
 				convertible.ToDisposable(this.GetDisposableParent());
 		}
 		/// <inheritdoc/>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 		[Obsolete]
 #endif
 		public IFixedContext<Object> AsObjectContext()
@@ -120,7 +122,7 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IObsoleteFixedCo
 		}
 
 		/// <inheritdoc/>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 		[Obsolete]
 #endif
 		public IFixedContext<TDestination> Transformation<TDestination>(out IFixedMemory residual)

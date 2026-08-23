@@ -24,7 +24,7 @@ internal sealed partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IOb
 	/// <summary>
 	/// An empty instance of <see cref="IReadOnlyFixedContext{T}.IDisposable"/>.
 	/// </summary>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 	public static readonly IReadOnlyFixedContext<T>.IDisposable EmptyDisposable = Disposable.Default;

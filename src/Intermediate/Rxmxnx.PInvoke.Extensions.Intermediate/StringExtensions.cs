@@ -22,7 +22,7 @@ public static unsafe class StringExtensions
 	/// <param name="str">The <see cref="String"/> instance to pin during the action.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedContextAction{Char}"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -55,7 +55,7 @@ public static unsafe class StringExtensions
 	/// <param name="arg">An object of type <typeparamref name="TArg"/> that represents the state.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{Char, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -91,7 +91,7 @@ public static unsafe class StringExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedContextFunc{Char, TResult}"/>.</param>
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -125,7 +125,7 @@ public static unsafe class StringExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedContextFunc{Char, TArg, TResult}"/>.</param>
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif

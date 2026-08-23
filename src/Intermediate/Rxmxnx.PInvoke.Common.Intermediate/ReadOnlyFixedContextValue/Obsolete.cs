@@ -13,7 +13,7 @@ public unsafe ref partial struct ReadOnlyFixedContextValue<T> : IFixedPointerOpe
 #pragma warning restore CS0612
 #endif
 {
-	#if OBSOLETE_FIXED_INTERFACES
+	#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 #if !PACKAGE
@@ -27,7 +27,7 @@ public unsafe ref partial struct ReadOnlyFixedContextValue<T> : IFixedPointerOpe
 		FixedValueHandle handle = FixedPointerValue.GetValidationObject(this);
 		return new ReadOnlyFixedContext<Byte>(this._value.Pointer.ToPointer(), this._value.Size, handle);
 	}
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 #if !PACKAGE
@@ -42,7 +42,7 @@ public unsafe ref partial struct ReadOnlyFixedContextValue<T> : IFixedPointerOpe
 		Int32 count = this._value.Size / IntPtr.Size;
 		return new ReadOnlyFixedContext<Object>(this._value.Pointer.ToPointer(), count, handle);
 	}
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 #if !PACKAGE

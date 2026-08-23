@@ -395,7 +395,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
 #endif
@@ -432,7 +432,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
 #endif
@@ -463,7 +463,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
 #endif
@@ -488,7 +488,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
 #endif

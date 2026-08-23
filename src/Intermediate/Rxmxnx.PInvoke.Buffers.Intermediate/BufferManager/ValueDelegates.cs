@@ -11,7 +11,7 @@ public static partial class BufferManager
 	/// </summary>
 	/// <typeparam name="T">Type of items in the buffer.</typeparam>
 	/// <param name="action">A <see cref="ScopedBufferAction{T}"/> delegate.</param>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 	private readonly struct ActionValue<T>(ScopedBufferAction<T> action) : IScopedBufferAction<T>
@@ -38,7 +38,7 @@ public static partial class BufferManager
 	/// <typeparam name="TState">The type of the state object.</typeparam>
 	/// <param name="action">A <see cref="ScopedBufferAction{T}"/> delegate.</param>
 	/// <param name="state">State object.</param>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 #if !NET9_0_OR_GREATER
@@ -74,7 +74,7 @@ public static partial class BufferManager
 	/// <typeparam name="T">Type of items in the buffer.</typeparam>
 	/// <typeparam name="TResult">The type of the result.</typeparam>
 	/// <param name="func">A <see cref="ScopedBufferFunc{T, TResult}"/> delegate.</param>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 	private readonly struct FunctionValue<T, TResult>(ScopedBufferFunc<T, TResult> func)
@@ -103,7 +103,7 @@ public static partial class BufferManager
 	/// <typeparam name="TResult">The type of the result.</typeparam>
 	/// <param name="func">A <see cref="ScopedBufferFunc{T, TState, TResult}"/> delegate.</param>
 	/// <param name="state">State object.</param>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 #if !NET9_0_OR_GREATER

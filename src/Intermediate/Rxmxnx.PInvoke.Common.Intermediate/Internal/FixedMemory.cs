@@ -72,13 +72,13 @@ internal abstract unsafe partial class FixedMemory : ReadOnlyFixedMemory, IEquat
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get => this.CreateReadOnlyObjectSpan();
 	}
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
 
 	/// <inheritdoc/>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 	public new virtual IFixedContext<Byte> AsBinaryContext()
@@ -87,7 +87,7 @@ internal abstract unsafe partial class FixedMemory : ReadOnlyFixedMemory, IEquat
 		return new FixedContext<Byte>(this.BinaryOffset, this);
 	}
 	/// <inheritdoc/>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 	public new virtual IFixedContext<Object> AsObjectContext()

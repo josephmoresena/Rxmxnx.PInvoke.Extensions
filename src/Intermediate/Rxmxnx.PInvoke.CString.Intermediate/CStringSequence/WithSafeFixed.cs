@@ -39,7 +39,7 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the action execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -72,7 +72,7 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the action execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -107,7 +107,7 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the function execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -142,7 +142,7 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the function execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif

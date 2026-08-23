@@ -13,7 +13,9 @@ internal partial class ReadOnlyFixedContext<T> : IConvertibleDisposable<IObsolet
 #if !OBSOLETE_FIXED_INTERFACES
 	public IReadOnlyFixedContext<T>.IDisposable ToDisposable(IDisposable? disposable)
 #else
+#if !GITHUB_ACTIONS
 	[Obsolete]
+#endif
 	public IObsoleteReadOnlyFixedContext<T>.IDisposable ToDisposable(IDisposable? disposable)
 #endif
 		=> this.CreateDisposable(disposable);
@@ -53,7 +55,7 @@ internal partial class ReadOnlyFixedContext<T> : IConvertibleDisposable<IObsolet
 			=> this.GetValue<IReadOnlyFixedMemory<T>>() is { } val ? val.Values : default;
 
 		/// <inheritdoc/>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 		[Obsolete]
 #endif
 		public IReadOnlyFixedContext<Byte> AsBinaryContext()
@@ -65,7 +67,7 @@ internal partial class ReadOnlyFixedContext<T> : IConvertibleDisposable<IObsolet
 				convertible.ToDisposable(this.GetDisposableParent());
 		}
 		/// <inheritdoc/>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 		[Obsolete]
 #endif
 		public IReadOnlyFixedContext<Object> AsObjectContext()
@@ -78,7 +80,7 @@ internal partial class ReadOnlyFixedContext<T> : IConvertibleDisposable<IObsolet
 		}
 
 		/// <inheritdoc/>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 		[Obsolete]
 #endif
 		public IReadOnlyFixedContext<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual)

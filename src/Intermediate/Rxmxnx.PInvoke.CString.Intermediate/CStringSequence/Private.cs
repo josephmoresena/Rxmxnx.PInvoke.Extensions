@@ -63,7 +63,7 @@ public partial class CStringSequence
 	/// </summary>
 	/// <param name="ptr">Pointer to the UTF-8 sequence buffer.</param>
 	/// <returns>A <see cref="FixedCStringSequence"/> instance.</returns>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 	private unsafe FixedCStringSequence GetFixedSequence(Char* ptr)

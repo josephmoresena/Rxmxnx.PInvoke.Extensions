@@ -57,7 +57,7 @@ public static partial class BufferManager
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateMethods, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -74,7 +74,7 @@ public static partial class BufferManager
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateMethods, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -93,7 +93,7 @@ public static partial class BufferManager
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
 	/// <returns><paramref name="func"/> result.</returns>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateMethods, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -117,7 +117,7 @@ public static partial class BufferManager
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
 	/// <returns><paramref name="func"/> result.</returns>
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateMethods, ObsoleteConstants.ErrorDelegate)]
 #endif

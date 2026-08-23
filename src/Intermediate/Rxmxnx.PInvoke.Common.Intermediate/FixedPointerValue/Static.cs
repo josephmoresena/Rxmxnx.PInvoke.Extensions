@@ -86,7 +86,7 @@ public readonly ref partial struct FixedPointerValue
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete(ObsoleteConstants.ObsoleteFixedInterface, ObsoleteConstants.ErrorFixedInterface)]
 #endif
 	internal static IFixedContext<TDestination>
@@ -94,7 +94,7 @@ public readonly ref partial struct FixedPointerValue
 		where TFixedContext : IFixedContext<T>, allows ref struct
 		=> ctx.Transformation<TDestination>(out residual);
 	/// <inheritdoc cref="IFixedMemory.AsObjectContext()"/>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 #if !PACKAGE
@@ -104,7 +104,7 @@ public readonly ref partial struct FixedPointerValue
 		where TFixedContext : IFixedMemory<T>, allows ref struct
 		=> ctx.AsObjectContext();
 	/// <inheritdoc cref="IFixedMemory.AsObjectContext()"/>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 #if !PACKAGE

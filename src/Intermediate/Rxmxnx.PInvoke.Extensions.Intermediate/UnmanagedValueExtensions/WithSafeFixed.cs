@@ -23,7 +23,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A delegate of type <see cref="FixedContextAction{T}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -56,7 +56,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -91,7 +91,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="arg">An object representing the state, of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A delegate of type <see cref="FixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -129,7 +129,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="arg">An object representing the state, of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -167,7 +167,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="func">A delegate of type <see cref="FixedContextFunc{T, TResult}"/>.</param>
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -201,7 +201,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedContextFunc{T, TResult}"/>.</param>
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -237,7 +237,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="func">A delegate of type <see cref="FixedContextFunc{T, TArg, TResult}"/>.</param>
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -277,7 +277,7 @@ public unsafe partial class UnmanagedValueExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedContextFunc{T, TArg, TResult}"/>.</param>
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif

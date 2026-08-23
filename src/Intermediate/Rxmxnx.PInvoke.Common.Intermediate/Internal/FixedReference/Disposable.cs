@@ -37,21 +37,21 @@ internal partial class FixedReference<T> : IConvertibleDisposable<IFixedReferenc
 #endif
 		ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => (this.Value as IReadOnlyFixedMemory).Bytes;
 
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 		[Obsolete]
 #endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
 		IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 		[Obsolete]
 #endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
 		IReadOnlyFixedContext<Object> IReadOnlyFixedMemory.AsObjectContext() => this.AsObjectContext();
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 		[Obsolete]
 #endif
 #if !PACKAGE
@@ -77,14 +77,14 @@ internal partial class FixedReference<T> : IConvertibleDisposable<IFixedReferenc
 		}
 
 		/// <inheritdoc/>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 		[Obsolete]
 #endif
 		public IFixedContext<Byte> AsBinaryContext()
 			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IFixedContext<Byte>.IDisposable>)!.ToDisposable(
 				this.GetDisposableParent());
 		/// <inheritdoc/>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 		[Obsolete]
 #endif
 		public IFixedContext<Object> AsObjectContext()

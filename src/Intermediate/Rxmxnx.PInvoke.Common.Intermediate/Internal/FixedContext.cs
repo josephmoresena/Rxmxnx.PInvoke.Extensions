@@ -24,7 +24,7 @@ internal sealed partial class FixedContext<T> : FixedMemory, IObsoleteFixedConte
 	/// <summary>
 	/// An empty instance of <see cref="IFixedContext{T}.IDisposable"/>.
 	/// </summary>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 	public static readonly IFixedContext<T>.IDisposable EmptyDisposable = Disposable.Default;

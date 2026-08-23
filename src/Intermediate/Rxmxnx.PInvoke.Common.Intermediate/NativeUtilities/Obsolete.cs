@@ -21,7 +21,7 @@ public unsafe partial class NativeUtilities
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceMethods, ObsoleteConstants.ErrorFixedInterface)]
 #endif
@@ -51,7 +51,7 @@ public unsafe partial class NativeUtilities
 	/// The returned context owns the native memory allocation and releases it when disposed. The allocated memory is not
 	/// initialized. Consumers should use a <see langword="using"/> statement or otherwise dispose the returned context.
 	/// </remarks>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceMethods, ObsoleteConstants.ErrorFixedInterface)]
 #endif

@@ -62,7 +62,7 @@ internal sealed unsafe class NativeMemoryOwner : FixedValueHandle
 	/// <param name="count">The number of values of type <typeparamref name="T"/> to allocate.</param>
 	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance over the allocated native memory block.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 	public static IFixedContext<T>.IDisposable CreateContext<T>(Int32 count) where T : unmanaged

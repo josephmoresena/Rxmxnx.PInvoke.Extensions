@@ -22,7 +22,7 @@ public interface IReadOnlyFixedMemory : IFixedPointer
 	/// Creates a new instance of <see cref="IReadOnlyFixedContext{Byte}"/> from the current instance.
 	/// </summary>
 	/// <returns>An instance of <see cref="IReadOnlyFixedContext{Byte}"/>.</returns>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteFixedInterface, ObsoleteConstants.ErrorFixedInterface)]
 #endif
@@ -31,7 +31,7 @@ public interface IReadOnlyFixedMemory : IFixedPointer
 	/// Creates a new instance of <see cref="IReadOnlyFixedContext{Object}"/> from the current instance.
 	/// </summary>
 	/// <returns>An instance of <see cref="IReadOnlyFixedContext{Object}"/>.</returns>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteFixedInterface, ObsoleteConstants.ErrorFixedInterface)]
 #endif

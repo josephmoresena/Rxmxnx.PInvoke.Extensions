@@ -76,7 +76,7 @@ internal sealed unsafe class RentedMemoryOwner<T> : FixedValueHandle.Memory
 	/// <param name="arrayLength">Output. Rented array length.</param>
 	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance representing the pinned memory.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 	public static IFixedContext<T>.IDisposable CreateContext(ArrayPool<T> arrayPool, Int32 count, Boolean clearArray,

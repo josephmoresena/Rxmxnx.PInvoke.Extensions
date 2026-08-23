@@ -19,7 +19,7 @@ public unsafe partial class CString
 	/// The action operates on a read-only fixed memory instance.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -51,7 +51,7 @@ public unsafe partial class CString
 	/// The action operates on a read-only fixed memory instance using an additional state object.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -86,7 +86,7 @@ public unsafe partial class CString
 	/// The function operates on a read-only fixed memory instance.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -120,7 +120,7 @@ public unsafe partial class CString
 	/// The function operates on a read-only fixed memory instance using an additional state object.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif

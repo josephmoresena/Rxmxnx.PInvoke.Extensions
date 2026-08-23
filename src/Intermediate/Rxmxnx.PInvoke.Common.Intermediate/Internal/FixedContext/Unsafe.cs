@@ -18,7 +18,7 @@ internal sealed unsafe partial class FixedContext<T>
 	/// This method serves as a reference for the assembly patcher in .NET 9.0+. It is important to keep the
 	/// attributes of its parameters compatible.
 	/// </remarks>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
 #endif

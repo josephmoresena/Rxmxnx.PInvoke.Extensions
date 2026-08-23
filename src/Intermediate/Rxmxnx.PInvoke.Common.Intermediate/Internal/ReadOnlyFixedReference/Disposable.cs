@@ -28,14 +28,14 @@ internal partial class ReadOnlyFixedReference<T> : IConvertibleDisposable<IReadO
 		ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects => (this.Value as IReadOnlyFixedMemory).Objects;
 
 		/// <inheritdoc/>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 		[Obsolete]
 #endif
 		public IReadOnlyFixedContext<Byte> AsBinaryContext()
 			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IReadOnlyFixedContext<Byte>.IDisposable>)!
 				.ToDisposable(this.GetDisposableParent());
 		/// <inheritdoc/>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 		[Obsolete]
 #endif
 		public IReadOnlyFixedContext<Object> AsObjectContext()

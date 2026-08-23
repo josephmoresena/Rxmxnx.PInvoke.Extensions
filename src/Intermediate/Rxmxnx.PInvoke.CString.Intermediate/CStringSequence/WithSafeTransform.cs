@@ -20,7 +20,7 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the action execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, false)]
 #endif
@@ -53,7 +53,7 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the action execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, false)]
 #endif
@@ -88,7 +88,7 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the function execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, false)]
 #endif
@@ -123,7 +123,7 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the function execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, false)]
 #endif

@@ -19,7 +19,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="span">The current binary span.</param>
 	/// <param name="action">A <see cref="FixedAction"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -46,7 +46,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="span">The current binary span.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedAction"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -73,7 +73,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="span">The current read-only binary span.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedAction"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -103,7 +103,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="arg">An object of type <typeparamref name="TArg"/> that represents the state.</param>
 	/// <param name="action">A delegate of type <see cref="FixedAction{TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -135,7 +135,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="arg">An object of type <typeparamref name="TArg"/> that represents the state.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedAction{TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -167,7 +167,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="arg">An object of type <typeparamref name="TArg"/> that represents the state.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedAction{TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -200,7 +200,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="func">A delegate of type <see cref="FixedFunc{TResult}"/>.</param>
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -229,7 +229,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedFunc{TResult}"/>.</param>
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -258,7 +258,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedFunc{TResult}"/>.</param>
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -290,7 +290,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="func">A delegate of type <see cref="FixedFunc{TArg, TResult}"/>.</param>
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -324,7 +324,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedFunc{TArg, TResult}"/>.</param>
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif
@@ -359,7 +359,7 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedFunc{TArg, TResult}"/>.</param>
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if OBSOLTE_DELEGATES
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
 #endif

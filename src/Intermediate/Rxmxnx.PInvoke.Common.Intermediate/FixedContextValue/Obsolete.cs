@@ -30,7 +30,7 @@ public readonly unsafe ref partial struct FixedContextValue<T> : IFixedPointerOp
 #endif
 	ReadOnlyValPtr<T> IReadOnlyFixedMemory<T>.ValuePointer => this.ValuePointer;
 
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 #if !PACKAGE
@@ -44,7 +44,7 @@ public readonly unsafe ref partial struct FixedContextValue<T> : IFixedPointerOp
 		FixedValueHandle handle = FixedPointerValue.GetValidationObject(this);
 		return new FixedContext<Byte>(this._value.Pointer.ToPointer(), this._value.Size, handle);
 	}
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 #if !PACKAGE
@@ -52,7 +52,7 @@ public readonly unsafe ref partial struct FixedContextValue<T> : IFixedPointerOp
 #endif
 	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext()
 		=> FixedPointerValue.AsBinaryContext<T, FixedContextValue<T>>(this);
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 #if !PACKAGE
@@ -67,7 +67,7 @@ public readonly unsafe ref partial struct FixedContextValue<T> : IFixedPointerOp
 		Int32 count = this._value.Size / IntPtr.Size;
 		return new FixedContext<Object>(this._value.Pointer.ToPointer(), count, handle);
 	}
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 #if !PACKAGE
@@ -75,7 +75,7 @@ public readonly unsafe ref partial struct FixedContextValue<T> : IFixedPointerOp
 #endif
 	IReadOnlyFixedContext<Object> IReadOnlyFixedMemory.AsObjectContext()
 		=> FixedPointerValue.AsObjectContext<T, FixedContextValue<T>>(this);
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 #if !PACKAGE
@@ -102,7 +102,7 @@ public readonly unsafe ref partial struct FixedContextValue<T> : IFixedPointerOp
 			new((this._value.Pointer + offset).ToPointer(), this._value.Size - offset, handle);
 		return new FixedContext<TDestination>(this._value.Pointer.ToPointer(), count, handle);
 	}
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 #if !PACKAGE
@@ -114,7 +114,7 @@ public readonly unsafe ref partial struct FixedContextValue<T> : IFixedPointerOp
 		ref IFixedMemory refResidual = ref Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual);
 		return FixedPointerValue.Transformation<T, FixedContextValue<T>, TDestination>(this, out refResidual);
 	}
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 #if !PACKAGE

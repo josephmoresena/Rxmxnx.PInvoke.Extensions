@@ -45,7 +45,7 @@ internal sealed class CStringSequenceDebugView
 	/// specified <see cref="FixedCStringSequence"/> instance.
 	/// </summary>
 	/// <param name="fseq">The <see cref="FixedCStringSequence"/> instance to provide a debug view for.</param>
-#if OBSOLETE_FIXED_INTERFACES
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
 	public CStringSequenceDebugView(FixedCStringSequence fseq) => this._values = fseq.Values.ToArray();
