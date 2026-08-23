@@ -146,9 +146,15 @@ jobs:
         run: |
           sudo rm -rf /Users/runner/Library/Android
 
-          # GitHub-hosted images ship aws/tap. Homebrew 6 requires tap trust and
-          # warns on every brew command until the unused tap is removed.
-          brew untap aws/tap || true
+          # GitHub-hosted images ship unused third-party taps (last CI: aws/tap).
+          # Homebrew 6 warns on every command while an untrusted tap remains,
+          # including brew untap — drop vendor dirs before the first brew call.
+          # Official formulae live under Taps/homebrew/; leave that tree alone.
+          for vendor in /opt/homebrew/Library/Taps/* /usr/local/Homebrew/Library/Taps/*; do
+            [ -e "$vendor" ] || continue
+            [ "$(basename "$vendor")" = "homebrew" ] && continue
+            rm -rf "$vendor"
+          done
 
           brew install --cask mono-mdk
           brew install --overwrite mono
