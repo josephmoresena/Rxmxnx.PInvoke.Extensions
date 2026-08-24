@@ -180,7 +180,7 @@ public static unsafe class PointerExtensions
 	public static T[]? GetUnsafeArray<T>(this IntPtr ptr, Int32 length) where T : unmanaged
 	{
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
-		return ptr.IsZero() ? default : ptr.GetUnsafeReadOnlySpan<T>(length).ToArray();
+		return ptr.IsZero() ? default : [.. ptr.GetUnsafeReadOnlySpan<T>(length),];
 	}
 	/// <summary>
 	/// Generates a <typeparamref name="T"/> array by copying values from memory starting at the location referenced by a
@@ -196,7 +196,7 @@ public static unsafe class PointerExtensions
 	public static T[]? GetUnsafeArray<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
 	{
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
-		return uptr.IsZero() ? default : uptr.GetUnsafeReadOnlySpan<T>(length).ToArray();
+		return uptr.IsZero() ? default : [.. uptr.GetUnsafeReadOnlySpan<T>(length),];
 	}
 	/// <summary>
 	/// Generates a <typeparamref name="T"/> array by copying values from memory starting at the location referenced by a
@@ -212,7 +212,7 @@ public static unsafe class PointerExtensions
 	public static T[]? GetUnsafeArray<T>(this MemoryHandle handle, Int32 length) where T : unmanaged
 	{
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
-		return handle.Pointer == default ? default : handle.ToIntPtr().GetUnsafeReadOnlySpan<T>(length).ToArray();
+		return handle.Pointer == default ? default : [.. handle.ToIntPtr().GetUnsafeReadOnlySpan<T>(length),];
 	}
 
 	/// <summary>

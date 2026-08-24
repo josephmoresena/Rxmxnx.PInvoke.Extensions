@@ -115,6 +115,25 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 		}
 		return count;
 	}
+	/// <summary>
+	/// Creates a <see cref="CString"/> array from current instance.
+	/// </summary>
+	/// <returns>Retrieves a <see cref="CString"/> array with the items of the current instance.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public CString[] ToArray()
+	{
+		CString[] result = new CString[this._lengths.Length];
+		for (Int32 i = 0; i < this._lengths.Length; i++)
+			result[i] = this._lengths[i] switch
+			{
+				< 0 => CString.Zero,
+				0 => CString.Empty,
+				_ => this.GetCString(i, this._lengths[i]),
+			};
+		return result;
+	}
 
 	/// <summary>
 	/// Retrieves the binary offset for the given index in the current sequence.

@@ -58,6 +58,7 @@ public sealed class GetFixedMethodTests : DelegatesTests
 		PInvokeAssert.Equal(getValue(input), getByteValueDisposable.FunctionPointer.Invoke(input));
 
 #if NETCOREAPP
+		// ReSharper disable once ConvertClosureToMethodGroup
 		Assert.Throws<ArgumentException>(() => getValue.GetFixedMethod());
 #endif
 	}

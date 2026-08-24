@@ -39,7 +39,7 @@ internal partial class FixedPointer
 		IntPtr IFixedPointer.Pointer => this.Value is IFixedPointer ptr ? ptr.Pointer : default;
 
 #if !NETSTANDARD2_1 && !NETCOREAPP
-		/// <inheritdoc/>
+		/// <inheritdoc cref="IEquatable{TFixed}.Equals(TFixed)"/>
 		public Boolean Equals(TFixed? other) => other is not null && other.Equals(other);
 #endif
 		/// <inheritdoc/>

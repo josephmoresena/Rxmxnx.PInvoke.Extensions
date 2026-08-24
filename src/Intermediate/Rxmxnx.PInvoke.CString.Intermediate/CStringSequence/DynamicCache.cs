@@ -56,7 +56,7 @@ public partial class CStringSequence
 		/// <inheritdoc/>
 		public override void Clear()
 		{
-			Int32[] keys = this._cache.Keys.ToArray();
+			Int32[] keys = [.. this._cache.Keys,];
 			foreach (Int32 key in keys.AsSpan())
 			{
 				if (!this._cache[key].TryGetTarget(out _))

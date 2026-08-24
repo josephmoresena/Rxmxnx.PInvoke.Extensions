@@ -152,7 +152,7 @@ public sealed class NonBinarySpaceTests
 			MethodInfo? getMetadata = typeofInterface.GetMethod(nameof(BuffersHelper.GetMetadata), getMetadataFlags);
 			if (getMetadata is not null)
 				return (BufferTypeMetadata<T>)getMetadata.MakeGenericMethod(typeof(TBuffer)).Invoke(null, [])!;
-			return (BufferTypeMetadata<T>)typeof(TBuffer).GetField(nameof(NonBinarySpace<Int32, Int32>.TypeMetadata),
+			return (BufferTypeMetadata<T>)typeof(TBuffer).GetField(nameof(NonBinarySpace<,>.TypeMetadata),
 			                                                       getMetadataFlags)!.GetValue(null)!;
 		}
 		catch (TargetInvocationException tie)

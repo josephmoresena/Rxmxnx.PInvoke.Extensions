@@ -82,7 +82,7 @@ public partial class CStringSequence
 		internal CString[] ToArray()
 		{
 			if (this._instance is null or { Count: 0, }) return [];
-			if (!this._excludeEmptyItems) return this._instance.ToArray();
+			if (!this._excludeEmptyItems) return [.. this._instance,];
 
 			CString[] result = new CString[this._instance.NonEmptyCount];
 			ref CString item = ref MemoryMarshal.GetReference(result.AsSpan());

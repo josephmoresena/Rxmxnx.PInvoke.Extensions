@@ -305,6 +305,7 @@ public sealed class PInvokeAssert
 	/// </summary>
 	/// <param name="pin">The pinning operation to attempt.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	// ReSharper disable once UseSymbolAlias
 	public static void PinIfHostAllows(Action pin)
 	{
 		try

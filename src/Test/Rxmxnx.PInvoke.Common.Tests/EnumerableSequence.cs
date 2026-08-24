@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿#if (!NETSTANDARD2_1 || LEGACY) && !NETCOREAPP3_0_OR_GREATER
+using System.Collections;
+#endif
 
 namespace Rxmxnx.PInvoke.Tests;
 

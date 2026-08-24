@@ -140,6 +140,7 @@ public partial class CStringSequence
 				Byte[] array = CString.CreateByteArray(this._charBuffer.Length);
 
 				this._charBuffer.CopyTo(0, array);
+				// ReSharper disable once UseCollectionExpression
 				lengths = this._lengths.ToArray();
 				return CString.Create(array);
 			}

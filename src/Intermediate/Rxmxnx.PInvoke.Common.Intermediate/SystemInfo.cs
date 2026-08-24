@@ -8,7 +8,11 @@
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1121)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 public static unsafe partial class SystemInfo
+#else
+public static partial class SystemInfo
+#endif
 {
 	/// <summary>
 	/// Indicates whether the current execution is utilizing the built-in implementation of <see cref="Span{T}"/> and

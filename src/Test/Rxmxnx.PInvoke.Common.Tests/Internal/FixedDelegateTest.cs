@@ -82,11 +82,11 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
 #endif
 	}
 
+	// ReSharper disable once RedundantAssignment
 #if NETCOREAPP
 	private static void AssertTest(Byte[] bytes, Guid[] guids, ref Object obj, ref Boolean toggle,
 		FixedDelegateTestStatus status)
 #else
-	// ReSharper disable once RedundantAssignment
 	private static void AssertTest(ref Object obj, ref Boolean toggle, FixedDelegateTestStatus status)
 #endif
 	{

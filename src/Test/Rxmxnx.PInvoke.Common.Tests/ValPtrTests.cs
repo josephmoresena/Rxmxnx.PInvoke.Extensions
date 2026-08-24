@@ -114,7 +114,7 @@ public sealed class ValPtrTests
 			PInvokeAssert.False(ptrI.IsZero);
 			PInvokeAssert.Equal(ptrI.Pointer, (ptrI as IWrapper<IntPtr>).Value);
 
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			ValPtrTests.ReferenceTest(ptrI, ref span[i]);
 #endif
 
@@ -169,7 +169,7 @@ public sealed class ValPtrTests
 		ValPtrTests.ContextValueTest(valPtr, span);
 		ValPtrTests.NestedContextValueTest(valPtr);
 		ValPtrTests.MultipleContextValueTest(valPtr);
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		ValPtrTests.ContextTest(valPtr, span);
 #endif
 		ValPtrTests.MarshallerTest(valPtr);
@@ -240,7 +240,7 @@ public sealed class ValPtrTests
 		PInvokeAssert.Same(disposable, FixedPointerValue.UnsafeDisposable);
 		PInvokeAssert.Same(disposable, valPtr.GetUnsafeFixedContext(span.Length, disposable, out _));
 	}
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 	private static unsafe void ContextTest<T>(ValPtr<T> valPtr, Span<T> span)
 	{
@@ -375,7 +375,7 @@ public sealed class ValPtrTests
 		PInvokeAssert.Equal(value, valPtr.Pointer);
 		PInvokeAssert.Equal(valPtr, ptr);
 	}
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	private static unsafe void ReferenceTransformTest<T, TDestination>(ValPtr<T> ptrI,
 		IFixedReference<T>.IDisposable fRef)
 	{

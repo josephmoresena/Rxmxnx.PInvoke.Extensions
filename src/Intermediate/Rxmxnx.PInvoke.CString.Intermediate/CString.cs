@@ -360,7 +360,7 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <param name="source">A read-only span of UTF-8 characters.</param>
 	/// <returns>A new instance of the <see cref="CString"/> class.</returns>
 	public static CString Create(ReadOnlySpan<Byte> source)
-		=> source.Length == 0 ? CString.Empty : new(source.ToArray(), false);
+		=> source.Length == 0 ? CString.Empty : new([.. source,], false);
 	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using the
 	/// <see cref="ReadOnlySpanFunc{Byte}"/> delegate provided.

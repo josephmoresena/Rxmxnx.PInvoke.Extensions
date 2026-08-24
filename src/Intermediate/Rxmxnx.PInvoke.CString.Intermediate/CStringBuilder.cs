@@ -184,7 +184,7 @@ public sealed partial class CStringBuilder
 	internal String GetDebugInfo(out Int32 length, out CStringBuilderDebugView.ChunkInfo[] chunks)
 	{
 		length = this._chunk.Count;
-		chunks = this._chunk.EnumerateInformation().Reverse().ToArray();
+		chunks = [.. this._chunk.EnumerateInformation().Reverse(),];
 		return Encoding.UTF8.GetString(this.GetDataBytes(false));
 	}
 	/// <summary>

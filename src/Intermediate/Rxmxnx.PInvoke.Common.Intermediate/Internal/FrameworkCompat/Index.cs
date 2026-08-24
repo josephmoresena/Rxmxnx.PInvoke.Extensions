@@ -3,6 +3,8 @@
 
 // Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Bcl.Memory
 
+// ReSharper disable MemberCanBePrivate.Global
+
 #if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER && !NET462_OR_GREATER && !UAP10_0_16299
 namespace System;
 

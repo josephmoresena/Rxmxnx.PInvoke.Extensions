@@ -752,11 +752,9 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 			GetTransformationTest.OffsetTest<T2, TimeOnly>(offset, offset2);
 		}
 #endif
-		if (fref.BinaryLength >= sizeof(TimeSpan))
-		{
-			_ = fref.GetTransformation<TimeSpan>(out offset2);
-			GetTransformationTest.OffsetTest<T2, TimeSpan>(offset, offset2);
-		}
+		if (fref.BinaryLength < sizeof(TimeSpan)) return;
+		_ = fref.GetTransformation<TimeSpan>(out offset2);
+		GetTransformationTest.OffsetTest<T2, TimeSpan>(offset, offset2);
 	}
 	private static void OffsetTest<T2, T3>(FixedOffset offset1, FixedOffset offset2)
 	{

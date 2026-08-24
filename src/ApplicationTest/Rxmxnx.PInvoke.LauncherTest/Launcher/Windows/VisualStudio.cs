@@ -28,6 +28,7 @@ public partial class Launcher
 			DirectoryInfo includeDir = zlibDir.CreateSubdirectory("include");
 			Boolean missingHeaders = includeDir.GetFiles("z*.h").Count(f => f.Name is "zlib.h" or "zconf.h") < 2;
 #if !ZLINK_STATIC
+			// ReSharper disable once InvertIf
 			if (missingHeaders)
 			{
 				await File.WriteAllTextAsync(Path.Combine(includeDir.FullName, Windows.zLibHeaderName),
@@ -246,7 +247,7 @@ public partial class Launcher
 				kits.Add(kitVersion, installationFolder);
 				ConsoleNotifier.Notifier.Print($"Windows Kit Version {kitVersion} [{installationFolder}] found.");
 			}
-			return kits.OrderBy(p => p.Key).Select(p => p.Value).ToArray();
+			return [.. kits.OrderBy(p => p.Key).Select(p => p.Value),];
 		}
 
 		[GeneratedRegex("(.+)=(.+)")]

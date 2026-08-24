@@ -46,6 +46,7 @@ public interface IWrapper
 #if !PACKAGE && !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3246)]
 #endif
+// ReSharper disable once TypeParameterCanBeVariant
 public interface IWrapper<T>
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	: IWrapper.IBase<T>, IEquatable<T>

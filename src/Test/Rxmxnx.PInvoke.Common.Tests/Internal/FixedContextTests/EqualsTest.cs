@@ -88,7 +88,7 @@ public sealed class EqualsTest : FixedContextTestsBase
 		PInvokeAssert.Equal(equal, ctx2.Equals((Object)ctx));
 		PInvokeAssert.Equal(equal, ctx2.Equals(ctx as FixedContext<T2>));
 		PInvokeAssert.False(ctx2.Equals(null));
-		PInvokeAssert.False(ctx2.Equals(new Object()));
+		PInvokeAssert.False(ctx2!.Equals(new Object()));
 	}
 	private static void Test<T, T2>(ReadOnlyFixedContext<T2> ctx2, ReadOnlyFixedContext<T> ctx)
 	{
@@ -98,7 +98,7 @@ public sealed class EqualsTest : FixedContextTestsBase
 		PInvokeAssert.Equal(equal, ctx2.Equals((Object)ctx));
 		PInvokeAssert.Equal(equal, ctx2.Equals(ctx as ReadOnlyFixedContext<T2>));
 		PInvokeAssert.False(ctx2.Equals(null));
-		PInvokeAssert.False(ctx2.Equals(new Object()));
+		PInvokeAssert.False(ctx2!.Equals(new Object()));
 	}
 	private static unsafe void TransformationTest<T, T2>(FixedContext<T> ctx, Int32 length)
 	{

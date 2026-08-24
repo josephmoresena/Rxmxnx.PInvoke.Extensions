@@ -1,3 +1,5 @@
+// ReSharper disable NotAccessedPositionalProperty.Global
+
 namespace Rxmxnx.PInvoke;
 
 public partial class BufferTypeMetadata

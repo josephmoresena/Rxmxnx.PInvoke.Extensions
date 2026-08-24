@@ -20,13 +20,8 @@ public partial class ValueRegion<T>
 		/// </summary>
 		private readonly Int32 _length;
 
-		/// <summary>
-		/// The pointer to the native memory region.
-		/// </summary>
-		private readonly IntPtr _ptr;
-
 		/// <inheritdoc/>
-		public IntPtr Pointer => this._ptr;
+		public IntPtr Pointer { get; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ValueRegion{T}.NativeRegion"/> class.
@@ -35,8 +30,8 @@ public partial class ValueRegion<T>
 		/// <param name="length">The length of the sequence.</param>
 		public NativeRegion(IntPtr ptr, Int32 length)
 		{
-			this._ptr = ptr;
-			this._length = this._ptr != IntPtr.Zero ? length : 0;
+			this.Pointer = ptr;
+			this._length = this.Pointer != IntPtr.Zero ? length : 0;
 		}
 
 		/// <summary>
@@ -49,7 +44,7 @@ public partial class ValueRegion<T>
 		private NativeRegion(NativeRegion region, Int32 offset, Int32 length)
 		{
 			T* tPtr = region.GetElementPointer(offset);
-			this._ptr = new(tPtr);
+			this.Pointer = new(tPtr);
 			this._length = length;
 		}
 
@@ -66,12 +61,12 @@ public partial class ValueRegion<T>
 		internal override ReadOnlySpan<T> AsSpan()
 		{
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-			ref T refValue = ref Unsafe.AsRef<T>(this._ptr.ToPointer());
+			ref T refValue = ref Unsafe.AsRef<T>(this.Pointer.ToPointer());
 			return MemoryMarshal.CreateReadOnlySpan(ref refValue, this._length);
 #else
 			return typeof(T).IsPrimitive ?
-				new(this._ptr.ToPointer(), this._length) :
-				MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(this._ptr.ToPointer(), this._length);
+				new(this.Pointer.ToPointer(), this._length) :
+				MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(this.Pointer.ToPointer(), this._length);
 #endif
 		}
 		/// <inheritdoc/>
@@ -85,7 +80,7 @@ public partial class ValueRegion<T>
 		/// <returns>The pointer of the element at the given index.</returns>
 		private T* GetElementPointer(Int32 index)
 		{
-			T* tPtr = (T*)this._ptr.ToPointer();
+			T* tPtr = (T*)this.Pointer.ToPointer();
 			tPtr += index;
 			return tPtr;
 		}

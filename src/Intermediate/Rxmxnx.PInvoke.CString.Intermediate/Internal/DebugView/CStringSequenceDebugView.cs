@@ -1,6 +1,4 @@
-﻿// ReSharper disable UseCollectionExpression
-
-namespace Rxmxnx.PInvoke.Internal.DebugView;
+﻿namespace Rxmxnx.PInvoke.Internal.DebugView;
 
 /// <summary>
 /// Provides a debug view for the <see cref="CStringSequence"/> classes.
@@ -38,7 +36,7 @@ internal sealed class CStringSequenceDebugView
 	/// specified <see cref="CStringSequence"/> instance.
 	/// </summary>
 	/// <param name="seq">The <see cref="CStringSequence"/> instance to provide a debug view for.</param>
-	public CStringSequenceDebugView(CStringSequence seq) => this._values = seq.ToArray();
+	public CStringSequenceDebugView(CStringSequence seq) => this._values = [.. seq,];
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequenceDebugView"/> class with the

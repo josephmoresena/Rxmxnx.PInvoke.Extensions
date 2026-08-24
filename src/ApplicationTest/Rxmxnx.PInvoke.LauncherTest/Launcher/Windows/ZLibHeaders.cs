@@ -1,5 +1,7 @@
+// ReSharper disable UseRawString
 namespace Rxmxnx.PInvoke.ApplicationTest;
 
+// ReSharper disable once ClassCannotBeInstantiated
 public partial class Launcher
 {
 	private sealed partial class Windows

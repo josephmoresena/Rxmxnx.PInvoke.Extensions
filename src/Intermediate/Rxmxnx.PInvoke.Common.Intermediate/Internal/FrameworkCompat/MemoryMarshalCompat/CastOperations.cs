@@ -3,7 +3,11 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 internal static unsafe partial class MemoryMarshalCompat
+#else
+internal static partial class MemoryMarshalCompat
+#endif
 {
 #pragma warning disable CS8500
 	/// <summary>

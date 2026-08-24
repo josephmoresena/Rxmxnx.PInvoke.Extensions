@@ -24,6 +24,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable UnusedType.Global
+
 #if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 namespace System.Diagnostics.CodeAnalysis;
 
@@ -32,6 +35,7 @@ namespace System.Diagnostics.CodeAnalysis;
 [ExcludeFromCodeCoverage]
 #endif
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.Property)]
+// ReSharper disable once ClassCannotBeInstantiated
 internal sealed class AllowNullAttribute : Attribute;
 
 /// <summary>Specifies that null is disallowed as an input even if the corresponding type allows it.</summary>
@@ -44,10 +48,10 @@ internal sealed class DisallowNullAttribute : Attribute;
 /// <summary>Specifies that an output may be null even if the corresponding type disallows it.</summary>
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
-#endif
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.Property |
 	AttributeTargets.ReturnValue)]
 internal sealed class MaybeNullAttribute : Attribute;
+#endif
 
 /// <summary>
 /// Specifies that an output will not be null even if the corresponding type allows it. Specifies that an input
@@ -66,7 +70,6 @@ internal sealed class NotNullAttribute : Attribute;
 /// </summary>
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
-#endif
 [AttributeUsage(AttributeTargets.Parameter)]
 internal sealed class MaybeNullWhenAttribute : Attribute
 {
@@ -78,6 +81,7 @@ internal sealed class MaybeNullWhenAttribute : Attribute
 	/// </param>
 	public MaybeNullWhenAttribute(Boolean returnValue) => this.ReturnValue = returnValue;
 }
+#endif
 
 /// <summary>
 /// Specifies that when a method returns <see cref="ReturnValue"/>, the parameter will not be null even if the
@@ -118,14 +122,13 @@ internal sealed class NotNullIfNotNullAttribute : Attribute
 /// <summary>Applied to a method that will never return under any circumstance.</summary>
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
-#endif
 [AttributeUsage(AttributeTargets.Method, Inherited = false)]
 internal sealed class DoesNotReturnAttribute : Attribute;
+#endif
 
 /// <summary>Specifies that the method will not return if the associated Boolean parameter is passed the specified value.</summary>
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
-#endif
 [AttributeUsage(AttributeTargets.Parameter)]
 internal sealed class DoesNotReturnIfAttribute : Attribute
 {
@@ -138,4 +141,5 @@ internal sealed class DoesNotReturnIfAttribute : Attribute
 	/// </param>
 	public DoesNotReturnIfAttribute(Boolean parameterValue) => this.ParameterValue = parameterValue;
 }
+#endif
 #endif

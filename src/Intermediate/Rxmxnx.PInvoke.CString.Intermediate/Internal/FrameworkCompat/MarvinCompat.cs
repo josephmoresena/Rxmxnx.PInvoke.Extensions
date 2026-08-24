@@ -33,8 +33,6 @@ SOFTWARE.
 using UIntPtr = nuint;
 
 #elif !NETCOREAPP3_1_OR_GREATER
-
-using System.Reflection;
 // ReSharper disable once BuiltInTypeReferenceStyle
 using IntPtr = nint;
 

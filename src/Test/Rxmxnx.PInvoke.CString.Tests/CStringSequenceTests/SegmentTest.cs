@@ -61,6 +61,7 @@ public sealed class SegmentTest
 		for (Int32 i = 0; i < count; i++)
 		{
 			Int32 start = PInvokeRandom.Shared.Next(i);
+			// ReSharper disable once ReplaceSliceWithRangeIndexer
 			CStringSequence subSeq = seq.Slice(start);
 			for (Int32 j = 0; j < subSeq.Count; j++)
 				PInvokeAssert.Equal(seq[j + start], subSeq[j]);

@@ -81,6 +81,7 @@ internal static unsafe class ValidationUtilities
 	/// Thrown if the fixed pointer instance is not guaranteed to be safe.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static void ThrowIfInvalidPointer(Boolean isValid)
 	{
 		if (isValid) return;

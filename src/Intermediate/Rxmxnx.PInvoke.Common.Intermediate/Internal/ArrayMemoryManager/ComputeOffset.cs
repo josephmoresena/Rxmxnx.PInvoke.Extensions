@@ -1,6 +1,7 @@
 #if !NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal;
 
+// ReSharper disable once ClassCannotBeInstantiated
 internal partial class ArrayMemoryManager<T>
 {
 	/// <summary>

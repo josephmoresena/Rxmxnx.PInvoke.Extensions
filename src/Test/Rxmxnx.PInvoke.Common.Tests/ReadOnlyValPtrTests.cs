@@ -118,7 +118,7 @@ public sealed class ReadOnlyValPtrTests
 			PInvokeAssert.False(ptrI.IsZero);
 			PInvokeAssert.Equal(ptrI.Pointer, (ptrI as IWrapper<IntPtr>).Value);
 
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			ReadOnlyValPtrTests.ReferenceTest(ptrI, ref Unsafe.AsRef(in span[i]));
 #endif
 
@@ -173,7 +173,7 @@ public sealed class ReadOnlyValPtrTests
 		ReadOnlyValPtrTests.ContextValueTest(valPtr, span);
 		ReadOnlyValPtrTests.NestedContextValueTest(valPtr);
 		ReadOnlyValPtrTests.MultipleContextValueTest(valPtr);
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		ReadOnlyValPtrTests.ContextTest(valPtr, span);
 #endif
 		ReadOnlyValPtrTests.MarshallerTest(valPtr);
@@ -249,7 +249,7 @@ public sealed class ReadOnlyValPtrTests
 		PInvokeAssert.Same(disposable, FixedPointerValue.UnsafeDisposable);
 		PInvokeAssert.Same(disposable, valPtr.GetUnsafeFixedContext(span.Length, disposable, out _));
 	}
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 	private static unsafe void ContextTest<T>(ReadOnlyValPtr<T> valPtr, ReadOnlySpan<T> span)
 	{
@@ -391,7 +391,7 @@ public sealed class ReadOnlyValPtrTests
 		PInvokeAssert.Equal(value, valPtr.Pointer);
 		PInvokeAssert.Equal(valPtr, ptr);
 	}
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	private static unsafe void ReferenceTransformTest<T, TDestination>(ReadOnlyValPtr<T> ptrI,
 		IReadOnlyFixedReference<T>.IDisposable fRef) where TDestination : unmanaged
 	{

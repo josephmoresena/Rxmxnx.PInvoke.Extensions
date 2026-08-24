@@ -36,7 +36,7 @@ public partial class CStringSequence
 		{
 			this._startIndex = startIndex;
 			this._sequence = sequence;
-			this._lengths = sequence._lengths.AsSpan().Slice(startIndex, length).ToArray();
+			this._lengths = [.. sequence._lengths.AsSpan().Slice(startIndex, length),];
 		}
 
 		/// <summary>
