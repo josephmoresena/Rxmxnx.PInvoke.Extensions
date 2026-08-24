@@ -7,6 +7,8 @@ public partial class TestCompiler
 	{
 		public String ProjectFile { get; init; }
 		public String PlatformTarget { get; init; }
+		public String OutputPath { get; init; }
+		public String IntermediateOutputPath { get; init; }
 
 		public static void Append(CompileFrameworkArgs compileArgs, Collection<String> args)
 		{
@@ -16,7 +18,10 @@ public partial class TestCompiler
 			args.Add("Release");
 			args.Add("/p:UsePackage=true");
 			args.Add("/p:FrameworkLegacyOnly=true");
+			args.Add("/p:BuildInParallel=false");
 			args.Add($"/p:PlatformTarget={compileArgs.PlatformTarget}");
+			args.Add($"/p:OutputPath={compileArgs.OutputPath}");
+			args.Add($"/p:IntermediateOutputPath={compileArgs.IntermediateOutputPath}");
 		}
 	}
 }

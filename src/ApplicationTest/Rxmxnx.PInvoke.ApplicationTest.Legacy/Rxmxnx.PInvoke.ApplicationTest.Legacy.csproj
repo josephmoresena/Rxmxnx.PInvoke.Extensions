@@ -19,14 +19,6 @@
         <TargetFrameworks>net452;net46;net461;net462;net470;net471;net472</TargetFrameworks>
         <TargetFrameworks Condition="'$(FrameworkLegacyOnly)' != 'true'">netcoreapp2.1;$(TargetFrameworks)</TargetFrameworks>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(FrameworkLegacyOnly)' == 'true' And '$(PlatformTarget)' != ''">
-        <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
-        <OutputPath>bin\$(Configuration)\$(PlatformTarget)\</OutputPath>
-        <BaseIntermediateOutputPath>obj\$(PlatformTarget)\</BaseIntermediateOutputPath>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(FrameworkLegacyOnly)' == 'true' And '$(PlatformTarget)' != '' And '$(TargetFramework)' != ''">
-        <IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
-    </PropertyGroup>
 
     <Import Project="..\..\PackageReference.props"/>
     <Import Condition="'$(MSBuildRuntimeType)' == 'Mono'" Project="..\MonoApp.props"/>
