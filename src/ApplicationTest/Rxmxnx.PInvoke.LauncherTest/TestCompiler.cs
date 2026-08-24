@@ -128,8 +128,6 @@ public static partial class TestCompiler
 					{
 						ProjectFile = appProjectFile.FullName,
 						PlatformTarget = platformTarget,
-						OutputPath = Path.Combine("bin", "Release", platformTarget) + Path.DirectorySeparatorChar,
-						IntermediateOutputPath = Path.Combine("obj", platformTarget) + Path.DirectorySeparatorChar,
 					},
 					AppendArgs = CompileFrameworkArgs.Append,
 					Notifier = ConsoleNotifier.Notifier,
