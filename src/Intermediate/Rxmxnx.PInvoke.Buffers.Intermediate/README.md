@@ -1,8 +1,14 @@
-﻿`Rxmxnx.PInvoke.Extensions` supports the use of two types of buffers: binary and non-binary. The maximum capacity of any
-buffer is limited to 2<sup>15</sup> elements. However, this maximum capacity may not always be allocatable at runtime.
+﻿`Rxmxnx.PInvoke.Extensions` supports the use of two types of buffers: binary and non-binary. The theoretical maximum of a
+**managed** buffer is (2<sup>16</sup>) − 1 elements. A single **binary** buffer is at most 2<sup>15</sup> elements;
+combining every maximum binary space still cannot exceed (2<sup>16</sup>) − 1. The runtime may offer less.
 
-Internally, all reference types utilize buffers of type `Object`. Only not unmanaged value types require
-the use of buffers specific to their type, the unmanaged ones uses stackalloc.
+For the capability overview, recipes, and API map, see the [buffers guide](../../../docs/api/buffers.md),
+[use cases](../../../docs/use-cases.md#use-a-stack-buffer-in-a-hot-parser), and
+[documentation hub](../../../docs/README.md).
+
+Internally, all reference types utilize buffers of type `Object`. Only not unmanaged value types require the use of
+buffers specific to their type. Unmanaged types do not need a managed buffer: `ScopedBuffer<T>` is a view, and the
+allocation uses `stackalloc`.
 
 ---
 
@@ -26,13 +32,13 @@ following conditions:
 
 In a Native AOT runtime, binary buffer composition requires metadata preservation through a Runtime Directives file.
 Below is an example of the metadata preservation needed to compose a binary buffer with a capacity of 10 elements of any
-reference type Composite(2<sup>1</sup>, 2<sup>3</sup>, `Object`).
+reference type Composite (2<sup>1</sup>, 2<sup>3</sup>, `Object`).
 
 **Notes**:
 
-* 2<sup>3</sup> is Composite(2<sup>2</sup>, 2<sup>2</sup>, `Object`), 2<sup>2</sup> is Composite(2<sup>1</sup>, 2<sup>
-  1</sup>, `Object`), 2<sup>1</sup> is
-  Composite(2<sup>0</sup>, 2<sup>0</sup>, `Object`) and 2<sup>0</sup> is Atomic(`Object`).
+* 2<sup>3</sup> is Composite (2<sup>2</sup>, 2<sup>2</sup>, `Object`), 2<sup>2</sup> is Composite (2<sup>1</sup>, 2<sup>
+  1</sup>, `Object`), 2<sup>1</sup> is Composite (2<sup>0</sup>, 2<sup>0</sup>, `Object`) and 2<sup>0</sup> is Atomic
+  (`Object`).
 * Once a buffer is composed, it becomes available for use. This process is executed only once for each capacity.
 
 ```xml
@@ -122,8 +128,8 @@ requirements, the following feature switches were introduced:
   elements, with a binary space limit of 2<sup>6</sup> + 2<sup>5</sup> + 2<sup>4</sup> + 2<sup>3</sup> + 2<sup>2</sup> +
   2<sup>1</sup> + 2<sup>0</sup>.
 * `PInvoke.BootstrapBufferStorage.Limited`: Restricts buffer storage and composition to a maximum binary capacity of
-  2047 elements, with a binary space limit of 2<sup>10</sup> + 2<sup>9</sup> + 2<sup>8</sup> + 2<sup>7</sup> +
-  2<sup>6</sup> + 2<sup>5</sup> + 2<sup>4</sup> + 2<sup>3</sup> + 2<sup>2</sup> + 2<sup>1</sup> + 2<sup>0</sup>.
+  2047 elements, with a binary space limit of 2<sup>10</sup> + 2<sup>9</sup> + 2<sup>8</sup> + 2<sup>7</sup> + 2<sup>
+  6</sup> + 2<sup>5</sup> + 2<sup>4</sup> + 2<sup>3</sup> + 2<sup>2</sup> + 2<sup>1</sup> + 2<sup>0</sup>.
 * `PInvoke.BootstrapBufferStorage.Extended`: Uses the new storage system using a managed-buffer-based binary space of
   2047 elements, while still allowing extension to support larger binary metadata capacities.
 
@@ -133,5 +139,4 @@ requirements, the following feature switches were introduced:
   infrastructure itself.
 - Storage systems based on managed buffer binary spaces of 2<sup>N</sup> - 1 elements preload `2N - 1` object buffer
   metadata instances; specifically, metadata ranging from 2<sup>N</sup> - 1 down to 2<sup>2</sup> - 1, plus additional
-  metadata
-  from 2<sup>N-1</sup> down to 2<sup>0</sup>. This behavior is particularly beneficial for AOT compilations.
+  metadata from 2<sup>N-1</sup> down to 2<sup>0</sup>. This behavior is particularly beneficial for AOT compilations.

@@ -84,7 +84,7 @@ public partial class CString
 	{
 		if (count == 0) return CString.empty;
 
-		Int32 utf8Length = Encoding.UTF8.GetByteCount(seq);
+		Int32 utf8Length = seq.GetUtf8Count();
 		Int32 bufferLength = utf8Length * count + 1;
 		Byte[] result = CString.CreateByteArray(bufferLength);
 		Span<Byte> span = result.AsSpan();
@@ -104,7 +104,14 @@ public partial class CString
 	/// <param name="separator">The character to make up the <see cref="String"/>.</param>
 	/// <returns>A <see cref="String"/> that consists of a single instance of the specified character.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static String CreateSeparator(Char separator) => String.Create(1, separator, CString.SetSeparator);
+	private static String CreateSeparator(Char separator)
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+	{
+		Span<Char> chars = stackalloc Char[] { separator, };
+		return chars.ToString();
+	}
+#else
+		=> String.Create(1, separator, CString.SetSeparator);
 	/// <summary>
 	/// Sets the value of the specified UTF-16 character in a Span of characters.
 	/// </summary>
@@ -121,7 +128,8 @@ public partial class CString
 		await Task.Yield();
 		writer.Write();
 	}
-#if NETCOREAPP
+#endif
+#if NETCOREAPP || NET461_OR_GREATER || UAP10_0_16299
 	/// <summary>
 	/// Reads a UTF-8 string from the specified <see cref="Utf8JsonReader"/> and returns its length.
 	/// </summary>
@@ -145,6 +153,7 @@ public partial class CString
 		return length;
 	}
 #endif
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Creates a non-null-terminated <see cref="CString"/> instance that contains a single
 	/// <paramref name="c"/> character.
@@ -154,6 +163,7 @@ public partial class CString
 	/// A non-null-terminated <see cref="CString"/> instance that contains a single <paramref name="c"/> character.
 	/// </returns>
 	private static CString Create(Byte c) => new([c,], false);
+#endif
 	/// <summary>
 	/// Creates a managed region with <paramref name="utf16Text"/> UTF-8 representation.
 	/// </summary>
@@ -199,10 +209,14 @@ public partial class CString
 	/// <returns>A <see cref="String"/> instance.</returns>
 	private static String ToUtf16(ReadOnlySpan<Byte> utf8Bytes)
 	{
-		String result = Encoding.UTF8.GetString(utf8Bytes);
+		String result = Utf8Comparator.GetStringFromUtf8(utf8Bytes);
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		return String.IsInterned(result) ?? result;
+#else
+		return result;
+#endif
 	}
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Encodes <paramref name="utf8Bytes"/> to UTF-16 chars and computes the hash function
 	/// for <paramref name="utf8Bytes"/>.

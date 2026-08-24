@@ -54,6 +54,7 @@ public partial class CString
 			helper.Write(value);
 		return helper.ToCString();
 	}
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Asynchronously concatenates the elements of a specified <see cref="String"/>
 	/// array.
@@ -102,4 +103,5 @@ public partial class CString
 		}
 		return helper.ToCString();
 	}
+#endif
 }

@@ -5,8 +5,10 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// Provides a set of extensions for basic operations with <see cref="Delegate"/> instances.
 /// </summary>
-[EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 [Browsable(false)]
+#endif
+[EditorBrowsable(EditorBrowsableState.Never)]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
@@ -80,7 +82,7 @@ public static unsafe partial class DelegateExtensions
 	public static IFixedMethod<TDelegate>.IDisposable GetFixedMethod<TDelegate>(this TDelegate? method)
 		where TDelegate : Delegate
 		=> NativeUtilities.GetFixedMethod(method);
-
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER
 	/// <summary>
 	/// Determines whether all methods referenced by the specified delegate are backed by statically compiled
 	/// image code rather than dynamically generated runtime code.
@@ -131,4 +133,5 @@ public static unsafe partial class DelegateExtensions
 			return false;
 		}
 	}
+#endif
 }

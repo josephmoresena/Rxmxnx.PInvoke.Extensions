@@ -15,7 +15,11 @@ public partial class CString
 	public static CString operator +(String? left, CString? right)
 	{
 		if (!String.IsNullOrEmpty(left) && CString.IsNullOrEmpty(right))
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 			return new(left);
+#else
+			return new(left!);
+#endif
 		ReadOnlySpan<Char> leftSpan = left;
 		return leftSpan + right;
 	}
@@ -48,7 +52,11 @@ public partial class CString
 	public static CString operator +(CString? left, String? right)
 	{
 		if (CString.IsNullOrEmpty(left) && !String.IsNullOrEmpty(right))
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 			return new(right);
+#else
+			return new(right!);
+#endif
 		ReadOnlySpan<Char> rightSpan = right;
 		return left + rightSpan;
 	}
@@ -68,7 +76,7 @@ public partial class CString
 		if (CString.IsNullOrEmpty(right))
 			return new(leftSpan);
 
-		Int32 leftUtf8Length = Encoding.UTF8.GetByteCount(leftSpan);
+		Int32 leftUtf8Length = leftSpan.GetUtf8Count();
 		Int32 bufferLength = leftUtf8Length + right.Length + 1;
 		Byte[] result = CString.CreateByteArray(bufferLength);
 		Utf8.FromUtf16(leftSpan, result.AsSpan()[..leftUtf8Length], out Int32 _, out Int32 _);
@@ -116,7 +124,7 @@ public partial class CString
 		if (CString.IsNullOrEmpty(left))
 			return new(rightSpan);
 
-		Int32 rightUtf8Length = Encoding.UTF8.GetByteCount(rightSpan);
+		Int32 rightUtf8Length = rightSpan.GetUtf8Count();
 		Int32 bufferLength = left.Length + rightUtf8Length + 1;
 		Byte[] result = CString.CreateByteArray(bufferLength);
 		left.AsSpan().CopyTo(result.AsSpan()[..left.Length]);

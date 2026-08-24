@@ -57,29 +57,47 @@ public sealed class WrapperTests
 	{
 		T value = WrapperTests.fixture.Create<T>();
 		T value2 = WrapperTests.fixture.Create<T>();
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		IWrapper<T> result = IWrapper.Create(value);
+#else
+		IWrapper<T> result = WrapperFactory.Create(value);
+#endif
+		Boolean isEquatable = typeof(IWrapper<T>).GetInterfaces().Any(i => i == typeof(IEquatable<T>));
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(value, result.Value);
-		PInvokeAssert.True(result.Equals(value));
-		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
+		PInvokeAssert.Equal(isEquatable, result.Equals(value));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
 	}
 	private static void Nullable<T>(Boolean nullInput) where T : unmanaged
 	{
 		T? value = !nullInput ? WrapperTests.fixture.Create<T>() : null;
 		T? value2 = WrapperTests.fixture.Create<Boolean>() ? WrapperTests.fixture.Create<T>() : null;
+#if (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER) && !LEGACY
 		IWrapper<T?> result = IWrapper.CreateNullable(value);
+#else
+		IWrapper<T?> result = WrapperFactory.CreateNullable(value);
+#endif
+		Boolean isEquatable = typeof(IWrapper<T[]>).GetInterfaces().Any(i => i == typeof(IEquatable<T[]>));
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(value, result.Value);
-		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
 	}
 	private static void ObjectTest<T>() where T : unmanaged
 	{
 		T[] array = WrapperTests.fixture.CreateMany<T>().ToArray();
 		T[] array2 = WrapperTests.fixture.CreateMany<T>().ToArray();
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		IWrapper<T[]> result = IWrapper.CreateObject(array);
+#else
+		IWrapper<T[]> result = WrapperFactory.CreateObject(array);
+#endif
+		Boolean isEquatable = typeof(IWrapper<T[]>).GetInterfaces().Any(i => i == typeof(IEquatable<T[]>));
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(array, result.Value);
-		PInvokeAssert.True(result.Equals(array));
-		PInvokeAssert.Equal(Object.Equals(array, array2), result.Equals(array2));
+		PInvokeAssert.Equal(isEquatable, result.Equals(array));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(array, array2), result.Equals(array2));
 	}
 }

@@ -8,6 +8,7 @@ internal partial class ReadOnlyFixedContext<T> : IEquatable<ReadOnlyFixedContext
 	public override Boolean Equals(ReadOnlyFixedMemory? other) => base.Equals(other as ReadOnlyFixedContext<T>);
 	/// <inheritdoc/>
 	public override Boolean Equals(Object? obj) => base.Equals(obj as ReadOnlyFixedContext<T>);
+
 	/// <inheritdoc/>
 	public override Int32 GetHashCode() => base.GetHashCode();
 }

@@ -9,23 +9,6 @@ namespace Rxmxnx.PInvoke;
 public static partial class AotInfo
 {
 	/// <summary>
-	/// Indicates whether the current runtime is ahead-of-time.
-	/// </summary>
-	private static readonly Boolean isAotRuntime =
-#if !NET6_0_OR_GREATER
-		!AotInfo.IsJitEnabled();
-#else
-		TrimInfo.IsMobileTrimmedXnu() || // iOS, tvOS, watchOS, macCatalyst
-		TrimInfo.ZeroIlBytes() && AotInfo.IsDesktopOrAndroid() || AotInfo.IsMonoAot() ||
-		!AotInfo.IsDesktopOrAndroid() && !EmitInfo.IsEmitAllowed;
-#endif
-
-	/// <summary>
-	/// Indicates whether runtime reflection is disabled.
-	/// </summary>
-	private static Boolean? reflectionDisabled;
-
-	/// <summary>
 	/// Indicates whether runtime reflection is disabled.
 	/// </summary>
 	public static Boolean IsReflectionDisabled
@@ -50,7 +33,11 @@ public static partial class AotInfo
 			if (TrimInfo.ZeroIlBytes() && AotInfo.IsDesktopOrAndroid())
 				return false;
 #endif
+#if !UAP10_0
 			return !AotInfo.IsReflectionDisabled && EmitInfo.IsEmitAllowed;
+#else
+			return !AotInfo.isAotRuntime;
+#endif
 		}
 	}
 	/// <summary>
@@ -64,29 +51,5 @@ public static partial class AotInfo
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get => TrimInfo.IsPlatformTrimmed();
-	}
-
-	/// <inheritdoc cref="EmitInfo.IsDynamicMethod(MethodBase)"/>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static Boolean IsDynamicCode(MethodBase methodBase) => EmitInfo.IsDynamicMethod(methodBase);
-	/// <summary>
-	/// Indicates whether the function pointer of <paramref name="methodHandle"/> references to an R/RX memory section.
-	/// </summary>
-	/// <param name="methodHandle">A <see langword="RuntimeMethodHandle"/> value.</param>
-	/// <returns>
-	/// <see langword="true"/> if the function pointer references to an R/RX memory section; otherwise,
-	/// <see langword="false"/>.
-	/// </returns>
-#if !PACKAGE
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
-	[ExcludeFromCodeCoverage]
-#endif
-	internal static unsafe Boolean IsImageMethodUnsafe(RuntimeMethodHandle methodHandle)
-	{
-		RuntimeHelpers.PrepareMethod(methodHandle);
-		return MemoryInspector.Instance.IsReadOnlyAddress(methodHandle.GetFunctionPointer().ToPointer());
 	}
 }

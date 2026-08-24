@@ -5,15 +5,14 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="$(MSBuildThisFileDirectory)..\MonoFacades\Rxmxnx.PInvoke.Json\Rxmxnx.PInvoke.Json.csproj"/>
         <PackageReference Include="NUnitLite" Version="3.14.0" GeneratePathProperty="true">
             <SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
         </PackageReference>
-        <ProjectReference Include="$(MSBuildThisFileDirectory)..\MonoFacades\Rxmxnx.PInvoke.Json\Rxmxnx.PInvoke.Json.csproj"/>
     </ItemGroup>
 
-    <Target Name="CopyNUnitLiteRunner" AfterTargets="Build" Condition="'$(TargetFramework)' == 'netstandard2.1'">
-        <Copy SourceFiles="$(PkgNUnitLite)\tools\net45\nunitlite-runner.exe"
-              DestinationFolder="$(OutDir)"/>
+    <Target Name="CopyNUnitLiteRunner" AfterTargets="Build" Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'netstandard2.1'">
+        <Copy SourceFiles="$(PkgNUnitLite)\tools\net45\nunitlite-runner.exe" DestinationFolder="$(OutDir)"/>
     </Target>
 
 </Project>

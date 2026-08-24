@@ -5,15 +5,12 @@
 
     <PropertyGroup>
         <AssemblyName>$(AssemblyName).mono</AssemblyName>
-        <UseSystemTextJson Condition="'$(UseSystemTextJson)' == ''">True</UseSystemTextJson>
-        <DefineConstants Condition="'$(UseSystemTextJson)' == 'True'">$(DefineConstants);USE_SYSTEM_JSON</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
         <EmbeddedResource Include="Mono.ILLink.Descriptors.xml">
             <LogicalName>$(AssemblyName).xml</LogicalName>
         </EmbeddedResource>
-        <ProjectReference Condition="'$(UseSystemTextJson)' == 'True'" Include="$(MSBuildThisFileDirectory)..\MonoFacades\Rxmxnx.PInvoke.Json\Rxmxnx.PInvoke.Json.csproj"/>
     </ItemGroup>
 
 </Project>

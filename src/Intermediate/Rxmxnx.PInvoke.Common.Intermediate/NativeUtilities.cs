@@ -188,6 +188,7 @@ public static unsafe partial class NativeUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Byte[] ToBytes<TSource>(in TSource value) where TSource : unmanaged
 	{
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref TSource refValue = ref Unsafe.AsRef(in value);
 		ReadOnlySpan<TSource> intermediateSpan = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
 		ReadOnlySpan<Byte> bytes = MemoryMarshal.AsBytes(intermediateSpan);
@@ -198,60 +199,10 @@ public static unsafe partial class NativeUtilities
 #endif
 		bytes.CopyTo(result);
 		return result;
-	}
-	/// <summary>
-	/// Creates a <see cref="ReadOnlySpan{Byte}"/> from an exising read-only reference to a
-	/// <typeparamref name="TSource"/> <see langword="unmanaged"/> value.
-	/// </summary>
-	/// <typeparam name="TSource"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> source value.</typeparam>
-	/// <param name="value">A read-only reference to a <typeparamref name="TSource"/> <see langword="unmanaged"/> value.</param>
-	/// <returns>
-	/// A <see cref="ReadOnlySpan{Byte}"/> from an exising memory reference to a <typeparamref name="TSource"/>
-	/// <see langword="unmanaged"/> value.
-	/// </returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static ReadOnlySpan<Byte> AsBytes<TSource>(in TSource value) where TSource : unmanaged
-	{
-		ref TSource refValue = ref Unsafe.AsRef(in value);
-		ReadOnlySpan<TSource> span = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
-		return MemoryMarshal.AsBytes(span);
-	}
-	/// <summary>
-	/// Creates a <see cref="Span{Byte}"/> from an exising reference to a
-	/// <typeparamref name="TSource"/> <see langword="unmanaged"/> value.
-	/// </summary>
-	/// <typeparam name="TSource"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> source value.</typeparam>
-	/// <param name="refValue">A read-only reference to a <typeparamref name="TSource"/> <see langword="unmanaged"/> value.</param>
-	/// <returns>
-	/// A <see cref="ReadOnlySpan{Byte}"/> from an exising memory reference to a <typeparamref name="TSource"/>
-	/// <see langword="unmanaged"/> value.
-	/// </returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static Span<Byte> AsBinarySpan<TSource>(ref TSource refValue) where TSource : unmanaged
-	{
-		Span<TSource> span = MemoryMarshal.CreateSpan(ref refValue, 1);
-		return MemoryMarshal.AsBytes(span);
-	}
-	/// <summary>
-	/// Creates a new <typeparamref name="T"/> array with a specific length and initializes it after
-	/// creation by using the specified callback.
-	/// </summary>
-	/// <typeparam name="T">A type of elements in the array.</typeparam>
-	/// <typeparam name="TState">The type of the element to pass to <paramref name="action"/>.</typeparam>
-	/// <param name="length">The length of the array to create.</param>
-	/// <param name="state">The element to pass to <paramref name="action"/>.</param>
-	/// <param name="action">A callback to initialize the array.</param>
-	/// <returns>The created array.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T[] CreateArray<T, TState>(Int32 length, TState state, SpanAction<T, TState> action)
-#if NET9_0_OR_GREATER
-		where TState : allows ref struct
+#else
+		fixed (TSource* valuePtr = &value)
+			return new ReadOnlySpan<Byte>(valuePtr, sizeof(TSource)).ToArray();
 #endif
-	{
-		T[] result = new T[length];
-		Span<T> span = result;
-		NativeUtilities.WriteSpan(span, state, action);
-		return result;
 	}
 	/// <summary>
 	/// Performs a binary copy of the given <typeparamref name="TSource"/> to the <paramref name="destination"/> span.
@@ -270,8 +221,16 @@ public static unsafe partial class NativeUtilities
 	public static void CopyBytes<TSource>(in TSource value, Span<Byte> destination, Int32 offset = 0)
 		where TSource : unmanaged
 	{
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ValidationUtilities.ThrowIfInvalidCopyType(value, destination, offset, out ReadOnlySpan<Byte> bytes);
 		bytes.CopyTo(destination[offset..]);
+#else
+		fixed (TSource* valuePtr = &value)
+		{
+			ValidationUtilities.ThrowIfInvalidCopyType(valuePtr, destination, offset, out ReadOnlySpan<Byte> bytes);
+			bytes.CopyTo(destination[offset..]);
+		}
+#endif
 	}
 	/// <summary>
 	/// Creates a new span over an array of the values of the constants in a specified enumeration type.
@@ -289,28 +248,28 @@ public static unsafe partial class NativeUtilities
 	public static ReadOnlySpan<String> GetEnumNamesSpan<TEnum>() where TEnum : struct, Enum
 		=> EnumNameHelper<TEnum>.Values.Span;
 	/// <summary>
-	/// Creates an <see cref="IReadOnlyFixedContext{TEnum}.IDisposable"/> instance by pinning an array of the values of
-	/// the constants in a specified enumeration type.
+	/// Creates a <see cref="ReadOnlyFixedContextValue{TEnum}"/> instance by pinning an array of the values of  the
+	/// constants in a specified enumeration type.
 	/// </summary>
 	/// <typeparam name="TEnum">The type of the enumeration.</typeparam>
-	/// <returns>An <see cref="IFixedContext{TEnum}.IDisposable"/> instance representing the pinned array.</returns>
+	/// <param name="fixedContext">
+	/// Output. The <see cref="ReadOnlyFixedContextValue{T}"/> instance representing the pinned memory.
+	/// </param>
+	/// <returns>An <see cref="IDisposable"/> instance representing the pinned memory releasing.</returns>
 	/// <remarks>
-	/// This method pins the array to prevent the garbage collector from moving it, which is essential for safe
-	/// operations on unmanaged memory.
-	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned array
-	/// and avoid memory leaks.
+	/// The output context owns the pinned memory and releases it when the returning object is disposed.
+	/// Consumers should use a <see langword="using"/> statement or otherwise dispose the returned object.
 	/// </remarks>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	public static IReadOnlyFixedContext<TEnum>.IDisposable GetValuesFixedContext<TEnum>() where TEnum : unmanaged, Enum
+	public static IDisposable GetValuesFixedContext<TEnum>(out ReadOnlyFixedContextValue<TEnum> fixedContext)
+		where TEnum : unmanaged, Enum
 	{
 		ReadOnlyMemory<TEnum> mem = EnumValueHelper<TEnum>.Values;
 		MemoryHandle handle = mem.Pin();
-		return handle.Pointer == default ?
-			ReadOnlyFixedContext<TEnum>.EmptyDisposable :
-			// ReSharper disable once HeapView.BoxingAllocation
-			new ReadOnlyFixedContext<TEnum>(handle.Pointer, mem.Length).ToDisposable(handle);
+		fixedContext = new(handle, mem.Length, true, out IDisposable result);
+		return result;
 	}
 
 	/// <summary>
@@ -333,153 +292,27 @@ public static unsafe partial class NativeUtilities
 			new FixedDelegate<TDelegate>(method).ToDisposable(default);
 
 	/// <summary>
-	/// Determines whether all methods referenced by the specified <typeparamref name="TDelegate"/> delegate are backed
-	/// by statically compiled image code rather than dynamically generated runtime code.
-	/// </summary>
-	/// <typeparam name="TDelegate">The delegate type.</typeparam>
-	/// <param name="method">The delegate instance to evaluate.</param>
-	/// <returns>
-	/// <see langword="true"/> if all referenced methods are backed by image-compiled code; otherwise, <see langword="false"/>.
-	/// </returns>
-	/// <remarks>
-	/// This API is primarily intended for Mono-based runtimes.
-	/// Returns <see langword="false"/> if the delegate is <see langword="null"/>, if any referenced method is an open
-	/// generic method, or if the current platform does not support memory inspection.
-	/// In reflection-free runtimes, valid delegates are treated as image-backed.
-	/// </remarks>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	public static Boolean IsImageMethod<TDelegate>(TDelegate? method) where TDelegate : Delegate
-	{
-		if (!MemoryInspector.IsSupported || method is null) return false;
-		if (AotInfo.IsReflectionDisabled) return true;
-		try
-		{
-			foreach (Delegate d in NativeUtilities.GetInvocationSpan(method))
-			{
-				if (!NativeUtilities.IsImageMethodUnsafe(d.Method))
-					return false;
-			}
-		}
-		catch (Exception)
-		{
-			return false;
-		}
-		return true;
-	}
-	/// <summary>
 	/// Allocates a native memory block for <paramref name="count"/> values of type <typeparamref name="T"/> and exposes
-	/// it through an <see cref="IFixedContext{T}.IDisposable"/> instance.
+	/// it through a <see cref="FixedContextValue{T}"/> instance.
 	/// </summary>
 	/// <typeparam name="T">The unmanaged value type stored in the allocated memory block.</typeparam>
 	/// <param name="count">The number of values of type <typeparamref name="T"/> to allocate.</param>
-	/// <returns>
-	/// An <see cref="IFixedContext{T}.IDisposable"/> instance over the allocated native memory block.
-	/// </returns>
+	/// <param name="fixedContext">
+	/// Output. The <see cref="FixedContextValue{T}"/> instance representing the pinned memory.
+	/// </param>
+	/// <returns>An <see cref="IDisposable"/> instance representing the allocated memory releasing.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="count"/> is negative.</exception>
 	/// <exception cref="OverflowException">
 	/// Thrown when the requested allocation size exceeds <see cref="Int32.MaxValue"/>.
 	/// </exception>
 	/// <remarks>
-	/// The returned context owns the native memory allocation and releases it when disposed. The allocated memory is not
-	/// initialized. Consumers should use a <see langword="using"/> statement or otherwise dispose the returned context.
+	/// The output context owns the native memory allocation and releases it when the returning object is disposed.
+	/// The allocated memory is not initialized.
+	/// Consumers should use a <see langword="using"/> statement or otherwise dispose the returned object.
 	/// </remarks>
-	public static IFixedContext<T>.IDisposable HeapAlloc<T>(Int32 count) where T : unmanaged
+	public static IDisposable HeapAlloc<T>(Int32 count, out FixedContextValue<T> fixedContext) where T : unmanaged
 	{
 		ValidationUtilities.ThrowIfInvalidLength(count);
-		return NativeMemoryOwner.CreateContext<T>(count);
+		return NativeMemoryOwner.CreateContext(count, out fixedContext);
 	}
-#if !PACKAGE || NETCOREAPP
-	/// <summary>
-	/// Provides a high-level API for loading a native library.
-	/// </summary>
-	/// <param name="libraryName">The name of the native library to be loaded.</param>
-	/// <param name="searchPath">The search path.</param>
-	/// <returns>The OS handle for the loaded native library.</returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static IntPtr? LoadNativeLib(String? libraryName, DllImportSearchPath? searchPath = default)
-#if NETCOREAPP
-	{
-		if (String.IsNullOrWhiteSpace(libraryName)) return default;
-		if (NativeLibrary.TryLoad(libraryName, Assembly.GetExecutingAssembly(), searchPath, out IntPtr handle) ||
-		    (Path.IsPathFullyQualified(libraryName) && NativeLibrary.TryLoad(libraryName, out handle)))
-			return handle;
-		return default;
-	}
-	/// <summary>
-	/// Provides a high-level API for loading a native library.
-	/// </summary>
-	/// <param name="libraryName">The name of the native library to be loaded.</param>
-	/// <param name="unloadEvent">
-	/// An optional event handler that is called when the library is unloaded. The handler's invocation includes a call
-	/// to <see cref="NativeLibrary.Free(IntPtr)"/>.
-	/// </param>
-	/// <param name="searchPath">The search path.</param>
-	/// <returns>The OS handle for the loaded native library.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static IntPtr? LoadNativeLib(String? libraryName, ref EventHandler? unloadEvent,
-		DllImportSearchPath? searchPath = default)
-	{
-		// ReSharper disable once HeapView.ClosureAllocation
-		IntPtr? handle = NativeUtilities.LoadNativeLib(libraryName, searchPath);
-		if (handle.HasValue)
-			// ReSharper disable once HeapView.DelegateAllocation
-			unloadEvent += (_, _) => NativeLibrary.Free(handle.Value);
-		return handle;
-	}
-#else
-		=> default;
-	/// <summary>
-	/// Provides a high-level API for loading a native library.
-	/// </summary>
-	/// <param name="libraryName">The name of the native library to be loaded.</param>
-	/// <param name="unloadEvent">
-	/// An optional event handler that is called when the library is unloaded.
-	/// </param>
-	/// <param name="searchPath">The search path.</param>
-	/// <returns>The OS handle for the loaded native library.</returns>
-	[ExcludeFromCodeCoverage]
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static IntPtr? LoadNativeLib(String? libraryName, ref EventHandler? unloadEvent,
-		DllImportSearchPath? searchPath = default)
-		=> default;
-#endif
-	/// <summary>
-	/// Gets the <typeparamref name="TDelegate"/> delegate of an exported symbol.
-	/// </summary>
-	/// <typeparam name="TDelegate">Type of the delegate corresponding to the exported symbol.</typeparam>
-	/// <param name="handle">The native library OS handle.</param>
-	/// <param name="name">The name of the exported symbol.</param>
-	/// <returns><typeparamref name="TDelegate"/> delegate.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static TDelegate? GetNativeMethod<TDelegate>(IntPtr handle, String? name) where TDelegate : Delegate
-	{
-#if NETCOREAPP
-		if (handle != IntPtr.Zero && NativeLibrary.TryGetExport(handle, name ?? String.Empty, out IntPtr address))
-			return Marshal.GetDelegateForFunctionPointer<TDelegate>(address);
-#endif
-		return default;
-	}
-	/// <summary>
-	/// Gets a function pointer of type <typeparamref name="TDelegate"/> of an exported symbol.
-	/// </summary>
-	/// <typeparam name="TDelegate">Type of the delegate corresponding to the exported symbol.</typeparam>
-	/// <param name="handle">The native library OS handle.</param>
-	/// <param name="name">The name of the exported symbol.</param>
-	/// <returns><typeparamref name="TDelegate"/> delegate.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static FuncPtr<TDelegate> GetNativeMethodPtr<TDelegate>(IntPtr handle, String? name)
-		where TDelegate : Delegate
-	{
-#if NETCOREAPP
-		if (handle != IntPtr.Zero && NativeLibrary.TryGetExport(handle, name ?? String.Empty, out IntPtr address))
-			return (FuncPtr<TDelegate>)address;
-#endif
-		return default;
-	}
-#endif
 }

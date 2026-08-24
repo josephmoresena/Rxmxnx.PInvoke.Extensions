@@ -7,8 +7,10 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// Provides a set of extensions for basic operations with <see cref="IntPtr"/> and <see cref="UIntPtr"/> instances.
 /// </summary>
-[EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 [Browsable(false)]
+#endif
+[EditorBrowsable(EditorBrowsableState.Never)]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
@@ -116,7 +118,7 @@ public static unsafe class PointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static String? GetUnsafeString(this IntPtr ptr, Int32 length)
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		return ptr.IsZero() ? default : PointerExtensions.GetStringFromCharPointer((Char*)ptr.ToPointer(), length);
 	}
 	/// <summary>
@@ -137,7 +139,7 @@ public static unsafe class PointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static String? GetUnsafeString(this UIntPtr uptr, Int32 length)
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		return uptr.IsZero() ? default : PointerExtensions.GetStringFromCharPointer((Char*)uptr.ToPointer(), length);
 	}
 	/// <summary>
@@ -154,7 +156,7 @@ public static unsafe class PointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static String? GetUnsafeString(this MemoryHandle handle, Int32 length)
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		return handle.Pointer == default ?
 			default :
 			PointerExtensions.GetStringFromCharPointer((Char*)handle.Pointer, length);
@@ -177,8 +179,8 @@ public static unsafe class PointerExtensions
 	/// </remarks>
 	public static T[]? GetUnsafeArray<T>(this IntPtr ptr, Int32 length) where T : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
-		return ptr.IsZero() ? default : ptr.GetUnsafeReadOnlySpan<T>(length).ToArray();
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
+		return ptr.IsZero() ? default : [.. ptr.GetUnsafeReadOnlySpan<T>(length),];
 	}
 	/// <summary>
 	/// Generates a <typeparamref name="T"/> array by copying values from memory starting at the location referenced by a
@@ -193,8 +195,8 @@ public static unsafe class PointerExtensions
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
 	public static T[]? GetUnsafeArray<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
-		return uptr.IsZero() ? default : uptr.GetUnsafeReadOnlySpan<T>(length).ToArray();
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
+		return uptr.IsZero() ? default : [.. uptr.GetUnsafeReadOnlySpan<T>(length),];
 	}
 	/// <summary>
 	/// Generates a <typeparamref name="T"/> array by copying values from memory starting at the location referenced by a
@@ -209,8 +211,8 @@ public static unsafe class PointerExtensions
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
 	public static T[]? GetUnsafeArray<T>(this MemoryHandle handle, Int32 length) where T : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
-		return handle.Pointer == default ? default : handle.ToIntPtr().GetUnsafeReadOnlySpan<T>(length).ToArray();
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
+		return handle.Pointer == default ? default : [.. handle.ToIntPtr().GetUnsafeReadOnlySpan<T>(length),];
 	}
 
 	/// <summary>
@@ -232,7 +234,7 @@ public static unsafe class PointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<T> GetUnsafeSpan<T>(this IntPtr ptr, Int32 length) where T : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (ptr.IsZero())
 			return default;
 		return new(ptr.ToPointer(), length);
@@ -256,7 +258,7 @@ public static unsafe class PointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<T> GetUnsafeSpan<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (uptr.IsZero())
 			return default;
 		return new(uptr.ToPointer(), length);
@@ -272,7 +274,6 @@ public static unsafe class PointerExtensions
 	/// <param name="length">The number of <typeparamref name="T"/> values to include in the span.</param>
 	/// <returns>A <see cref="Span{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
-	/// <exception cref="ArgumentException"><see cref="MemoryHandle"/> cannot be obtained from a non-unmanaged memory.</exception>
 	/// <remarks>
 	/// The reliability of the obtained span depends on the lifetime and validity of the handle during the usage of
 	/// the span.
@@ -281,7 +282,7 @@ public static unsafe class PointerExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<T> GetUnsafeSpan<T>(this MemoryHandle handle, Int32 length)
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (handle.Pointer == default)
 			return default;
 		return new(handle.Pointer, length);
@@ -308,7 +309,7 @@ public static unsafe class PointerExtensions
 #endif
 	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this IntPtr ptr, Int32 length) where T : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (ptr.IsZero())
 			return default;
 		return new(ptr.ToPointer(), length);
@@ -335,7 +336,7 @@ public static unsafe class PointerExtensions
 #endif
 	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (uptr.IsZero())
 			return default;
 		return new(uptr.ToPointer(), length);
@@ -362,7 +363,7 @@ public static unsafe class PointerExtensions
 #endif
 	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this MemoryHandle handle, Int32 length) where T : unmanaged
 	{
-		ValidationUtilities.ThrowIfInvalidMemoryLength(length);
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (handle.Pointer == default)
 			return default;
 		return new(handle.Pointer, length);
@@ -381,7 +382,11 @@ public static unsafe class PointerExtensions
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TDelegate? GetUnsafeDelegate<TDelegate>(this IntPtr ptr) where TDelegate : Delegate
+#if NETSTANDARD1_2_OR_GREATER || NETCOREAPP || NET451_OR_GREATER || UAP10_0
 		=> !ptr.IsZero() ? Marshal.GetDelegateForFunctionPointer<TDelegate>(ptr) : default;
+#else
+		=> !ptr.IsZero() ? (TDelegate)Marshal.GetDelegateForFunctionPointer(ptr, typeof(TDelegate)) : default;
+#endif
 	/// <summary>
 	/// Generates a delegate of type <typeparamref name="TDelegate"/> from a <see cref="UIntPtr"/>.
 	/// </summary>
@@ -490,6 +495,53 @@ public static unsafe class PointerExtensions
 		=> uptr.IsZero() ? default(T?) : uptr.GetUnsafeReadOnlyReference<T>();
 
 	/// <summary>
+	/// Generates a <see cref="UnmanagedMemoryStream"/> instance from an <see cref="IntPtr"/>.
+	/// </summary>
+	/// <param name="ptr">The <see cref="IntPtr"/> pointing to the beginning of the stream.</param>
+	/// <param name="size">The size of the stream.</param>
+	/// <param name="access">Optional. One of the <see cref="FileAccess" /> values.</param>
+	/// <param name="capacity">Optional. The total amount of memory assigned to the stream.</param>
+	/// <returns>A <see cref="Span{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
+	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+	/// <remarks>
+	/// The reliability of the obtained stream depends on the lifetime and validity of the pointer during the usage of
+	/// the stream.
+	/// The stream does not own the memory it points to, it's merely a projection over the existing memory.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Stream GetUnsafeStream(this IntPtr ptr, Int64 size, FileAccess access = FileAccess.ReadWrite,
+		Int64? capacity = default)
+	{
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(size);
+		if (ptr.IsZero())
+			return Stream.Null;
+		return new UnmanagedMemoryStream((Byte*)ptr.ToPointer(), size, capacity ?? size, access);
+	}
+	/// <summary>
+	/// Generates a <see cref="UnmanagedMemoryStream"/> instance from an <see cref="IntPtr"/>.
+	/// </summary>
+	/// <param name="uptr">The <see cref="UIntPtr"/> pointing to the beginning of the stream.</param>
+	/// <param name="size">The size of the stream.</param>
+	/// <param name="access">Optional. One of the <see cref="FileAccess" /> values.</param>
+	/// <param name="capacity">Optional. The total amount of memory assigned to the stream.</param>
+	/// <returns>A <see cref="Span{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
+	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+	/// <remarks>
+	/// The reliability of the obtained stream depends on the lifetime and validity of the pointer during the usage of
+	/// the stream.
+	/// The stream does not own the memory it points to, it's merely a projection over the existing memory.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Stream GetUnsafeStream(this UIntPtr uptr, Int64 size, FileAccess access = FileAccess.ReadWrite,
+		Int64? capacity = default)
+	{
+		ValidationUtilities.ThrowIfNegativeLengthOrIndex(size);
+		if (uptr.IsZero())
+			return Stream.Null;
+		return new UnmanagedMemoryStream((Byte*)uptr.ToPointer(), size, capacity ?? size, access);
+	}
+
+	/// <summary>
 	/// Creates a new read-only span for a UTF-16 null-terminated string.
 	/// </summary>
 	/// <param name="char0">The pointer to the UTF-16 null-terminated string of characters.</param>
@@ -538,6 +590,7 @@ public static unsafe class PointerExtensions
 #endif
 	public static Boolean IsImageCode(this RuntimeMethodHandle methodHandle)
 	{
+#if !UAP10_0
 		if (!MemoryInspector.IsSupported || methodHandle == default) return false;
 		if (AotInfo.IsReflectionDisabled) return true;
 		try
@@ -550,6 +603,9 @@ public static unsafe class PointerExtensions
 		{
 			return true;
 		}
+#else
+		return true;
+#endif
 	}
 
 	/// <summary>
@@ -568,5 +624,5 @@ public static unsafe class PointerExtensions
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static String GetStringFromCharPointer(Char* chrPtr, Int32 length)
-		=> length == default ? new String(chrPtr) : new(new ReadOnlySpan<Char>(chrPtr, length));
+		=> length == default ? new(chrPtr) : new ReadOnlySpan<Char>(chrPtr, length).ToString();
 }

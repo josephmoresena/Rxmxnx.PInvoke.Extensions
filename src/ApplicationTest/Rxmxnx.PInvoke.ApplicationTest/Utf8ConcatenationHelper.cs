@@ -1,14 +1,19 @@
 #if !NET9_0_OR_GREATER
 using System;
+using System.IO;
 
 namespace Rxmxnx.PInvoke.ApplicationTest
 {
-	public static class Utf8ConcatenationHelper
+	internal static class Utf8ConcatenationHelper
 	{
-		public static void CStringBuildingFeature()
+		public static void CStringBuildingFeature(TextWriter writer)
 		{
 			Span<Int32> interruptions = stackalloc Int32[8];
+#if CSHARP9_0
 			CStringBuilder bohemianRhapsody = new();
+#else
+			CStringBuilder bohemianRhapsody = new CStringBuilder();
+#endif
 			bohemianRhapsody.AppendLine("I'm just a poor boy, I need no sympathy ")
 			                .AppendLine("Because I'm easy come, easy go").AppendLine("Little high, little low ")
 			                .AppendLine("Any way the wind blows doesn't really matter to me, to me").AppendLine()
@@ -96,7 +101,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			bohemianRhapsody.Insert(0, Environment.NewLine);
 			bohemianRhapsody.Insert(0, "Is this the real life? Is this just fantasy?");
 
-			Console.WriteLine(bohemianRhapsody.ToString());
+			writer.WriteLine(bohemianRhapsody.ToString());
 		}
 	}
 }

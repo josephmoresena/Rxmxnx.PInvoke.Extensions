@@ -1,4 +1,5 @@
-﻿// ReSharper disable ConvertToExtensionBlock
+﻿#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+// ReSharper disable ConvertToExtensionBlock
 
 #if !NET6_0_OR_GREATER
 using ArgumentNullException = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
@@ -22,6 +23,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A delegate of type <see cref="FixedContextAction{T}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T>(this Span<T> span, FixedContextAction<T> action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -48,6 +53,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T>(this Span<T> span, ReadOnlyFixedContextAction<T> action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -74,6 +83,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="span">The current read-only span of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T>(this ReadOnlySpan<T> span, ReadOnlyFixedContextAction<T> action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -102,6 +115,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="arg">An object representing the state, of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A delegate of type <see cref="FixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T, TArg>(this Span<T> span, TArg arg, FixedContextAction<T, TArg> action)
 #if NET9_0_OR_GREATER
 		where TArg : allows ref struct
@@ -133,6 +150,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="arg">An object representing the state, of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T, TArg>(this Span<T> span, TArg arg, ReadOnlyFixedContextAction<T, TArg> action)
 #if NET9_0_OR_GREATER
 		where TArg : allows ref struct
@@ -164,6 +185,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="arg">An object representing the state, of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedContextAction{T, TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<T, TArg>(this ReadOnlySpan<T> span, TArg arg,
 		ReadOnlyFixedContextAction<T, TArg> action)
 #if NET9_0_OR_GREATER
@@ -196,6 +221,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="func">A delegate of type <see cref="FixedContextFunc{T, TResult}"/>.</param>
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T, TResult>(this Span<T> span, FixedContextFunc<T, TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
@@ -224,6 +253,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedContextFunc{T, TResult}"/>.</param>
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T, TResult>(this Span<T> span, ReadOnlyFixedContextFunc<T, TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
@@ -252,6 +285,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedContextFunc{T, TResult}"/>.</param>
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T, TResult>(this ReadOnlySpan<T> span,
 		ReadOnlyFixedContextFunc<T, TResult> func)
 	{
@@ -283,6 +320,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="func">A delegate of type <see cref="FixedContextFunc{T, TArg, TResult}"/>.</param>
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T, TArg, TResult>(this Span<T> span, TArg arg,
 		FixedContextFunc<T, TArg, TResult> func)
 #if NET9_0_OR_GREATER
@@ -317,6 +358,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedContextFunc{T, TArg, TResult}"/>.</param>
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T, TArg, TResult>(this Span<T> span, TArg arg,
 		ReadOnlyFixedContextFunc<T, TArg, TResult> func)
 #if NET9_0_OR_GREATER
@@ -351,6 +396,10 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedContextFunc{T, TArg, TResult}"/>.</param>
 	/// <returns>The result of executing the function specified by <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T, TArg, TResult>(this ReadOnlySpan<T> span, TArg arg,
 		ReadOnlyFixedContextFunc<T, TArg, TResult> func)
 #if NET9_0_OR_GREATER
@@ -373,3 +422,4 @@ public static unsafe partial class MemoryBlockExtensions
 	}
 }
 #pragma warning restore CS8500
+#endif

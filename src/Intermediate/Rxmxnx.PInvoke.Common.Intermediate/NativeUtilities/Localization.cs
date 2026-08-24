@@ -2,6 +2,7 @@ namespace Rxmxnx.PInvoke;
 
 public partial class NativeUtilities
 {
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	/// <summary>
 	/// Indicates whether globalization-invariant mode is enabled.
 	/// </summary>
@@ -11,6 +12,7 @@ public partial class NativeUtilities
 #endif
 	public static Boolean GlobalizationInvariantModeEnabled
 		=> NativeUtilities.globalizationInvariantMode ??= NativeUtilities.IsGlobalizationInvariantMode();
+#endif
 	/// <summary>
 	/// Retrieves the <see cref="Iso639P1"/> enum value corresponding to the current user interface culture.
 	/// </summary>

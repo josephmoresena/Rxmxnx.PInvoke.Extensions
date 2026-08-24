@@ -1,3 +1,7 @@
+#if WINDOWS_UWP
+using ThreadState = System.Threading.ThreadState;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests.UnmanagedValueExtensionsTest;
 
 [TestFixture]

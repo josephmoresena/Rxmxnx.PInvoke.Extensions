@@ -6,9 +6,9 @@
 public sealed class WithSafeFixedTest
 {
 	private static readonly IFixture fixture = new Fixture();
-
 	private Array? _array;
 
+#pragma warning disable CS0612
 	[Fact]
 	public void ByteTest() => this.Test<Byte>();
 	[Fact]
@@ -41,7 +41,11 @@ public sealed class WithSafeFixedTest
 	public void UInt32Test() => this.Test<UInt32>();
 	[Fact]
 	public void UInt64Test() => this.Test<UInt64>();
+#pragma warning restore CS0612
 
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+	[Obsolete]
+#endif
 	private void Test<T>() where T : unmanaged
 	{
 		T[] values = WithSafeFixedTest.fixture.CreateMany<T>(10).ToArray();
@@ -49,6 +53,7 @@ public sealed class WithSafeFixedTest
 		ReadOnlySpan<T> readOnlySpan = span;
 
 		this._array = values;
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		span.WithSafeFixed(this.ActionTest);
 		span.WithSafeFixed(this.ActionReadOnlyTest);
 		readOnlySpan.WithSafeFixed(this.ReadOnlyActionReadOnlyTest);
@@ -64,7 +69,20 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(values, span.WithSafeFixed(this, WithSafeFixedTest.FuncTest));
 		PInvokeAssert.Equal(values, span.WithSafeFixed(this, WithSafeFixedTest.FuncReadOnlyTest));
 		PInvokeAssert.Equal(values, readOnlySpan.WithSafeFixed(this, WithSafeFixedTest.ReadOnlyFuncReadOnlyTest));
+#endif
+		span.WithSafeFixed(new FixedAction<T>(this._array));
+		span.WithSafeFixed(new ReadOnlyFixedAction<T>(this._array));
+		readOnlySpan.WithSafeFixed(new ReadOnlyFixedAction<T>(this._array));
+
+		span.WithSafeFixed(new FixedFunction<T>(this._array), out Int32 sResult);
+		span.WithSafeFixed(new ReadOnlyFixedFunction<T>(this._array), out Int32 srResult);
+		readOnlySpan.WithSafeFixed(new ReadOnlyFixedFunction<T>(this._array), out Int32 rResult);
+
+		PInvokeAssert.Equal(sResult, srResult);
+		PInvokeAssert.Equal(rResult, srResult);
 	}
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+	[Obsolete]
 	private void ActionTest<T>(in IFixedContext<T> ctx) where T : unmanaged
 	{
 		IFixedContext<Byte> bctx = ctx.AsBinaryContext();
@@ -100,11 +118,22 @@ public sealed class WithSafeFixedTest
 		WithSafeFixedTest.Test<T, UInt16>(ctx);
 		WithSafeFixedTest.Test<T, UInt32>(ctx);
 		WithSafeFixedTest.Test<T, UInt64>(ctx);
+
+		FixedContextValue<T> value = FixedContextValue<T>.CreateValue(ctx);
+		PInvokeAssert.Equal(value.Pointer, ctx.Pointer);
+#if NET6_0_OR_GREATER
+		PInvokeAssert.True(value.Values.SequenceEqual(ctx.Values));
+#endif
+		PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(value.Values),
+		                                  ref MemoryMarshal.GetReference(ctx.Values)));
 	}
+	[Obsolete]
 	private void ActionReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
 		=> this.ActionReadOnlyTest(ctx, false);
+	[Obsolete]
 	private void ReadOnlyActionReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
 		=> this.ActionReadOnlyTest(ctx, true);
+	[Obsolete]
 	private void ActionReadOnlyTest<T>(IReadOnlyFixedContext<T> ctx, Boolean readOnly) where T : unmanaged
 	{
 		IReadOnlyFixedContext<Byte> bctx = ctx.AsBinaryContext();
@@ -163,23 +192,35 @@ public sealed class WithSafeFixedTest
 		WithSafeFixedTest.Test<T, UInt16>(ctx);
 		WithSafeFixedTest.Test<T, UInt32>(ctx);
 		WithSafeFixedTest.Test<T, UInt64>(ctx);
+
+		ReadOnlyFixedContextValue<T> value = ReadOnlyFixedContextValue<T>.CreateValue(ctx);
+		PInvokeAssert.Equal(value.Pointer, ctx.Pointer);
+#if NET6_0_OR_GREATER
+		PInvokeAssert.True(value.Values.SequenceEqual(ctx.Values));
+#endif
+		PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(value.Values),
+		                                  ref MemoryMarshal.GetReference(ctx.Values)));
 	}
+	[Obsolete]
 	private T[] FuncTest<T>(in IFixedContext<T> ctx) where T : unmanaged
 	{
 		this.ActionTest(ctx);
 		return ctx.Values.ToArray();
 	}
+	[Obsolete]
 	private T[] FuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
 	{
 		this.ActionReadOnlyTest(ctx);
 		return ctx.Values.ToArray();
 	}
+	[Obsolete]
 	private T[] ReadOnlyFuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
 	{
 		this.ReadOnlyActionReadOnlyTest(ctx);
 		return ctx.Values.ToArray();
 	}
 
+	[Obsolete]
 	private static unsafe void Test<T, T2>(IFixedContext<T> ctx) where T : unmanaged where T2 : unmanaged
 	{
 		IFixedContext<T2> ctx2 = ctx.Transformation<T2>(out IFixedMemory residual);
@@ -199,6 +240,7 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(ctx.Pointer + offset, residualR.Pointer);
 		PInvokeAssert.Equal(ctx.Pointer + offset, bctx.Pointer);
 	}
+	[Obsolete]
 	private static unsafe void Test<T, T2>(IReadOnlyFixedContext<T> ctx) where T : unmanaged where T2 : unmanaged
 	{
 		IReadOnlyFixedContext<T2> ctx2 = ctx.Transformation<T2>(out IReadOnlyFixedMemory residual);
@@ -210,19 +252,55 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(ctx.Bytes.Length - offset, residual.Bytes.Length);
 		PInvokeAssert.Equal(ctx.Pointer + offset, residual.Pointer);
 	}
+	[Obsolete]
 	private static void ActionTest<T>(in IFixedContext<T> ctx, WithSafeFixedTest test) where T : unmanaged
 		=> test.ActionTest(ctx);
+	[Obsolete]
 	private static void ActionReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx, WithSafeFixedTest test)
 		where T : unmanaged
 		=> test.ActionReadOnlyTest(ctx);
+	[Obsolete]
 	private static void ReadOnlyActionReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx, WithSafeFixedTest test)
 		where T : unmanaged
 		=> test.ReadOnlyActionReadOnlyTest(ctx);
+	[Obsolete]
 	private static T[] FuncTest<T>(in IFixedContext<T> ctx, WithSafeFixedTest test) where T : unmanaged
 		=> test.FuncTest(ctx);
+	[Obsolete]
 	private static T[] FuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx, WithSafeFixedTest test) where T : unmanaged
 		=> test.FuncReadOnlyTest(ctx);
+	[Obsolete]
 	private static T[] ReadOnlyFuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx, WithSafeFixedTest test)
 		where T : unmanaged
 		=> test.ReadOnlyFuncReadOnlyTest(ctx);
+#endif
+	private readonly struct ReadOnlyFixedAction<T>(Array array) : IReadOnlyFixedContextAction<T>
+	{
+		public void Accept(scoped ReadOnlyFixedContextValue<T> ctx)
+		{
+			T[] arr = (T[])array;
+			PInvokeAssert.Equal(arr, ctx.Values.ToArray());
+			PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(arr.AsSpan()),
+			                                  ref MemoryMarshal.GetReference(ctx.Values)));
+		}
+	}
+
+	private readonly struct ReadOnlyFixedFunction<T>(Array array) : IReadOnlyFixedContextFunction<T, Int32>
+	{
+		public Int32 Apply(scoped ReadOnlyFixedContextValue<T> ctx)
+		{
+			new ReadOnlyFixedAction<T>(array).Accept(ctx);
+			return ctx.Bytes.Length;
+		}
+	}
+
+	private readonly struct FixedAction<T>(Array array) : IFixedContextAction<T>
+	{
+		public void Accept(scoped FixedContextValue<T> ctx) => new ReadOnlyFixedAction<T>(array).Accept(ctx);
+	}
+
+	private readonly struct FixedFunction<T>(Array array) : IFixedContextFunction<T, Int32>
+	{
+		public Int32 Apply(scoped FixedContextValue<T> ctx) => new ReadOnlyFixedFunction<T>(array).Apply(ctx);
+	}
 }

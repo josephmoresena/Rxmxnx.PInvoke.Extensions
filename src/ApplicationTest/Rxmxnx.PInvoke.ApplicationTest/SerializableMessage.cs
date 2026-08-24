@@ -1,11 +1,11 @@
 using System;
-#if NETCOREAPP
+#if NETCOREAPP2_1_OR_GREATER || NETFRAMEWORK && (MONO || NET461_OR_GREATER) || WINDOWS_UWP
 using System.Text.Json.Serialization;
 #endif
 
 namespace Rxmxnx.PInvoke.ApplicationTest
 {
-#if !CSHARP9_0
+#if !CSHARP9_0 || UAP && !WINDOWS_UWP
 	public sealed class SerializableMessage<T>
 #else
 	public sealed record SerializableMessage<T>
@@ -15,7 +15,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		public T? Title { get; set; }
 		public T? Message { get; set; }
 
-#if NETCOREAPP
+#if NETCOREAPP2_1_OR_GREATER || NETFRAMEWORK && (MONO || NET461_OR_GREATER) || WINDOWS_UWP
 		[JsonConstructor]
 		public SerializableMessage() { }
 #endif

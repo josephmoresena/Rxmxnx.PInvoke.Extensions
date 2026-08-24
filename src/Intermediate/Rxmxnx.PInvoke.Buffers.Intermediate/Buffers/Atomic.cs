@@ -30,11 +30,13 @@ public struct Atomic<T> : IManagedBinaryBuffer<Atomic<T>, T>
 	[ExcludeFromCodeCoverage]
 #endif
 	static void IManagedBuffer<T>.AppendComponent(IMetadataStorage storage) { }
-#else
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 	BufferTypeMetadata<T> IManagedBinaryBuffer<T>.Metadata => Atomic<T>.TypeMetadata;
-	BufferTypeMetadata<T> IManagedBuffer<T>.GetStaticTypeMetadata() => Atomic<T>.TypeMetadata;
+#if !PACKAGE && NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
 #endif
+	BufferTypeMetadata<T> IManagedBuffer<T>.GetStaticTypeMetadata() => Atomic<T>.TypeMetadata;
 }

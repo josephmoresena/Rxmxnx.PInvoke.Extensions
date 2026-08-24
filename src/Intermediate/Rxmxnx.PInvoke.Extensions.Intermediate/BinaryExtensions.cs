@@ -4,17 +4,27 @@
 using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
 
+#if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP && !NETFRAMEWORK && !UAP10_0_16299
+using InsufficientMemoryException = System.OutOfMemoryException;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Provides a set of extensions for basic operations with <see cref="Byte"/> instances.
 /// </summary>
-[EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 [Browsable(false)]
+#endif
+[EditorBrowsable(EditorBrowsableState.Never)]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 public static unsafe partial class BinaryExtensions
+#else
+public static unsafe class BinaryExtensions
+#endif
 {
 	/// <summary>
 	/// Map of hexadecimal values.
@@ -52,7 +62,11 @@ public static unsafe partial class BinaryExtensions
 			return Unsafe.ReadUnaligned<T>(ref refByte);
 
 		T result = default;
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<Byte> resultBytes = MemoryMarshal.CreateSpan(ref Unsafe.As<T, Byte>(ref result), span.Length);
+#else
+		Span<Byte> resultBytes = new(&result, span.Length);
+#endif
 		span.CopyTo(resultBytes);
 		return result;
 	}
@@ -72,7 +86,7 @@ public static unsafe partial class BinaryExtensions
 	public static ref readonly T AsValue<T>(this ReadOnlySpan<Byte> span) where T : unmanaged
 	{
 		ValidationUtilities.ThrowIfInvalidBinarySpanSize(span, sizeof(T));
-		return ref MemoryMarshal.Cast<Byte, T>(span)[0];
+		return ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(span));
 	}
 	/// <summary>
 	/// Retrieves a reference to a <typeparamref name="T"/> value from the given byte span.
@@ -90,7 +104,7 @@ public static unsafe partial class BinaryExtensions
 	public static ref T AsValue<T>(this Span<Byte> span) where T : unmanaged
 	{
 		ValidationUtilities.ThrowIfInvalidBinarySpanSize(span, sizeof(T));
-		return ref MemoryMarshal.Cast<Byte, T>(span)[0];
+		return ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(span));
 	}
 
 	/// <summary>
@@ -106,7 +120,17 @@ public static unsafe partial class BinaryExtensions
 #else
 		ArgumentNullException.ThrowIfNull(bytes);
 #endif
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		return bytes.Length > 0 ? String.Create(bytes.Length * 2, bytes, BinaryExtensions.CopyHexChars) : String.Empty;
+#else
+		if (bytes.Length <= 0) return String.Empty;
+		Int32 stringLength = bytes.Length * 2;
+		Span<Char> chars = stringLength <= StackAllocationHelper.StackallocByteThreshold ?
+			stackalloc Char[stringLength] :
+			new Char[stringLength];
+		BinaryExtensions.CopyHexChars(chars, bytes);
+		return chars.ToString();
+#endif
 	}
 	/// <summary>
 	/// Gets the hexadecimal string representation of a byte.
@@ -114,7 +138,16 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="value">The source byte.</param>
 	/// <returns>The hexadecimal string representation of the byte.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static String AsHexString(this Byte value) => String.Create(2, value, BinaryExtensions.CopyHexChars);
+	public static String AsHexString(this Byte value)
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		=> String.Create(2, value, BinaryExtensions.CopyHexChars);
+#else
+	{
+		Span<Char> chars = stackalloc Char[2];
+		BinaryExtensions.CopyHexChars(chars, value);
+		return chars.ToString();
+	}
+#endif
 
 	/// <summary>
 	/// Copies to <paramref name="chars"/> the Hexadecimal representation of <paramref name="value"/>.

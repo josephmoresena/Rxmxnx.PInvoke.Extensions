@@ -36,7 +36,7 @@ public partial class CStringSequence
 		{
 			this._startIndex = startIndex;
 			this._sequence = sequence;
-			this._lengths = sequence._lengths.AsSpan().Slice(startIndex, length).ToArray();
+			this._lengths = [.. sequence._lengths.AsSpan().Slice(startIndex, length),];
 		}
 
 		/// <summary>
@@ -46,7 +46,15 @@ public partial class CStringSequence
 		public CStringSequence CreateSequence()
 		{
 			Int32 length = CStringSequence.GetBufferLength(this._lengths.AsSpan());
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			String value = String.Create(length, this, SubsequenceHelper.CopyBytes);
+#else
+			Span<Char> chars = length <= StackAllocationHelper.StackallocByteThreshold ?
+				stackalloc Char[length] :
+				new Char[length];
+			SubsequenceHelper.CopyBytes(chars, this);
+			String value = chars.ToString();
+#endif
 			return new(value, this._lengths);
 		}
 

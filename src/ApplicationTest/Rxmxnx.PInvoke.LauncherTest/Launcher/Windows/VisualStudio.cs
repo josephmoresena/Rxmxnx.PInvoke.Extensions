@@ -1,15 +1,20 @@
+using System.Runtime.CompilerServices;
+
 namespace Rxmxnx.PInvoke.ApplicationTest;
 
+// ReSharper disable once ClassCannotBeInstantiated
 public partial class Launcher
 {
 	[SupportedOSPlatform("WINDOWS")]
-	private sealed partial class Windows
+	private sealed partial class Windows : IStrongBox
 	{
 #if ZLINK_STATIC
 		private const String zLibUrl = "https://www.winimage.com/zLibDll/zlib123.zip ";
 		private const String zLib32Url = "https://www.winimage.com/zLibDll/zlib123dll.zip ";
 		private const String zLib64Url = "https://www.winimage.com/zLibDll/zlib123dllx64.zip ";
 #endif
+		
+		Object? IStrongBox.Value { get; set; }
 
 		public override async Task<String?> GetZlibPath()
 		{
@@ -23,6 +28,7 @@ public partial class Launcher
 			DirectoryInfo includeDir = zlibDir.CreateSubdirectory("include");
 			Boolean missingHeaders = includeDir.GetFiles("z*.h").Count(f => f.Name is "zlib.h" or "zconf.h") < 2;
 #if !ZLINK_STATIC
+			// ReSharper disable once InvertIf
 			if (missingHeaders)
 			{
 				await File.WriteAllTextAsync(Path.Combine(includeDir.FullName, Windows.zLibHeaderName),
@@ -83,14 +89,15 @@ public partial class Launcher
 		}
 #endif
 		private static async Task PrepareCompilers(Dictionary<Architecture, CppCompiler> cppCompilers,
-			Architecture[] architectures)
+			Architecture[] architectures, IStrongBox msbuild)
 		{
-			(String vcBuildPath, String msvcPath) = await Windows.GetVisualCppPath();
+			VisualStudioInfo info = await Windows.GetVisualCppPath();
 			String kitPath = Windows.GetWindowsKitLibPath();
 			foreach (Architecture arch in architectures)
-				cppCompilers.Add(arch, new(vcBuildPath, msvcPath, kitPath, arch));
+				cppCompilers.Add(arch, new(info.VcBuildPath, info.MsVcPath, kitPath, arch));
+			msbuild.Value = info.MsBuildPath;
 		}
-		private static async Task<(String, String)> GetVisualCppPath()
+		private static async Task<VisualStudioInfo> GetVisualCppPath()
 		{
 			const String registryPath = @"\Microsoft\VisualStudio\SxS\VS7";
 			try
@@ -135,9 +142,14 @@ public partial class Launcher
 				String vcBuildPath = Path.Combine(vsPath, "VC", "Auxiliary", "Build");
 				String vcVersionText = await File.ReadAllTextAsync(
 					Path.Combine(vcBuildPath, "Microsoft.VCToolsVersion.default.txt"));
-				Version vcVersion = Version.Parse(vcVersionText);
+				Version vcVersion = Version.Parse(vcVersionText.Trim());
 				ConsoleNotifier.Notifier.Print($"Visual C++ {vcVersion} found.");
-				return (vcBuildPath, Path.Combine(vsPath, "VC", "Tools", "MSVC", vcVersion.ToString()));
+				return new()
+				{
+					VcBuildPath = vcBuildPath,
+					MsVcPath = Path.Combine(vsPath, "VC", "Tools", "MSVC", vcVersion.ToString()),
+					MsBuildPath = Path.Combine(vsPath, "MSBuild", "Current", "Bin", "MSBuild.exe"),
+				};
 			}
 			catch (Exception ex)
 			{
@@ -235,7 +247,7 @@ public partial class Launcher
 				kits.Add(kitVersion, installationFolder);
 				ConsoleNotifier.Notifier.Print($"Windows Kit Version {kitVersion} [{installationFolder}] found.");
 			}
-			return kits.OrderBy(p => p.Key).Select(p => p.Value).ToArray();
+			return [.. kits.OrderBy(p => p.Key).Select(p => p.Value),];
 		}
 
 		[GeneratedRegex("(.+)=(.+)")]

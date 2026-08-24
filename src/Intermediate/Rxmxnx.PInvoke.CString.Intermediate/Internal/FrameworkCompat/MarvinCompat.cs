@@ -65,7 +65,11 @@ internal static class MarvinCompat
 	static MarvinCompat()
 	{
 		if (TrimInfo.SafeGetType(typeof(String), "System.Marvin") is not { } marvinType) return;
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (marvinType.GetProperty("DefaultSeed") is not { } defaultSeedProp) return;
+#else
+		if (marvinType.GetTypeInfo().GetDeclaredProperty("DefaultSeed") is not { } defaultSeedProp) return;
+#endif
 		MarvinCompat.DefaultSeed = Convert.ToUInt64(defaultSeedProp.GetValue(default));
 	}
 
@@ -92,23 +96,27 @@ internal static class MarvinCompat
 		{
 			Span<Char> chars = stackalloc Char[maxChars];
 			Utf8.ToUtf16(value, chars, out _, out Int32 charCount);
-#if !NETCOREAPP
+#if !NETCOREAPP3_0_OR_GREATER
 			return MarvinCompat.GetHashCode(chars[..charCount]);
 #else
 			return String.GetHashCode(chars[..charCount]);
 #endif
 		}
 
-		Debug.Assert(MarvinCompat.DefaultSeed.HasValue);
 		unchecked
 		{
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+			Debug.Assert(MarvinCompat.DefaultSeed.HasValue);
 			UInt32 seed0 = (UInt32)MarvinCompat.DefaultSeed.Value;
+#else
+			UInt32 seed0 = (UInt32)MarvinCompat.DefaultSeed!.Value;
+#endif
 			UInt32 seed1 = (UInt32)(MarvinCompat.DefaultSeed.Value >> 32);
 			return MarvinCompat.ComputeUtf8Hash32(value, seed0, seed1);
 		}
 	}
 
-#if !PACKAGE || !NETCOREAPP
+#if !PACKAGE || !NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Returns the hash code for the provided read-only character span.
 	/// </summary>
@@ -120,12 +128,16 @@ internal static class MarvinCompat
 	private static Int32 GetHashCode(ReadOnlySpan<Char> value)
 #endif
 	{
-		Debug.Assert(MarvinCompat.DefaultSeed.HasValue);
 		unchecked
 		{
 			ref Byte refData0 = ref Unsafe.As<Char, Byte>(ref MemoryMarshal.GetReference(value));
 			UInt32 dataLength = (UInt32)value.Length * 2;
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+			Debug.Assert(MarvinCompat.DefaultSeed.HasValue);
 			UInt32 seed0 = (UInt32)MarvinCompat.DefaultSeed.Value;
+#else
+			UInt32 seed0 = (UInt32)MarvinCompat.DefaultSeed!.Value;
+#endif
 			UInt32 seed1 = (UInt32)(MarvinCompat.DefaultSeed.Value >> 32);
 			return MarvinCompat.ComputeUtf16Hash32(ref refData0, dataLength, seed0, seed1);
 		}

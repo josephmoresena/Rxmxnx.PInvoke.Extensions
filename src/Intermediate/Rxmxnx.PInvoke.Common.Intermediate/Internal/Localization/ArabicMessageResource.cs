@@ -40,6 +40,7 @@ internal sealed class ArabicMessageResource : IMessageResource
 	String IMessageResource.IndexOutOfSequence => "يجب أن يشير الفهرس والطول إلى موقع داخل التسلسل.";
 	String IMessageResource.MissingMemoryInspector => "لا يتم دعم فحص الذاكرة على النظام الأساسي الحالي.";
 	String IMessageResource.ReflectionDisabled => "تتطلب هذه الميزة وضع الانعكاس الكامل.";
+	String IMessageResource.InvalidSpanLayout => "تعذّر تحديد الحقل القابل للتثبيت في تخطيط Span<T>.";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"يجب أن يكون الكائن من النوع {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)
@@ -48,7 +49,7 @@ internal sealed class ArabicMessageResource : IMessageResource
 		=> $"يجب أن يكون طول المعامل {nameofSpan} مساويًا لـ {sizeOf}.";
 	String IMessageResource.InvalidCopyUnmanagedType(String nameofSpan, String nameofValue)
 		=> $"المساحة المتوفرة على {nameofSpan} غير كافية لنسخ {nameofValue}.";
-	String IMessageResource.InvalidLength(String nameofLength)
+	String IMessageResource.InvalidLengthOrIndex(String nameofLength)
 		=> $"يجب أن يكون المعامل {nameofLength} صفرًا أو عددًا صحيحًا موجبًا.";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} ليس نوعًا غير مُدار.";
 	String IMessageResource.NotValueType(Type type) => $"{type} ليس نوعًا قيمًا.";

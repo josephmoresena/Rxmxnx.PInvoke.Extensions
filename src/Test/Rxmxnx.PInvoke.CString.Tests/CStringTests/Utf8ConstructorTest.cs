@@ -79,7 +79,7 @@ public sealed class Utf8ConstructorTest
 
 	private static void Test(ReadOnlySpan<Byte> seq, Int32 count, CString cstr)
 	{
-		String strSeq = Encoding.UTF8.GetString(seq);
+		String strSeq = seq.ToUtf16();
 		PInvokeAssert.Equal(seq.Length * count, cstr.Length);
 		PInvokeAssert.Equal(seq.Length * count + 1, CString.GetBytes(cstr).Length);
 

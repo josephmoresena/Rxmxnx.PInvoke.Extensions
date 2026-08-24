@@ -25,11 +25,18 @@ public partial class CStringSequence
 			}
 			set
 			{
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 				Debug.Assert(value is not null);
 				if (this._cache.TryGetValue(index, out WeakReference<CString>? weak))
 					weak.SetTarget(value);
 				else
 					this._cache[index] = new(value);
+#else
+				if (this._cache.TryGetValue(index, out WeakReference<CString>? weak))
+					weak.SetTarget(value!);
+				else
+					this._cache[index] = new(value!);
+#endif
 			}
 		}
 		/// <inheritdoc/>
@@ -49,7 +56,7 @@ public partial class CStringSequence
 		/// <inheritdoc/>
 		public override void Clear()
 		{
-			Int32[] keys = this._cache.Keys.ToArray();
+			Int32[] keys = [.. this._cache.Keys,];
 			foreach (Int32 key in keys.AsSpan())
 			{
 				if (!this._cache[key].TryGetTarget(out _))

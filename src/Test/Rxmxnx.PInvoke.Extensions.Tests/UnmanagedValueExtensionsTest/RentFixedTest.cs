@@ -7,6 +7,7 @@ public sealed class RentFixedTest
 {
 	private static readonly IFixture fixture = new Fixture();
 
+#pragma warning disable CS0612
 	[Theory]
 	[InlineData(10)]
 	[InlineData(100)]
@@ -81,26 +82,46 @@ public sealed class RentFixedTest
 	[InlineData(100)]
 	[InlineData(1000)]
 	public void UInt64Test(Int32 size) => TestClass<UInt64>.Test(size);
+#pragma warning restore CS0612
 
 	private static class TestClass<T> where T : unmanaged
 	{
 		private static readonly ArrayPool<T> pool = ArrayPool<T>.Create(1024 * Unsafe.SizeOf<T>(), 50);
 
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+		[Obsolete]
+#endif
 		public static void Test(Int32 size)
 		{
 			T[] arr = TestClass<T>.pool.Rent(size);
 			RentFixedTest.fixture.CreateMany<T>(arr.Length).ToArray().CopyTo(arr.AsSpan());
 			TestClass<T>.pool.Return(arr); // Ensure this array is used.
-
-			using IFixedContext<T>.IDisposable ctx = TestClass<T>.pool.RentFixed(size, true, out Int32 arrayLength);
+			// ReSharper disable once InlineOutVariableDeclaration
+			Int32 arrayLength;
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+			using (IFixedContext<T>.IDisposable ctx = TestClass<T>.pool.RentFixed(size, true, out arrayLength))
+			{
+				PInvokeAssert.Equal(arr.Length, arrayLength);
+				PInvokeAssert.Equal(size, ctx.Values.Length);
+				PInvokeAssert.True(Unsafe.AreSame(ref ctx.ValuePointer.Reference,
+				                                  ref MemoryMarshal.GetReference(arr.AsSpan())));
+#if NET6_0_OR_GREATER
+				Assert.True(ctx.Values.SequenceEqual(arr.AsSpan()[..size]));
+#else
+				PInvokeAssert.Equal(ctx.Values.ToArray(), arr.AsSpan()[..size].ToArray());
+#endif
+			}
+#endif
+			using IDisposable _ =
+				TestClass<T>.pool.RentFixed(size, out FixedContextValue<T> ctxValue, true, out arrayLength);
 			PInvokeAssert.Equal(arr.Length, arrayLength);
-			PInvokeAssert.Equal(size, ctx.Values.Length);
-			PInvokeAssert.True(Unsafe.AreSame(ref ctx.ValuePointer.Reference,
+			PInvokeAssert.Equal(size, ctxValue.Values.Length);
+			PInvokeAssert.True(Unsafe.AreSame(ref ctxValue.ValuePointer.Reference,
 			                                  ref MemoryMarshal.GetReference(arr.AsSpan())));
 #if NET6_0_OR_GREATER
-			Assert.True(ctx.Values.SequenceEqual(arr.AsSpan()[..size]));
+			Assert.True(ctxValue.Values.SequenceEqual(arr.AsSpan()[..size]));
 #else
-			PInvokeAssert.Equal(ctx.Values.ToArray(), arr.AsSpan()[..size].ToArray());
+			PInvokeAssert.Equal(ctxValue.Values.ToArray(), arr.AsSpan()[..size].ToArray());
 #endif
 		}
 	}

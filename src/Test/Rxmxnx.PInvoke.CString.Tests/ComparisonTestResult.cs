@@ -9,6 +9,7 @@ internal sealed record ComparisonTestResult
 	public IReadOnlyDictionary<StringComparison, Int32> Comparisons { get; private init; }
 	private ComparisonTestResult() => this.Comparisons = default!;
 
+	[SuppressMessage("ReSharper", "StringCompareToIsCultureSpecific")]
 	public static ComparisonTestResult Compare(String strA, String strB)
 	{
 		Int32 normal = strA.CompareTo(strB);

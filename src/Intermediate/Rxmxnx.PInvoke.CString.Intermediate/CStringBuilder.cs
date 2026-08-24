@@ -153,6 +153,9 @@ public sealed partial class CStringBuilder
 		=> new Concurrent(this.GetLock(), this).Remove(startIndex, length);
 	/// <inheritdoc cref="CStringBuilder.CopyTo(Int32, Span{Byte})"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public Int32 ConcurrentCopyTo(Int32 index, Span<Byte> destination)
 		=> new Concurrent(this.GetLock(), this).CopyTo(index, destination);
 	/// <inheritdoc cref="CStringBuilder.ToCString()"/>
@@ -160,10 +163,16 @@ public sealed partial class CStringBuilder
 	public CString ConcurrentToCString() => new Concurrent(this.GetLock(), this).ToCString(true);
 	/// <inheritdoc cref="CStringBuilder.ToCString(Boolean)"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public CString ConcurrentToCString(Boolean nullTerminated)
 		=> new Concurrent(this.GetLock(), this).ToCString(nullTerminated);
 	/// <inheritdoc cref="CStringBuilder.ToString()"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public String ConcurrentToString() => new Concurrent(this.GetLock(), this).ToCString(false).ToString();
 
 	/// <summary>
@@ -175,7 +184,7 @@ public sealed partial class CStringBuilder
 	internal String GetDebugInfo(out Int32 length, out CStringBuilderDebugView.ChunkInfo[] chunks)
 	{
 		length = this._chunk.Count;
-		chunks = this._chunk.EnumerateInformation().Reverse().ToArray();
+		chunks = [.. this._chunk.EnumerateInformation().Reverse(),];
 		return Encoding.UTF8.GetString(this.GetDataBytes(false));
 	}
 	/// <summary>
@@ -219,7 +228,7 @@ public sealed partial class CStringBuilder
 	/// <returns>Builder capacity.</returns>
 	private static UInt16 GetCapacityFor(ReadOnlySpan<Char> initialValue)
 	{
-		Int32 byteCount = Encoding.UTF8.GetByteCount(initialValue);
+		Int32 byteCount = initialValue.GetUtf8Count();
 		if (byteCount < CStringBuilder.DefaultCapacity)
 			return CStringBuilder.DefaultCapacity;
 		return (UInt16)Math.Min(byteCount, Chunk.MaxLength);

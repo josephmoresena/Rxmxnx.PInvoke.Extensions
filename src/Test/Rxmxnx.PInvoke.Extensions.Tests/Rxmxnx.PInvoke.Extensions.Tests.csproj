@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <Import Project="..\Tests.props"/>
-    <Import Condition="'$(TargetFramework)' == 'netstandard2.1'" Project="..\MonoTests.targets"/>
-    <Import Condition="'$(TargetFramework)' != 'netstandard2.1' And '$(MultipleFrameworkTest)' == 'true'" Project="..\DotnetCoreAppTests.targets"/>
+    <Import Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'netstandard2.1'" Project="..\MonoTests.targets"/>
+    <Import Condition="'$(TargetFramework)' != 'netstandard2.0' And '$(TargetFramework)' != 'netstandard2.1' And '$(MultipleFrameworkTest)' == 'true'" Project="..\DotnetCoreAppTests.targets"/>
 
     <ItemGroup>
-        <Using Condition="'$(TargetFramework)' != 'netstandard2.1'" Include="Xunit"/>
-        <Using Condition="'$(TargetFramework)' == 'netstandard2.1'" Include="NUnit.Framework"/>
+        <Using Condition="'$(TargetFrameworkIdentifier)' != '.NETStandard'" Include="Xunit"/>
+        <Using Condition="'$(TargetFrameworkIdentifier)' == '.NETStandard'" Include="NUnit.Framework"/>
         <Using Include="AutoFixture"/>
         <Using Include="System.Buffers"/>
         <Using Include="System.Collections"/>

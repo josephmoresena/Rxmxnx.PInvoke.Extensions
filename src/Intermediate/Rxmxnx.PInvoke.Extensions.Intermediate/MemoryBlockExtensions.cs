@@ -1,4 +1,10 @@
-﻿// ReSharper disable ConvertToExtensionBlock
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+using Rxmxnx.PInvoke.Internal.FrameworkCompat;
+
+using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
+#endif
+
+// ReSharper disable ConvertToExtensionBlock
 
 namespace Rxmxnx.PInvoke;
 
@@ -6,8 +12,10 @@ namespace Rxmxnx.PInvoke;
 /// Provides a set of extensions for basic operations with <see cref="Span{T}"/> and <see cref="ReadOnlySpan{T}"/>
 /// instances.
 /// </summary>
-[EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 [Browsable(false)]
+#endif
+[EditorBrowsable(EditorBrowsableState.Never)]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
@@ -43,8 +51,13 @@ public static unsafe partial class MemoryBlockExtensions
 	public static Boolean IsLiteral<T>(this ReadOnlySpan<T> span)
 	{
 		ref T refT = ref MemoryMarshal.GetReference(span);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ReadOnlySpan<Byte> byteSpan = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, Byte>(ref refT), 1);
 		return MemoryInspector.Instance.IsLiteral(byteSpan);
+#else
+		fixed (void* ptr = &Unsafe.As<T, Byte>(ref refT))
+			return MemoryInspector.Instance.IsLiteral<Byte>(new(ptr, 1));
+#endif
 	}
 	/// <summary>
 	/// Creates a new read-only span over a target array.
@@ -53,9 +66,13 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <param name="array">The array to convert.</param>
 	/// <returns>The read-only span representation of the array.</returns>
 	public static ReadOnlySpan<T> AsReadOnlySpan<T>(this T[]? array)
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+		=> array is not null ? new(array) : default;
+#else
 		=> array is not null ?
 			MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(array), array.Length) :
 			default;
+#endif
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
 	/// <remarks>
 	/// This method creates a <see cref="Span{T}"/> even if <paramref name="array"/>
@@ -63,7 +80,12 @@ public static unsafe partial class MemoryBlockExtensions
 	/// </remarks>
 	public static Span<T> AsCovariantSpan<T>(this T[]? array)
 		=> array is not null ?
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+			MemoryMarshalCompat.CreateSafeSpan(Unsafe.As<T[], Pinnable<T>>(ref array),
+			                                   ref NativeUtilities.GetArrayDataReference(array), array.Length) :
+#else
 			MemoryMarshal.CreateSpan(ref NativeUtilities.GetArrayDataReference(array), array.Length) :
+#endif
 			default;
 
 	/// <summary>
@@ -218,7 +240,11 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <returns>A binary span.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<Byte> AsBytes<TSource>(this Span<TSource> span) where TSource : unmanaged
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		=> MemoryMarshal.AsBytes(span);
+#else
+		=> MemoryMarshalCompat.Cast<TSource, Byte>(span);
+#endif
 	/// <summary>
 	/// Reinterprets the read-only span of <typeparamref name="TSource"/> as a read-only binary span.
 	/// </summary>
@@ -227,7 +253,11 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <returns>A binary span.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ReadOnlySpan<Byte> AsBytes<TSource>(this ReadOnlySpan<TSource> span) where TSource : unmanaged
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		=> MemoryMarshal.AsBytes(span);
+#else
+		=> MemoryMarshalCompat.Cast<TSource, Byte>(span);
+#endif
 
 	/// <summary>
 	/// Reinterprets the span of <typeparamref name="TSource"/> as a span of <typeparamref name="TDestination"/>.
@@ -239,7 +269,11 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span)
 		where TSource : unmanaged where TDestination : unmanaged
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		=> MemoryMarshal.Cast<TSource, TDestination>(span);
+#else
+		=> MemoryMarshalCompat.Cast<TSource, TDestination>(span);
+#endif
 	/// <summary>
 	/// Reinterprets the read-only span of <typeparamref name="TSource"/> as a read-only span of
 	/// <typeparamref name="TDestination"/>.
@@ -251,7 +285,11 @@ public static unsafe partial class MemoryBlockExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ReadOnlySpan<TDestination> AsValues<TSource, TDestination>(this ReadOnlySpan<TSource> span)
 		where TSource : unmanaged where TDestination : unmanaged
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		=> MemoryMarshal.Cast<TSource, TDestination>(span);
+#else
+		=> MemoryMarshalCompat.Cast<TSource, TDestination>(span);
+#endif
 	/// <summary>
 	/// Reinterprets the span of <typeparamref name="TSource"/> as a span of <typeparamref name="TDestination"/>.
 	/// </summary>
@@ -267,9 +305,17 @@ public static unsafe partial class MemoryBlockExtensions
 	public static Span<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span, out Span<Byte> residual)
 		where TSource : unmanaged where TDestination : unmanaged
 	{
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<TDestination> result = MemoryMarshal.Cast<TSource, TDestination>(span);
+#else
+		Span<TDestination> result = MemoryMarshalCompat.Cast<TSource, TDestination>(span);
+#endif
 		Int32 offset = result.Length * sizeof(TDestination) / sizeof(TSource);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		residual = MemoryMarshal.AsBytes(span[offset..]);
+#else
+		residual = MemoryMarshalCompat.Cast<TSource, Byte>(span[offset..]);
+#endif
 		return result;
 	}
 	/// <summary>
@@ -287,9 +333,17 @@ public static unsafe partial class MemoryBlockExtensions
 	public static ReadOnlySpan<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span,
 		out ReadOnlySpan<Byte> residual) where TSource : unmanaged where TDestination : unmanaged
 	{
-		ReadOnlySpan<TDestination> result = MemoryMarshal.Cast<TSource, TDestination>(span);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		Span<TDestination> result = MemoryMarshal.Cast<TSource, TDestination>(span);
+#else
+		Span<TDestination> result = MemoryMarshalCompat.Cast<TSource, TDestination>(span);
+#endif
 		Int32 offset = result.Length * sizeof(TDestination) / sizeof(TSource);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		residual = MemoryMarshal.AsBytes(span[offset..]);
+#else
+		residual = MemoryMarshalCompat.Cast<TSource, Byte>(span[offset..]);
+#endif
 		return result;
 	}
 	/// <summary>
@@ -308,11 +362,20 @@ public static unsafe partial class MemoryBlockExtensions
 	public static ReadOnlySpan<TDestination> AsValues<TSource, TDestination>(this ReadOnlySpan<TSource> span,
 		out ReadOnlySpan<Byte> residual) where TSource : unmanaged where TDestination : unmanaged
 	{
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ReadOnlySpan<TDestination> result = MemoryMarshal.Cast<TSource, TDestination>(span);
+#else
+		ReadOnlySpan<TDestination> result = MemoryMarshalCompat.Cast<TSource, TDestination>(span);
+#endif
 		Int32 offset = result.Length * sizeof(TDestination) / sizeof(TSource);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		residual = MemoryMarshal.AsBytes(span[offset..]);
+#else
+		residual = MemoryMarshalCompat.Cast<TSource, Byte>(span[offset..]);
+#endif
 		return result;
 	}
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Creates an <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance by pinning the current
 	/// <see cref="ReadOnlyMemory{T}"/> instance, ensuring a safe context for accessing the fixed memory.
@@ -322,13 +385,20 @@ public static unsafe partial class MemoryBlockExtensions
 	/// </typeparam>
 	/// <param name="mem">A <see cref="ReadOnlyMemory{T}"/> instance.</param>
 	/// <returns>An <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance representing the pinned memory.</returns>
-	/// <exception cref="ArgumentException">A read-only memory with non-unmanaged items cannot be pinned.</exception>
+	/// <exception cref="ArgumentException">
+	/// The executing runtime may throw if it cannot pin this memory. Whether a given <typeparamref name="T"/> can be
+	/// pinned is a host policy; this library does not reject managed types.
+	/// </exception>
 	/// <remarks>
 	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
 	/// operations on unmanaged memory.
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	public static IReadOnlyFixedContext<T>.IDisposable GetFixedContext<T>(this ReadOnlyMemory<T> mem)
 	{
 		MemoryHandle handle = mem.Pin();
@@ -352,13 +422,20 @@ public static unsafe partial class MemoryBlockExtensions
 	/// </typeparam>
 	/// <param name="mem">A <see cref="Memory{T}"/> instance.</param>
 	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance representing the pinned memory.</returns>
-	/// <exception cref="ArgumentException">A memory with non-unmanaged items cannot be pinned.</exception>
+	/// <exception cref="ArgumentException">
+	/// The executing runtime may throw if it cannot pin this memory. Whether a given <typeparamref name="T"/> can be
+	/// pinned is a host policy; this library does not reject managed types.
+	/// </exception>
 	/// <remarks>
 	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
 	/// operations on unmanaged memory.
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	public static IFixedContext<T>.IDisposable GetFixedContext<T>(this Memory<T> mem)
 	{
 		MemoryHandle handle = mem.Pin();
@@ -376,13 +453,20 @@ public static unsafe partial class MemoryBlockExtensions
 	/// </typeparam>
 	/// <param name="mem">A <see cref="ReadOnlyMemory{T}"/> instance.</param>
 	/// <returns>An <see cref="IReadOnlyFixedMemory.IDisposable"/> instance representing the pinned memory.</returns>
-	/// <exception cref="ArgumentException">A read-only memory with non-unmanaged items cannot be pinned.</exception>
+	/// <exception cref="ArgumentException">
+	/// The executing runtime may throw if it cannot pin this memory. Whether a given <typeparamref name="T"/> can be
+	/// pinned is a host policy; this library does not reject managed types.
+	/// </exception>
 	/// <remarks>
 	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
 	/// operations on unmanaged memory.
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	public static IReadOnlyFixedMemory.IDisposable GetFixedMemory<T>(this ReadOnlyMemory<T> mem)
 		=> mem.GetFixedContext();
 	/// <summary>
@@ -394,12 +478,20 @@ public static unsafe partial class MemoryBlockExtensions
 	/// </typeparam>
 	/// <param name="mem">A <see cref="Memory{T}"/> instance.</param>
 	/// <returns>An <see cref="IFixedMemory.IDisposable"/> instance representing the pinned memory.</returns>
-	/// <exception cref="ArgumentException">A memory with non-unmanaged items cannot be pinned.</exception>
+	/// <exception cref="ArgumentException">
+	/// The executing runtime may throw if it cannot pin this memory. Whether a given <typeparamref name="T"/> can be
+	/// pinned is a host policy; this library does not reject managed types.
+	/// </exception>
 	/// <remarks>
 	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
 	/// operations on unmanaged memory.
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteFixedInterfaceExtensions, ObsoleteConstants.ErrorFixedInterface)]
+#endif
 	public static IFixedMemory.IDisposable GetFixedMemory<T>(this Memory<T> mem) => mem.GetFixedContext();
+#endif
 }

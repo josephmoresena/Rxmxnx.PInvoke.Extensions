@@ -1,5 +1,9 @@
-﻿`Rxmxnx.PInvoke.Extensions` supports UTF-8/ASCII text handling through the `CString` class, inspired by
-C-style strings. These strings provide a simple and safe way to access UTF-8/ASCII units, regardless of their nature.
+﻿`Rxmxnx.PInvoke.Extensions` supports UTF-8/ASCII text handling through the `CString` class, inspired by C-style strings.
+These strings provide a simple and safe way to access UTF-8/ASCII units, regardless of their nature.
+
+For the capability overview, recipes, and API map, see the [UTF-8 guide](../../../docs/api/cstring.md),
+[use cases](../../../docs/use-cases.md#build-utf-8-once-marshal-many-times), and
+[documentation hub](../../../docs/README.md).
 
 There are three types of `CString`:
 
@@ -7,8 +11,8 @@ There are three types of `CString`:
 2. **Delegate-Based**: This type relies on a delegate that returns a `Span<Byte>`. The delegate can represent a UTF-8 or
    ASCII literal, or an arbitrary function, with or without a state object.
 3. **Unmanaged Pointer-Based**: This type is based on an unmanaged pointer and a specified length. When use this type,
-   the developer have to ensure that the memory address holding the UTF-8/ASCII units remains valid for the
-   lifetime of the `CString` instance.
+   the developer have to ensure that the memory address holding the UTF-8/ASCII units remains valid for the lifetime of
+   the `CString` instance.
 
 ---
 
@@ -32,8 +36,8 @@ Console.WriteLine(cstring);                     // Output: "Hello"
 Console.WriteLine(cstring.IsNullTerminated);    // Output: False
 ```
 
-This operator converts a `Byte[]` containing UTF-8/ASCII units into a `CString` instance. If
-the last element of the array is a null character (`0x0`), it is excluded from the length count, and the
+This operator converts a `Byte[]` containing UTF-8/ASCII units into a `CString` instance. If the last element of the
+array is a null character (`0x0`), it is excluded from the length count, and the
 `IsNullTerminated` property is set to `true`.
 
 ### Explicit operator
@@ -46,8 +50,8 @@ Console.WriteLine(cstring);                     // Output: "Hello"
 Console.WriteLine(cstring.IsNullTerminated);    // Output: True
 ```
 
-This operator encodes a UTF-16 string into UTF-8, creating a managed buffer to store the
-resulting bytes. It always reserves space for a null terminator, ensuring the `IsNullTerminated` property is always
+This operator encodes a UTF-16 string into UTF-8, creating a managed buffer to store the resulting bytes. It always
+reserves space for a null terminator, ensuring the `IsNullTerminated` property is always
 `true`.
 
 **Note:** This operator is considered *inefficient* when used with string literals.
@@ -65,8 +69,7 @@ This constructor enables the creation of `CString` instances
 using [UTF-8/ASCII literals](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-11.0/utf8-string-literals).
 
 **Note:** This constructor is considered **primary** because these literals are constants, ensuring their memory
-location
-remains fixed.
+location remains fixed.
 
 ### Span constructor
 
@@ -181,8 +184,8 @@ Console.WriteLine(cstring.IsNullTerminated);    // Output: False
 cstring = null; // Discard unsafe instance
 ```
 
-This method creates a `CString` instance that points to an unmanaged
-memory block containing UTF-8/ASCII units of a specified length. If the full length is used, the `IsNullTerminated`
+This method creates a `CString` instance that points to an unmanaged memory block containing UTF-8/ASCII units of a
+specified length. If the full length is used, the `IsNullTerminated`
 property is set to `false`; otherwise, it is set to `true`.
 
 **Note:** This method is considered *unsafe* because the pinning of the memory block pointed to by the resulting
@@ -366,9 +369,8 @@ For high-performance scenarios, the `CopyTo` method allows direct copying of the
 ## Sequence Builder
 
 `CStringSequence.Builder` is an structure that enables the dynamic, incremental construction of UTF-8 null-terminated
-text sequences.
-Its usage and design closely mirror `CStringBuilder`, extending the same construction model from single UTF-8 text
-values to *sequences* of them.
+text sequences. Its usage and design closely mirror `CStringBuilder`, extending the same construction model from single
+UTF-8 text values to *sequences* of them.
 
 ### Similarities with `CStringBuilder`
 
@@ -410,8 +412,8 @@ This pattern allows sequences to be assembled conditionally without pre-allocati
 
 ### Structural Operations
 
-Insertion and removal operations are conceptually equivalent to their `CStringBuilder` counterparts, but operate at
-the **item level** instead of the character level:
+Insertion and removal operations are conceptually equivalent to their `CStringBuilder` counterparts, but operate at the
+**item level** instead of the character level:
 
 ```csharp
 CStringSequence seq = CStringSequence.CreateBuilder()

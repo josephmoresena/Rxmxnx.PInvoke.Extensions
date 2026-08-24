@@ -42,9 +42,13 @@ internal static class BuffersHelper
 	public static Boolean BufferAutoCompositionEnabled
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
 		get
 			=> !AotInfo.IsReflectionDisabled &&
 				(!AppContext.TryGetSwitch("PInvoke.DisableBufferAutoComposition", out Boolean disable) || !disable);
+#else
+		get => true;
+#endif
 	}
 
 	/// <summary>
@@ -58,7 +62,7 @@ internal static class BuffersHelper
 	public static UInt16 GetSpaceFor(UInt16 count)
 	{
 		Debug.Assert(count > 0);
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 		return (UInt16)(1u << BitOperations.Log2(count));
 #else
 		UInt32 value = count;
@@ -67,6 +71,49 @@ internal static class BuffersHelper
 		value |= value >> 4;
 		value |= value >> 8;
 		return (UInt16)((value + 1) >> 1);
+#endif
+	}
+	/// <summary>
+	/// Calculates the number of leading zeros (unused bits) for a UInt16.
+	/// </summary>
+	/// <param name="value">The value to evaluate.</param>
+	/// <returns>The number of unused bits out of 16.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Int32 GetLeadingZeros(UInt16 value)
+	{
+#if NETCOREAPP3_0_OR_GREATER
+		return BitOperations.LeadingZeroCount(value) - 16;
+#else
+		if (value == 0)
+			return 16;
+
+		Int32 zeros = 16;
+
+		if (value >= 0x0100)
+		{
+			zeros -= 8;
+			value >>= 8;
+		}
+
+		if (value >= 0x0010)
+		{
+			zeros -= 4;
+			value >>= 4;
+		}
+
+		if (value >= 0x0004)
+		{
+			zeros -= 2;
+			value >>= 2;
+		}
+
+		if (value >= 0x0002)
+			zeros--;
+
+		return zeros - 1;
 #endif
 	}
 	/// <summary>
@@ -255,6 +302,46 @@ internal static class BuffersHelper
 		}
 #endif
 		return storage.AddBinaryMetadata(result);
+	}
+	/// <summary>
+	/// Searches for the first available metadata entry in a page segment.
+	/// </summary>
+	/// <typeparam name="T">The type of items in the buffer</typeparam>
+	/// <param name="r0">Managed reference to metadata page.</param>
+	/// <param name="start">Zero-based index of the first entry to inspect.</param>
+	/// <param name="count">Number of entries to inspect.</param>
+	/// <returns>
+	/// The first available metadata entry within the specified range; otherwise, <see langword="null"/>.
+	/// </returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static unsafe BufferTypeMetadata<T>? Search<T>(ref BufferTypeMetadata<T>? r0, Int32 start, Int32 count)
+	{
+		Debug.Assert(start >= 0);
+		Debug.Assert(count > 0);
+		ref BufferTypeMetadata<T>? rS = ref Unsafe.Add(ref r0, start);
+#pragma warning disable CS8500
+		fixed (void* ptr = &rS)
+#pragma warning restore CS8500
+		{
+			ReadOnlySpan<IntPtr> unsafeSpan = new(ptr, count);
+#if NET7_0_OR_GREATER
+			Int32 index = unsafeSpan.IndexOfAnyExcept(IntPtr.Zero);
+#else
+			Int32 index = -1;
+			for (Int32 i = 0; i < unsafeSpan.Length; i++)
+			{
+				IntPtr val = unsafeSpan[i];
+				if (val == IntPtr.Zero) continue;
+				index = i;
+				break;
+			}
+#endif
+			return index < 0 ? default : Unsafe.Add(ref rS, index);
+		}
 	}
 
 #if !NET7_0_OR_GREATER

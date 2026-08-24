@@ -1,4 +1,4 @@
-#if NETCOREAPP && (!PACKAGE || !NET6_0_OR_GREATER)
+#if NETCOREAPP3_0_OR_GREATER && (!PACKAGE || !NET6_0_OR_GREATER)
 // ReSharper disable BuiltInTypeReferenceStyle
 
 using UIntPtr = nuint;

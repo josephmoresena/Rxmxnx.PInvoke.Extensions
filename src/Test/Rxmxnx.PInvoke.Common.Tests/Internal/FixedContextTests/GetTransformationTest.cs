@@ -1,4 +1,11 @@
-﻿namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
+#endif
+
+namespace Rxmxnx.PInvoke.Tests.Internal.FixedContextTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]

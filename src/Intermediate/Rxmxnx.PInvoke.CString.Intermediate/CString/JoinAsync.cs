@@ -1,4 +1,5 @@
-﻿#if !NET6_0_OR_GREATER
+﻿#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+#if !NET6_0_OR_GREATER
 using ArgumentNullException = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
 
@@ -229,3 +230,4 @@ public partial class CString
 		return helper.ToCString();
 	}
 }
+#endif

@@ -43,6 +43,15 @@ public struct Composite<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAcc
 	/// </summary>
 	private TBufferB _buff1;
 
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	BufferTypeMetadata<T> IManagedBinaryBuffer<T>.Metadata => Composite<TBufferA, TBufferB, T>.TypeMetadata;
+#if !PACKAGE && NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
+	BufferTypeMetadata<T> IManagedBuffer<T>.GetStaticTypeMetadata() => Composite<TBufferA, TBufferB, T>.TypeMetadata;
+
 #if NET7_0_OR_GREATER
 	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => Composite<TBufferA, TBufferB, T>.TypeMetadata;
 	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [TBufferA.TypeMetadata, TBufferB.TypeMetadata,];
@@ -53,12 +62,6 @@ public struct Composite<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAcc
 		IManagedBuffer<T>.AppendComponent<TBufferB>(storage);
 	}
 #else
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	BufferTypeMetadata<T> IManagedBinaryBuffer<T>.Metadata => Composite<TBufferA, TBufferB, T>.TypeMetadata;
-	BufferTypeMetadata<T> IManagedBuffer<T>.GetStaticTypeMetadata() => Composite<TBufferA, TBufferB, T>.TypeMetadata;
-
 	/// <summary>
 	/// Creates the <see cref="BufferTypeMetadata{T}"/> instance for current type.
 	/// </summary>

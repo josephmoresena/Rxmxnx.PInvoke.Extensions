@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke.Tests.ValueRegionTests;
+﻿#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
+
+namespace Rxmxnx.PInvoke.Tests.ValueRegionTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -88,8 +92,13 @@ public sealed class SegmentTest : ValueRegionTestBase
 		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => emptyRegion.Slice(0, -1));
 		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => emptyRegion.Slice(0, 1));
 
-		if ((T[]?)emptyRegion is { } arr)
+		if ((T[]?)emptyRegion is not { } arr) return;
+
+		if (!SystemInfo.CompilationFramework.Contains("Framework") &&
+		    !SystemInfo.CompilationFramework.Contains("2.0"))
 			PInvokeAssert.Same(emptyRegion.ToArray(), arr);
+		else
+			PInvokeAssert.Equal(emptyRegion.ToArray(), arr);
 	}
 
 	private static void AssertRegionSegment<T>(T[] values, ICollection<GCHandle> handles) where T : unmanaged
@@ -175,8 +184,11 @@ public sealed class SegmentTest : ValueRegionTestBase
 			PInvokeAssert.Same(state.Values, array);
 			if (state.Values.Length > 0)
 				PInvokeAssert.NotSame(state.Values, newArray);
-			else
+			else if (!SystemInfo.CompilationFramework.Contains("Framework") &&
+			         !SystemInfo.CompilationFramework.Contains("2.0"))
 				PInvokeAssert.Same(Array.Empty<T>(), newArray);
+			else
+				PInvokeAssert.Equal(Array.Empty<T>(), newArray);
 		}
 		else if (state is { IsReference: true, Count: 0, })
 		{

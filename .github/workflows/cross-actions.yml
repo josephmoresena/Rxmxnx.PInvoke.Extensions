@@ -111,6 +111,10 @@ jobs:
           sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
           rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
 
+          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
+          sudo dpkg -i libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
+          rm libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
+
           sudo apt update 
           sudo apt-get install clang llvm zlib1g-dev libkrb5-dev libssl-dev \
             qemu-user qemu-user-static binfmt-support libicu74:arm64 libicu74:armhf \
@@ -141,7 +145,17 @@ jobs:
         if: runner.os == 'MacOS'
         run: |
           sudo rm -rf /Users/runner/Library/Android
-          
+
+          # GitHub-hosted images ship unused third-party taps (last CI: aws/tap).
+          # Homebrew 6 warns on every command while an untrusted tap remains,
+          # including brew untap — drop vendor dirs before the first brew call.
+          # Official formulae live under Taps/homebrew/; leave that tree alone.
+          for vendor in /opt/homebrew/Library/Taps/* /usr/local/Homebrew/Library/Taps/*; do
+            [ -e "$vendor" ] || continue
+            [ "$(basename "$vendor")" = "homebrew" ] && continue
+            rm -rf "$vendor"
+          done
+
           brew install --cask mono-mdk
           brew install --overwrite mono
           mono --version
@@ -249,8 +263,9 @@ jobs:
         run: |
           $versions = 6..10
           $latestVersion = ($versions | Measure-Object -Maximum).Maximum
+          $previousVersion = $latestVersion - 1
           foreach ($v in $versions) {
-            if ($v -eq $latestVersion) {
+            if ($v -eq $latestVersion -or $v -eq $previousVersion) {
                 continue
             }
             winget uninstall "Microsoft.DotNet.SDK.$v" `
@@ -318,7 +333,9 @@ jobs:
         uses: actions/cache/restore@v5
         if: inputs.build_artifacts == true
         with:
-          path: ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
+          path: |
+            ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
+            ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest.Legacy
           key: internal-monoapp-bin-${{ github.run_id }}
           fail-on-cache-miss: true
           enableCrossOsArchive: true
@@ -403,6 +420,7 @@ jobs:
         with:
           name: ${{ runner.os }}-Artifact
           path: |
+            ./artifacts/*.appxbundle
             ./artifacts/*NAOT*
             ./artifacts/*RFM*
             ./artifacts/Mono/X86/*
@@ -442,3 +460,16 @@ jobs:
         shell: bash
         run: |
           gh release upload ${{ github.ref_name }} ./*-Assets*.zip --clobber
+      - name: Upload Release Assets
+        if: inputs.build_artifacts == true && inputs.package_version != '' && runner.os == 'Windows'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          shopt -s nullglob
+          bundles=(./artifacts/*.appxbundle)
+          if ((${#bundles[@]} == 0)); then
+            echo "No .appxbundle files found under ./artifacts; skipping bundle upload."
+            exit 0
+          fi
+          gh release upload ${{ github.ref_name }} "${bundles[@]}" --clobber

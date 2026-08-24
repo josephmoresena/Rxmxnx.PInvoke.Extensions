@@ -18,7 +18,7 @@ internal abstract unsafe partial class Utf8Comparator
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected static String GetStringFromUtf8(ReadOnlySpan<Byte> source) => Encoding.UTF8.GetString(source);
+	public static String GetStringFromUtf8(ReadOnlySpan<Byte> source) => source.ToUtf16();
 	/// <summary>
 	/// Decodes all the bytes in <paramref name="source"/> into a <paramref name="destination"/>.
 	/// </summary>
@@ -30,16 +30,6 @@ internal abstract unsafe partial class Utf8Comparator
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected static void CopyCharsFromUtf8(ReadOnlySpan<Byte> source, Span<Char> destination)
 		=> Utf8.ToUtf16(source, destination, out _, out _);
-	/// <summary>
-	/// Calculates the number of characters produced by decoding the <paramref name="source"/>.
-	/// </summary>
-	/// <param name="source">A read-only span of <see cref="byte"/> elements representing a UTF-8 encoded text.</param>
-	/// <returns>The number of characters produced by decoding the UTF-8 encoded text.</returns>
-#if !PACKAGE && NETCOREAPP && !NET7_0_OR_GREATER
-	[ExcludeFromCodeCoverage]
-#endif
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected static Int32 GetCharCountFromUtf8(ReadOnlySpan<Byte> source) => Encoding.UTF8.GetCharCount(source);
 	/// <summary>
 	/// Decodes the <see cref="Rune"/> at the beginning of the provided UTF-8 encoded source buffer.
 	/// </summary>
@@ -77,11 +67,18 @@ internal abstract unsafe partial class Utf8Comparator
 
 		if (Utf8Comparator.OrdinalCompareFirst(ref spanA, ref spanB, out Int32 result))
 			return result;
-
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		Int32 minLength = Environment.Is64BitProcess ? 12 : 10;
+#else
+		Int32 minLength = sizeof(IntPtr) == 8 ? 12 : 10;
+#endif
 		while (Math.Min(spanA.Length, spanB.Length) >= minLength)
 		{
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 			switch (Environment.Is64BitProcess)
+#else
+			switch (sizeof(IntPtr) == 8)
+#endif
 			{
 				case true when Utf8Comparator.OrdinalCompare64Bit(ref spanA, ref spanB, out result):
 				case false when Utf8Comparator.OrdinalCompare32Bit(ref spanA, ref spanB, out result):
@@ -153,10 +150,19 @@ internal abstract unsafe partial class Utf8Comparator
 		}
 
 		T result = default;
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref Byte refByte = ref Unsafe.As<Char, Byte>(ref refChar);
 		ReadOnlySpan<Byte> bytes = MemoryMarshal.CreateReadOnlySpan(ref refByte, sizeOnBytes);
 		Span<Byte> resultBytes = MemoryMarshal.CreateSpan(ref Unsafe.As<T, Byte>(ref result), bytes.Length);
 		bytes.CopyTo(resultBytes);
+#else
+		fixed (void* charPtr = &refChar)
+		{
+			ReadOnlySpan<Byte> bytes = new(charPtr, sizeOnBytes);
+			Span<Byte> resultBytes = new(Unsafe.AsPointer(ref result), bytes.Length);
+			bytes.CopyTo(resultBytes);
+		}
+#endif
 		source = default;
 		return result;
 	}

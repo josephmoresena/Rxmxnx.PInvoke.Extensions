@@ -6,6 +6,8 @@ namespace Rxmxnx.PInvoke.Tests;
 #pragma warning disable CS8500
 public sealed class ReadOnlyValPtrTests
 {
+	private static readonly IFixture fixture = ManagedStruct.Register(new Fixture());
+#if NET6_0_OR_GREATER
 	private static readonly CultureInfo[] allCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
 	private static readonly String[] formats =
 	[
@@ -15,7 +17,7 @@ public sealed class ReadOnlyValPtrTests
 #endif
 		"D", "d", "E", "e", "G", "g", "X", "x",
 	];
-	private static readonly IFixture fixture = ManagedStruct.Register(new Fixture());
+#endif
 
 	[Fact]
 	public void BooleanTest() => ReadOnlyValPtrTests.Test<Boolean>();
@@ -72,6 +74,7 @@ public sealed class ReadOnlyValPtrTests
 		fixed (void* ptr = &MemoryMarshal.GetReference(span))
 			ReadOnlyValPtrTests.Test((ReadOnlyValPtr<T>)new IntPtr(ptr), span);
 	}
+#pragma warning disable CS0612
 	private static unsafe void Test<T>(ReadOnlyValPtr<T> valPtr, ReadOnlySpan<T> span)
 	{
 		ReadOnlyValPtr<T> empty = (ReadOnlyValPtr<T>)IntPtr.Zero;
@@ -115,7 +118,9 @@ public sealed class ReadOnlyValPtrTests
 			PInvokeAssert.False(ptrI.IsZero);
 			PInvokeAssert.Equal(ptrI.Pointer, (ptrI as IWrapper<IntPtr>).Value);
 
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			ReadOnlyValPtrTests.ReferenceTest(ptrI, ref Unsafe.AsRef(in span[i]));
+#endif
 
 			PInvokeAssert.True(ptrI >= valPtr);
 			PInvokeAssert.True(valPtr <= ptrI);
@@ -133,7 +138,14 @@ public sealed class ReadOnlyValPtrTests
 			PInvokeAssert.Equal(1, ptrI.CompareTo((Object)valPtr));
 			PInvokeAssert.Equal(0, ptrI.CompareTo((Object)ptrIAdd2));
 			PInvokeAssert.Equal(1, ptrI.CompareTo(null));
-			PInvokeAssert.Throws<ArgumentException>(() => ptrI.CompareTo(ptrI.Pointer));
+			PInvokeAssert.Throws<ArgumentException>(() =>
+			{
+				// ReSharper disable once AccessToModifiedClosure
+				// ReSharper disable once InlineTemporaryVariable
+				ReadOnlyValPtr<T> p = ptrI;
+				// ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+				p.CompareTo(p.Pointer);
+			});
 
 			PInvokeAssert.False(ptrI.Equals((Object)valPtr));
 			PInvokeAssert.True(ptrI.Equals((Object)ptrIAdd2));
@@ -158,9 +170,87 @@ public sealed class ReadOnlyValPtrTests
 		PInvokeAssert.Equal(valPtr.Pointer, incValue);
 		PInvokeAssert.False(valPtr != incValue);
 
+		ReadOnlyValPtrTests.ContextValueTest(valPtr, span);
+		ReadOnlyValPtrTests.NestedContextValueTest(valPtr);
+		ReadOnlyValPtrTests.MultipleContextValueTest(valPtr);
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		ReadOnlyValPtrTests.ContextTest(valPtr, span);
+#endif
 		ReadOnlyValPtrTests.MarshallerTest(valPtr);
 	}
+#pragma warning restore CS0612
+	private static unsafe void ContextValueTest<T>(ReadOnlyValPtr<T> valPtr, ReadOnlySpan<T> span)
+	{
+		using IDisposable disposable = valPtr.GetUnsafeFixedContext(span.Length, out ReadOnlyFixedContextValue<T> ctx);
+		PInvokeAssert.Equal(ctx.Values.Length, span.Length);
+		PInvokeAssert.Equal(valPtr.Pointer, ctx.Pointer);
+		if (!ValPtr<T>.IsUnmanaged)
+		{
+			PInvokeAssert.True(ctx.Bytes.IsEmpty);
+			if (typeof(T).IsValueType)
+			{
+				PInvokeAssert.True(ctx.Objects.IsEmpty);
+			}
+			else
+			{
+#if !NET10_0_OR_GREATER
+				ReadOnlySpan<T>.Enumerator enumerator = span.GetEnumerator();
+#else
+				using ReadOnlySpan<T>.Enumerator enumerator = span.GetEnumerator();
+#endif
+				foreach (ref readonly Object refObj in ctx.Objects)
+				{
+					if (!enumerator.MoveNext()) break;
+#if NET8_0_OR_GREATER
+					Assert.True(Unsafe.AreSame(in enumerator.Current,
+#else
+					PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in enumerator.Current),
+#endif
+					                                  ref Unsafe.As<Object, T>(ref Unsafe.AsRef(in refObj))));
+				}
+				PInvokeAssert.Equal(typeof(T).IsValueType || ctx.IsNullOrEmpty, ctx.Objects.IsEmpty);
+			}
+			return;
+		}
+		fixed (void* ptr = &MemoryMarshal.GetReference(span))
+		{
+			Span<Byte> byteSpan = new(ptr, span.Length * sizeof(T));
+			ctx.Bytes.SequenceEqual(byteSpan);
+		}
+
+		ReadOnlySpan<T> span2 = ctx.Values;
+		for (Int32 i = 0; i < span.Length; i++)
+			PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in span[i]), ref Unsafe.AsRef(in span2[i])));
+
+		ReadOnlyValPtrTests.UnsafeValueContextTest(valPtr, span);
+	}
+	private static unsafe void NestedContextValueTest<T>(ReadOnlyValPtr<T> valPtr)
+	{
+		Byte* bytePtr = stackalloc Byte[10];
+		using IDisposable disposable =
+			new ValPtr<Byte>(bytePtr).GetUnsafeFixedContext(10, out FixedContextValue<Byte> bCtx);
+		using (IDisposable disposable2 = valPtr.GetUnsafeFixedContext(1, disposable, out _))
+			PInvokeAssert.Same(disposable, disposable2);
+		ref FixedContextValue<Byte> bCtxRef = ref bCtx;
+		fixed (void* ptr = &bCtxRef)
+		{
+			IntPtr cCtxPtr = new(ptr);
+			PInvokeAssert.Throws<InvalidOperationException>(() => ((FixedContextValue<Byte>*)cCtxPtr)[0].Values.Length);
+		}
+	}
+	private static void MultipleContextValueTest<T>(ReadOnlyValPtr<T> valPtr)
+	{
+		Memory<Byte> value = new Byte[10];
+		using IDisposable disposable = valPtr.GetUnsafeFixedContext(1, value.Pin(), out _);
+	}
+	private static void UnsafeValueContextTest<T>(ReadOnlyValPtr<T> valPtr, ReadOnlySpan<T> span)
+	{
+		using IDisposable disposable = ReadOnlyValPtr<T>.Zero.GetUnsafeFixedContext(0, out _);
+		PInvokeAssert.Same(disposable, FixedPointerValue.UnsafeDisposable);
+		PInvokeAssert.Same(disposable, valPtr.GetUnsafeFixedContext(span.Length, disposable, out _));
+	}
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+	[Obsolete]
 	private static unsafe void ContextTest<T>(ReadOnlyValPtr<T> valPtr, ReadOnlySpan<T> span)
 	{
 		using IReadOnlyFixedContext<T>.IDisposable ctx = valPtr.GetUnsafeFixedContext(span.Length);
@@ -169,6 +259,7 @@ public sealed class ReadOnlyValPtrTests
 		if (!ReadOnlyValPtr<T>.IsUnmanaged)
 		{
 			PInvokeAssert.Throws<InvalidOperationException>(ctx.AsBinaryContext);
+			// ReSharper disable once AccessToDisposedClosure
 			PInvokeAssert.Throws<InvalidOperationException>(() => ctx.Transformation<Byte>(out _));
 
 			if (typeof(T).IsValueType)
@@ -178,7 +269,11 @@ public sealed class ReadOnlyValPtrTests
 			}
 			else
 			{
+#if !NET10_0_OR_GREATER
 				ReadOnlySpan<T>.Enumerator enumerator = span.GetEnumerator();
+#else
+				using ReadOnlySpan<T>.Enumerator enumerator = span.GetEnumerator();
+#endif
 				foreach (ref readonly Object refObj in ctx.AsObjectContext().Values)
 				{
 					if (!enumerator.MoveNext()) break;
@@ -207,6 +302,7 @@ public sealed class ReadOnlyValPtrTests
 		ReadOnlyValPtrTests.ContextTransformTest<T, Int32>(ctx);
 		ReadOnlyValPtrTests.ContextTransformTest<T, Int64>(ctx);
 	}
+	[Obsolete]
 	private static unsafe void ReferenceTest<T>(ReadOnlyValPtr<T> ptrI, ref T reference)
 	{
 		using IReadOnlyFixedReference<T>.IDisposable fixedReference = ptrI.GetUnsafeFixedReference();
@@ -219,7 +315,8 @@ public sealed class ReadOnlyValPtrTests
 			PInvokeAssert.Equal(ptrI.IsZero || typeof(T).IsValueType, fixedReference.Objects.IsEmpty);
 			if (typeof(T).IsValueType)
 			{
-				PInvokeAssert.Throws<InvalidOperationException>(() => fixedReference.AsObjectContext());
+				// ReSharper disable once AccessToDisposedClosure
+				PInvokeAssert.Throws<InvalidOperationException>(fixedReference.AsObjectContext);
 				PInvokeAssert.True(fixedReference.Objects.IsEmpty);
 			}
 			else
@@ -236,6 +333,7 @@ public sealed class ReadOnlyValPtrTests
 				                    fixedReference.Objects.IsEmpty);
 			}
 			PInvokeAssert.Throws<InvalidOperationException>(fixedReference.AsBinaryContext);
+			// ReSharper disable once AccessToDisposedClosure
 			PInvokeAssert.Throws<InvalidOperationException>(() => fixedReference.Transformation<Byte>(out _));
 			return;
 		}
@@ -250,10 +348,9 @@ public sealed class ReadOnlyValPtrTests
 		ReadOnlyValPtrTests.ReferenceTransformTest<T, Int32>(ptrI, fixedReference);
 		ReadOnlyValPtrTests.ReferenceTransformTest<T, Int64>(ptrI, fixedReference);
 	}
+#endif
 	private static void FormatTest<T>(ReadOnlyValPtr<T> valPtr)
 	{
-		CultureInfo culture =
-			ReadOnlyValPtrTests.allCultures[PInvokeRandom.Shared.Next(0, ReadOnlyValPtrTests.allCultures.Length)];
 		PInvokeAssert.Equal(valPtr.Pointer.GetHashCode(), valPtr.GetHashCode());
 		PInvokeAssert.Equal(valPtr.Pointer.ToString(), valPtr.ToString());
 
@@ -263,6 +360,8 @@ public sealed class ReadOnlyValPtrTests
 		                                                .GetMethod(nameof(IntPtr.ToString),
 		                                                           BindingFlags.Public | BindingFlags.Instance, null,
 		                                                           [typeof(IFormatProvider),], null);
+		CultureInfo culture =
+			ReadOnlyValPtrTests.allCultures[PInvokeRandom.Shared.Next(0, ReadOnlyValPtrTests.allCultures.Length)];
 		if (toStringMethodInfo is not null)
 			Assert.Equal(valPtr.Pointer.ToString(culture), toStringMethodInfo.Invoke(valPtr, [culture,]));
 
@@ -277,8 +376,8 @@ public sealed class ReadOnlyValPtrTests
 
 		foreach (String format in ReadOnlyValPtrTests.formats)
 		{
-			culture =
- ReadOnlyValPtrTests.allCultures[PInvokeRandom.Shared.Next(0, ReadOnlyValPtrTests.allCultures.Length)];
+			culture = ReadOnlyValPtrTests.allCultures[
+				PInvokeRandom.Shared.Next(0, ReadOnlyValPtrTests.allCultures.Length)];
 			Assert.Equal(valPtr.Pointer.ToString(format), valPtr.ToString(format));
 			Assert.Equal(valPtr.Pointer.ToString(format, culture), spanFormattable.ToString(format, culture));
 		}
@@ -292,6 +391,7 @@ public sealed class ReadOnlyValPtrTests
 		PInvokeAssert.Equal(value, valPtr.Pointer);
 		PInvokeAssert.Equal(valPtr, ptr);
 	}
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	private static unsafe void ReferenceTransformTest<T, TDestination>(ReadOnlyValPtr<T> ptrI,
 		IReadOnlyFixedReference<T>.IDisposable fRef) where TDestination : unmanaged
 	{
@@ -301,11 +401,13 @@ public sealed class ReadOnlyValPtrTests
 		                                  ref Unsafe.AsRef<TDestination>(ptrI.Pointer.ToPointer())));
 		PInvokeAssert.Equal(sizeof(T) - sizeof(TDestination), offset.Bytes.Length);
 	}
+	[Obsolete]
 	private static unsafe void ContextTransformTest<T, TDestination>(IReadOnlyFixedContext<T>.IDisposable ctx)
 	{
 		IReadOnlyFixedContext<TDestination> ctx2 = ctx.Transformation<TDestination>(out IReadOnlyFixedMemory offset);
 		PInvokeAssert.Equal(ctx2.Values.Length, ctx.Bytes.Length / sizeof(TDestination));
 		PInvokeAssert.Equal(offset.Bytes.Length, ctx.Bytes.Length - ctx2.Values.Length * sizeof(TDestination));
 	}
+#endif
 }
 #pragma warning restore CS8500

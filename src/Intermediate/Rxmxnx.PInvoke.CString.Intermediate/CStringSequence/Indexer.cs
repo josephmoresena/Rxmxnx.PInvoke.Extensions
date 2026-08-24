@@ -1,4 +1,4 @@
-﻿#if PACKAGE && !NETCOREAPP
+﻿#if !NETCOREAPP3_0_OR_GREATER && (PACKAGE || !NETSTANDARD2_1)
 using IEnumerator = System.Collections.IEnumerator;
 using IEnumerable = System.Collections.IEnumerable;
 #endif
@@ -15,13 +15,17 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 
 	Int32 IEnumerableSequence<CString>.GetSize() => this._lengths.Length;
 	CString IEnumerableSequence<CString>.GetItem(Int32 index) => this[index];
-#if PACKAGE && !NETCOREAPP
+#if PACKAGE && NETSTANDARD2_1
 	IEnumerator<CString> IEnumerable<CString>.GetEnumerator()
 		=> IEnumerableSequence.CreateEnumerator(this, CStringSequence.DisposeEnumeration);
 	IEnumerator IEnumerable.GetEnumerator()
 		=> IEnumerableSequence.CreateEnumerator(this, CStringSequence.DisposeEnumeration);
-#else
+#elif NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	void IEnumerableSequence<CString>.DisposeEnumeration() => CStringSequence.DisposeEnumeration(this);
+#else
+	IEnumerator<CString> IEnumerable<CString>.GetEnumerator()
+		=> this.CreateDefaultEnumerator(CStringSequence.DisposeEnumeration);
+	IEnumerator IEnumerable.GetEnumerator() => this.CreateDefaultEnumerator(CStringSequence.DisposeEnumeration);
 #endif
 	ReadOnlySpan<Byte> IUtf8Buffer.Buffer => MemoryMarshal.AsBytes(this._value.AsSpan());
 	GCHandle IUtf8Buffer.Alloc(GCHandleType type) => GCHandle.Alloc(this._value, type);
@@ -110,6 +114,25 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 			count++;
 		}
 		return count;
+	}
+	/// <summary>
+	/// Creates a <see cref="CString"/> array from current instance.
+	/// </summary>
+	/// <returns>Retrieves a <see cref="CString"/> array with the items of the current instance.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public CString[] ToArray()
+	{
+		CString[] result = new CString[this._lengths.Length];
+		for (Int32 i = 0; i < this._lengths.Length; i++)
+			result[i] = this._lengths[i] switch
+			{
+				< 0 => CString.Zero,
+				0 => CString.Empty,
+				_ => this.GetCString(i, this._lengths[i]),
+			};
+		return result;
 	}
 
 	/// <summary>

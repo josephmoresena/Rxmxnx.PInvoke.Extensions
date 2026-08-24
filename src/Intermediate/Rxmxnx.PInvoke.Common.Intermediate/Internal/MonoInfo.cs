@@ -33,7 +33,12 @@ internal static class MonoInfo
 		fixed (Byte* ptr = CString.Empty)
 #endif
 			MonoInfo.IsEmptyNonLiteral = MemoryInspector.MayBeNonLiteral(ptr);
+#if !UAP10_0
 		MonoInfo.MonoRuntimeType = TrimInfo.SafeGetType(typeof(String), "Mono.Runtime");
 		MonoInfo.MonoAssemblyNameType = TrimInfo.SafeGetType(typeof(String), "Mono.MonoAssemblyName");
+#else
+		MonoInfo.MonoRuntimeType = default;
+		MonoInfo.MonoAssemblyNameType = default;
+#endif
 	}
 }

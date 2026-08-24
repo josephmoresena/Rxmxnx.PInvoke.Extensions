@@ -3,8 +3,10 @@
         <NoWarn>$(NoWarn);MSB3243;MSB3277</NoWarn>
         <SystemTextJsonVersion>5.0.2</SystemTextJsonVersion>
         <SystemTextEncodingsWebVersion>5.0.1</SystemTextEncodingsWebVersion>
-        <MicrosoftBclAsyncInterfacesVersion>10.0.5</MicrosoftBclAsyncInterfacesVersion>
+        <MicrosoftBclAsyncInterfacesVersion>5.0.0</MicrosoftBclAsyncInterfacesVersion>
         <IsMDK Condition="'$(MSBuildRuntimeType)' == 'Mono' And '$(TargetFrameworkIdentifier)' == '.NETFramework'">True</IsMDK>
+        <CustomFacadesRequired Condition="'$(IsMDK)' == 'True'">true</CustomFacadesRequired>
+        <CustomFacadesRequired Condition="'$(TargetFramework)' == 'netstandard2.0'">false</CustomFacadesRequired>
     </PropertyGroup>
 
     <ItemGroup>
@@ -26,9 +28,9 @@
         </PackageReference>
     </ItemGroup>
 
-    <ItemGroup Condition="'$(CustomFacadesRequired)' == 'true' Or '$(IsMDK)' == 'True'">
-        <ProjectReference Include="$(MSBuildThisFileDirectory)System.Buffers\System.Buffers.csproj"/>
+    <ItemGroup Condition="'$(CustomFacadesRequired)' == 'true'">
         <ProjectReference Include="$(MSBuildThisFileDirectory)System.Memory\System.Memory.csproj"/>
+        <ProjectReference Include="$(MSBuildThisFileDirectory)System.Buffers\System.Buffers.csproj"/>
         <ProjectReference Include="$(MSBuildThisFileDirectory)System.Threading.Tasks.Extensions\System.Threading.Tasks.Extensions.csproj"/>
     </ItemGroup>
 

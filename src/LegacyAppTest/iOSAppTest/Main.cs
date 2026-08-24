@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 
 using Rxmxnx.PInvoke.ApplicationTest;
@@ -14,7 +15,8 @@ namespace iOSAppTest
 		static Application()
 		{
 			StringBuilder sb = new();
-			RuntimeHelper.PrintRuntimeInfo(sb);
+			using (StringWriter writer = new(sb))
+				FeatureHelper.MainEntryPoint(writer);
 			Application.RuntimeInfo = sb.ToString();
 		}
 

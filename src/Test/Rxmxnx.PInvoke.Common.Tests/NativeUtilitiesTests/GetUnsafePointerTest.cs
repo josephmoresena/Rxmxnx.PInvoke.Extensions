@@ -10,24 +10,23 @@ public sealed class GetUnsafePointerTest
 	[Fact]
 	public void DelegateTest()
 	{
-		FuncPtr<GetProcessDelegate> getCurrentProcessPtr =
-			NativeUtilities.GetUnsafeFuncPtr<GetProcessDelegate>(Process.GetCurrentProcess);
-		FuncPtr<GetNativeMethodTest.GetInt32> getProcessIdPtr =
-			NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetInt32>(GetProcessIdFunc);
+		GetProcessDelegate getCurrentProcess = Process.GetCurrentProcess;
+		GetNativeMethodTest.GetInt32 getProcessId = GetProcessIdFunc;
+		GetNativeMethodTest.GetInt32 getProcessStaticId = GetProcessIdStaticFunc;
+		FuncPtr<GetProcessDelegate> getCurrentProcessPtr = NativeUtilities.GetUnsafeFuncPtr(getCurrentProcess);
+		FuncPtr<GetNativeMethodTest.GetInt32> getProcessIdPtr = NativeUtilities.GetUnsafeFuncPtr(getProcessId);
 		FuncPtr<GetNativeMethodTest.GetInt32> getProcessStaticIdPtr =
-			NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetInt32>(GetProcessIdStaticFunc);
+			NativeUtilities.GetUnsafeFuncPtr(getProcessStaticId);
 
 		PInvokeAssert.Equal(getProcessStaticIdPtr.Invoke(), getCurrentProcessPtr.Invoke().Id);
-		PInvokeAssert.Equal(getCurrentProcessPtr,
-		                    NativeUtilities.GetUnsafeFuncPtr<GetProcessDelegate>(Process.GetCurrentProcess));
+		PInvokeAssert.Equal(getCurrentProcessPtr, NativeUtilities.GetUnsafeFuncPtr(getCurrentProcess));
 #if NETCOREAPP
 		Assert.NotEqual(getProcessIdPtr,
 		                NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetInt32>(GetProcessIdFunc));
 #endif
-		PInvokeAssert.Equal(getProcessStaticIdPtr,
-		                    NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetInt32>(GetProcessIdStaticFunc));
+		PInvokeAssert.Equal(getProcessStaticIdPtr, NativeUtilities.GetUnsafeFuncPtr(getProcessStaticId));
 
-#if NETCOREAPP
+#if NETCOREAPP2_1_OR_GREATER
 		Assert.Throws<ArgumentException>(() => NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetT<Int32>>(
 			                                 Thread.GetCurrentProcessorId));
 		Assert.Throws<ArgumentException>(() => NativeUtilities.GetUnsafeFuncPtr<GetNativeMethodTest.GetT<Int32>>(
@@ -36,9 +35,12 @@ public sealed class GetUnsafePointerTest
 			                                 GetProcessIdFunc));
 #endif
 
-		PInvokeAssert.Equal(getCurrentProcessPtr.Invoke, Process.GetCurrentProcess);
-		PInvokeAssert.Equal(getProcessIdPtr.Invoke, GetProcessIdFunc);
-		PInvokeAssert.Equal(getProcessStaticIdPtr.Invoke, GetProcessIdStaticFunc);
+		PInvokeAssert.Equal(getCurrentProcessPtr.Invoke, getCurrentProcess);
+		PInvokeAssert.Equal(getProcessIdPtr.Invoke, getProcessId);
+		PInvokeAssert.Equal(getProcessStaticIdPtr.Invoke, getProcessStaticId);
+		GC.KeepAlive(getCurrentProcess);
+		GC.KeepAlive(getProcessId);
+		GC.KeepAlive(getProcessStaticId);
 
 		return;
 

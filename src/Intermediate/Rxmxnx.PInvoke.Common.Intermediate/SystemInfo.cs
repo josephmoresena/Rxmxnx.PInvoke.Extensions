@@ -6,9 +6,25 @@
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1121)]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+public static unsafe partial class SystemInfo
+#else
 public static partial class SystemInfo
+#endif
 {
+	/// <summary>
+	/// Indicates whether the current execution is utilizing the built-in implementation of <see cref="Span{T}"/> and
+	/// <see cref="ReadOnlySpan{T}"/>.
+	/// </summary>
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+	public static Boolean UsesNativeSpan => true;
+#else
+#pragma warning disable CS8500
+	public static Boolean UsesNativeSpan => sizeof(Span<Byte>) <= 2 * sizeof(IntPtr);
+#pragma warning restore CS8500
+#endif
 	/// <summary>
 	/// Indicates whether the current execution is running on a Windows-compatible platform.
 	/// </summary>
@@ -18,8 +34,10 @@ public static partial class SystemInfo
 	public static Boolean IsWindows
 #if NET5_0_OR_GREATER
 		=> OperatingSystem.IsWindows();
-#else
+#elif !UAP10_0
 		=> SystemInfo.isWindows;
+#else
+		=> true;
 #endif
 	/// <summary>
 	/// Indicates whether the current execution is running on a Linux-compatible platform.
@@ -36,8 +54,10 @@ public static partial class SystemInfo
 			return
 #if NET5_0_OR_GREATER
 				OperatingSystem.IsLinux() || OperatingSystem.IsAndroid()
-#else
+#elif !UAP10_0
 				SystemInfo.isLinux
+#else
+				false
 #endif
 				;
 		}
@@ -64,8 +84,10 @@ public static partial class SystemInfo
 #else
 				(!TrimInfo.IsPlatformTrimmed() && RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 #endif
-#else
+#elif !UAP10_0
 				SystemInfo.isMac
+#else
+				false
 #endif
 				;
 		}
@@ -79,8 +101,10 @@ public static partial class SystemInfo
 	public static Boolean IsFreeBsd
 #if NET5_0_OR_GREATER
 		=> OperatingSystem.IsFreeBSD();
-#else
+#elif !UAP10_0
 		=> SystemInfo.isFreeBsd;
+#else
+		=> false;
 #endif
 	/// <summary>
 	/// Indicates whether the current execution is running on NetBSD platform.
@@ -89,8 +113,12 @@ public static partial class SystemInfo
 	[SupportedOSPlatformGuard("netbsd")]
 #endif
 	public static Boolean IsNetBsd
+#if !UAP10_0
 		=> !TrimInfo.IsPlatformTrimmed() &&
 			(SystemInfo.isNetBsd ??= SystemInfo.IsOsPlatform(SystemInfo.netBsdPlatform));
+#else
+		=> false;
+#endif
 	/// <summary>
 	/// Indicates whether the current execution is running on NetBSD platform.
 	/// </summary>
@@ -99,8 +127,12 @@ public static partial class SystemInfo
 	[SupportedOSPlatformGuard("illumos")]
 #endif
 	public static Boolean IsSolaris
+#if !UAP10_0
 		=> !TrimInfo.IsPlatformTrimmed() && (SystemInfo.isSolaris ??=
 			SystemInfo.IsOsPlatform(SystemInfo.solarisPlatform, SystemInfo.illumosPlatform, SystemInfo.sunosPlatform));
+#else
+		=> false;
+#endif
 
 	/// <summary>
 	/// Indicates whether the current execution is running on a Web engine.
@@ -123,8 +155,10 @@ public static partial class SystemInfo
 #else
 				(!TrimInfo.IsPlatformTrimmed() && (SystemInfo.isWasi ??= SystemInfo.IsOsPlatform(SystemInfo.wPlatform)))
 #endif
-#else
+#elif !UAP10_0
 				SystemInfo.isWebRuntime
+#else
+				false
 #endif
 				;
 		}
@@ -133,6 +167,7 @@ public static partial class SystemInfo
 	/// Indicates whether the current execution is running on Mono Runtime.
 	/// </summary>
 	public static Boolean IsMonoRuntime
+#if !UAP10_0
 	{
 		get
 		{
@@ -142,6 +177,9 @@ public static partial class SystemInfo
 			return AotInfo.IsReflectionDisabled && MonoInfo.IsEmptyNonLiteral; // Microsoft.NETCore.App (CLR)
 		}
 	}
+#else
+		=> false;
+#endif
 
 	/// <summary>
 	/// Indicates whether the current application is running on the specified platform.

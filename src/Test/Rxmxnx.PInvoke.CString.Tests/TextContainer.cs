@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.Tests;
 
+[ExcludeFromCodeCoverage]
 [StructLayout(LayoutKind.Sequential)]
 public readonly struct TextContainer
 {
@@ -17,7 +18,7 @@ public readonly struct TextContainer
 	public TextContainer(ReadOnlySpanFunc<Byte> func)
 	{
 		this.Utf8 = new() { Value = new(func), };
-		this.Utf16 = new() { Value = Encoding.UTF8.GetString(func()), };
+		this.Utf16 = new() { Value = func().ToUtf16(), };
 	}
 
 	private TextContainer(String str)
@@ -27,6 +28,7 @@ public readonly struct TextContainer
 	}
 }
 
+[ExcludeFromCodeCoverage]
 [StructLayout(LayoutKind.Sequential)]
 public sealed class TextContainer<TString> where TString : IEquatable<TString>, IEquatable<String>
 {

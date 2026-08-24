@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if !UAP10_0
+namespace Rxmxnx.PInvoke;
 
 public static partial class SystemInfo
 {
@@ -9,7 +10,7 @@ public static partial class SystemInfo
 #if !NET8_0_OR_GREATER
 	private const String wPlatform = "WASI";
 #endif
-#if !NETCOREAPP
+#if !NETCOREAPP3_0_OR_GREATER
 	private const String freePlatform = "FREEBSD";
 #endif
 #if !NET5_0_OR_GREATER
@@ -19,3 +20,4 @@ public static partial class SystemInfo
 	private const String tPlatform = "TVOS";
 #endif
 }
+#endif

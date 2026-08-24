@@ -34,22 +34,34 @@ public sealed class StringJoinStringTest
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		CString resultCString = CString.Join(separator, strings);
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
+		String resultCStringCString = CString.GetBytes(resultCString).AsSpan()[..^1].ToUtf16();
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+#else
+		PInvokeAssert.True(expectedResultCString.AsSpan()
+		                                        .SequenceEqual(CString.GetBytes(resultCString).AsSpan()[..^1]));
+#endif
 	}
 	private static void EnumerableTest(String? separator, IEnumerable<String?> strings)
 	{
 		String? strSeparator = separator;
+		// ReSharper disable once PossibleMultipleEnumeration
 		String expectedCString = String.Join(strSeparator, strings);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
+		// ReSharper disable once PossibleMultipleEnumeration
 		CString resultCString = CString.Join(separator, strings);
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
+		String resultCStringCString = CString.GetBytes(resultCString).AsSpan()[..^1].ToUtf16();
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+#else
+		PInvokeAssert.True(expectedResultCString.AsSpan()
+		                                        .SequenceEqual(CString.GetBytes(resultCString).AsSpan()[..^1]));
+#endif
 	}
 	private static void ArrayRangeTest(String? separator, String?[] strings)
 	{
@@ -60,10 +72,15 @@ public sealed class StringJoinStringTest
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		CString resultCString = CString.Join(separator, strings, startIndex, count);
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
+		String resultCStringCString = CString.GetBytes(resultCString).AsSpan()[..^1].ToUtf16();
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+#else
+		PInvokeAssert.True(expectedResultCString.AsSpan()
+		                                        .SequenceEqual(CString.GetBytes(resultCString).AsSpan()[..^1]));
+#endif
 	}
 	private static String? GetCStringSeparator()
 	{

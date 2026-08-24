@@ -1,3 +1,4 @@
+#if !UAP10_0
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
@@ -10,6 +11,9 @@ internal partial class MemoryInspector
 		[Preserve(AllMembers = true, Conditional = true)]
 		private protected readonly unsafe struct MemoryBoundary : IEquatable<MemoryBoundary>,
 			IComparable<MemoryBoundary>, IWrapper<UIntPtr>
+#if !NETSTANDARD2_1 && !NETCOREAPP
+			, IEquatable<UIntPtr>
+#endif
 		{
 			/// <summary>
 			/// Internal value.
@@ -21,14 +25,9 @@ internal partial class MemoryInspector
 				private init;
 #endif
 			}
-
-#if NET5_0_OR_GREATER
-#else
-#endif
 			/// <summary>
 			/// Indicates whether current boundary is terminal.
 			/// </summary>
-
 #if NET5_0_OR_GREATER
 			public Boolean IsEnd { get; private init; }
 #else
@@ -88,6 +87,10 @@ internal partial class MemoryInspector
 #endif
 			/// <inheritdoc/>
 			public Boolean Equals(MemoryBoundary other) => this.Value == other.Value;
+#if !NETSTANDARD2_1 && !NETCOREAPP
+			/// <inheritdoc/>
+			public Boolean Equals(UIntPtr other) => this.Value == other;
+#endif
 			/// <inheritdoc/>
 			public override Boolean Equals([NotNullWhen(true)] Object? obj)
 				=> obj is MemoryBoundary boundary && this.Equals(boundary);
@@ -205,3 +208,4 @@ internal partial class MemoryInspector
 		}
 	}
 }
+#endif

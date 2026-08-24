@@ -9,7 +9,11 @@
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
 #endif
+#if NETSTANDARD1_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 internal sealed record CStringBuilderDebugView
+#else
+internal sealed class CStringBuilderDebugView
+#endif
 {
 	/// <summary>
 	/// Provides the builder chunks information.

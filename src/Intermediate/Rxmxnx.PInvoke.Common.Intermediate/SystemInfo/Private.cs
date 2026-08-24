@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if !UAP10_0
+namespace Rxmxnx.PInvoke;
 
 public static partial class SystemInfo
 {
@@ -24,3 +25,4 @@ public static partial class SystemInfo
 	/// <inheritdoc cref="IsSolaris"/>
 	private static Boolean? isSolaris;
 }
+#endif

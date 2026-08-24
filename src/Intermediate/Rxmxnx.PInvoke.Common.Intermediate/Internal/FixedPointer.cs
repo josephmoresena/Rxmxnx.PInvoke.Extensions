@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke.Internal;
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
+namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// Helper class for managing fixed memory pointer blocks.
@@ -8,15 +12,23 @@
 #endif
 internal abstract unsafe partial class FixedPointer : IFixedPointer
 {
+	/// <summary>
+	/// Defines an explicit conversion of a given pointer to a read-only value pointer.
+	/// </summary>
+	/// <param name="ptr">A pointer to explicitly convert.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static explicit operator FixedValueHandle(FixedPointer ptr) => ptr._handle;
 #pragma warning disable CS8500
 	/// <summary>
 	/// Size of the memory block in bytes.
 	/// </summary>
 	private readonly Int32 _binaryLength;
 	/// <summary>
-	/// Indicates whether the current instance is still valid.
+	/// Current <see cref="FixedValueHandle"/> instance.
 	/// </summary>
-	private readonly IMutableWrapper<Boolean> _isValid;
+	private readonly FixedValueHandle _handle;
 	/// <summary>
 	/// Pointer to the fixed memory block.
 	/// </summary>
@@ -55,7 +67,10 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// <summary>
 	/// Indicates whether the current instance is still valid.
 	/// </summary>
-	public Boolean IsValid => this._isValid.Value;
+	// ReSharper disable once MemberCanBePrivate.Global
+	public Boolean IsValid => this._handle.Value;
+
+	IntPtr IFixedPointer.Pointer => (IntPtr)this.GetMemoryOffset();
 
 	/// <summary>
 	/// Constructs a new FixedPointer instance pointing to a fixed memory block.
@@ -70,7 +85,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	{
 		this._ptr = ptr;
 		this._binaryLength = binaryLength;
-		this._isValid = new MutableWrapper<Boolean>(true);
+		this._handle = new();
 		this.IsReadOnly = isReadOnly;
 	}
 	/// <summary>
@@ -79,18 +94,15 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// <param name="ptr">The pointer to a fixed memory block.</param>
 	/// <param name="binaryLength">The size of the memory block in bytes.</param>
 	/// <param name="isReadOnly">A Boolean value indicating whether the memory block is read-only.</param>
-	/// <param name="isValid">
-	/// A mutable wrapper containing a Boolean value indicating whether the current instance
-	/// remains valid.
-	/// </param>
+	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
 	/// <remarks>
 	/// This constructor allows to set the validity of the instance during the construction of the object.
 	/// </remarks>
-	protected FixedPointer(void* ptr, Int32 binaryLength, Boolean isReadOnly, IMutableWrapper<Boolean> isValid)
+	protected FixedPointer(void* ptr, Int32 binaryLength, Boolean isReadOnly, FixedValueHandle handle)
 	{
 		this._ptr = ptr;
 		this._binaryLength = binaryLength;
-		this._isValid = isValid;
+		this._handle = handle;
 		this.IsReadOnly = isReadOnly;
 	}
 	/// <summary>
@@ -105,7 +117,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	{
 		this._ptr = pointer._ptr;
 		this._binaryLength = pointer._binaryLength;
-		this._isValid = pointer._isValid;
+		this._handle = pointer._handle;
 		this.IsReadOnly = pointer.IsReadOnly;
 	}
 	/// <summary>
@@ -123,11 +135,9 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	{
 		this._ptr = ((IntPtr)pointer._ptr + offset).ToPointer();
 		this._binaryLength = pointer._binaryLength - offset;
-		this._isValid = pointer._isValid;
+		this._handle = pointer._handle;
 		this.IsReadOnly = pointer.IsReadOnly;
 	}
-
-	IntPtr IFixedPointer.Pointer => (IntPtr)this.GetMemoryOffset();
 
 	/// <summary>
 	/// Creates a reference of a <typeparamref name="T"/> value over the memory block.
@@ -178,8 +188,12 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	public Span<TValue> CreateSpan<TValue>(Int32 length)
 	{
 		this.ValidateOperation();
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref TValue refValue = ref Unsafe.AsRef<TValue>(this._ptr);
 		return MemoryMarshal.CreateSpan(ref refValue, length);
+#else
+		return MemoryMarshalCompat.CreateUnsafeSpan<TValue>(this._ptr, length);
+#endif
 	}
 	/// <summary>
 	/// Creates a <see cref="ReadOnlySpan{TValue}"/> instance over the memory block whose
@@ -192,8 +206,12 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	public ReadOnlySpan<TValue> CreateReadOnlySpan<TValue>(Int32 length)
 	{
 		this.ValidateOperation(true);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref TValue refValue = ref Unsafe.AsRef<TValue>(this._ptr);
 		return MemoryMarshal.CreateReadOnlySpan(ref refValue, length);
+#else
+		return MemoryMarshalCompat.CreateUnsafeReadOnlySpan<TValue>(this._ptr, length);
+#endif
 	}
 	/// <summary>
 	/// Creates a <see cref="Span{Byte}"/> instance over the memory block.
@@ -217,8 +235,12 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		this.ValidateOperation();
 		if (this.Type is null || this.Type.IsValueType) return default;
 		void* ptr = this.GetMemoryOffset();
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref Object refObject = ref Unsafe.AsRef<Object>(ptr);
 		return MemoryMarshal.CreateSpan(ref refObject, this.BinaryLength / sizeof(IntPtr));
+#else
+		return MemoryMarshalCompat.CreateUnsafeSpan<Object>(ptr, this.BinaryLength / sizeof(IntPtr));
+#endif
 	}
 	/// <summary>
 	/// Creates a <see cref="ReadOnlySpan{Byte}"/> instance over the memory block.
@@ -242,8 +264,12 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		this.ValidateOperation(true);
 		if (this.Type is null || this.Type.IsValueType) return default;
 		void* ptr = this.GetMemoryOffset();
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref Object refObject = ref Unsafe.AsRef<Object>(ptr);
 		return MemoryMarshal.CreateReadOnlySpan(ref refObject, this.BinaryLength / sizeof(IntPtr));
+#else
+		return MemoryMarshalCompat.CreateUnsafeReadOnlySpan<Object>(ptr, this.BinaryLength / sizeof(IntPtr));
+#endif
 	}
 	/// <summary>
 	/// Creates a <typeparamref name="TDelegate"/> instance over the memory block.
@@ -253,7 +279,11 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	public TDelegate CreateDelegate<TDelegate>() where TDelegate : Delegate
 	{
 		this.ValidateFunctionOperation();
+#if NETSTANDARD1_2_OR_GREATER || NETCOREAPP || NET451_OR_GREATER || UAP10_0
 		return Marshal.GetDelegateForFunctionPointer<TDelegate>(new(this._ptr));
+#else
+		return (TDelegate)Marshal.GetDelegateForFunctionPointer(new(this._ptr), typeof(TDelegate));
+#endif
 	}
 	/// <summary>
 	/// Creates a <see cref="FuncPtr{TDelegate}"/> instance over the memory block.
@@ -273,7 +303,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	public virtual void Unload()
 	{
 		if (this._ptr == default && this._binaryLength == 0) return;
-		this._isValid.Value = false;
+		this._handle.Dispose();
 	}
 
 	/// <summary>
@@ -284,7 +314,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	protected void ValidateOperation(Boolean isReadOnly = false)
 	{
 		ValidationUtilities.ThrowIfFunctionPointer(this.IsFunction);
-		ValidationUtilities.ThrowIfInvalidPointer(this._isValid);
+		ValidationUtilities.ThrowIfInvalidPointer(this._handle);
 		ValidationUtilities.ThrowIfReadOnlyPointer(isReadOnly, this.IsReadOnly);
 	}
 	/// <summary>
@@ -338,7 +368,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	private void ValidateFunctionOperation()
 	{
 		ValidationUtilities.ThrowIfNotFunctionPointer(this.IsFunction);
-		ValidationUtilities.ThrowIfInvalidPointer(this._isValid);
+		ValidationUtilities.ThrowIfInvalidPointer(this._handle);
 	}
 	/// <summary>
 	/// Retrieves the memory offset for current instance.

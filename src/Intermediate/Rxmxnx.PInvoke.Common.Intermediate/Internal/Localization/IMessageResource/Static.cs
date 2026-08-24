@@ -1,19 +1,20 @@
 namespace Rxmxnx.PInvoke.Internal.Localization;
 
-internal partial interface IMessageResource
+internal static class MessageResource
 {
 	/// <summary>
 	/// Retrieves internal resource objects.
 	/// </summary>
-	/// <returns>Resource resource object.</returns>
+	/// <returns>Resource object.</returns>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 	public static IMessageResource GetInstance()
 	{
 		IMessageResource result = DefaultMessageResource.Instance;
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (NativeUtilities.GlobalizationInvariantModeEnabled) return result;
-
+#endif
 		return NativeUtilities.UserInterfaceIso639P1 switch
 		{
 			Iso639P1.Es => SpanishMessageResource.Instance,

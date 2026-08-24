@@ -23,9 +23,13 @@
         <!-- Embed untracked source files for better debugging -->
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <!-- Select the first target framework from the list -->
-        <FirstTargetFramework>$(TargetFrameworks.Split(';')[0])</FirstTargetFramework>
+        <FirstTargetFramework Condition="'$(TargetFrameworks)' != ''">$(TargetFrameworks.Split(';')[0])</FirstTargetFramework>
+        <FirstTargetFramework Condition="'$(FirstTargetFramework)' == ''">$(TargetFramework)</FirstTargetFramework>
         <!-- Required modern .NET SDK building -->
         <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+        <!-- GitHub Version -->
+        <GithubVersion>*</GithubVersion>
+        <GithubVersion Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.1'))">8.0.0</GithubVersion>
     </PropertyGroup>
     <!-- Trimming Options if targeting .NET 6.0 or later -->
     <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))">
@@ -42,6 +46,10 @@
     -->
     <Target Name="BuildIntermediateProjects" BeforeTargets="CoreCompile">
         <ItemGroup>
+            <!-- Mark IntermediateAssemblyNames as non-visible collection -->
+            <IntermediateAssemblyNames Update="@(IntermediateAssemblyNames)">
+                <Visible>false</Visible>
+            </IntermediateAssemblyNames>
             <!-- Identify intermediate C# projects based on their assembly names -->
             <CsIntermediateProjects Include="@(IntermediateAssemblyNames)">
                 <ProjectPath>$(IntermediateSourceBasePath)\%(Identity)\%(Identity).csproj</ProjectPath>
@@ -52,7 +60,7 @@
         <MSBuild Condition="'$(NoIntermediateBuild)' != 'true'"
                  Projects="@(CsIntermediateProjects->'%(ProjectPath)')"
                  Properties="Configuration=$(Configuration);Platform=$(Platform);TargetFramework=$(FirstTargetFramework);UseSourceGeneratorAssembly=true"
-                 BuildInParallel="false" Targets="Restore;Build"/>
+                 BuildInParallel="false" Targets="Restore;PrepareForBuild;GenerateGlobalUsings"/>
     </Target>
 
     <!--
@@ -61,25 +69,21 @@
     -->
     <Target Name="IncludeIntermediateSources" AfterTargets="BuildIntermediateProjects">
         <ItemGroup>
-
             <!-- Collect C# source files -->
-            <CsFiles Include="@(IntermediateAssemblyNames->'$(IntermediateSourceBasePath)\%(Identity)\**\*.cs')"/>
+            <CsFiles Include="$(IntermediateSourceBasePath)\%(IntermediateAssemblyNames.Identity)\**\*.cs"/>
             <!-- Collect excluded C# source files -->
             <ExcludeFiles Include="@(IntermediateAssemblyNames->'$(IntermediateSourceBasePath)\%(Identity)\**\obj\**\*.*;$(IntermediateSourceBasePath)\%(Identity)\**\bin\**\*.*')"/>
             <!-- Collect global using directive files -->
             <GlobalUsingFiles Include="@(IntermediateAssemblyNames->'$(IntermediateSourceBasePath)\%(Identity)\**\*.GlobalUsings.g.cs')"/>
-
             <!-- Add the collected source files to the compilation -->
             <Compile Include="%(CsFiles.Identity)">
                 <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
             </Compile>
-
-
-            <!-- Exclude files from obj and bin directories -->
             <Compile Remove="%(ExcludeFiles.Identity)"/>
-
             <!-- Include global using files -->
-            <Compile Include="%(GlobalUsingFiles.Identity)"/>
+            <Compile Include="%(GlobalUsingFiles.Identity)">
+                <Link>GlobalUsings\%(RecursiveDir)%(Filename)%(Extension)</Link>
+            </Compile>
         </ItemGroup>
     </Target>
 
@@ -142,7 +146,7 @@
     </PropertyGroup>
 
     <!-- Embed final ILLink.Substitutions.xml file -->
-    <ItemGroup>
+    <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netstandard2.1')) Or '$(TargetFramework)' == 'netstandard2.0'">
         <EmbeddedResource Include="$(IntermediateOutputPath)\ILLink\ILLink.Substitutions.xml">
             <LogicalName>ILLink.Substitutions.xml</LogicalName>
         </EmbeddedResource>
@@ -150,7 +154,7 @@
 
     <ItemGroup>
         <!-- Include Source Link for GitHub -->
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="*" PrivateAssets="All"/>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(GithubVersion)" PrivateAssets="All"/>
     </ItemGroup>
 
 </Project>

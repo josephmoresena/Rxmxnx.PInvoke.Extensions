@@ -7,6 +7,7 @@ namespace Rxmxnx.PInvoke.Internal;
 internal static class SuppressMessageConstants
 {
 	public const String CSharpSquid = "csharpsquid";
+	public const String CheckIdS7133 = "S7133";
 	public const String CheckIdS6670 = "S6670";
 	public const String CheckIdS6640 = "S6640";
 	public const String CheckIdS4487 = "S4487";
@@ -16,12 +17,17 @@ internal static class SuppressMessageConstants
 	public const String CheckIdS3963 = "S3963";
 	public const String CheckIdS3928 = "S3928";
 	public const String CheckIdS3881 = "S3881";
+	public const String CheckIdS3877 = "S3877";
 	public const String CheckIdS3776 = "S3776";
+	public const String CheckIdS3459 = "S3459";
+	public const String CheckIdS3427 = "S3427";
 	public const String CheckIdS3400 = "S3400";
+	public const String CheckIdS3398 = "S3398";
 	public const String CheckIdS3358 = "S3358";
 	public const String CheckIdS3267 = "S3267";
 	public const String CheckIdS3261 = "S3261";
 	public const String CheckIdS3260 = "S3260";
+	public const String CheckIdS3246 = "S3246";
 	public const String CheckIdS3218 = "S3218";
 	public const String CheckIdS3011 = "S3011";
 	public const String CheckIdS2743 = "S2743";
@@ -39,8 +45,10 @@ internal static class SuppressMessageConstants
 	public const String CheckIdS1199 = "S1199";
 	public const String CheckIdS1172 = "S1172";
 	public const String CheckIdS1144 = "S1144";
+	public const String CheckIdS1133 = "S1133";
 	public const String CheckIdS1066 = "S1066";
 	public const String CheckIdS1006 = "S1006";
+	public const String CheckIdS927 = "S927";
 	public const String CheckIdS907 = "S907";
 	public const String CheckIdS107 = "S107";
 }

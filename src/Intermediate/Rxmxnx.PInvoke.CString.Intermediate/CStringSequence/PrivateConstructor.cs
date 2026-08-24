@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
+
+namespace Rxmxnx.PInvoke;
 
 public partial class CStringSequence
 {
@@ -19,7 +23,11 @@ public partial class CStringSequence
 	private CStringSequence(CStringSequence sequence)
 	{
 		this._lengths = (Int32[])sequence._lengths.Clone();
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		this._value = (String)sequence._value.Clone();
+#else
+		this._value = sequence._value.AsSpan().ToString();
+#endif
 		this._cache = CStringSequence.CreateCache(this._lengths.AsSpan(), out this._nonEmptyCount);
 	}
 	/// <summary>

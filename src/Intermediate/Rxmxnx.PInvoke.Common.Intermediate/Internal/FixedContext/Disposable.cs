@@ -1,9 +1,24 @@
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal;
 
+#if !OBSOLETE_FIXED_INTERFACES
 internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>.IDisposable>
+#else
+#pragma warning disable CS0612
+internal partial class FixedContext<T> : IConvertibleDisposable<IObsoleteFixedContext<T>.IDisposable>
+#pragma warning restore CS0612
+#endif
 {
 	/// <inheritdoc/>
-	public IFixedContext<T>.IDisposable ToDisposable(IDisposable? disposable) => this.CreateDisposable(disposable);
+#if !OBSOLETE_FIXED_INTERFACES
+	public IFixedContext<T>.IDisposable ToDisposable(IDisposable? disposable)
+#else
+#if !GITHUB_ACTIONS
+	[Obsolete]
+#endif
+	public IObsoleteFixedContext<T>.IDisposable ToDisposable(IDisposable? disposable)
+#endif
+		=> this.CreateDisposable(disposable);
 
 	/// <summary>
 	/// Creates a <see cref="Disposable"/> instance from current instance.
@@ -15,7 +30,13 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 	/// <summary>
 	/// Disposable implementation.
 	/// </summary>
+#if !OBSOLETE_FIXED_INTERFACES
 	private sealed class Disposable : Disposable<FixedContext<T>>, IFixedContext<T>.IDisposable
+#else
+#pragma warning disable CS0612
+	private sealed class Disposable : Disposable<FixedContext<T>>, IObsoleteFixedContext<T>.IDisposable
+#pragma warning restore CS0612
+#endif
 	{
 		/// <summary>
 		/// An empty instance of <see cref="FixedContext{T}.Disposable"/>.
@@ -35,14 +56,23 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 		ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects
 			=> this.GetValue<IReadOnlyFixedMemory>() is { } val ? val.Objects : default;
 
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+		[Obsolete]
+#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
 		IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+		[Obsolete]
+#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
 		IReadOnlyFixedContext<Object> IReadOnlyFixedMemory.AsObjectContext() => this.AsObjectContext();
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+		[Obsolete]
+#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
@@ -54,6 +84,9 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 				this.Transformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual));
 			return result;
 		}
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+		[Obsolete]
+#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
@@ -66,6 +99,9 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 		}
 
 		/// <inheritdoc/>
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+		[Obsolete]
+#endif
 		public IFixedContext<Byte> AsBinaryContext()
 		{
 			FixedContext<T>? ctx = this.GetValue<FixedContext<T>>();
@@ -74,6 +110,9 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 				convertible.ToDisposable(this.GetDisposableParent());
 		}
 		/// <inheritdoc/>
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+		[Obsolete]
+#endif
 		public IFixedContext<Object> AsObjectContext()
 		{
 			FixedContext<T>? ctx = this.GetValue<FixedContext<T>>();
@@ -83,6 +122,9 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 		}
 
 		/// <inheritdoc/>
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+		[Obsolete]
+#endif
 		public IFixedContext<TDestination> Transformation<TDestination>(out IFixedMemory residual)
 		{
 			FixedOffset offset;
@@ -101,3 +143,4 @@ internal partial class FixedContext<T> : IConvertibleDisposable<IFixedContext<T>
 		}
 	}
 }
+#endif

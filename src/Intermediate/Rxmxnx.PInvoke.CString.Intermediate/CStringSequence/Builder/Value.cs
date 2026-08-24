@@ -140,6 +140,7 @@ public partial class CStringSequence
 				Byte[] array = CString.CreateByteArray(this._charBuffer.Length);
 
 				this._charBuffer.CopyTo(0, array);
+				// ReSharper disable once UseCollectionExpression
 				lengths = this._lengths.ToArray();
 				return CString.Create(array);
 			}
@@ -177,7 +178,15 @@ public partial class CStringSequence
 					return CStringSequence.Empty._value;
 
 				Int32 bufferLength = totalLength / sizeof(Char) + totalLength % sizeof(Char);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 				return String.Create(bufferLength, this._charBuffer, Value.CopyChars);
+#else
+				Span<Char> chars = bufferLength <= StackAllocationHelper.StackallocByteThreshold ?
+					stackalloc Char[bufferLength] :
+					new Char[bufferLength];
+				Value.CopyChars(chars, this._charBuffer);
+				return chars.ToString();
+#endif
 			}
 
 			/// <summary>

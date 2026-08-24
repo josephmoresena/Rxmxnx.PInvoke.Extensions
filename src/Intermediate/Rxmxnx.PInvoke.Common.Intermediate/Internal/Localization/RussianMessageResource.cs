@@ -42,6 +42,7 @@ internal sealed class RussianMessageResource : IMessageResource
 		=> "Индекс и длина должны указывать на местоположение внутри последовательности.";
 	String IMessageResource.MissingMemoryInspector => "Проверка памяти не поддерживается на текущей платформе.";
 	String IMessageResource.ReflectionDisabled => "Эта функция требует режима полной рефлексии.";
+	String IMessageResource.InvalidSpanLayout => "Не удалось определить закрепляемое поле в структуре Span<T>.";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"Объект должен быть типа {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)
@@ -50,7 +51,7 @@ internal sealed class RussianMessageResource : IMessageResource
 		=> $"Длина параметра {nameofSpan} должна быть равна {sizeOf}.";
 	String IMessageResource.InvalidCopyUnmanagedType(String nameofSpan, String nameofValue)
 		=> $"Недостаточно доступного места в {nameofSpan} для копирования {nameofValue}.";
-	String IMessageResource.InvalidLength(String nameofLength)
+	String IMessageResource.InvalidLengthOrIndex(String nameofLength)
 		=> $"Параметр {nameofLength} должен быть равен нулю или положительному целому числу.";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} не является неуправляемым типом.";
 	String IMessageResource.NotValueType(Type type) => $"{type} не является значимым типом.";

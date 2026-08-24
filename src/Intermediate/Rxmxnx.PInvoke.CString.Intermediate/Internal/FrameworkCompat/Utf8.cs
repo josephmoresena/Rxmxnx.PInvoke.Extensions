@@ -28,7 +28,7 @@ SOFTWARE.
 // Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Blc.Memory 10.0.8
 // (System.text.Unicode.Utf8)
 
-#if !NETCOREAPP
+#if !NETCOREAPP3_0_OR_GREATER && !NET462_OR_GREATER
 // ReSharper disable UnusedMethodReturnValue.Global
 namespace System.Text.Unicode;
 
@@ -36,6 +36,7 @@ namespace System.Text.Unicode;
 /// Provides static methods that convert chunked data between UTF-8 and UTF-16 encodings.
 /// </summary>
 #if !PACKAGE
+[ExcludeFromCodeCoverage]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 internal static unsafe class Utf8

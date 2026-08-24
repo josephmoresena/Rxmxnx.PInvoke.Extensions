@@ -1,4 +1,5 @@
-﻿// ReSharper disable ConvertToExtensionBlock
+﻿#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+// ReSharper disable ConvertToExtensionBlock
 
 #if !NET6_0_OR_GREATER
 using ArgumentNullException = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
@@ -18,6 +19,10 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="span">The current binary span.</param>
 	/// <param name="action">A <see cref="FixedAction"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed(this Span<Byte> span, FixedAction action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -41,6 +46,10 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="span">The current binary span.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedAction"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed(this Span<Byte> span, ReadOnlyFixedAction action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -64,6 +73,10 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="span">The current read-only binary span.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedAction"/> delegate.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed(this ReadOnlySpan<Byte> span, ReadOnlyFixedAction action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -90,6 +103,10 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="arg">An object of type <typeparamref name="TArg"/> that represents the state.</param>
 	/// <param name="action">A delegate of type <see cref="FixedAction{TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<TArg>(this Span<Byte> span, TArg arg, FixedAction<TArg> action)
 #if NET9_0_OR_GREATER
 		where TArg : allows ref struct
@@ -118,6 +135,10 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="arg">An object of type <typeparamref name="TArg"/> that represents the state.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedAction{TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<TArg>(this Span<Byte> span, TArg arg, ReadOnlyFixedAction<TArg> action)
 #if NET9_0_OR_GREATER
 		where TArg : allows ref struct
@@ -146,6 +167,10 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="arg">An object of type <typeparamref name="TArg"/> that represents the state.</param>
 	/// <param name="action">A delegate of type <see cref="ReadOnlyFixedAction{TArg}"/>.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void WithSafeFixed<TArg>(this ReadOnlySpan<Byte> span, TArg arg, ReadOnlyFixedAction<TArg> action)
 #if NET9_0_OR_GREATER
 		where TArg : allows ref struct
@@ -175,6 +200,10 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="func">A delegate of type <see cref="FixedFunc{TResult}"/>.</param>
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<TResult>(this Span<Byte> span, FixedFunc<TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
@@ -200,6 +229,10 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedFunc{TResult}"/>.</param>
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<TResult>(this Span<Byte> span, ReadOnlyFixedFunc<TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
@@ -225,6 +258,10 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedFunc{TResult}"/>.</param>
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<TResult>(this ReadOnlySpan<Byte> span, ReadOnlyFixedFunc<TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
@@ -253,6 +290,10 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="func">A delegate of type <see cref="FixedFunc{TArg, TResult}"/>.</param>
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<TArg, TResult>(this Span<Byte> span, TArg arg, FixedFunc<TArg, TResult> func)
 #if NET9_0_OR_GREATER
 		where TArg : allows ref struct
@@ -283,6 +324,10 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedFunc{TArg, TResult}"/>.</param>
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<TArg, TResult>(this Span<Byte> span, TArg arg,
 		ReadOnlyFixedFunc<TArg, TResult> func)
 #if NET9_0_OR_GREATER
@@ -314,6 +359,10 @@ public static unsafe partial class BinaryExtensions
 	/// <param name="func">A delegate of type <see cref="ReadOnlyFixedFunc{TArg, TResult}"/>.</param>
 	/// <returns>The result of executing <paramref name="func"/>.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<TArg, TResult>(this ReadOnlySpan<Byte> span, TArg arg,
 		ReadOnlyFixedFunc<TArg, TResult> func)
 #if NET9_0_OR_GREATER
@@ -335,3 +384,4 @@ public static unsafe partial class BinaryExtensions
 		}
 	}
 }
+#endif

@@ -1,17 +1,24 @@
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+#if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 using System.Reflection;
-using System.Runtime.CompilerServices;
+#endif
 using System.Runtime.InteropServices;
-using System.Text;
+#if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
+using System.Diagnostics;
+#endif
+
+#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET452_OR_GREATER && !WINDOWS_UWP
+using System.Runtime.CompilerServices;
+#endif
 #if NET5_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 #endif
 
 #if NET6_0_OR_GREATER
 using System.Runtime;
+
 #endif
 
 namespace Rxmxnx.PInvoke.ApplicationTest
@@ -19,7 +26,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #if NET5_0_OR_GREATER
 	[UnconditionalSuppressMessage("SingleFile", "IL3000")]
 #endif
-	public static class RuntimeHelper
+	internal static class RuntimeHelper
 	{
 		private const String runtimeName =
 #if NET10_0_OR_GREATER
@@ -34,10 +41,36 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				".NET 6.0"
 #elif NET5_0_OR_GREATER
 				".NET 5.0"
-#elif NETCOREAPP3_1
+#elif NETCOREAPP3_1_OR_GREATER
 				".NET Core 3.1"
-#elif NETCOREAPP3_0
+#elif NETCOREAPP3_0_OR_GREATER
 				".NET Core 3.0"
+#elif NETCOREAPP2_2_OR_GREATER
+				".NET Core 2.2"
+#elif NETCOREAPP2_1_OR_GREATER
+				".NET Core 2.1"
+#elif NETCOREAPP2_0_OR_GREATER
+				".NET Core 2.0"
+#elif NET481
+				".NET Framework 4.8.1"
+#elif NET48_OR_GREATER
+				".NET Framework 4.8"
+#elif NET472_OR_GREATER
+				".NET Framework 4.7.2"
+#elif NET471_OR_GREATER
+				".NET Framework 4.7.1"
+#elif NET47_OR_GREATER
+				".NET Framework 4.7.0"
+#elif NET462_OR_GREATER
+				".NET Framework 4.6.2"
+#elif NET461_OR_GREATER
+				".NET Framework 4.6.1"
+#elif NET46_OR_GREATER
+				".NET Framework 4.6.0"
+#elif NET452_OR_GREATER
+				".NET Framework 4.5.2"
+#elif WINDOWS_UWP
+				".NET for Windows Universal"
 #else
 				"Mono"
 #endif
@@ -63,33 +96,37 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		public static readonly CString Null = new(static () =>
 		{
 			Byte[] utf8 = { (Byte)'N', (Byte)'u', (Byte)'l', (Byte)'l', (Byte)'\0', };
+#if NETCOREAPP3_0_OR_GREATER || NETFRAMEWORK && (MONO || NET462_OR_GREATER) || WINDOWS_UWP
 			return utf8.AsSpan()[..^1];
+#else
+			return utf8.AsSpan().Slice(0, utf8.Length - 1);
+#endif
 		});
 #endif
 
-		public static void PrintRuntimeInfo() => RuntimeHelper.PrintRuntimeInfo(Console.Out);
-		public static void PrintRuntimeInfo(StringBuilder strBuilder)
-		{
-			using StringWriter writer = new(strBuilder);
-			RuntimeHelper.PrintRuntimeInfo(writer);
-		}
-
-		private static void PrintRuntimeInfo(TextWriter writer)
+		public static void PrintRuntimeInfo(TextWriter writer)
 		{
 			writer.WriteLine("========== Application for " + RuntimeHelper.runtimeName + " ==========");
+#if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 			RuntimeHelper.PrintDomainInfo(writer);
+#endif
 			writer.WriteLine("========== Runtime information ==========");
 			writer.WriteLine($"Number of Cores: {Environment.ProcessorCount}");
 			writer.WriteLine($"Is Little-Endian: {BitConverter.IsLittleEndian}");
 			writer.WriteLine($"OS: {RuntimeInformation.OSDescription}");
 			writer.WriteLine($"OS Arch: {RuntimeInformation.OSArchitecture.GetName()}");
+#if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 			writer.WriteLine($"OS Version: {Environment.OSVersion}");
 			writer.WriteLine($"Computer: {Environment.MachineName}");
 			writer.WriteLine($"User: {Environment.UserName}");
+#endif
 			writer.WriteLine($"UI Culture: {CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}");
+#if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 			writer.WriteLine($"System Path: {Environment.SystemDirectory}");
 			writer.WriteLine($"Current Path: {Environment.CurrentDirectory}");
+#endif
 			writer.WriteLine($"Process Arch: {RuntimeInformation.ProcessArchitecture.GetName()}");
+#if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 			try
 			{
 				writer.WriteLine($"Framework Version: {Environment.Version}");
@@ -102,8 +139,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				if (!AotInfo.IsReflectionDisabled)
 					writer.WriteLine(ex);
 			}
+#endif
+#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET452_OR_GREATER && !WINDOWS_UWP
 			writer.WriteLine($"Dynamic Code Compiled: {RuntimeFeature.IsDynamicCodeCompiled}");
 			writer.WriteLine($"Dynamic Code Supported: {RuntimeFeature.IsDynamicCodeSupported}");
+#endif
 #if NET6_0_OR_GREATER
 			writer.WriteLine($"IL compiled bytes: {JitInfo.GetCompiledILBytes()}");
 			writer.WriteLine($"IL method count: {JitInfo.GetCompiledMethodCount()}");
@@ -112,7 +152,12 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			writer.WriteLine("======= Rxmxnx.PInvoke Runtime information =======");
 #if !RELEASE_PACKAGE
 			writer.WriteLine($"Package: {SystemInfo.CompilationFramework}");
+#elif (NETSTANDARD2_1 || NETFRAMEWORK && !NET452_OR_GREATER) && !LEGACY
+			writer.WriteLine($"Package: .NET Standard 2.1");
+#elif (NETSTANDARD2_1 || NETFRAMEWORK && !NET452_OR_GREATER) && LEGACY
+			writer.WriteLine($"Package: .NET Standard 2.0");
 #endif
+			writer.WriteLine($"Fast Span: {SystemInfo.UsesNativeSpan}");
 			writer.WriteLine($"Native AOT: {AotInfo.IsNativeAot}");
 			writer.WriteLine($"Reflection Enabled: {!AotInfo.IsReflectionDisabled}");
 			writer.WriteLine($"IL Code Generation Supported: {AotInfo.IsCodeGenerationSupported}");
@@ -126,7 +171,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			writer.WriteLine($"NetBSD Platform: {SystemInfo.IsNetBsd}");
 			writer.WriteLine($"Solaris Platform: {SystemInfo.IsSolaris}");
 			writer.WriteLine($"Pointer Size: {NativeUtilities.PointerSize}");
+#if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 			writer.WriteLine($"Globalization-Invariant Mode: {NativeUtilities.GlobalizationInvariantModeEnabled}");
+#endif
 			writer.WriteLine($"UI Iso639-1: {NativeUtilities.UserInterfaceIso639P1}");
 			writer.WriteLine($"Buffer AutoComposition Enabled: {BufferManager.BufferAutoCompositionEnabled}");
 			if (!SystemInfo.IsWebRuntime)
@@ -135,10 +182,14 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				writer.WriteLine($"CString.Empty literal: {CString.IsImagePersistent(CString.Empty)}");
 			}
 			writer.WriteLine($"Hardcoded Array literal: {!RuntimeHelper.Null.AsSpan().MayBeNonLiteral()}");
-			if (SystemInfo.IsWebRuntime || AotInfo.IsReflectionDisabled) return;
+#if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
+			if (SystemInfo.IsWebRuntime || AotInfo.IsReflectionDisabled || !SystemInfo.IsMonoRuntime) return;
 			writer.WriteLine("========== StackTrace information ==========");
 			RuntimeHelper.PrintStackInfo(writer);
+#endif
 		}
+
+#if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 		private static void PrintDomainInfo(TextWriter writer)
 		{
 			try
@@ -165,6 +216,8 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					writer.WriteLine(ex);
 			}
 		}
+#endif
+#if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
 #if NET5_0_OR_GREATER
 		[UnconditionalSuppressMessage("Trimming", "IL2026")]
 #endif
@@ -183,7 +236,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				{
 					ref readonly StackFrame? frame = ref enumerator.Current;
 #endif
+#if CSHARP9_0
 					if (frame?.GetMethod() is not { } methodBase) continue;
+#else
+					if (!(frame?.GetMethod() is MethodBase methodBase)) continue;
+#endif
 					writer.WriteLine($"{methodBase.DeclaringType}.{methodBase.Name} -> {methodBase.IsImageMethod()}");
 					hasFrame = true;
 				}
@@ -197,6 +254,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					writer.WriteLine(ex);
 			}
 		}
+#endif
 		private static String GetName(this Architecture architecture)
 			=> architecture switch
 			{
@@ -230,12 +288,18 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 				_ => $"{architecture}",
 			};
+#if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 		private static String GetAssemblyName(this Assembly assembly) => $"{assembly.FullName} {assembly.Location}";
+#endif
 #if !CSHARP9_0
 		private static ReadOnlySpan<Byte> NullBytes()
 		{
 			Byte[] utf8 = { (Byte)'N', (Byte)'u', (Byte)'l', (Byte)'l', (Byte)'\0', };
+#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET461 && !WINDOWS_UWP
 			return utf8.AsSpan()[..^1];
+#else
+			return utf8.AsSpan().Slice(0, utf8.Length - 1);
+#endif
 		}
 #endif
 	}

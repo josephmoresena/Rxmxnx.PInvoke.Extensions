@@ -1,12 +1,15 @@
+// ReSharper disable UseRawString
 namespace Rxmxnx.PInvoke.ApplicationTest;
 
+// ReSharper disable once ClassCannotBeInstantiated
 public partial class Launcher
 {
 	private sealed partial class Windows
 	{
-    private const String zLibHeaderName = "zlib.h";
-    private const String zConfHeaderName = "zconf.h";
-		private const String zLibHeaderContent = @"/* zlib.h -- interface of the 'zlib' general purpose compression library
+		private const String zLibHeaderName = "zlib.h";
+		private const String zConfHeaderName = "zconf.h";
+		private const String zLibHeaderContent =
+			@"/* zlib.h -- interface of the 'zlib' general purpose compression library
   version 1.2.3, July 18th, 2005
 
   Copyright (C) 1995-2005 Jean-loup Gailly and Mark Adler
@@ -1364,7 +1367,7 @@ ZEXTERN const uLongf * ZEXPORT get_crc_table    OF((void));
 
 #endif /* ZLIB_H */
 ";
-    private const String zConfHeaderContent = @"/* zconf.h -- configuration of the zlib compression library
+		private const String zConfHeaderContent = @"/* zconf.h -- configuration of the zlib compression library
  * Copyright (C) 1995-2005 Jean-loup Gailly.
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
@@ -1697,5 +1700,5 @@ typedef uLong FAR uLongf;
 
 #endif /* ZCONF_H */
 ";
-  }
+	}
 }

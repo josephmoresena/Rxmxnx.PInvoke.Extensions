@@ -1,5 +1,14 @@
 ﻿#if !NET6_0_OR_GREATER
 using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
+#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
+#if PACKAGE && !NET5_0_OR_GREATER
+using B1 = Rxmxnx.PInvoke.Buffers.Atomic<System.Object>;
+#elif !NET5_0_OR_GREATER && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
+using B1 = Rxmxnx.PInvoke.NativeUtilities.B1;
+#endif
+
 #endif
 
 namespace Rxmxnx.PInvoke;
@@ -13,6 +22,40 @@ public unsafe partial class CStringSequence
 	/// Length of the CString.Zero item.
 	/// </summary>
 	private const Int32 zeroItemLength = Int32.MinValue;
+
+#if !NET5_0_OR_GREATER && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
+	/// <summary>
+	/// Static buffer for type instance.
+	/// </summary>
+	[FixedAddressValueType]
+	private static B1 bufferType;
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+	/// <summary>
+	/// Static buffer for delegate instance.
+	/// </summary>
+	[FixedAddressValueType]
+	private static B1 bufferConstructor;
+#endif
+
+	/// <summary>
+	/// Static constructor.
+	/// </summary>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3963)]
+#endif
+	static CStringSequence()
+	{
+		CStringSequence.bufferType = new();
+		Span<Type> types = NativeUtilities.CreateTypeSpan(ref CStringSequence.bufferType);
+		types[0] = typeof(Byte);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+		CStringSequence.bufferConstructor = new();
+		Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+			NativeUtilities.CreateConstructorSpan(ref CStringSequence.bufferConstructor);
+		constructors[0] = ReadOnlyFixedContext<Byte>.CreateInstance;
+#endif
+	}
+#endif
 
 	/// <summary>
 	/// Determines the length of the given <see cref="CString"/> instance for the sequence.
@@ -38,7 +81,15 @@ public unsafe partial class CStringSequence
 		fixed (CString?* valuesPtr = values)
 		{
 			CStringSpanState state = new() { Ptr = valuesPtr, Length = values.Length, };
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			return String.Create(totalChars, state, CStringSequence.CopyText);
+#else
+			Span<Char> chars = totalChars <= StackAllocationHelper.StackallocByteThreshold ?
+				stackalloc Char[totalChars] :
+				new Char[totalChars];
+			CStringSequence.CopyText(chars, state);
+			return chars.ToString();
+#endif
 		}
 #pragma warning restore CS8500
 	}
@@ -63,7 +114,15 @@ public unsafe partial class CStringSequence
 	{
 		Int32 bufferLength = CStringSequence.GetBufferLength(lengths.AsSpan());
 		SpanCreationInfo info = new() { Pointers = ptrSpan, Lengths = lengths, };
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		return String.Create(bufferLength, info, CStringSequence.CreateBuffer);
+#else
+		Span<Char> chars = bufferLength <= StackAllocationHelper.StackallocByteThreshold ?
+			stackalloc Char[bufferLength] :
+			new Char[bufferLength];
+		CStringSequence.CreateBuffer(chars, info);
+		return chars.ToString();
+#endif
 	}
 	/// <summary>
 	/// Create buffer using <paramref name="info"/>.
@@ -98,9 +157,13 @@ public unsafe partial class CStringSequence
 	private static void CopyText(Span<Char> charSpan, CStringSpanState state)
 	{
 		Int32 position = 0;
-		ref CString? refCStr = ref *state.Ptr;
 #pragma warning disable CS8619
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		ref CString? refCStr = ref *state.Ptr;
 		ReadOnlySpan<CString?> values = MemoryMarshal.CreateReadOnlySpan(ref refCStr, state.Length);
+#else
+		ReadOnlySpan<CString?> values = MemoryMarshalCompat.CreateUnsafeReadOnlySpan<CString?>(state.Ptr, state.Length);
+#endif
 #pragma warning restore CS8619
 		Span<Byte> byteSpan = MemoryMarshal.AsBytes(charSpan);
 		foreach (CString? value in values)
@@ -342,7 +405,15 @@ public unsafe partial class CStringSequence
 		fixed (Byte* ptr = &MemoryMarshal.GetReference(buffer))
 		{
 			CopyTextHelper state = new() { Pointer = ptr, Length = buffer.Length, NullChars = [], };
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			sequenceBuffer = String.Create(totalChars, state, CStringSequence.CopyText);
+#else
+			Span<Char> chars = totalChars <= StackAllocationHelper.StackallocByteThreshold ?
+				stackalloc Char[totalChars] :
+				new Char[totalChars];
+			CStringSequence.CopyText(chars, state);
+			sequenceBuffer = chars.ToString();
+#endif
 			lengths = CStringSequence.GetLengths(state.NullChars);
 		}
 		return new(sequenceBuffer, lengths);

@@ -101,7 +101,7 @@ internal partial class Utf8Comparator<TChar>
 
 		try
 		{
-			Int32 charCountA = Utf8Comparator.GetCharCountFromUtf8(textA);
+			Int32 charCountA = textA.GetUtf16Count();
 			Span<Char> spanA = StackAllocationHelper.ConsumeStackBytes(charCountA, ref stackConsumed) ?
 				stackalloc Char[charCountA] :
 				StackAllocationHelper.RentArray(charCountA, out arrayA, false);
@@ -161,15 +161,22 @@ internal partial class Utf8Comparator<TChar>
 	[SkipLocalsInit]
 #endif
 	private Int32 OrdinalCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB, String? stringB)
+#if UAP
+		=> this._ignoreCase ?
+			this.Compare(this._culture.CompareInfo, CompareOptions.OrdinalIgnoreCase, textA, textB, stringB) :
+			String.CompareOrdinal(Utf8Comparator.GetStringFromUtf8(textA), stringB ?? this.GetString(textB));
+#else
 	{
 		if (this._ignoreCase)
 			return this.Compare(this._culture.CompareInfo, CompareOptions.OrdinalIgnoreCase, textA, textB, stringB);
 
 #if !NET7_0_OR_GREATER
-		// In Mono Framework, System.AppDomain implements System._AppDomain interface.
+		// .NET Core 2.0 and .NET Framework uses package-provided System.Memory assembly.
+		// In .NET Framework and Mono Framework, System.AppDomain implements System._AppDomain interface.
 		// Starting with .NET 7.0, System.Runtime.InteropServices.GCHandle implements
 		// System.IEquatable<System.Runtime.InteropServices.GCHandle>.
-		if (SystemInfo.CountInterfaces<AppDomain>() == 0 && !SystemInfo.IsSelfEquatable<GCHandle>())
+		if (!SystemInfo.UsesNativeSpan ||
+		    SystemInfo.CountInterfaces<AppDomain>() == 0 && !SystemInfo.IsSelfEquatable<GCHandle>())
 			return String.CompareOrdinal(Utf8Comparator.GetStringFromUtf8(textA), stringB ?? this.GetString(textB));
 #endif
 
@@ -178,7 +185,7 @@ internal partial class Utf8Comparator<TChar>
 		Char[]? arrayB = default;
 		try
 		{
-			Int32 charCountA = Utf8Comparator.GetCharCountFromUtf8(textA);
+			Int32 charCountA = textA.GetUtf16Count();
 			Span<Char> spanA = StackAllocationHelper.ConsumeStackBytes(charCountA * sizeof(Char), ref stackConsumed) ?
 				stackalloc Char[charCountA] :
 				StackAllocationHelper.RentArray(charCountA, out arrayA, false);
@@ -204,6 +211,7 @@ internal partial class Utf8Comparator<TChar>
 			StackAllocationHelper.ReleaseStackBytes(stackConsumed);
 		}
 	}
+#endif
 	/// <summary>
 	/// Retrieves the <see cref="CompareOptions"/> for the current comparison.
 	/// </summary>

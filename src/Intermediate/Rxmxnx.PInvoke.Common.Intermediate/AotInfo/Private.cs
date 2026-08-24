@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if !UAP
+namespace Rxmxnx.PInvoke;
 
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3011)]
@@ -23,7 +24,20 @@ public static partial class AotInfo
 		{
 			if (frame?.GetMethod() is not { } methodBase) continue;
 			if (EmitInfo.IsDynamicMethod(methodBase)) return false;
+#if NETSTANDARD2_0
+			if (typeof(RuntimeHelpers).GetMethod(nameof(RuntimeHelpers.PrepareMethod), [typeof(RuntimeMethodHandle),])
+				    is not { } prepare || typeof(MethodBase).GetProperty(nameof(MethodBase.MethodHandle)) is not
+				    { } handle)
+				// Unable to find RuntimeHelpers.PrepareMethod(RuntimeMethodHandle) and MethodBase.MethodHandle with reflection.
+				return true;
+			Object?[] args = [handle.GetValue(methodBase),];
+			// Unable to get RuntimeMethodHandle from current instance.
+			if (args[0] is null) return true;
+			prepare.Invoke(null, args);
+			if (!AotInfo.IsImageMethodUnsafe((RuntimeMethodHandle)args[0]!)) return false;
+#else
 			if (!AotInfo.IsImageMethodUnsafe(methodBase.MethodHandle)) return false;
+#endif
 		}
 		return true;
 	}
@@ -65,7 +79,11 @@ public static partial class AotInfo
 #else
 			Boolean isAndroid = false;
 #endif
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			foreach (Assembly assembly in AotInfo.GetAssembliesSpan())
+#else
+			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+#endif
 			{
 				if (String.IsNullOrWhiteSpace(assembly.FullName) || assembly.IsDynamic) continue;
 				switch (AotInfo.GetAssemblyName(assembly.FullName))
@@ -218,6 +236,7 @@ public static partial class AotInfo
 
 		return default; // Unabled to retrieve JIT information.
 	}
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <inheritdoc cref="AppDomain.GetAssemblies()"/>
 	/// <returns>A read-only span of assemblies in this application domain.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -226,6 +245,7 @@ public static partial class AotInfo
 		Assembly[] array = AppDomain.CurrentDomain.GetAssemblies();
 		return MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(array), array.Length);
 	}
+#endif
 	/// <summary>
 	/// Retrieves the assembly name from its full name.
 	/// </summary>
@@ -277,3 +297,4 @@ public static partial class AotInfo
 	}
 #endif
 }
+#endif

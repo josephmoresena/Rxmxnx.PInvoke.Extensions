@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Represents a <see cref="CStringSequence"/> that is fixed in memory.
@@ -8,6 +9,7 @@
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1121)]
 #endif
+#pragma warning disable CS0618
 public readonly unsafe ref struct FixedCStringSequence
 {
 	/// <summary>
@@ -21,7 +23,7 @@ public readonly unsafe ref struct FixedCStringSequence
 	/// <summary>
 	/// Indicates whether the current instance remains valid.
 	/// </summary>
-	private readonly IMutableWrapper<Boolean>? _isValid;
+	private readonly FixedValueHandle? _handle;
 
 	/// <summary>
 	/// Gets the list of <see cref="CString"/> values in the sequence.
@@ -42,7 +44,8 @@ public readonly unsafe ref struct FixedCStringSequence
 		get
 		{
 			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, this.Values.Count);
-			return this.GetFixedCString(index);
+			void* ptr = this.GetPointer(index, out Int32 length);
+			return new ReadOnlyFixedContext<Byte>(ptr, length, this._handle!);
 		}
 	}
 
@@ -55,7 +58,7 @@ public readonly unsafe ref struct FixedCStringSequence
 	{
 		this._values = values;
 		this._value = value;
-		this._isValid = IMutableWrapper.Create(true);
+		this._handle = new();
 	}
 
 	/// <summary>
@@ -79,10 +82,64 @@ public readonly unsafe ref struct FixedCStringSequence
 	/// <param name="fseq">A <see cref="FixedCStringSequence"/> instance.</param>
 	public static implicit operator ReadOnlyFixedMemoryList(FixedCStringSequence fseq)
 	{
-		ReadOnlyFixedMemory[] memories = new ReadOnlyFixedMemory[fseq.Values.Count];
+		FixedPointerInfo[] info = new FixedPointerInfo[fseq.Values.Count];
+		ReadOnlyFixedMemory?[] memories = new ReadOnlyFixedMemory?[fseq.Values.Count];
 		for (Int32 i = 0; i < memories.Length; i++)
-			memories[i] = fseq.GetFixedCString(i);
-		return new(memories);
+		{
+			void* ptr = fseq.GetPointer(i, out Int32 length);
+			info[i] = new()
+			{
+				Pointer = ptr,
+				Count = length,
+				SizeOf = sizeof(Byte),
+				IsUnmanaged = true,
+#if !NET5_0_OR_GREATER
+				ConstructorOrFunctionPointer = CStringSequence.ConstructorPointer,
+				TypeOrFunctionPointer = CStringSequence.TypePointer,
+#else
+				ConstructorOrFunctionPointer = FixedPointerInfo.ToUnmanaged(&ReadOnlyFixedContext<Byte>.CreateInstance),
+				TypeOrFunctionPointer = FixedPointerInfo.ToUnmanaged(&NativeUtilities.GetType<Byte>),
+#endif
+			};
+		}
+		return new(new()
+		{
+			IsReadOnly = true, Handle = fseq._handle!, Information = info, Instances = memories,
+		});
+	}
+	/// <summary>
+	/// Implicitly converts a <see cref="FixedCStringSequence"/> to a <see cref="FixedPointerInfo"/>.
+	/// </summary>
+	/// <param name="fseq">A <see cref="FixedCStringSequence"/> instance.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static implicit operator FixedPointerValueList(FixedCStringSequence fseq)
+	{
+		FixedPointerInfo[] info = new FixedPointerInfo[fseq.Values.Count];
+		ReadOnlyFixedMemory?[] memories = new ReadOnlyFixedMemory?[fseq.Values.Count];
+		for (Int32 i = 0; i < memories.Length; i++)
+		{
+			void* ptr = fseq.GetPointer(i, out Int32 length);
+			info[i] = new()
+			{
+				Pointer = ptr,
+				Count = length,
+				SizeOf = sizeof(Byte),
+				IsUnmanaged = true,
+#if !NET5_0_OR_GREATER
+				ConstructorOrFunctionPointer = CStringSequence.ConstructorPointer,
+				TypeOrFunctionPointer = CStringSequence.TypePointer,
+#else
+				ConstructorOrFunctionPointer = FixedPointerInfo.ToUnmanaged(&ReadOnlyFixedContext<Byte>.CreateInstance),
+				TypeOrFunctionPointer = FixedPointerInfo.ToUnmanaged(&NativeUtilities.GetType<Byte>),
+#endif
+			};
+		}
+		return new()
+		{
+			IsReadOnly = true, Handle = fseq._handle!, Information = info, Instances = memories,
+		};
 	}
 
 	/// <summary>
@@ -101,17 +158,24 @@ public readonly unsafe ref struct FixedCStringSequence
 	/// <summary>
 	/// Invalidates the current sequence.
 	/// </summary>
-	internal void Unload() => this._isValid?.Value = false;
+	internal void Unload() => this._handle?.Dispose();
 
 	/// <summary>
-	/// Retrieves the <see cref="ReadOnlyFixedContext{Byte}"/> for the element at the specified <paramref name="index"/>.
+	/// Retrieves an unmanaged pointer for the element at the specified <paramref name="index"/>.
 	/// </summary>
 	/// <param name="index">The index of the element to retrieve.</param>
-	/// <returns>A <see cref="ReadOnlyFixedContext{Byte}"/> for the element at the specified <paramref name="index"/>.</returns>
-	private ReadOnlyFixedContext<Byte> GetFixedCString(Int32 index)
+	/// <param name="length">Output. Length of the element.</param>
+	/// <returns>An unmanaged pointer for the element.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private void* GetPointer(Int32 index, out Int32 length)
 	{
 		CString cstr = this._values![index];
 		fixed (void* ptr = cstr) // Use Pinnable reference
-			return new(ptr, cstr.Length, this._isValid!);
+		{
+			length = cstr.Length;
+			return ptr;
+		}
 	}
 }
+#pragma warning restore CS0618
+#endif

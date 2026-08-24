@@ -28,7 +28,7 @@ SOFTWARE.
 // Adopted and adapted by Joseph Moreno in 2025 based on code from .NET 6.0 CoreCLR
 // (System.Runtime.InteropServices.MemoryMarshal / System.String /  System.SpanHelpers )
 
-#if NETCOREAPP && (!PACKAGE || !NET6_0_OR_GREATER)
+#if NETCOREAPP3_0_OR_GREATER && (!PACKAGE || !NET6_0_OR_GREATER)
 // ReSharper disable BuiltInTypeReferenceStyle
 
 using UIntPtr = nuint;

@@ -19,6 +19,7 @@ public partial class CStringSequence
 	/// </summary>
 	private readonly String _value;
 
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Retrieves the internal buffer as a <see cref="ReadOnlySpan{Char}"/> instance and creates a
 	/// <see cref="CString"/> array representing the sequence of texts.
@@ -62,11 +63,15 @@ public partial class CStringSequence
 	/// </summary>
 	/// <param name="ptr">Pointer to the UTF-8 sequence buffer.</param>
 	/// <returns>A <see cref="FixedCStringSequence"/> instance.</returns>
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+	[Obsolete]
+#endif
 	private unsafe FixedCStringSequence GetFixedSequence(Char* ptr)
 	{
 		_ = this.AsUnsafeSpan(out CString[] output);
 		return new(output, CString.CreateUnsafe(new(ptr), this._value.Length * sizeof(Char), true));
 	}
+#endif
 	/// <summary>
 	/// Calculates the offset and length for the indicated sub-range.
 	/// </summary>
@@ -138,7 +143,7 @@ public partial class CStringSequence
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private Int32 GetIndexOfExactLength(Int32 length)
 	{
-#if !NET10_0_OR_GREATER
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 		ReadOnlySpan<Int32> lengths = this._lengths.AsSpan();
 		for (Int32 i = 0; i < lengths.Length; i++)
 		{

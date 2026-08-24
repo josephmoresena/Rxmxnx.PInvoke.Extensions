@@ -5,8 +5,10 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// <see cref="CString"/> extensions for <see cref="Stream"/> class.
 /// </summary>
-[EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 [Browsable(false)]
+#endif
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static class StreamCStringExtensions
 {
 	/// <summary>
@@ -32,7 +34,7 @@ public static class StreamCStringExtensions
 	/// <param name="count">The number of bytes to be written to the current stream.</param>
 	public static void Write(this Stream stream, CString cstr, Int32 startIndex, Int32 count)
 		=> cstr.Write(stream, startIndex, count);
-
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Asynchronously writes the sequence of bytes represented by the <paramref name="cstr"/> to the current
 	/// <paramref name="stream"/>,
@@ -82,4 +84,5 @@ public static class StreamCStringExtensions
 	public static Task WriteAsync(this Stream stream, CString cstr, Int32 startIndex, Int32 count,
 		CancellationToken cancellationToken = default)
 		=> cstr.WriteAsync(stream, startIndex, count, cancellationToken);
+#endif
 }

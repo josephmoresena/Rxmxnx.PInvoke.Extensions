@@ -20,9 +20,11 @@
 // THE SOFTWARE.
 // 
 
+#if NETSTANDARD2_1 || MONO
 using System.Buffers;
 using System.Runtime.CompilerServices;
 
 [assembly: CompilationRelaxations(8)]
 [assembly: RuntimeCompatibility(WrapNonExceptionThrows = true)]
 [assembly: TypeForwardedTo(typeof(ArrayPool<>))]
+#endif

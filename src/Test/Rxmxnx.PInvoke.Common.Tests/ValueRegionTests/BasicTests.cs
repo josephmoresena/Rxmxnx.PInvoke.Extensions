@@ -1,4 +1,12 @@
-﻿namespace Rxmxnx.PInvoke.Tests.ValueRegionTests;
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
+
+#endif
+
+namespace Rxmxnx.PInvoke.Tests.ValueRegionTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -46,7 +54,17 @@ public sealed class BasicTests : ValueRegionTestBase
 	public void TimeSpanTest() => BasicTests.Test<TimeSpan>();
 
 	[Fact]
-	public void StringTest() => BasicTests.Test<String>();
+	public void StringTest()
+#if !NETCOREAPP
+		=> BasicTests.Test<String>();
+#else
+	{
+		BasicTests.Test<String>();
+		ValueRegion<String> region =
+			ValueRegion<String>.Create(ValueRegionTestBase.Fixture.CreateMany<String>(10).ToArray());
+		Assert.False(region.TryAlloc(GCHandleType.Pinned, out _));
+	}
+#endif
 
 	private static void Test<T>()
 	{
@@ -122,8 +140,11 @@ public sealed class BasicTests : ValueRegionTestBase
 		PInvokeAssert.Equal(values, newArray);
 		if (values.Length > 0)
 			PInvokeAssert.NotSame(values, newArray);
-		else
+		else if (!SystemInfo.CompilationFramework.Contains("Framework") &&
+		         !SystemInfo.CompilationFramework.Contains("2.0"))
 			PInvokeAssert.Same(Array.Empty<T>(), newArray);
+		else
+			PInvokeAssert.Equal(Array.Empty<T>(), newArray);
 
 		Boolean isAllocated = region.TryAlloc(GCHandleType.Pinned, out GCHandle handle);
 		PInvokeAssert.Equal(isAllocated, handle.IsAllocated);

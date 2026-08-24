@@ -20,11 +20,13 @@ internal partial class BinaryConcatenator<T>
 	/// instance.
 	/// </summary>
 	private WriteDelegate _write = default!;
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Delegate that handles the writing of a specific value into the current
 	/// instance asynchronously.
 	/// </summary>
 	private WriteAsyncDelegate _writeAsync = default!;
+#endif
 
 	/// <summary>
 	/// Initializes the delegates of the current instance based on the separator's
@@ -37,20 +39,32 @@ internal partial class BinaryConcatenator<T>
 		{
 			this._binaryWrite = static (c, s) => c.InitialWrite(s);
 			this._write = static (c, v) => c.InitialWrite(v);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			this._writeAsync = static (c, a) => c.InitialWriteAsync(a);
+#endif
 		}
 		else
 		{
 			this._binaryWrite = static (c, s) => c.FinalWrite(s);
 			this._write = static (c, v) => c.FinalWrite(v);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			this._writeAsync = static (c, a) => c.FinalWriteAsync(a);
+#endif
 		}
 	}
 	/// <summary>
 	/// Writes the <paramref name="value"/> to the current instance.
 	/// </summary>
 	/// <param name="value">The UTF-8 bytes to write.</param>
-	private void WriteValue(ReadOnlySpan<Byte> value) => this.Stream.Write(value);
+	private void WriteValue(ReadOnlySpan<Byte> value)
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		=> this.Stream.Write(value);
+#else
+	{
+		foreach (Byte b in value)
+			this.Stream.WriteByte(b);
+	}
+#endif
 	/// <summary>
 	/// Writes the <paramref name="value"/> to the current instance and updates the writing
 	/// delegates for subsequent writes with a separator.
@@ -63,7 +77,9 @@ internal partial class BinaryConcatenator<T>
 		this.WriteValue(value);
 		this._binaryWrite = static (c, s) => c.WriteWithSeparator(s);
 		this._write = static (c, v) => c.WriteWithSeparator(v);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		this._writeAsync = static (c, a) => c.WriteWithSeparatorAsync(a);
+#endif
 	}
 	/// <summary>
 	/// Writes the <paramref name="value"/> to the current instance and updates the writing delegates
@@ -77,7 +93,9 @@ internal partial class BinaryConcatenator<T>
 		this.WriteValue(value!);
 		this._binaryWrite = static (c, s) => c.WriteWithSeparator(s);
 		this._write = static (c, v) => c.WriteWithSeparator(v);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		this._writeAsync = static (c, a) => c.WriteWithSeparatorAsync(a);
+#endif
 	}
 	/// <summary>
 	/// Writes the <paramref name="value"/> to the current instance preceded by the separator.
@@ -127,6 +145,7 @@ internal partial class BinaryConcatenator<T>
 		if (!this.IsEmpty(value))
 			this.WriteValue(value);
 	}
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Asynchronously writes the <paramref name="value"/> to the current instance and
 	/// sets the delegates for subsequent writes that require a separator.
@@ -173,6 +192,7 @@ internal partial class BinaryConcatenator<T>
 		if (!this.IsEmpty(value))
 			await this.WriteValueAsync(value);
 	}
+#endif
 
 	/// <summary>
 	/// Delegate that defines a method to write UTF-8 bytes into the current instance.
@@ -188,7 +208,7 @@ internal partial class BinaryConcatenator<T>
 	/// <param name="concatenator">A <see cref="BinaryConcatenator{T}"/> instance.</param>
 	/// <param name="value">The value to write its UTF-8 bytes representation.</param>
 	private delegate void WriteDelegate(BinaryConcatenator<T> concatenator, T? value);
-
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Delegate that defines a method to write the UTF-8 bytes of a specific value into the
 	/// current instance asynchronously.
@@ -197,4 +217,5 @@ internal partial class BinaryConcatenator<T>
 	/// <param name="value">The value to write its UTF-8 bytes representation.</param>
 	/// <returns>A <see cref="Task"/> that represents the asynchronous write operation.</returns>
 	private delegate Task WriteAsyncDelegate(BinaryConcatenator<T> concatenator, T? value);
+#endif
 }

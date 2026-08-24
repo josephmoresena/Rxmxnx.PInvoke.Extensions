@@ -33,8 +33,34 @@ public static partial class SystemInfo
 			".NET Core 3.1"
 #elif NETCOREAPP3_0
 			".NET Core 3.0"
-#else
+#elif NETCOREAPP2_2
+			".NET Core 2.2"
+#elif NETCOREAPP2_1
+			".NET Core 2.1"
+#elif NETCOREAPP2_0
+			".NET Core 2.0"
+#elif NETSTANDARD2_1
 			".NET Standard 2.1"
+#elif NET472_OR_GREATER
+			".NET Framework 4.7.2"
+#elif NET471_OR_GREATER
+			".NET Framework 4.7.1"
+#elif NET47_OR_GREATER
+			".NET Framework 4.7.0"
+#elif NET462_OR_GREATER
+			".NET Framework 4.6.2"
+#elif NET461_OR_GREATER
+			".NET Framework 4.6.1"
+#elif NET46_OR_GREATER
+			".NET Framework 4.6.0"
+#elif NET452_OR_GREATER
+			".NET Framework 4.5.2"
+#elif UAP10_0_16299
+			".NET for Windows Universal 10.0.16299"
+#elif UAP10_0
+			".NET for Windows Universal"
+#else
+			".NET Standard 2.0"
 #endif
 		;
 #endif

@@ -203,7 +203,7 @@ public sealed class BasicTests
 		}
 	}
 
-#if NETCOREAPP
+#if NETCOREAPP2_1_OR_GREATER
 	[Fact]
 	public void LiteralTest()
 	{
@@ -342,6 +342,17 @@ public sealed class BasicTests
 			PInvokeAssert.Equal(valueInvCStr0, (ReadOnlySpan<Byte>)rightCStr + leftCStr);
 		}
 	}
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+	[Fact]
+	public void GetHashCodeTest()
+	{
+		using IEnumerator<String> strEnumerator = TestSet.Utf16Text.GetEnumerator();
+		using IEnumerator<ReadOnlySpanFunc<Byte>> utfEnumerator = TestSet.Utf8Text.GetEnumerator();
+		while (strEnumerator.MoveNext() && utfEnumerator.MoveNext())
+			PInvokeAssert.Equal(strEnumerator.Current!.GetHashCode(), CString.GetHashCode(utfEnumerator.Current!()));
+		PInvokeAssert.Equal(String.Empty.GetHashCode(), CString.GetHashCode(default));
+	}
+#endif
 
 	private static void CreateCStringFromString(CString[,] cstr)
 	{

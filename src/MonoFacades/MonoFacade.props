@@ -1,16 +1,17 @@
 <Project>
-
     <PropertyGroup>
-        <TargetFramework Condition="'$(MSBuildRuntimeType)' != 'Mono'">netstandard2.1</TargetFramework>
+        <TargetFrameworks Condition="'$(MSBuildRuntimeType)' != 'Mono'">netstandard2.1;netstandard2.0;net452</TargetFrameworks>
         <LangVersion>8.0</LangVersion>
         <OutputType>Library</OutputType>
         <Deterministic>true</Deterministic>
         <Optimize>true</Optimize>
+        <DefineConstants Condition="'$(MSBuildRuntimeType)' == 'Mono'">$(DefineConstants);MONO</DefineConstants>
+        <AssemblyName Condition="$(AssemblyName.StartsWith('System')) And ('$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'net452')">$(AssemblyName).Empty</AssemblyName>
     </PropertyGroup>
 
-    <Import Condition="'$(MSBuildRuntimeType)' == 'Mono'" Project=" ..\MonoProject.props"/>
+    <Import Condition="'$(MSBuildRuntimeType)' == 'Mono'" Project="..\MonoProject.props"/>
 
-    <PropertyGroup Condition="$(FacadeVersion) != ''">
+    <PropertyGroup Condition="'$(FacadeVersion)' != ''">
         <Version>$(FacadeVersion)</Version>
         <AssemblyVersion>$(FacadeVersion)</AssemblyVersion>
         <Company>Mono development team</Company>

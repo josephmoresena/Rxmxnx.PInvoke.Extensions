@@ -1,10 +1,6 @@
-#if !NET9_0_OR_GREATER
-using Lock = System.Object;
-#endif
-
 namespace Rxmxnx.PInvoke.Internal;
 
-internal abstract partial class MetadataStorage<T>
+internal abstract partial class MetadataStorage
 {
 	/// <summary>
 	/// Static class for non-binary buffer types metadata.
@@ -13,13 +9,13 @@ internal abstract partial class MetadataStorage<T>
 	[ExcludeFromCodeCoverage]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2743)]
 #endif
-	private static class NonBinaryStore
+	protected static class NonBinaryStore<T>
 	{
 		/// <summary>
-		/// Lock object.
+		/// Reader-Writer lock object initialized lazily to orchestrate concurrent access.
 		/// </summary>
 		// ReSharper disable once StaticMemberInGenericType
-		private static Lock? lockObj;
+		private static ReaderWriterLockSlim? rwLock;
 		/// <summary>
 		/// Internal non-binary metadata list.
 		/// </summary>
@@ -29,70 +25,76 @@ internal abstract partial class MetadataStorage<T>
 		/// Retrieves non-binary metadata required for a buffer with <paramref name="count"/> items.
 		/// </summary>
 		/// <param name="count">Amount of items in required buffer.</param>
-		/// <param name="allowMinimal">Allow to return minimal buffer.</param>
+		/// <param name="minimal">Output. Minimal non-binary buffer.</param>
 		/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
-		public static BufferTypeMetadata<T>? GetNonBinary(UInt16 count, Boolean allowMinimal)
+		public static BufferTypeMetadata<T>? GetNonBinary(UInt16 count, out BufferTypeMetadata<T>? minimal)
 		{
-			if (!NonBinaryStore.HasNonBinaryMap()) return default;
-#if NET9_0_OR_GREATER
-			using (NonBinaryStore.GetLock().EnterScope())
-#else
-			lock (NonBinaryStore.GetLock())
-#endif
+			minimal = default;
+			if (!NonBinaryStore<T>.HasNonBinaryMap()) return default;
+
+			using ReadScope scope = NonBinaryStore<T>.GetLock();
+			SortedList<UInt16, BufferTypeMetadata<T>> map = NonBinaryStore<T>.GetNonBinaryMap();
+			if (map.TryGetValue(count, out BufferTypeMetadata<T>? result))
+				return result;
+			IList<UInt16> keys = map.Keys;
+			Int32 low = 0;
+			Int32 high = keys.Count - 1;
+			while (low <= high)
 			{
-				SortedList<UInt16, BufferTypeMetadata<T>> map = NonBinaryStore.GetNonBinaryMap();
-				if (map.TryGetValue(count, out BufferTypeMetadata<T>? result))
-					return result;
-				if (!allowMinimal || map.Count == 0) return default;
+				Int32 middle = low + ((high - low) >> 1);
+				UInt16 size = keys[middle];
 
-				IList<UInt16> keys = map.Keys;
-				Int32 lo = 0;
-				Int32 hi = keys.Count - 1;
-
-				while (lo <= hi)
-				{
-					Int32 mid = lo + ((hi - lo) >> 1);
-
-					if (keys[mid] < count)
-						lo = mid + 1;
-					else
-						hi = mid - 1;
-				}
-				if ((UInt32)lo >= (UInt32)keys.Count) return default;
-				return keys[lo] <= (UInt32)count << 1 ? map.Values[lo] : default;
+				if (size < count)
+					low = middle + 1;
+				else if (size > count)
+					high = middle - 1;
+				else
+					return map.Values[middle];
 			}
+			if ((UInt32)low < (UInt32)keys.Count && keys[low] <= (UInt32)count << 1)
+				minimal = map.Values[low];
+			return default;
 		}
+
 		/// <summary>
 		/// Adds non-binary metadata to current cache.
 		/// </summary>
 		/// <param name="typeMetadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
-		/// <returns>
-		/// <see langword="true"/> if <paramref name="typeMetadata"/> was successfully added; otherwise,
-		/// <see langword="false"/>.
-		/// </returns>
 		public static void AddNonBinary(BufferTypeMetadata<T> typeMetadata)
 		{
-#if NET9_0_OR_GREATER
-			using (NonBinaryStore.GetLock().EnterScope())
+			using WriteScope scope = NonBinaryStore<T>.GetLock();
+#if NETSTANDARD2_1 || NETCOREAPP2_0_OR_GREATER
+			NonBinaryStore<T>.GetNonBinaryMap().TryAdd(typeMetadata.Size, typeMetadata);
 #else
-			lock (NonBinaryStore.GetLock())
+			SortedList<UInt16, BufferTypeMetadata<T>> maps = NonBinaryStore<T>.GetNonBinaryMap();
+			if (maps.ContainsKey(typeMetadata.Size)) return;
+			try
+			{
+				maps.Add(typeMetadata.Size, typeMetadata);
+			}
+			catch (Exception)
+			{
+				// NONE
+			}
 #endif
-				NonBinaryStore.GetNonBinaryMap().TryAdd(typeMetadata.Size, typeMetadata);
 		}
 
 		/// <summary>
-		/// Retrieves the lock object to concurrent operations.
+		/// Retrieves the reader-writer lock object for concurrent operations.
 		/// </summary>
-		/// <returns>A <see cref="Lock"/> instance.</returns>
+		/// <returns>A <see cref="ReaderWriterLockSlim"/> instance.</returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static Lock GetLock() => NativeUtilities.GetConcurrentObject(ref NonBinaryStore.lockObj);
+		private static ReaderWriterLockSlim GetLock()
+			=> NativeUtilities.GetConcurrentObject(ref NonBinaryStore<T>.rwLock);
+
 		/// <summary>
-		/// Retrieves the non-binary map to concurrent operations.
+		/// Retrieves the non-binary map for concurrent operations.
 		/// </summary>
-		/// <returns>A <see cref="SortedDictionary{UInt16, BufferTypeMetadata}"/> instance.</returns>
+		/// <returns>A <see cref="SortedList{UInt16, BufferTypeMetadata}"/> instance.</returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static SortedList<UInt16, BufferTypeMetadata<T>> GetNonBinaryMap()
-			=> NativeUtilities.GetConcurrentObject(ref NonBinaryStore.nonBinaryMap);
+			=> NativeUtilities.GetConcurrentObject(ref NonBinaryStore<T>.nonBinaryMap);
+
 		/// <summary>
 		/// Indicates whether the current type has a non-binary map.
 		/// </summary>
@@ -100,6 +102,6 @@ internal abstract partial class MetadataStorage<T>
 		/// <see langword="true"/> if current type has a non-binary map; otherwise, <see langword="false"/>.
 		/// </returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static Boolean HasNonBinaryMap() => NonBinaryStore.nonBinaryMap is not null;
+		private static Boolean HasNonBinaryMap() => Volatile.Read(ref NonBinaryStore<T>.nonBinaryMap) is not null;
 	}
 }

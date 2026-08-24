@@ -1,4 +1,11 @@
-﻿namespace Rxmxnx.PInvoke.Internal;
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+#if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP && !NETFRAMEWORK && !UAP10_0_16299
+using InsufficientMemoryException = System.OutOfMemoryException;
+#endif
+
+namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// Fixed memory reference class, used to hold a fixed read-only memory reference of a specific type.
@@ -38,17 +45,38 @@ internal sealed unsafe partial class ReadOnlyFixedReference<T> : ReadOnlyFixedMe
 	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
 	{
-#if NETCOREAPP3_1_OR_GREATER
 		Unsafe.SkipInit(out residual);
-#else
-		residual = default!;
-#endif
 		IReadOnlyFixedReference<TDestination> result =
 			this.GetTransformation<TDestination>(
 				out Unsafe.As<IReadOnlyFixedMemory, ReadOnlyFixedOffset>(ref residual));
 		return result;
 	}
 
+	/// <summary>
+	/// Transforms the current memory reference into a different type and provides a fixed offset that represents the remaining
+	/// portion of memory not included in the newly formed reference.
+	/// </summary>
+	/// <typeparam name="TDestination">The type into which the current memory reference should be transformed.</typeparam>
+	/// <returns>
+	/// A new instance of FixedReference for the destination type, which represents a fixed memory reference of the
+	/// new type.
+	/// </returns>
+	/// <exception cref="InsufficientMemoryException">
+	/// Thrown when the size of the current reference is not sufficient to
+	/// accommodate the new type. For example, if an attempt is made to transform a 2-byte reference into a 4-byte type.
+	/// </exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public IReadOnlyFixedReference<TDestination> Transformation<TDestination>()
+	{
+		this.ValidateOperation(true);
+		this.ValidateTransformation(typeof(TDestination),
+		                            !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>());
+		Int32 sizeOf = sizeof(TDestination);
+		this.ValidateReferenceSize(typeof(TDestination), sizeOf);
+		return new ReadOnlyFixedReference<TDestination>(this);
+	}
 	/// <summary>
 	/// Transforms the current memory reference into a different type and provides a fixed offset that represents the remaining
 	/// portion of memory not included in the newly formed reference.

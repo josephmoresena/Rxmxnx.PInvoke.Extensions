@@ -28,7 +28,7 @@ SOFTWARE.
 // Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Blc.Memory 10.0.8
 // (System.text.Ascii)
 
-#if !NETCOREAPP
+#if !NETCOREAPP3_0_OR_GREATER && !NET462_OR_GREATER
 namespace System.Text;
 
 // ReSharper disable BuiltInTypeReferenceStyle
@@ -38,6 +38,7 @@ using UIntPtr = nuint;
 /// Provides static methods for ASCII encoding.
 /// </summary>
 #if !PACKAGE
+[ExcludeFromCodeCoverage]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1199)]
@@ -178,7 +179,7 @@ internal static unsafe class Ascii
 		}
 
 		if ((bufferLength & 1) != 0 && *pBuffer <= 0x007F)
-				pBuffer++;
+			pBuffer++;
 
 		Finish:
 

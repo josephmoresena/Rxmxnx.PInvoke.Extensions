@@ -41,6 +41,7 @@ internal sealed class DefaultMessageResource : IMessageResource
 	String IMessageResource.IndexOutOfSequence => "Index and length must refer to a location within the sequence.";
 	String IMessageResource.MissingMemoryInspector => "Memory inspection is not supported on the current platform.";
 	String IMessageResource.ReflectionDisabled => "This feature requires reflection-full mode";
+	String IMessageResource.InvalidSpanLayout => "Unable to identify the pinnable field in the Span<T> layout.";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"Object must be of type {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)
@@ -49,7 +50,7 @@ internal sealed class DefaultMessageResource : IMessageResource
 		=> $"The length of parameter {nameofSpan} must be equals to {sizeOf}.";
 	String IMessageResource.InvalidCopyUnmanagedType(String nameofSpan, String nameofValue)
 		=> $"Insufficient available size on {nameofSpan} to copy {nameofValue}.";
-	String IMessageResource.InvalidLength(String nameofLength)
+	String IMessageResource.InvalidLengthOrIndex(String nameofLength)
 		=> $"The parameter {nameofLength} must be zero or positive integer.";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} is not an unmanaged type.";
 	String IMessageResource.NotValueType(Type type) => $"{type} is not a value type.";

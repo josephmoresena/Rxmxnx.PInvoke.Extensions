@@ -4,6 +4,10 @@
         <RootNamespace>Rxmxnx.PInvoke</RootNamespace>
         <IsPackable>false</IsPackable>
         <Deterministic>true</Deterministic>
+        <DefineConstants>$(DefineConstants);OBSOLETE_FIXED_INTERFACES;OBSOLTE_DELEGATES</DefineConstants>
+        <DefineConstants>$(DefineConstants);EXCLUDE_UNUSED_INTERNALS</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Version)' == ''">
         <DocumentationFile>./$(AssemblyName).xml</DocumentationFile>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <ExcludeXmlAssemblyFiles>false</ExcludeXmlAssemblyFiles>
@@ -15,5 +19,11 @@
     </PropertyGroup>
 
     <Import Project="..\Library.props"/>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>Rxmxnx.PInvoke.Windows.Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
 
 </Project>

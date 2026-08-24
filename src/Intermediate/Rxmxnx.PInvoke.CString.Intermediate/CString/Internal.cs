@@ -48,9 +48,16 @@ public partial class CString
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal void Write(Stream strm, Boolean writeNullTermination)
 	{
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		strm.Write(this.AsSpan());
 		if (writeNullTermination)
 			strm.Write(CString.empty);
+#else
+		foreach (Byte b in this.AsSpan())
+			strm.WriteByte(b);
+		if (writeNullTermination)
+			strm.WriteByte(CString.empty[0]);
+#endif
 	}
 	/// <summary>
 	/// Writes the sequence of bytes to the given <see cref="Stream"/>, starting at the
@@ -65,7 +72,16 @@ public partial class CString
 	/// <param name="count">The number of bytes in the current instance to write.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal void Write(Stream strm, Int32 startIndex, Int32 count)
-		=> strm.Write(this.AsSpan().Slice(startIndex, count));
+	{
+		ReadOnlySpan<Byte> span = this.AsSpan().Slice(startIndex, count);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		strm.Write(span);
+#else
+		foreach (Byte b in span)
+			strm.WriteByte(b);
+#endif
+	}
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Asynchronously writes the sequence of bytes to the given <see cref="Stream"/> and advances
 	/// the current position within this stream by the number of bytes written.
@@ -107,6 +123,7 @@ public partial class CString
 	internal async Task WriteAsync(Stream strm, Int32 startIndex, Int32 count,
 		CancellationToken cancellationToken = default)
 		=> await this.GetWriteTask(strm, startIndex, count, cancellationToken).ConfigureAwait(false);
+#endif
 	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
 	/// </summary>

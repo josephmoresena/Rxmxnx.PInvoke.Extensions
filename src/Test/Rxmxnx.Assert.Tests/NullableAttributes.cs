@@ -24,7 +24,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#if NETSTANDARD2_0
+#if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER && !WINDOWS_UWP
 namespace System.Diagnostics.CodeAnalysis;
 
 /// <summary>Specifies that null is allowed as an input even if the corresponding type disallows it.</summary>

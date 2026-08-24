@@ -5,67 +5,11 @@ public static class JsonEncoderStandard
 {
 	public static Byte[] EncodeToUtf8Bytes(ReadOnlySpan<Byte> input)
 	{
-		Byte[] buffer = ArrayPool<Byte>.Shared.Rent(input.Length * 12);
-		Int32 pos = 0;
-
+		Int32 length = input.Length * 12;
+		Byte[] buffer = ArrayPool<Byte>.Shared.Rent(length);
 		try
 		{
-			Int32 i = 0;
-			while (i < input.Length)
-			{
-				Byte b = input[i];
-				if (b < 128)
-				{
-					switch (b)
-					{
-						case (Byte)'\"': JsonEncoderStandard.WriteEscape(buffer, ref pos, '\"'); break;
-						case (Byte)'\\': JsonEncoderStandard.WriteEscape(buffer, ref pos, '\\'); break;
-						case (Byte)'\b': JsonEncoderStandard.WriteEscape(buffer, ref pos, 'b'); break;
-						case (Byte)'\f': JsonEncoderStandard.WriteEscape(buffer, ref pos, 'f'); break;
-						case (Byte)'\n': JsonEncoderStandard.WriteEscape(buffer, ref pos, 'n'); break;
-						case (Byte)'\r': JsonEncoderStandard.WriteEscape(buffer, ref pos, 'r'); break;
-						case (Byte)'\t': JsonEncoderStandard.WriteEscape(buffer, ref pos, 't'); break;
-						case (Byte)'<': JsonEncoderStandard.WriteHexEscape(buffer, ref pos, 0x3C); break;
-						case (Byte)'>': JsonEncoderStandard.WriteHexEscape(buffer, ref pos, 0x3E); break;
-						case (Byte)'&': JsonEncoderStandard.WriteHexEscape(buffer, ref pos, 0x26); break;
-						case (Byte)'\'': JsonEncoderStandard.WriteHexEscape(buffer, ref pos, 0x27); break;
-						case (Byte)'+': JsonEncoderStandard.WriteHexEscape(buffer, ref pos, 0x2B); break;
-						default:
-							if (b < 32) JsonEncoderStandard.WriteHexEscape(buffer, ref pos, b);
-							else buffer[pos++] = b;
-							break;
-					}
-					i++;
-				}
-				else
-				{
-					if (Rune.DecodeFromUtf8(input[i..], out Rune rune, out Int32 consumed) is OperationStatus.Done)
-					{
-						if (rune.Value <= 0xFFFF)
-						{
-							JsonEncoderStandard.WriteHexEscape(buffer, ref pos, rune.Value);
-						}
-						else
-						{
-							Int32 high = (rune.Value - 0x10000) / 0x400 + 0xD800;
-							Int32 low = (rune.Value - 0x10000) % 0x400 + 0xDC00;
-							JsonEncoderStandard.WriteHexEscape(buffer, ref pos, high);
-							JsonEncoderStandard.WriteHexEscape(buffer, ref pos, low);
-						}
-						i += consumed;
-					}
-					else
-					{
-						// Invalid unit.
-						JsonEncoderStandard.WriteHexEscape(buffer, ref pos, 0xFFFD);
-						i++;
-					}
-				}
-			}
-
-			Byte[] result = new Byte[pos];
-			Array.Copy(buffer, 0, result, 0, pos);
-			return result;
+			return JsonEncoderStandard.EncodeToUtf8Bytes(buffer, input);
 		}
 		finally
 		{
@@ -73,6 +17,66 @@ public static class JsonEncoderStandard
 		}
 	}
 
+	private static Byte[] EncodeToUtf8Bytes(Byte[] buffer, ReadOnlySpan<Byte> input)
+	{
+		Int32 pos = 0;
+		Int32 i = 0;
+		while (i < input.Length)
+		{
+			Byte b = input[i];
+			if (b < 128)
+			{
+				switch (b)
+				{
+					case (Byte)'\"': JsonEncoderStandard.WriteEscape(buffer, ref pos, '\"'); break;
+					case (Byte)'\\': JsonEncoderStandard.WriteEscape(buffer, ref pos, '\\'); break;
+					case (Byte)'\b': JsonEncoderStandard.WriteEscape(buffer, ref pos, 'b'); break;
+					case (Byte)'\f': JsonEncoderStandard.WriteEscape(buffer, ref pos, 'f'); break;
+					case (Byte)'\n': JsonEncoderStandard.WriteEscape(buffer, ref pos, 'n'); break;
+					case (Byte)'\r': JsonEncoderStandard.WriteEscape(buffer, ref pos, 'r'); break;
+					case (Byte)'\t': JsonEncoderStandard.WriteEscape(buffer, ref pos, 't'); break;
+					case (Byte)'<': JsonEncoderStandard.WriteHexEscape(buffer, ref pos, 0x3C); break;
+					case (Byte)'>': JsonEncoderStandard.WriteHexEscape(buffer, ref pos, 0x3E); break;
+					case (Byte)'&': JsonEncoderStandard.WriteHexEscape(buffer, ref pos, 0x26); break;
+					case (Byte)'\'': JsonEncoderStandard.WriteHexEscape(buffer, ref pos, 0x27); break;
+					case (Byte)'+': JsonEncoderStandard.WriteHexEscape(buffer, ref pos, 0x2B); break;
+					default:
+						if (b < 32) JsonEncoderStandard.WriteHexEscape(buffer, ref pos, b);
+						else buffer[pos++] = b;
+						break;
+				}
+				i++;
+			}
+			else
+			{
+				if (Rune.DecodeFromUtf8(input[i..], out Rune rune, out Int32 consumed) is OperationStatus.Done)
+				{
+					if (rune.Value <= 0xFFFF)
+					{
+						JsonEncoderStandard.WriteHexEscape(buffer, ref pos, rune.Value);
+					}
+					else
+					{
+						Int32 high = (rune.Value - 0x10000) / 0x400 + 0xD800;
+						Int32 low = (rune.Value - 0x10000) % 0x400 + 0xDC00;
+						JsonEncoderStandard.WriteHexEscape(buffer, ref pos, high);
+						JsonEncoderStandard.WriteHexEscape(buffer, ref pos, low);
+					}
+					i += consumed;
+				}
+				else
+				{
+					// Invalid unit.
+					JsonEncoderStandard.WriteHexEscape(buffer, ref pos, 0xFFFD);
+					i++;
+				}
+			}
+		}
+
+		Byte[] result = new Byte[pos];
+		Array.Copy(buffer, 0, result, 0, pos);
+		return result;
+	}
 	private static void WriteEscape(Byte[] buffer, ref Int32 pos, Char val)
 	{
 		buffer[pos++] = (Byte)'\\';

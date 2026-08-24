@@ -20,6 +20,7 @@
 // THE SOFTWARE.
 // 
 
+#if NETSTANDARD2_1 || MONO
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Sources;
@@ -39,3 +40,4 @@ using System.Threading.Tasks.Sources;
 [assembly: TypeForwardedTo(typeof(IValueTaskSource<>))]
 [assembly: TypeForwardedTo(typeof(ValueTaskSourceOnCompletedFlags))]
 [assembly: TypeForwardedTo(typeof(ValueTaskSourceStatus))]
+#endif

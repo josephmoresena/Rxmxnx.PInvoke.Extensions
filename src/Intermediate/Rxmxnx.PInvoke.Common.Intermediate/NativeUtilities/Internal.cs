@@ -1,6 +1,13 @@
 namespace Rxmxnx.PInvoke;
 
+#if !PACKAGE
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+#if !PACKAGE || !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
+public unsafe partial class NativeUtilities
+#else
 public partial class NativeUtilities
+#endif
 {
 	/// <summary>
 	/// Retrieves the decimal value of <paramref name="hexCharacter"/>.
@@ -46,6 +53,7 @@ public partial class NativeUtilities
 		=> ref array.Length > 0 ?
 			ref Unsafe.AsRef(in array[0]) :
 			ref MemoryMarshal.GetReference(new ReadOnlyMemory<T>(array).Span);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER
 	/// <summary>
 	/// Determines whether the specified <see cref="MethodBase"/> represents executable code that originates
 	/// from a statically compiled image (AOT/R2R) rather than dynamically generated runtime code.
@@ -66,6 +74,7 @@ public partial class NativeUtilities
 		if (methodBase.ContainsGenericParameters || AotInfo.IsDynamicCode(methodBase)) return false;
 		return AotInfo.IsImageMethodUnsafe(methodBase.MethodHandle);
 	}
+#endif
 	/// <summary>
 	/// Retrieves a concurrent value from <paramref name="fieldReference"/>.
 	/// </summary>
@@ -74,9 +83,81 @@ public partial class NativeUtilities
 	/// <returns>Concurrent value instance.</returns>
 	internal static T GetConcurrentObject<T>(ref T? fieldReference) where T : class, new()
 	{
-		if (fieldReference is { } existing) return existing;
+		if (Volatile.Read(ref fieldReference) is { } existing) return existing;
 		T newObj = new();
 		T? previous = Interlocked.CompareExchange(ref fieldReference, newObj, null);
 		return previous ?? newObj;
 	}
+	/// <summary>
+	/// Creates a <see cref="Type"/> span from <typeparamref name="TBuffer"/> reference.
+	/// </summary>
+	/// <typeparam name="TBuffer">A <see cref="ValueType"/> buffer type.</typeparam>
+	/// <param name="buffer">Managed reference to <typeparamref name="TBuffer"/> value.</param>
+	/// <returns>Created <see cref="Type"/> span.</returns>
+#if !PACKAGE && NET5_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static Span<Type> CreateTypeSpan<TBuffer>(ref TBuffer buffer)
+#if !PACKAGE
+		where TBuffer : struct
+#else
+		where TBuffer : struct, IManagedBinaryBuffer<Object>
+#endif
+	{
+#if !PACKAGE
+#pragma warning disable CS8500
+		Int32 length = sizeof(TBuffer) / IntPtr.Size;
+#pragma warning restore CS8500
+#else
+		Int32 length = buffer.Metadata.Size;
+#endif
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		ref Type r0 = ref Unsafe.As<TBuffer, Type>(ref buffer);
+		return MemoryMarshal.CreateSpan(ref r0, length);
+#else
+		return MemoryMarshalCompat.CreateUnsafeSpan<Type>(Unsafe.AsPointer(ref buffer), length);
+#endif
+	}
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+	/// <summary>
+	/// Creates a <see cref="Func{IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory}"/> span from
+	/// <typeparamref name="TBuffer"/> reference.
+	/// </summary>
+	/// <typeparam name="TBuffer">A <see cref="ValueType"/> buffer type.</typeparam>
+	/// <param name="buffer">Managed reference to <typeparamref name="TBuffer"/> value.</param>
+	/// <returns>Created <see cref="Func{IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory}"/> span.</returns>
+#if !PACKAGE && NET5_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> CreateConstructorSpan<TBuffer>(
+		ref TBuffer buffer)
+#if !PACKAGE
+		where TBuffer : struct
+#else
+		where TBuffer : struct, IManagedBinaryBuffer<Object>
+#endif
+	{
+#if !PACKAGE
+#pragma warning disable CS8500
+		Int32 length = sizeof(TBuffer) / IntPtr.Size;
+#pragma warning restore CS8500
+#else
+		Int32 length = buffer.Metadata.Size;
+#endif
+		ref Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory> r0 =
+			ref Unsafe.As<TBuffer, Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>>(ref buffer);
+		return MemoryMarshal.CreateSpan(ref r0, length);
+	}
+#endif
+#if NET5_0_OR_GREATER
+	/// <summary>
+	/// Generic <see langword="typeof"/> call.
+	/// </summary>
+	/// <typeparam name="T">Generic type.</typeparam>
+	/// <returns>The CLR type for <typeparamref name="T"/>.</returns>
+	[MethodImpl(MethodImplOptions.NoInlining)]
+	internal static Type GetType<T>() => typeof(T);
+#endif
 }

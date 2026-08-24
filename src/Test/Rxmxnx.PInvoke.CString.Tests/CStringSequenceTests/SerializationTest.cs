@@ -1,8 +1,10 @@
-#if NETCOREAPP
-using CStringSequenceJsonConverter = Rxmxnx.PInvoke.CStringSequence.JsonConverter;
-
-#else
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || WINDOWS_UWP
+using System.Text.Json;
+using System.Text.Json.Serialization;
+#if NETSTANDARD2_0_OR_GREATER
 using CStringSequenceJsonConverter = Rxmxnx.PInvoke.Json.CStringSequenceJsonConverter;
+#else
+using CStringSequenceJsonConverter = Rxmxnx.PInvoke.CStringSequence.JsonConverter;
 #endif
 
 namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
@@ -95,3 +97,4 @@ public sealed class SerializationTest
 		public TEnumerable? Values { get; set; }
 	}
 }
+#endif

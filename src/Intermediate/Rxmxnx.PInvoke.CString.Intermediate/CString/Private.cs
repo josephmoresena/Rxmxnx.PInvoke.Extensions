@@ -50,6 +50,7 @@ public partial class CString
 			length++;
 		return length;
 	}
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Retrieves a Task representing the asynchronous operation to write the content of the
 	/// current <see cref="CString"/> into the specified <see cref="Stream"/>.
@@ -69,6 +70,7 @@ public partial class CString
 			strm.WriteAsync(memory.Slice(startIndex, count), cancellationToken).AsTask() :
 			CString.WriteSyncAsync(new(this, strm) { Count = count, StartIndex = startIndex, });
 	}
+#endif
 	/// <summary>
 	/// Creates the <see cref="String"/> representation of the current instance.
 	/// </summary>

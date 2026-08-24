@@ -1,6 +1,7 @@
 using System;
 using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Text;
 
 namespace Rxmxnx.PInvoke.ApplicationTest
@@ -16,7 +17,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 			Double[]? array = default;
 			Span<Double> tempMatrix = n > 4 ?
+#if NETCOREAPP3_0_OR_GREATER || NETFRAMEWORK && (MONO || NET462_OR_GREATER) || WINDOWS_UWP
 				(array = ArrayPool<Double>.Shared.Rent(matrix.Length)).AsSpan()[..matrix.Length] :
+#else
+				(array = ArrayPool<Double>.Shared.Rent(matrix.Length)).AsSpan().Slice(0, matrix.Length) :
+#endif
 				stackalloc Double[matrix.Length];
 			try
 			{
@@ -61,7 +66,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 			Double[]? array = default;
 			Span<Double> augmented = n > 4 ?
+#if NETCOREAPP3_0_OR_GREATER || NETFRAMEWORK && (MONO || NET462_OR_GREATER) || WINDOWS_UWP
 				(array = ArrayPool<Double>.Shared.Rent(2 * matrix.Length)).AsSpan()[..(2 * matrix.Length)] :
+#else
+				(array = ArrayPool<Double>.Shared.Rent(2 * matrix.Length)).AsSpan().Slice(0, 2 * matrix.Length) :
+#endif
 				stackalloc Double[2 * matrix.Length];
 			try
 			{
@@ -158,20 +167,24 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			}
 			return matrix[maxRow * multiplier * n + currentRow];
 		}
-		public static void PrintMatrix(ReadOnlySpan<Double> matrix, Int32 nRow, Int32 nCol)
+		public static void PrintMatrix(ReadOnlySpan<Double> matrix, Int32 nRow, Int32 nCol, TextWriter writer)
 		{
 			Int32 addCol = (matrix.Length - nRow * nCol) / nRow;
+#if !CSHARP9_0
 			StringBuilder? strBuild = addCol > 0 ? new StringBuilder() : default;
+#else
+			StringBuilder? strBuild = addCol > 0 ? new() : default;
+#endif
 			for (Int32 row = 0; row < nRow; row++)
 			{
 				strBuild?.Append("\t|\t");
 				for (Int32 col = 0; col < nCol; col++)
 				{
-					Console.Write($"{matrix[row * (nCol + addCol) + col]:0.####}\t");
+					writer.Write($"{matrix[row * (nCol + addCol) + col]:0.####}\t");
 					if (strBuild is null || col >= addCol) continue;
 					strBuild.Append($"{matrix[row * (nCol + addCol) + col + nRow]:0.####}\t");
 				}
-				Console.WriteLine(strBuild?.ToString());
+				writer.WriteLine(strBuild?.ToString());
 				strBuild?.Clear();
 			}
 		}

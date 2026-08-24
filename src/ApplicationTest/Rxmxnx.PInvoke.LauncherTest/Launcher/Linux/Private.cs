@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.ApplicationTest;
 
+// ReSharper disable once ClassCannotBeInstantiated
 public partial class Launcher
 {
 	private partial class Linux
@@ -12,10 +13,12 @@ public partial class Launcher
 			outputDirectory, useMono)
 		{
 			this._isArmHf = Linux.IsArmHf(this.CurrentArch);
-			this.Architectures = Enum.GetValues<Architecture>()
-			                         .Where(a => this.IsCurrentArch(a) || Linux.IsArmHf(a) ||
-				                                (a is Architecture.X64 or Architecture.Arm64 &&
-					                                !Linux.IsArmHf(this.CurrentArch))).ToArray();
+			this.Architectures =
+			[
+				.. Enum.GetValues<Architecture>().Where(a => this.IsCurrentArch(a) || Linux.IsArmHf(a) ||
+					                                        (a is Architecture.X64 or Architecture.Arm64 &&
+						                                        !Linux.IsArmHf(this.CurrentArch))),
+			];
 			initialize = Task.CompletedTask;
 			if (!File.Exists("/usr/bin/mono"))
 			{

@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
+﻿#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -25,7 +26,7 @@ public sealed class WithSafeTransformTest
 	{
 		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices();
-		CStringSequence seq = WithSafeTransformTest.CreateSequence(handle, indices, out CString?[] values);
+		CStringSequence seq = WithSafeFixedTest.CreateSequence(handle, indices, out CString?[] values);
 		fixed (void* ptrSeq = seq)
 		{
 			IntPtr ptr = (IntPtr)ptrSeq;
@@ -51,7 +52,7 @@ public sealed class WithSafeTransformTest
 	{
 		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices();
-		CStringSequence seq = WithSafeTransformTest.CreateSequence(handle, indices, out CString?[] values);
+		CStringSequence seq = WithSafeFixedTest.CreateSequence(handle, indices, out CString?[] values);
 		using IFixedPointer.IDisposable fPtr = seq.GetFixedPointer();
 		IntPtr ptr = fPtr.Pointer;
 		for (Int32 i = 0; i < indices.Count; i++)
@@ -71,6 +72,8 @@ public sealed class WithSafeTransformTest
 	}
 
 	[Fact]
+#pragma warning disable CA1041
+	[Obsolete]
 	public void EmptyTest()
 	{
 		FixedCStringSequence fseq = default;
@@ -90,11 +93,13 @@ public sealed class WithSafeTransformTest
 	}
 
 	[Fact]
+#pragma warning disable CA1041
+	[Obsolete]
 	public void BasicTest()
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
-		CStringSequence seq = WithSafeTransformTest.CreateSequence(handle, indices, out _);
+		CStringSequence seq = WithSafeFixedTest.CreateSequence(handle, indices, out _);
 		seq.WithSafeTransform(WithSafeTransformTest.AssertReference);
 		seq.WithSafeFixed(WithSafeTransformTest.AssertReference);
 		PInvokeAssert.Equal(seq, seq.WithSafeTransform(WithSafeTransformTest.CreateCopy));
@@ -103,19 +108,22 @@ public sealed class WithSafeTransformTest
 	}
 
 	[Theory]
+#pragma warning disable CA1041
+	[Obsolete]
 	[InlineData(true)]
 	[InlineData(false)]
 	public void Test(Boolean fixedIndices)
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = !fixedIndices ? TestSet.GetIndices() : WithSafeTransformTest.GetIndices();
-		CStringSequence seq = WithSafeTransformTest.CreateSequence(handle, indices, out CString?[] values);
+		CStringSequence seq = WithSafeFixedTest.CreateSequence(handle, indices, out CString?[] values);
 		seq.WithSafeTransform(values, WithSafeTransformTest.AssertSequence);
 		seq.WithSafeFixed(seq, WithSafeTransformTest.AssertSequence);
 		PInvokeAssert.Equal(seq, seq.WithSafeTransform(seq, WithSafeTransformTest.CreateCopy));
 		PInvokeAssert.Equal(seq.ToString(), seq.WithSafeFixed(seq, WithSafeTransformTest.CreateCopy).ToString());
 	}
 
+	[Obsolete]
 	private static void AssertReference(FixedCStringSequence fseq)
 	{
 		IReadOnlyList<CString> values = fseq.Values;
@@ -126,6 +134,7 @@ public sealed class WithSafeTransformTest
 
 		WithSafeTransformTest.AssertReference((ReadOnlyFixedMemoryList)fseq);
 	}
+	[Obsolete]
 	private static void AssertReference(ReadOnlyFixedMemoryList fml)
 	{
 		Int32 offset = 0;
@@ -176,6 +185,7 @@ public sealed class WithSafeTransformTest
 			PInvokeAssert.Equal(0, fseq.Values[i].Length);
 		}
 	}
+	[Obsolete]
 	private static unsafe void AssertSequence(ReadOnlyFixedMemoryList fml, CStringSequence seq)
 	{
 		Int32 offset = 0;
@@ -252,6 +262,7 @@ public sealed class WithSafeTransformTest
 
 		return seq;
 	}
+	[Obsolete]
 	private static CStringSequence CreateCopy(FixedCStringSequence fseq, CStringSequence seq)
 	{
 		for (Int32 i = 0; i < seq.Count; i++)
@@ -259,6 +270,7 @@ public sealed class WithSafeTransformTest
 		PInvokeAssert.Equal(new CString(() => MemoryMarshal.AsBytes<Char>(seq.ToString())).ToString(), fseq.ToString());
 		return new(fseq.Values);
 	}
+	[Obsolete]
 	private static unsafe CStringSequence CreateCopy(ReadOnlyFixedMemoryList fml, CStringSequence seq)
 	{
 		Int32 offset = 0;
@@ -286,15 +298,7 @@ public sealed class WithSafeTransformTest
 
 		return new(cstr);
 	}
-	private static CStringSequence CreateSequence(TestMemoryHandle handle, IReadOnlyList<Int32> indices,
-		out CString?[] values)
-	{
-		values = new CString[indices.Count];
-		for (Int32 i = 0; i < values.Length; i++)
-			values[i] = TestSet.GetCString(indices[i], handle);
-		CStringSequence seq = new(values);
-		return seq;
-	}
+	[Obsolete]
 	private static IEnumerable<CString> GetNonEmptyValues(ReadOnlyFixedMemoryList fml)
 	{
 		List<CString> result = [];
@@ -335,3 +339,4 @@ public sealed class WithSafeTransformTest
 		return result.ToArray();
 	}
 }
+#endif

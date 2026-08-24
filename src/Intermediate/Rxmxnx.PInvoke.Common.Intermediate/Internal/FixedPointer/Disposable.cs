@@ -17,8 +17,13 @@ internal partial class FixedPointer
 		/// Internal <see cref="IDisposable"/> instance.
 		/// </summary>
 		private readonly IDisposable? _disposable;
+
+		/// <inheritdoc cref="IWrapper{T}.Value"/>
+		public TFixed Value { get; }
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		/// <inheritdoc cref="IReadOnlyFixedMemory.IsNullOrEmpty"/>
 		public Boolean IsNullOrEmpty => this.Value is not IReadOnlyFixedMemory { IsNullOrEmpty: false, };
+#endif
 
 		/// <summary>
 		/// Constructor.
@@ -31,17 +36,18 @@ internal partial class FixedPointer
 			this._disposable = disposable;
 		}
 
+		IntPtr IFixedPointer.Pointer => this.Value is IFixedPointer ptr ? ptr.Pointer : default;
+
+#if !NETSTANDARD2_1 && !NETCOREAPP
+		/// <inheritdoc cref="IEquatable{TFixed}.Equals(TFixed)"/>
+		public Boolean Equals(TFixed? other) => other is not null && other.Equals(other);
+#endif
 		/// <inheritdoc/>
 		public void Dispose()
 		{
 			this.Dispose(true);
 			GC.SuppressFinalize(this);
 		}
-
-		IntPtr IFixedPointer.Pointer => this.Value is IFixedPointer ptr ? ptr.Pointer : default;
-
-		/// <inheritdoc cref="IWrapper{T}.Value"/>
-		public TFixed Value { get; }
 
 		~Disposable() { this.Dispose(false); }
 

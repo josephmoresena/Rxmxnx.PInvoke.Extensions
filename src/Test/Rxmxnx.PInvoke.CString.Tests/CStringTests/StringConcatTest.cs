@@ -31,6 +31,7 @@ public sealed class StringConcatTest
 		StringConcatTest.NormalTest(strings);
 	}
 
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP2_1_OR_GREATER
 	[Theory]
 	[InlineData(true)]
 	[InlineData(false)]
@@ -63,10 +64,15 @@ public sealed class StringConcatTest
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		CString resultCString = await CString.ConcatAsync(strings);
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
+		String resultCStringCString = CString.GetBytes(resultCString).AsSpan()[..^1].ToUtf16();
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+#else
+		PInvokeAssert.True(expectedResultCString.AsSpan()
+		                                        .SequenceEqual(CString.GetBytes(resultCString).AsSpan()[..^1]));
+#endif
 	}
 	private static async Task EmptyTestAsync(String?[] values)
 	{
@@ -78,16 +84,22 @@ public sealed class StringConcatTest
 		PInvokeAssert.False(resultCString.IsReference);
 		PInvokeAssert.False(resultCString.IsSegmented);
 	}
+#endif
 	private static void NormalTest(String?[] strings)
 	{
 		String expectedCString = String.Concat(strings);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		CString resultCString = CString.Concat(strings);
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
+		String resultCStringCString = CString.GetBytes(resultCString).AsSpan()[..^1].ToUtf16();
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+#else
+		PInvokeAssert.True(expectedResultCString.AsSpan()
+		                                        .SequenceEqual(CString.GetBytes(resultCString).AsSpan()[..^1]));
+#endif
 	}
 	private static void EmptyTest(String?[] values)
 	{

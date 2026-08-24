@@ -47,7 +47,11 @@ public partial class CStringBuilder
 		/// <param name="value">The value to insert.</param>
 		/// <returns>A reference to this instance after the insert operation has completed.</returns>
 		public CStringBuilder Insert(Int32 index, Boolean value)
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 			=> this.Insert(index, value.ToString(CultureInfo.CurrentCulture));
+#else
+			=> this.Insert(index, value.ToString());
+#endif
 		/// <summary>
 		/// Inserts the UTF-8 representation of the specified character into this instance at the specified
 		/// UTF-8 unit position.
@@ -65,7 +69,11 @@ public partial class CStringBuilder
 			if (Concurrent.InsertUtf16(this, index, value) is { } result16)
 				return result16;
 #endif
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 			return this.Insert(index, value.ToString(CultureInfo.CurrentCulture));
+#else
+			return this.Insert(index, value.ToString());
+#endif
 		}
 		/// <summary>
 		/// Inserts the UTF-8 representation of the specified decimal number into this instance at the specified UTF-8

@@ -1,4 +1,57 @@
-﻿#if !NET6_0_OR_GREATER
+﻿#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if PACKAGE
+using B2 =
+	Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+		Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>;
+using B3 =
+	Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+		System.Object>;
+using B4 =
+	Rxmxnx.PInvoke.Buffers.Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+		System.Object>;
+using B5 = Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.
+	Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, System.Object>;
+using B6 =
+	Rxmxnx.PInvoke.Buffers.Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+			Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, System.Object>;
+using B7 =
+	Rxmxnx.PInvoke.Buffers.Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				System.Object>,
+			System.Object>, Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, System.Object>;
+using B8 =
+	Rxmxnx.PInvoke.Buffers.Composite<
+		Rxmxnx.PInvoke.Buffers.Composite<
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, Rxmxnx.PInvoke.Buffers.
+		Composite<
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>,
+			Rxmxnx.PInvoke.Buffers.Composite<Rxmxnx.PInvoke.Buffers.Atomic<System.Object>,
+				Rxmxnx.PInvoke.Buffers.Atomic<System.Object>, System.Object>, System.Object>, System.Object>;
+#endif
+
+#if !NET6_0_OR_GREATER
 using ArgumentNullException = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
 
@@ -9,6 +62,7 @@ namespace Rxmxnx.PInvoke;
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
+#pragma warning disable CS0618
 #pragma warning disable CS8500
 public static unsafe partial class NativeUtilities
 {
@@ -23,6 +77,10 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span1">2nd read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlyFixedListFunc<TResult> func)
 	{
@@ -30,8 +88,32 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
-			ReadOnlyFixedMemoryList lst = new(new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
-			                                  new ReadOnlyFixedContext<T1>(ptr1, span1.Length));
+#if !NET5_0_OR_GREATER
+			B2 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+#else
+			B2 buffer = new();
+#endif
+			ReadOnlyFixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = true,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+				],
+#endif
+			});
 			try
 			{
 				return func(lst);
@@ -55,6 +137,10 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, TArg, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, TArg arg,
 		ReadOnlyFixedListFunc<TArg, TResult> func)
 #if NET9_0_OR_GREATER
@@ -65,8 +151,32 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr0 = &MemoryMarshal.GetReference(span0))
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		{
-			ReadOnlyFixedMemoryList lst = new(new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
-			                                  new ReadOnlyFixedContext<T1>(ptr1, span1.Length));
+#if !NET5_0_OR_GREATER
+			B2 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+#else
+			B2 buffer = new();
+#endif
+			ReadOnlyFixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = true,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+				],
+#endif
+			});
 			try
 			{
 				return func(lst, arg);
@@ -90,6 +200,10 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span2">3rd read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlySpan<T2> span2, ReadOnlyFixedListFunc<TResult> func)
 	{
@@ -98,9 +212,34 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		{
-			ReadOnlyFixedMemoryList lst = new(new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
-			                                  new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
-			                                  new ReadOnlyFixedContext<T2>(ptr2, span2.Length));
+#if !NET5_0_OR_GREATER
+			B3 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+#else
+			B3 buffer = new();
+#endif
+			ReadOnlyFixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = true,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+				],
+#endif
+			});
 			try
 			{
 				return func(lst);
@@ -126,6 +265,10 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, TArg, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlySpan<T2> span2, TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func)
 #if NET9_0_OR_GREATER
@@ -137,9 +280,34 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr1 = &MemoryMarshal.GetReference(span1))
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		{
-			ReadOnlyFixedMemoryList lst = new(new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
-			                                  new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
-			                                  new ReadOnlyFixedContext<T2>(ptr2, span2.Length));
+#if !NET5_0_OR_GREATER
+			B3 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+#else
+			B3 buffer = new();
+#endif
+			ReadOnlyFixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = true,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+				],
+#endif
+			});
 			try
 			{
 				return func(lst, arg);
@@ -165,6 +333,10 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span3">4th read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlyFixedListFunc<TResult> func)
 	{
@@ -174,10 +346,36 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		{
-			ReadOnlyFixedMemoryList lst = new(new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
-			                                  new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
-			                                  new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
-			                                  new ReadOnlyFixedContext<T3>(ptr3, span3.Length));
+#if !NET5_0_OR_GREATER
+			B4 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+#else
+			B4 buffer = new();
+#endif
+			ReadOnlyFixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = true,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+				],
+#endif
+			});
 			try
 			{
 				return func(lst);
@@ -205,6 +403,10 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, TArg, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func)
 #if NET9_0_OR_GREATER
@@ -217,10 +419,36 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr2 = &MemoryMarshal.GetReference(span2))
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		{
-			ReadOnlyFixedMemoryList lst = new(new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
-			                                  new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
-			                                  new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
-			                                  new ReadOnlyFixedContext<T3>(ptr3, span3.Length));
+#if !NET5_0_OR_GREATER
+			B4 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+#else
+			B4 buffer = new();
+#endif
+			ReadOnlyFixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = true,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+				],
+#endif
+			});
 			try
 			{
 				return func(lst, arg);
@@ -248,6 +476,10 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span4">5th read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4, ReadOnlyFixedListFunc<TResult> func)
 	{
@@ -258,11 +490,38 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		{
-			ReadOnlyFixedMemoryList lst = new(new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
-			                                  new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
-			                                  new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
-			                                  new ReadOnlyFixedContext<T3>(ptr3, span3.Length),
-			                                  new ReadOnlyFixedContext<T4>(ptr4, span4.Length));
+#if !NET5_0_OR_GREATER
+			B5 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+			info[4] = NativeUtilities.CreateFixedPointerInfo(ptr4, span4, out types[4], out constructors[4]);
+#else
+			B5 buffer = new();
+#endif
+			ReadOnlyFixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = true,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
+				],
+#endif
+			});
 			try
 			{
 				return func(lst);
@@ -292,6 +551,10 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, TArg, TResult>(ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4, TArg arg,
 		ReadOnlyFixedListFunc<TArg, TResult> func)
@@ -306,11 +569,38 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr3 = &MemoryMarshal.GetReference(span3))
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		{
-			ReadOnlyFixedMemoryList lst = new(new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
-			                                  new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
-			                                  new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
-			                                  new ReadOnlyFixedContext<T3>(ptr3, span3.Length),
-			                                  new ReadOnlyFixedContext<T4>(ptr4, span4.Length));
+#if !NET5_0_OR_GREATER
+			B5 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+			info[4] = NativeUtilities.CreateFixedPointerInfo(ptr4, span4, out types[4], out constructors[4]);
+#else
+			B5 buffer = new();
+#endif
+			ReadOnlyFixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = true,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
+				],
+#endif
+			});
 			try
 			{
 				return func(lst, arg);
@@ -340,6 +630,10 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span5">6th read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, TResult>(ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1,
 		ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4, ReadOnlySpan<T5> span5,
 		ReadOnlyFixedListFunc<TResult> func)
@@ -352,12 +646,40 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		{
-			ReadOnlyFixedMemoryList lst = new(new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
-			                                  new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
-			                                  new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
-			                                  new ReadOnlyFixedContext<T3>(ptr3, span3.Length),
-			                                  new ReadOnlyFixedContext<T4>(ptr4, span4.Length),
-			                                  new ReadOnlyFixedContext<T5>(ptr5, span5.Length));
+#if !NET5_0_OR_GREATER
+			B6 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+			info[4] = NativeUtilities.CreateFixedPointerInfo(ptr4, span4, out types[4], out constructors[4]);
+			info[5] = NativeUtilities.CreateFixedPointerInfo(ptr5, span5, out types[5], out constructors[5]);
+#else
+			B6 buffer = new();
+#endif
+			ReadOnlyFixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = true,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
+					NativeUtilities.CreateFixedPointerInfo(ptr5, span5),
+				],
+#endif
+			});
 			try
 			{
 				return func(lst);
@@ -389,6 +711,10 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, TArg, TResult>(ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4,
 		ReadOnlySpan<T5> span5, TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func)
@@ -404,12 +730,40 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr4 = &MemoryMarshal.GetReference(span4))
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		{
-			ReadOnlyFixedMemoryList lst = new(new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
-			                                  new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
-			                                  new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
-			                                  new ReadOnlyFixedContext<T3>(ptr3, span3.Length),
-			                                  new ReadOnlyFixedContext<T4>(ptr4, span4.Length),
-			                                  new ReadOnlyFixedContext<T5>(ptr5, span5.Length));
+#if !NET5_0_OR_GREATER
+			B6 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+			info[4] = NativeUtilities.CreateFixedPointerInfo(ptr4, span4, out types[4], out constructors[4]);
+			info[5] = NativeUtilities.CreateFixedPointerInfo(ptr5, span5, out types[5], out constructors[5]);
+#else
+			B6 buffer = new();
+#endif
+			ReadOnlyFixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = true,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
+					NativeUtilities.CreateFixedPointerInfo(ptr5, span5),
+				],
+#endif
+			});
 			try
 			{
 				return func(lst, arg);
@@ -441,6 +795,10 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span6">7th read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, TResult>(ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4,
 		ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6, ReadOnlyFixedListFunc<TResult> func)
@@ -454,13 +812,42 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		{
-			ReadOnlyFixedMemoryList lst = new(new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
-			                                  new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
-			                                  new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
-			                                  new ReadOnlyFixedContext<T3>(ptr3, span3.Length),
-			                                  new ReadOnlyFixedContext<T4>(ptr4, span4.Length),
-			                                  new ReadOnlyFixedContext<T5>(ptr5, span5.Length),
-			                                  new ReadOnlyFixedContext<T6>(ptr6, span6.Length));
+#if !NET5_0_OR_GREATER
+			B7 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+			info[4] = NativeUtilities.CreateFixedPointerInfo(ptr4, span4, out types[4], out constructors[4]);
+			info[5] = NativeUtilities.CreateFixedPointerInfo(ptr5, span5, out types[5], out constructors[5]);
+			info[6] = NativeUtilities.CreateFixedPointerInfo(ptr6, span6, out types[6], out constructors[6]);
+#else
+			B7 buffer = new();
+#endif
+			ReadOnlyFixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = true,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
+					NativeUtilities.CreateFixedPointerInfo(ptr5, span5),
+					NativeUtilities.CreateFixedPointerInfo(ptr6, span6),
+				],
+#endif
+			});
 			try
 			{
 				return func(lst);
@@ -494,6 +881,10 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, TArg, TResult>(ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4,
 		ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6, TArg arg, ReadOnlyFixedListFunc<TArg, TResult> func)
@@ -510,13 +901,42 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr5 = &MemoryMarshal.GetReference(span5))
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		{
-			ReadOnlyFixedMemoryList lst = new(new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
-			                                  new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
-			                                  new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
-			                                  new ReadOnlyFixedContext<T3>(ptr3, span3.Length),
-			                                  new ReadOnlyFixedContext<T4>(ptr4, span4.Length),
-			                                  new ReadOnlyFixedContext<T5>(ptr5, span5.Length),
-			                                  new ReadOnlyFixedContext<T6>(ptr6, span6.Length));
+#if !NET5_0_OR_GREATER
+			B7 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+			info[4] = NativeUtilities.CreateFixedPointerInfo(ptr4, span4, out types[4], out constructors[4]);
+			info[5] = NativeUtilities.CreateFixedPointerInfo(ptr5, span5, out types[5], out constructors[5]);
+			info[6] = NativeUtilities.CreateFixedPointerInfo(ptr6, span6, out types[6], out constructors[6]);
+#else
+			B7 buffer = new();
+#endif
+			ReadOnlyFixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = true,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
+					NativeUtilities.CreateFixedPointerInfo(ptr5, span5),
+					NativeUtilities.CreateFixedPointerInfo(ptr6, span6),
+				],
+#endif
+			});
 			try
 			{
 				return func(lst, arg);
@@ -550,6 +970,10 @@ public static unsafe partial class NativeUtilities
 	/// <param name="span7">8th read-only span.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, T7, TResult>(ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4,
 		ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6, ReadOnlySpan<T7> span7, ReadOnlyFixedListFunc<TResult> func)
@@ -564,14 +988,44 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
 		{
-			ReadOnlyFixedMemoryList lst = new(new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
-			                                  new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
-			                                  new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
-			                                  new ReadOnlyFixedContext<T3>(ptr3, span3.Length),
-			                                  new ReadOnlyFixedContext<T4>(ptr4, span4.Length),
-			                                  new ReadOnlyFixedContext<T5>(ptr5, span5.Length),
-			                                  new ReadOnlyFixedContext<T6>(ptr6, span6.Length),
-			                                  new ReadOnlyFixedContext<T7>(ptr7, span7.Length));
+#if !NET5_0_OR_GREATER
+			B8 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+			info[4] = NativeUtilities.CreateFixedPointerInfo(ptr4, span4, out types[4], out constructors[4]);
+			info[5] = NativeUtilities.CreateFixedPointerInfo(ptr5, span5, out types[5], out constructors[5]);
+			info[6] = NativeUtilities.CreateFixedPointerInfo(ptr6, span6, out types[6], out constructors[6]);
+			info[7] = NativeUtilities.CreateFixedPointerInfo(ptr7, span7, out types[7], out constructors[7]);
+#else
+			B8 buffer = new();
+#endif
+			ReadOnlyFixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = true,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
+					NativeUtilities.CreateFixedPointerInfo(ptr5, span5),
+					NativeUtilities.CreateFixedPointerInfo(ptr6, span6),
+					NativeUtilities.CreateFixedPointerInfo(ptr7, span7),
+				],
+#endif
+			});
 			try
 			{
 				return func(lst);
@@ -607,6 +1061,10 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedListFunc{TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult WithSafeFixed<T0, T1, T2, T3, T4, T5, T6, T7, TArg, TResult>(ReadOnlySpan<T0> span0,
 		ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3, ReadOnlySpan<T4> span4,
 		ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6, ReadOnlySpan<T7> span7, TArg arg,
@@ -625,14 +1083,44 @@ public static unsafe partial class NativeUtilities
 		fixed (void* ptr6 = &MemoryMarshal.GetReference(span6))
 		fixed (void* ptr7 = &MemoryMarshal.GetReference(span7))
 		{
-			ReadOnlyFixedMemoryList lst = new(new ReadOnlyFixedContext<T0>(ptr0, span0.Length),
-			                                  new ReadOnlyFixedContext<T1>(ptr1, span1.Length),
-			                                  new ReadOnlyFixedContext<T2>(ptr2, span2.Length),
-			                                  new ReadOnlyFixedContext<T3>(ptr3, span3.Length),
-			                                  new ReadOnlyFixedContext<T4>(ptr4, span4.Length),
-			                                  new ReadOnlyFixedContext<T5>(ptr5, span5.Length),
-			                                  new ReadOnlyFixedContext<T6>(ptr6, span6.Length),
-			                                  new ReadOnlyFixedContext<T7>(ptr7, span7.Length));
+#if !NET5_0_OR_GREATER
+			B8 buffer = new(), bufferType = new(), bufferConstructor = new();
+			Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+			Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+				NativeUtilities.CreateConstructorSpan(ref bufferConstructor);
+			Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[constructors.Length];
+			info[0] = NativeUtilities.CreateFixedPointerInfo(ptr0, span0, out types[0], out constructors[0]);
+			info[1] = NativeUtilities.CreateFixedPointerInfo(ptr1, span1, out types[1], out constructors[1]);
+			info[2] = NativeUtilities.CreateFixedPointerInfo(ptr2, span2, out types[2], out constructors[2]);
+			info[3] = NativeUtilities.CreateFixedPointerInfo(ptr3, span3, out types[3], out constructors[3]);
+			info[4] = NativeUtilities.CreateFixedPointerInfo(ptr4, span4, out types[4], out constructors[4]);
+			info[5] = NativeUtilities.CreateFixedPointerInfo(ptr5, span5, out types[5], out constructors[5]);
+			info[6] = NativeUtilities.CreateFixedPointerInfo(ptr6, span6, out types[6], out constructors[6]);
+			info[7] = NativeUtilities.CreateFixedPointerInfo(ptr7, span7, out types[7], out constructors[7]);
+#else
+			B8 buffer = new();
+#endif
+			ReadOnlyFixedMemoryList lst = new(new()
+			{
+				Handle = new(),
+				IsReadOnly = true,
+				Instances = NativeUtilities.CreateReadOnlyFixedMemorySpan(ref buffer),
+#if !NET5_0_OR_GREATER
+				Information = info,
+#else
+				Information =
+				[
+					NativeUtilities.CreateFixedPointerInfo(ptr0, span0),
+					NativeUtilities.CreateFixedPointerInfo(ptr1, span1),
+					NativeUtilities.CreateFixedPointerInfo(ptr2, span2),
+					NativeUtilities.CreateFixedPointerInfo(ptr3, span3),
+					NativeUtilities.CreateFixedPointerInfo(ptr4, span4),
+					NativeUtilities.CreateFixedPointerInfo(ptr5, span5),
+					NativeUtilities.CreateFixedPointerInfo(ptr6, span6),
+					NativeUtilities.CreateFixedPointerInfo(ptr7, span7),
+				],
+#endif
+			});
 			try
 			{
 				return func(lst, arg);
@@ -645,3 +1133,5 @@ public static unsafe partial class NativeUtilities
 	}
 }
 #pragma warning restore CS8500
+#pragma warning restore CS0618
+#endif

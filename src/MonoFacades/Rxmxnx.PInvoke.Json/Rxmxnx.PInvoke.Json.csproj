@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <Import Project="..\MonoFacade.props"/>
-    <Import Project="..\System.Text.Json.Mono.props"/>
+    <Import Condition="'$(TargetFramework)' != 'net452'" Project="..\System.Text.Json.Mono.props"/>
     <Import Project="..\..\PackageReference.props"/>
 
     <PropertyGroup Condition="'$(UsePackage)' == 'true' And '$(PackageVersion)' != ''">

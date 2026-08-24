@@ -1,4 +1,5 @@
 #if NET5_0_OR_GREATER
+using System.Text.Json;
 using ThreadState = System.Threading.ThreadState;
 
 namespace Rxmxnx.PInvoke.Tests.Internal;

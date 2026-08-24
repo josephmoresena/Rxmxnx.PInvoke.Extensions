@@ -1,3 +1,4 @@
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class ReadOnlyFixedReference<T> : IConvertibleDisposable<IReadOnlyFixedReference<T>.IDisposable>
@@ -27,10 +28,16 @@ internal partial class ReadOnlyFixedReference<T> : IConvertibleDisposable<IReadO
 		ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects => (this.Value as IReadOnlyFixedMemory).Objects;
 
 		/// <inheritdoc/>
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+		[Obsolete]
+#endif
 		public IReadOnlyFixedContext<Byte> AsBinaryContext()
 			=> (this.Value.AsBinaryContext() as IConvertibleDisposable<IReadOnlyFixedContext<Byte>.IDisposable>)!
 				.ToDisposable(this.GetDisposableParent());
 		/// <inheritdoc/>
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+		[Obsolete]
+#endif
 		public IReadOnlyFixedContext<Object> AsObjectContext()
 			=> (this.Value.AsObjectContext() as IConvertibleDisposable<IReadOnlyFixedContext<Object>.IDisposable>)!
 				.ToDisposable(this.GetDisposableParent());
@@ -46,3 +53,4 @@ internal partial class ReadOnlyFixedReference<T> : IConvertibleDisposable<IReadO
 		}
 	}
 }
+#endif

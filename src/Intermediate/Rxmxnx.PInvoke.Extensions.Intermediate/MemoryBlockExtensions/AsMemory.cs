@@ -34,6 +34,7 @@ public static partial class MemoryBlockExtensions
 		=> ArrayMemoryManager<T>.GetMemory((Array?)arr);
 #endif
 
+#if !UAP || UAP10_0_16299
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
@@ -335,5 +336,6 @@ public static partial class MemoryBlockExtensions
 		=> ArrayMemoryManager<T>.GetMemory(arr);
 #else
 		=> ArrayMemoryManager<T>.GetMemory((Array?)arr);
+#endif
 #endif
 }

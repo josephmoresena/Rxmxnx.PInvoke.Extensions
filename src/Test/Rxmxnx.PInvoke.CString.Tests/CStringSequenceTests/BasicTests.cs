@@ -203,14 +203,37 @@ public sealed class BasicTests
 		PInvokeAssert.Equal(nonEmptyCount, clone.GetOffsets(offsetSpanClone));
 		PInvokeAssert.True(offsetSpan.SequenceEqual(offsetSpanClone));
 
-		using IFixedPointer.IDisposable fp = clone.GetFixedPointer();
+		using MemoryHandle handle = clone.Pin();
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+		using (IFixedPointer.IDisposable fp = clone.GetFixedPointer())
+		{
+			for (Int32 i = 0; i < clone.Count; i++)
+			{
+				ReadOnlySpan<Byte> spanValue =
+#if NET6_0_OR_GREATER
+					MemoryMarshal.CreateReadOnlySpanFromNullTerminated((Byte*)(fp.Pointer + offsetSpan[i]));
+#else
+					MemoryMarshalCompat.CreateReadOnlySpanFromNullTerminated((Byte*)(fp.Pointer + offsetSpan[i]));
+#endif
+				PInvokeAssert.True(clone[i].AsSpan().SequenceEqual(spanValue));
+#if NET8_0_OR_GREATER
+				Assert.True(Unsafe.AreSame(in clone[i].AsSpan()[0], in spanValue[0]));
+#else
+				PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in clone[i].AsSpan()[0]),
+				                                  ref Unsafe.AsRef(in spanValue[0])));
+#endif
+			}
+			PInvokeAssert.Equal(fp.Pointer, (IntPtr)handle.Pointer);
+		}
+#endif
+		using IDisposable _ = clone.GetFixedPointer(out FixedPointerValue fpv);
 		for (Int32 i = 0; i < clone.Count; i++)
 		{
 			ReadOnlySpan<Byte> spanValue =
 #if NET6_0_OR_GREATER
-				MemoryMarshal.CreateReadOnlySpanFromNullTerminated((Byte*)(fp.Pointer + offsetSpan[i]));
+				MemoryMarshal.CreateReadOnlySpanFromNullTerminated((Byte*)(fpv.Pointer + offsetSpan[i]));
 #else
-				MemoryMarshalCompat.CreateReadOnlySpanFromNullTerminated((Byte*)(fp.Pointer + offsetSpan[i]));
+				MemoryMarshalCompat.CreateReadOnlySpanFromNullTerminated((Byte*)(fpv.Pointer + offsetSpan[i]));
 #endif
 			PInvokeAssert.True(clone[i].AsSpan().SequenceEqual(spanValue));
 #if NET8_0_OR_GREATER
@@ -220,9 +243,7 @@ public sealed class BasicTests
 			                                  ref Unsafe.AsRef(in spanValue[0])));
 #endif
 		}
-
-		using MemoryHandle handle = clone.Pin();
-		PInvokeAssert.Equal(fp.Pointer, (IntPtr)handle.Pointer);
+		PInvokeAssert.Equal(fpv.Pointer, (IntPtr)handle.Pointer);
 	}
 	private static unsafe void AssertPin(String utf8Buffer, CString? cstr)
 	{

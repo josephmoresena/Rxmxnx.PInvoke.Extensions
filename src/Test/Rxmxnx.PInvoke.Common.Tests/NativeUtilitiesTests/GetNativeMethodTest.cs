@@ -1,7 +1,7 @@
 ﻿#if NET5_0_OR_GREATER
 using Skip = Xunit.Skip;
 
-#elif NETCOREAPP
+#elif NETCOREAPP3_0_OR_GREATER
 using SkippableTheoryAttribute = Xunit.TheoryAttribute;
 #endif
 
@@ -12,7 +12,7 @@ public sealed class GetNativeMethodTest
 {
 	internal delegate Int32 GetInt32();
 	internal delegate T GetT<out T>();
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 	private static readonly IFixture fixture = new Fixture();
 
 	[SkippableTheory]

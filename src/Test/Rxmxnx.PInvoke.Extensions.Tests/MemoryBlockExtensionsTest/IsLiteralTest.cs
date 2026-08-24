@@ -1,3 +1,4 @@
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Tests.MemoryBlockExtensionsTest;
 
 [ExcludeFromCodeCoverage]
@@ -81,3 +82,4 @@ public sealed class IsLiteralTest
 		PInvokeAssert.False(constValue.AsSpan().IsLiteral());
 	}
 }
+#endif

@@ -9,7 +9,11 @@
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
 #endif
+#if NETSTANDARD1_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 internal sealed record CStringDebugView
+#else
+internal sealed class CStringDebugView
+#endif
 {
 	/// <summary>
 	/// Enumeration of the flags used in the <see cref="CString"/> class for debugging purposes.

@@ -23,9 +23,22 @@ internal class MutableWrapper<T> : Input<T>, IMutableWrapper<T>
 	/// <param name="instance">The initial value of the encapsulated object.</param>
 	internal MutableWrapper(in T instance) : base(instance) { }
 
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	T IMutableWrapper<T>.Value
 	{
 		get => this.GetInstance();
 		set => this.SetInstance(this._writeLock, value);
 	}
+#if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	Object? IStrongBox.Value
+	{
+		get => this.GetInstance();
+		set => this.SetInstance(this._writeLock, (T)value!);
+	}
+#endif
 }

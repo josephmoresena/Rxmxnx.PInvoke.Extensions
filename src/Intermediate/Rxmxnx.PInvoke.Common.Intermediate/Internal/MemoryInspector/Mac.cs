@@ -1,3 +1,4 @@
+#if !UAP10_0
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
@@ -42,3 +43,4 @@ internal partial class MemoryInspector
 		}
 	}
 }
+#endif

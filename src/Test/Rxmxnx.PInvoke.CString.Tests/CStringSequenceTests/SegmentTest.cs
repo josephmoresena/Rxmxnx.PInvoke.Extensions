@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
+﻿#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
+
+namespace Rxmxnx.PInvoke.Tests.CStringSequenceTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -12,8 +16,11 @@ public sealed class SegmentTest
 		CStringSequence seq = new(Array.Empty<CString>());
 
 		PInvokeAssert.Empty(seq);
+		// ReSharper disable once AccessToModifiedClosure
 		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => seq[varIndex]);
+		// ReSharper disable once AccessToModifiedClosure
 		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => seq[varIndex..]);
+		// ReSharper disable once AccessToModifiedClosure
 		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => seq[..varIndex]);
 
 		varIndex = -1;
@@ -54,6 +61,7 @@ public sealed class SegmentTest
 		for (Int32 i = 0; i < count; i++)
 		{
 			Int32 start = PInvokeRandom.Shared.Next(i);
+			// ReSharper disable once ReplaceSliceWithRangeIndexer
 			CStringSequence subSeq = seq.Slice(start);
 			for (Int32 j = 0; j < subSeq.Count; j++)
 				PInvokeAssert.Equal(seq[j + start], subSeq[j]);

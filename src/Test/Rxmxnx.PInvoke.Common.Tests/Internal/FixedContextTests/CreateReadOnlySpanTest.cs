@@ -75,7 +75,6 @@ public sealed class CreateReadOnlySpanTest : FixedContextTestsBase
 		Exception functionException2 = PInvokeAssert.Throws<InvalidOperationException>(ctx.CreateDelegate<Action>);
 		PInvokeAssert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException2.Message);
 	}
-
 	private static void ReadOnlyTest<T>(ReadOnlyFixedContext<T> ctx, T[] values)
 	{
 		ReadOnlySpan<T> span = ctx.CreateReadOnlySpan<T>(values.Length);

@@ -16,10 +16,13 @@
 #endif
 [DebuggerDisplay("Count = {Count}")]
 [DebuggerTypeProxy(typeof(CStringSequenceDebugView))]
-#if NETCOREAPP
+#if NETCOREAPP || NET461_OR_GREATER
 [JsonConverter(typeof(JsonConverter))]
 #endif
-public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequence>
+public sealed partial class CStringSequence : IEquatable<CStringSequence>
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+	, ICloneable
+#endif
 {
 	/// <summary>
 	/// Represents an empty sequence.
@@ -137,8 +140,10 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// Required to support the use of a <see cref="CStringSequence"/> within a fixed statement.
 	/// It should not be used in typical code.
 	/// </remarks>
-	[EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	[Browsable(false)]
+#endif
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	public ref readonly Byte GetPinnableReference()
 	{
 		ReadOnlySpan<Char> chars = this._value.AsSpan();
@@ -218,9 +223,18 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 		Int32[] lengthsArray = CStringSequence.NormalizeLengths(lengths);
 		Int32 length = CStringSequence.GetBufferLength(lengthsArray);
 		SequenceCreationHelper<TState> helper = new() { State = state, Action = action, Lengths = lengthsArray, };
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		String buffer = String.Create(length, helper, CStringSequence.CreateCStringSequence);
+#else
+		Span<Char> chars = length <= StackAllocationHelper.StackallocByteThreshold ?
+			stackalloc Char[length] :
+			new Char[length];
+		CStringSequence.CreateCStringSequence(chars, helper);
+		String buffer = chars.ToString();
+#endif
 		return new(buffer, lengthsArray);
 	}
+#if !PACKAGE || NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Creates a new <see cref="CStringSequence"/> instance from a UTF-8 buffer.
 	/// </summary>
@@ -239,6 +253,7 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 #endif
 	public static CStringSequence Create(ReadOnlySpan<Char> value)
 		=> CStringSequence.Create(MemoryMarshal.AsBytes(value));
+#endif
 	/// <summary>
 	/// Creates a new <see cref="CStringSequence"/> instance from a UTF-8 buffer.
 	/// </summary>
@@ -294,5 +309,5 @@ public sealed partial class CStringSequence : ICloneable, IEquatable<CStringSequ
 	/// <remarks>
 	/// Avoid boxing the resulting instance since <see cref="Builder"/> is a <see cref="ValueType"/>.
 	/// </remarks>
-	public static Builder CreateBuilder() => new();
+	public static Builder CreateBuilder() => new([], new());
 }

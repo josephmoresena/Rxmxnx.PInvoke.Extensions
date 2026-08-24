@@ -46,7 +46,47 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="coverlet.collector" Version="10.0.0">
+        <PackageReference Include="coverlet.collector" Version="10.0.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <!-- NETFRAMEWORK_SUPPORT -->
+    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.3"/>
+        <PackageReference Condition="!$([MSBuild]::IsOSPlatform('WINDOWS'))" Include="Microsoft.TestPlatform.ObjectModel" Version="17.3.3" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Condition="'$(TargetFramework)' == 'net452'" Include="coverlet.collector" Version="6.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+        <PackageReference Condition="'$(TargetFramework)' != 'net452'" Include="coverlet.collector" Version="6.0.4">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' And '$(TargetFramework)' != 'net452' And '$(TargetFramework)' != 'net46'">
+        <PackageReference Condition="'$(TargetFramework)' == 'net461'" Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+        <PackageReference Condition="'$(TargetFramework)' != 'net461'" Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
+    </ItemGroup>
+    <!-- NETCOREAPP2.X_SUPPORT -->
+    <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0' Or '$(TargetFramework)' == 'netcoreapp2.1'">
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.3"/>
+        <PackageReference Condition="'$(TargetFramework)' == 'netcoreapp2.0'" Include="Microsoft.NETCore.App" Version="2.0.9"/>
+        <PackageReference Condition="'$(TargetFramework)' == 'netcoreapp2.1'" Include="Microsoft.NETCore.App" Version="2.1.30"/>
+        <PackageReference Condition="'$(TargetFramework)' == 'netcoreapp2.1'" Include="xunit.runner.visualstudio" Version="2.4.3">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Condition="'$(TargetFramework)' == 'netcoreapp2.0'" Include="xunit.runner.visualstudio" Version="2.4.1">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="coverlet.collector" Version="6.0.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>

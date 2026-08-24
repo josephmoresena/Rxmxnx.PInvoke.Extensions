@@ -117,7 +117,7 @@ public sealed class UnicodeConcurrentTests : CStringBuilderTestsBase
 	{
 		Int32 indexSeed = CStringBuilderTestsBase.GetSeedIndex();
 		String? seed = TestSet.GetString(indexSeed);
-		Int32 seedLength = Encoding.UTF8.GetByteCount((ReadOnlySpan<Char>)seed);
+		Int32 seedLength = seed.AsSpan().GetUtf8Count();
 		if (seedLength < CStringBuilder.DefaultCapacity) return;
 
 		CStringBuilder cstrBuild = new(seed + seed);

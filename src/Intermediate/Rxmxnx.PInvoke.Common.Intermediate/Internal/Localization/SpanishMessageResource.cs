@@ -45,6 +45,7 @@ internal sealed class SpanishMessageResource : IMessageResource
 	String IMessageResource.MissingMemoryInspector
 		=> "La inspección de memoria no es compatible con la plataforma actual.";
 	String IMessageResource.ReflectionDisabled => "Esta función requiere el modo de reflexión completa.";
+	String IMessageResource.InvalidSpanLayout => "No se pudo identificar el campo fijable en la estructura de Span<T>.";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"El objeto debe ser del tipo {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)
@@ -53,7 +54,7 @@ internal sealed class SpanishMessageResource : IMessageResource
 		=> $"La longitud del parámetro {nameofSpan} debe ser igual a {sizeOf}.";
 	String IMessageResource.InvalidCopyUnmanagedType(String nameofSpan, String nameofValue)
 		=> $"Tamaño disponible insuficiente en {nameofSpan} para copiar {nameofValue}.";
-	String IMessageResource.InvalidLength(String nameofLength)
+	String IMessageResource.InvalidLengthOrIndex(String nameofLength)
 		=> $"El parámetro {nameofLength} debe ser cero o un entero positivo.";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} no es un tipo no administrado.";
 	String IMessageResource.NotValueType(Type type) => $"{type} no es un tipo de valor.";

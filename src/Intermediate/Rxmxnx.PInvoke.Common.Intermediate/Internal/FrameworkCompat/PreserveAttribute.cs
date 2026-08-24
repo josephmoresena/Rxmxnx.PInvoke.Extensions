@@ -1,9 +1,13 @@
 // ReSharper disable NotAccessedField.Global
+
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 /// <summary>
 /// Prevents the Linker/Trimmer from removing code that it might otherwise think is unused.
 /// </summary>
+#if !PACKAGE
+[ExcludeFromCodeCoverage]
+#endif
 [AttributeUsage(AttributeTargets.All | AttributeTargets.Delegate, AllowMultiple = true)]
 internal sealed class PreserveAttribute : Attribute
 {

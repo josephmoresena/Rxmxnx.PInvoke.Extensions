@@ -1,4 +1,5 @@
-﻿#if !NET6_0_OR_GREATER
+﻿#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if !NET6_0_OR_GREATER
 using ArgumentNullException = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
 
@@ -19,6 +20,10 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the action execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, false)]
+#endif
 	public void WithSafeTransform(CStringSequenceAction action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -48,6 +53,10 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the action execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, false)]
+#endif
 	public void WithSafeTransform<TState>(TState state, CStringSequenceAction<TState> action)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
@@ -79,6 +88,10 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the function execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, false)]
+#endif
 	public TResult WithSafeTransform<TResult>(CStringSequenceFunc<TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
@@ -110,6 +123,10 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the function execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, false)]
+#endif
 	public TResult WithSafeTransform<TState, TResult>(TState state, CStringSequenceFunc<TState, TResult> func)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
@@ -130,3 +147,4 @@ public unsafe partial class CStringSequence
 		}
 	}
 }
+#endif

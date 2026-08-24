@@ -45,6 +45,7 @@ internal sealed class ItalianMessageResource : IMessageResource
 	String IMessageResource.MissingMemoryInspector
 		=> "L'ispezione della memoria non è supportata sulla piattaforma corrente.";
 	String IMessageResource.ReflectionDisabled => "Questa funzionalità richiede la modalità reflection-full.";
+	String IMessageResource.InvalidSpanLayout => "Impossibile identificare il campo bloccabile nel layout di Span<T>.";
 
 	String IMessageResource.InvalidType(String requiredTypeName)
 		=> $"L'oggetto deve essere di tipo {requiredTypeName}.";
@@ -54,7 +55,7 @@ internal sealed class ItalianMessageResource : IMessageResource
 		=> $"La lunghezza del parametro {nameofSpan} deve essere uguale a {sizeOf}.";
 	String IMessageResource.InvalidCopyUnmanagedType(String nameofSpan, String nameofValue)
 		=> $"Spazio insufficiente disponibile in {nameofSpan} per copiare {nameofValue}.";
-	String IMessageResource.InvalidLength(String nameofLength)
+	String IMessageResource.InvalidLengthOrIndex(String nameofLength)
 		=> $"Il parametro {nameofLength} deve essere zero o un numero intero positivo.";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} non è un tipo non gestito.";
 	String IMessageResource.NotValueType(Type type) => $"{type} non è un tipo valore.";

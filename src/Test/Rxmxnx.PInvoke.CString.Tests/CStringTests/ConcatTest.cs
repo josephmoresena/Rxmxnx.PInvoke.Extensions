@@ -60,23 +60,47 @@ public sealed class ConcatTest
 		List<Int32> indices = TestSet.GetIndices(8);
 		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
 
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(String.Concat(strings[..2]),
+#else
+		PInvokeAssert.Equal(String.Concat(strings.AsSpan()[..2].ToArray()),
+#endif
 		                    CString.Concat(TestSet.GetSpan(indices[0]), TestSet.GetSpan(indices[1])).ToString());
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(String.Concat(strings[..3]),
+#else
+		PInvokeAssert.Equal(String.Concat(strings.AsSpan()[..3].ToArray()),
+#endif
 		                    CString.Concat(TestSet.GetSpan(indices[0]), TestSet.GetSpan(indices[1]),
 		                                   TestSet.GetSpan(indices[2])).ToString());
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(String.Concat(strings[..4]),
+#else
+		PInvokeAssert.Equal(String.Concat(strings.AsSpan()[..4].ToArray()),
+#endif
 		                    CString.Concat(TestSet.GetSpan(indices[0]), TestSet.GetSpan(indices[1]),
 		                                   TestSet.GetSpan(indices[2]), TestSet.GetSpan(indices[3])).ToString());
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(String.Concat(strings[..5]),
+#else
+		PInvokeAssert.Equal(String.Concat(strings.AsSpan()[..5].ToArray()),
+#endif
 		                    CString.Concat(TestSet.GetSpan(indices[0]), TestSet.GetSpan(indices[1]),
 		                                   TestSet.GetSpan(indices[2]), TestSet.GetSpan(indices[3]),
 		                                   TestSet.GetSpan(indices[4])).ToString());
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(String.Concat(strings[..6]),
+#else
+		PInvokeAssert.Equal(String.Concat(strings.AsSpan()[..6].ToArray()),
+#endif
 		                    CString.Concat(TestSet.GetSpan(indices[0]), TestSet.GetSpan(indices[1]),
 		                                   TestSet.GetSpan(indices[2]), TestSet.GetSpan(indices[3]),
 		                                   TestSet.GetSpan(indices[4]), TestSet.GetSpan(indices[5])).ToString());
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(String.Concat(strings[..7]),
+#else
+		PInvokeAssert.Equal(String.Concat(strings.AsSpan()[..7].ToArray()),
+#endif
 		                    CString.Concat(TestSet.GetSpan(indices[0]), TestSet.GetSpan(indices[1]),
 		                                   TestSet.GetSpan(indices[2]), TestSet.GetSpan(indices[3]),
 		                                   TestSet.GetSpan(indices[4]), TestSet.GetSpan(indices[5]),
@@ -116,10 +140,15 @@ public sealed class ConcatTest
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		CString resultCString = CString.Concat(values);
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
+		String resultCStringCString = CString.GetBytes(resultCString).AsSpan()[..^1].ToUtf16();
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+#else
+		PInvokeAssert.True(expectedResultCString.AsSpan()
+		                                        .SequenceEqual(CString.GetBytes(resultCString).AsSpan()[..^1]));
+#endif
 	}
 	private static void NormalTest(String?[] strings, Byte[]?[] values)
 	{
@@ -127,10 +156,15 @@ public sealed class ConcatTest
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		CString resultCString = CString.Concat(values);
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
+		String resultCStringCString = CString.GetBytes(resultCString).AsSpan()[..^1].ToUtf16();
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+#else
+		PInvokeAssert.True(expectedResultCString.AsSpan()
+		                                        .SequenceEqual(CString.GetBytes(resultCString).AsSpan()[..^1]));
+#endif
 	}
 	private static void EmptyTest(CString?[] values)
 	{

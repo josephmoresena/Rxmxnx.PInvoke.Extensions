@@ -1,471 +1,295 @@
+#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-public static partial class BufferManager
+public static partial class BufferManager<T>
 {
 	/// <summary>
-	/// Allocates a heap buffer of size of <paramref name="count"/> elements.
+	/// Allocates a stack buffer with the required size for execution.
 	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
-	/// <param name="count">Required buffer size.</param>
+	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/>.</typeparam>
 	/// <param name="action">Method to execute.</param>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	private static void AllocHeap<T>(UInt16 count, ScopedBufferAction<T> action)
-	{
-		T[] arr = ArrayPool<T>.Shared.Rent(count);
-		try
-		{
-			Span<T> span = arr.AsSpan()[..count];
-			ScopedBuffer<T> buffer = new(span, true, arr.Length);
-
-			span.Clear();
-			action(buffer);
-		}
-		finally
-		{
-			ArrayPool<T>.Shared.Return(arr, true);
-		}
-	}
-	/// <summary>
-	/// Allocates a heap buffer of size of <paramref name="count"/> elements.
-	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
-	/// <typeparam name="TState">Type of state object.</typeparam>
-	/// <param name="count">Required buffer size.</param>
-	/// <param name="state">State object.</param>
-	/// <param name="action">Method to execute.</param>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	private static void AllocHeap<T, TState>(UInt16 count, TState state, ScopedBufferAction<T, TState> action)
-#if NET9_0_OR_GREATER
-		where TState : allows ref struct
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static void AllocObject<TAction>(ref TAction action)
+#if !NET9_0_OR_GREATER
+		where TAction : IScopedBufferAction<T>
+#else
+		where TAction : IScopedBufferAction<T>, allows ref struct
 #endif
 	{
-		T[] arr = ArrayPool<T>.Shared.Rent(count);
-		try
-		{
-			Span<T> span = arr.AsSpan()[..count];
-			ScopedBuffer<T> buffer = new(span, true, arr.Length);
-
-			span.Clear();
-			action(buffer, state);
-		}
-		finally
-		{
-			ArrayPool<T>.Shared.Return(arr, true);
-		}
-	}
-	/// <summary>
-	/// Allocates a heap buffer of size of <paramref name="count"/> elements.
-	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
-	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="count">Required buffer size.</param>
-	/// <param name="func">Function to execute.</param>
-	/// <returns><paramref name="func"/> result.</returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	private static TResult AllocHeap<T, TResult>(UInt16 count, ScopedBufferFunc<T, TResult> func)
-	{
-		T[] arr = ArrayPool<T>.Shared.Rent(count);
-		try
-		{
-			Span<T> span = arr.AsSpan()[..count];
-			ScopedBuffer<T> buffer = new(span, true, arr.Length);
-
-			span.Clear();
-			return func(buffer);
-		}
-		finally
-		{
-			ArrayPool<T>.Shared.Return(arr, true);
-		}
-	}
-	/// <summary>
-	/// Allocates a heap buffer of size of <paramref name="count"/> elements.
-	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
-	/// <typeparam name="TState">Type of state object.</typeparam>
-	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="count">Required buffer size.</param>
-	/// <param name="state">State object.</param>
-	/// <param name="func">Function to execute.</param>
-	/// <returns><paramref name="func"/> result.</returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	private static TResult AllocHeap<T, TState, TResult>(UInt16 count, TState state,
-		ScopedBufferFunc<T, TState, TResult> func)
-#if NET9_0_OR_GREATER
-		where TState : allows ref struct
-#endif
-	{
-		T[] arr = ArrayPool<T>.Shared.Rent(count);
-		try
-		{
-			Span<T> span = arr.AsSpan()[..count];
-			ScopedBuffer<T> buffer = new(span, true, arr.Length);
-
-			span.Clear();
-			return func(buffer, state);
-		}
-		finally
-		{
-			ArrayPool<T>.Shared.Return(arr, true);
-		}
-	}
-	/// <summary>
-	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
-	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
-	/// <param name="count">Required buffer size.</param>
-	/// <param name="action">Method to execute.</param>
-	/// <param name="isMinimumCount">
-	/// Indicates whether <paramref name="count"/> is just the minimum limit.
-	/// </param>
-	private static void AllocObject<T>(UInt16 count, ScopedBufferAction<T> action, Boolean isMinimumCount)
-	{
-		BufferTypeMetadata<Object>? metadata = BufferManager.Storage.GetMetadata<Object>(count);
-		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || count == 0);
-#if !PACKAGE
+		BufferTypeMetadata<Object>? metadata = BufferManager.Storage.GetMetadata<Object>(action.Count);
+		Boolean stackAlloc = metadata is not null &&
+			(action.IsMinimalCount || metadata.Size == action.Count || action.Count == 0);
+#if !PACKAGE && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
 		BufferManager.Storage.PrintMetadata<Object>(!stackAlloc);
 #endif
 		if (stackAlloc)
 		{
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 			Debug.Assert(metadata is not null);
-			BufferManager.StackAllocObject(metadata, count, action);
+			metadata.Execute<T, TAction>(ref action, action.Count);
+#else
+			metadata!.Execute<T, TAction>(ref action, action.Count);
+#endif
+			return;
 		}
-		else
-		{
-			BufferManager.AllocHeap(count, action);
-		}
+
+		BufferManager<T>.AllocHeap(ref action);
 	}
 	/// <summary>
-	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
+	/// Allocates a stack buffer with the required size for execution.
 	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
-	/// <typeparam name="TState">Type of state object.</typeparam>
-	/// <param name="count">Required buffer size.</param>
-	/// <param name="state">State object.</param>
-	/// <param name="action">Method to execute.</param>
-	/// <param name="isMinimumCount">
-	/// Indicates whether <paramref name="count"/> is just the minimum limit.
-	/// </param>
-	private static void AllocObject<T, TState>(UInt16 count, TState state, ScopedBufferAction<T, TState> action,
-		Boolean isMinimumCount)
-#if NET9_0_OR_GREATER
-		where TState : allows ref struct
-#endif
-	{
-		BufferTypeMetadata<Object>? metadata = BufferManager.Storage.GetMetadata<Object>(count);
-		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || count == 0);
-#if !PACKAGE
-		BufferManager.Storage.PrintMetadata<Object>(!stackAlloc);
-#endif
-		if (stackAlloc)
-		{
-			Debug.Assert(metadata is not null);
-			metadata.Execute(state, action, count);
-		}
-		else
-		{
-			BufferManager.AllocHeap(count, state, action);
-		}
-	}
-	/// <summary>
-	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
-	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
+	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, TFunction}"/>.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="count">Required buffer size.</param>
 	/// <param name="func">Function to execute.</param>
-	/// <param name="isMinimumCount">
-	/// Indicates whether <paramref name="count"/> is just the minimum limit.
-	/// </param>
-	/// <returns><paramref name="func"/> result.</returns>
-	private static TResult AllocObject<T, TResult>(UInt16 count, ScopedBufferFunc<T, TResult> func,
-		Boolean isMinimumCount)
+	/// <param name="result">Output. Function result.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static void AllocObject<TFunction, TResult>(ref TFunction func, out TResult result)
+#if !NET9_0_OR_GREATER
+		where TFunction : IScopedBufferFunction<T, TResult>
+#else
+		where TFunction : IScopedBufferFunction<T, TResult>, allows ref struct
+#endif
 	{
-		BufferTypeMetadata<Object>? metadata = BufferManager.Storage.GetMetadata<Object>(count);
-		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || count == 0);
-#if !PACKAGE
+		BufferTypeMetadata<Object>? metadata = BufferManager.Storage.GetMetadata<Object>(func.Count);
+		Boolean stackAlloc = metadata is not null &&
+			(func.IsMinimalCount || metadata.Size == func.Count || func.Count == 0);
+#if !PACKAGE && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
 		BufferManager.Storage.PrintMetadata<Object>(!stackAlloc);
 #endif
 		if (!stackAlloc)
-			return BufferManager.AllocHeap(count, func);
+		{
+			BufferManager<T>.AllocHeap(ref func, out result);
+			return;
+		}
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		Debug.Assert(metadata is not null);
-		return BufferManager.StackAllocObject(metadata, count, func);
+		result = metadata.Execute<T, TFunction, TResult>(ref func, func.Count);
+#else
+		result = metadata!.Execute<T, TFunction, TResult>(ref func, func.Count);
+#endif
 	}
 	/// <summary>
-	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
+	/// Allocates a stack buffer with the required size for execution.
 	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
-	/// <typeparam name="TState">Type of state object.</typeparam>
-	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="count">Required buffer size.</param>
-	/// <param name="state">State object.</param>
-	/// <param name="func">Function to execute.</param>
-	/// <param name="isMinimumCount">
-	/// Indicates whether <paramref name="count"/> is just the minimum limit.
-	/// </param>
-	/// <returns><paramref name="func"/> result.</returns>
-	private static TResult AllocObject<T, TState, TResult>(UInt16 count, TState state,
-		ScopedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount)
-#if NET9_0_OR_GREATER
-		where TState : allows ref struct
-#endif
-	{
-		BufferTypeMetadata<Object>? metadata = BufferManager.Storage.GetMetadata<Object>(count);
-		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || count == 0);
-#if !PACKAGE
-		BufferManager.Storage.PrintMetadata<Object>(!stackAlloc);
-#endif
-		if (!stackAlloc) return BufferManager.AllocHeap(count, state, func);
-		Debug.Assert(metadata is not null);
-		return metadata.Execute(state, func, count);
-	}
-	/// <summary>
-	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
-	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
-	/// <param name="count">Required buffer size.</param>
+	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/>.</typeparam>
 	/// <param name="action">Method to execute.</param>
-	/// <param name="isMinimumCount">
-	/// Indicates whether <paramref name="count"/> is just the minimum limit.
-	/// </param>
-	private static void AllocValue<T>(UInt16 count, ScopedBufferAction<T> action, Boolean isMinimumCount)
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static void AllocValue<TAction>(ref TAction action)
+#if !NET9_0_OR_GREATER
+		where TAction : IScopedBufferAction<T>
+#else
+		where TAction : IScopedBufferAction<T>, allows ref struct
+#endif
 	{
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>())
 		{
-			BufferManager.StackAlloc(count, action);
+			BufferManager<T>.StackAlloc(ref action);
 			return;
 		}
 
-		BufferTypeMetadata<T>? metadata = BufferManager.Storage.GetMetadata<T>(count);
-		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || count == 0);
-#if !PACKAGE
+		BufferTypeMetadata<T>? metadata = BufferManager.Storage.GetMetadata<T>(action.Count);
+		Boolean stackAlloc = metadata is not null && metadata.SizeOf <= BufferManager.StackAllocationByteLimit &&
+			(action.IsMinimalCount || metadata.Size == action.Count || action.Count == 0);
+#if !PACKAGE && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
 		BufferManager.Storage.PrintMetadata<T>(!stackAlloc);
 #endif
 		if (stackAlloc)
 		{
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 			Debug.Assert(metadata is not null);
-			metadata.Execute(action, count);
+			metadata.Execute(ref action, action.Count);
+#else
+			metadata!.Execute(ref action, action.Count);
+#endif
+			return;
 		}
-		else
-		{
-			BufferManager.AllocHeap(count, action);
-		}
+		BufferManager<T>.AllocHeap(ref action);
 	}
 	/// <summary>
-	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
+	/// Allocates a stack buffer with the required size for execution.
 	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
-	/// <typeparam name="TState">Type of state object.</typeparam>
-	/// <param name="count">Required buffer size.</param>
-	/// <param name="state">State object.</param>
-	/// <param name="action">Method to execute.</param>
-	/// <param name="isMinimumCount">
-	/// Indicates whether <paramref name="count"/> is just the minimum limit.
-	/// </param>
-	private static void AllocValue<T, TState>(UInt16 count, TState state, ScopedBufferAction<T, TState> action,
-		Boolean isMinimumCount)
-#if NET9_0_OR_GREATER
-		where TState : allows ref struct
+	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, TFunction}"/>.</typeparam>
+	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
+	/// <param name="func">Function to execute.</param>
+	/// <param name="result">Output. Function result.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static void AllocValue<TFunction, TResult>(ref TFunction func, out TResult result)
+#if !NET9_0_OR_GREATER
+		where TFunction : IScopedBufferFunction<T, TResult>
+#else
+		where TFunction : IScopedBufferFunction<T, TResult>, allows ref struct
 #endif
 	{
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>())
 		{
-			BufferManager.StackAlloc(count, state, action);
+			BufferManager<T>.StackAlloc(ref func, out result);
 			return;
 		}
 
-		BufferTypeMetadata<T>? metadata = BufferManager.Storage.GetMetadata<T>(count);
-		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || count == 0);
-#if !PACKAGE
+		BufferTypeMetadata<T>? metadata = BufferManager.Storage.GetMetadata<T>(func.Count);
+		Boolean stackAlloc = metadata is not null && metadata.SizeOf <= BufferManager.StackAllocationByteLimit &&
+			(func.IsMinimalCount || metadata.Size == func.Count || func.Count == 0);
+#if !PACKAGE && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
 		BufferManager.Storage.PrintMetadata<T>(!stackAlloc);
 #endif
 		if (stackAlloc)
 		{
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 			Debug.Assert(metadata is not null);
-			metadata.Execute<TState>(state, action, count);
+			result = metadata.Execute<TFunction, TResult>(ref func, func.Count);
+#else
+			result = metadata!.Execute<TFunction, TResult>(ref func, func.Count);
+#endif
+			return;
 		}
-		else
+		BufferManager<T>.AllocHeap(ref func, out result);
+	}
+	/// <summary>
+	/// Allocates a heap buffer with the required size for execution.
+	/// </summary>
+	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/>.</typeparam>
+	/// <param name="action">Method to execute.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static void AllocHeap<TAction>(ref TAction action)
+#if !NET9_0_OR_GREATER
+		where TAction : IScopedBufferAction<T>
+#else
+		where TAction : IScopedBufferAction<T>, allows ref struct
+#endif
+	{
+		T[] arr = ArrayPool<T>.Shared.Rent(action.Count);
+		try
 		{
-			BufferManager.AllocHeap(count, state, action);
+			Span<T> span = arr.AsSpan()[..action.Count];
+			ScopedBuffer<T> buffer = new(span, true, arr.Length);
+
+			span.Clear();
+			action.Accept(buffer);
+		}
+		finally
+		{
+			ArrayPool<T>.Shared.Return(arr, true);
 		}
 	}
 	/// <summary>
-	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
+	/// Allocates a heap buffer with the required size for execution.
 	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
+	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, TFunction}"/>.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="count">Required buffer size.</param>
 	/// <param name="func">Function to execute.</param>
-	/// <param name="isMinimumCount">
-	/// Indicates whether <paramref name="count"/> is just the minimum limit.
-	/// </param>
-	/// <returns><paramref name="func"/> result.</returns>
-	private static TResult AllocValue<T, TResult>(UInt16 count, ScopedBufferFunc<T, TResult> func,
-		Boolean isMinimumCount)
-	{
-		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>())
-			return BufferManager.StackAlloc(count, func);
-
-		BufferTypeMetadata<T>? metadata = BufferManager.Storage.GetMetadata<T>(count);
-		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || count == 0);
+	/// <param name="result">Output. Function result.</param>
 #if !PACKAGE
-		BufferManager.Storage.PrintMetadata<T>(!stackAlloc);
+	[ExcludeFromCodeCoverage]
 #endif
-		if (!stackAlloc) return BufferManager.AllocHeap(count, func);
-		Debug.Assert(metadata is not null);
-		return metadata.Execute(func, count);
-	}
-	/// <summary>
-	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
-	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
-	/// <typeparam name="TState">Type of state object.</typeparam>
-	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="count">Required buffer size.</param>
-	/// <param name="state">State object.</param>
-	/// <param name="func">Function to execute.</param>
-	/// <param name="isMinimumCount">
-	/// Indicates whether <paramref name="count"/> is just the minimum limit.
-	/// </param>
-	/// <returns><paramref name="func"/> result.</returns>
-	private static TResult AllocValue<T, TState, TResult>(UInt16 count, TState state,
-		ScopedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount)
-#if NET9_0_OR_GREATER
-		where TState : allows ref struct
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static void AllocHeap<TFunction, TResult>(ref TFunction func, out TResult result)
+#if !NET9_0_OR_GREATER
+		where TFunction : IScopedBufferFunction<T, TResult>
+#else
+		where TFunction : IScopedBufferFunction<T, TResult>, allows ref struct
 #endif
 	{
-		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>())
-			return BufferManager.StackAlloc(count, state, func);
+		T[] arr = ArrayPool<T>.Shared.Rent(func.Count);
+		try
+		{
+			Span<T> span = arr.AsSpan()[..func.Count];
+			ScopedBuffer<T> buffer = new(span, true, arr.Length);
 
-		BufferTypeMetadata<T>? metadata = BufferManager.Storage.GetMetadata<T>(count);
-		Boolean stackAlloc = metadata is not null && (isMinimumCount || metadata.Size == count || count == 0);
-#if !PACKAGE
-		BufferManager.Storage.PrintMetadata<T>(!stackAlloc);
+			span.Clear();
+			result = func.Apply(buffer);
+		}
+		finally
+		{
+			ArrayPool<T>.Shared.Return(arr, true);
+		}
+	}
+	/// <summary>
+	/// Allocates a stack buffer with the required size for execution.
+	/// </summary>
+	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/>.</typeparam>
+	/// <param name="action">Method to execute.</param>
+#if NET7_0_OR_GREATER
+	[SkipLocalsInit]
 #endif
-		if (!stackAlloc) return BufferManager.AllocHeap(count, state, func);
-		Debug.Assert(metadata is not null);
-		return metadata.Execute<TState, TResult>(state, func, count);
-	}
-	/// <summary>
-	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
-	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
-	/// <param name="metadata">A <see cref="BufferTypeMetadata{Object}"/> instance.</param>
-	/// <param name="count">Required buffer size.</param>
-	/// <param name="action">Method to execute.</param>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static void StackAllocObject<T>(BufferTypeMetadata<Object> metadata, UInt16 count,
-		ScopedBufferAction<T> action)
-	{
-		TransformationState<T> stateT = new(action);
-		metadata.Execute(stateT, TransformationState<T>.Execute, count);
-	}
-	/// <summary>
-	/// Allocates a stack buffer of size of <paramref name="count"/> reference elements.
-	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
-	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="metadata">A <see cref="BufferTypeMetadata{Object}"/> instance.</param>
-	/// <param name="count">Required buffer size.</param>
-	/// <param name="func">Function to execute.</param>
-	/// <returns><paramref name="func"/> result.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static TResult StackAllocObject<T, TResult>(BufferTypeMetadata<Object> metadata, UInt16 count,
-		ScopedBufferFunc<T, TResult> func)
-	{
-		TransformationState<T, TResult> stateT = new(func);
-		return metadata.Execute(stateT, TransformationState<T, TResult>.Execute, count);
-	}
-	/// <summary>
-	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
-	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
-	/// <param name="count">Required buffer size.</param>
-	/// <param name="action">Method to execute.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #pragma warning disable CS8500
-	private static unsafe void StackAlloc<T>(UInt16 count, ScopedBufferAction<T> action)
-	{
-		Int32 sizeOfT = sizeof(T);
-		Span<Byte> bytes = stackalloc Byte[count * sizeOfT];
-		ref T refT = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(bytes));
-		Span<T> span = MemoryMarshal.CreateSpan(ref refT, count);
-		ScopedBuffer<T> buffer = new(span, false, span.Length);
-		action(buffer);
-	}
-	/// <summary>
-	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
-	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
-	/// <typeparam name="TState">Type of state object.</typeparam>
-	/// <param name="count">Required buffer size.</param>
-	/// <param name="state">State object.</param>
-	/// <param name="action">Method to execute.</param>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe void StackAlloc<T, TState>(UInt16 count, TState state, ScopedBufferAction<T, TState> action)
-#if NET9_0_OR_GREATER
-		where TState : allows ref struct
+	private static unsafe void StackAlloc<TAction>(ref TAction action)
+#if !NET9_0_OR_GREATER
+		where TAction : IScopedBufferAction<T>
+#else
+		where TAction : IScopedBufferAction<T>, allows ref struct
 #endif
 	{
 		Int32 sizeOfT = sizeof(T);
-		Span<Byte> bytes = stackalloc Byte[count * sizeOfT];
+		Int32 totalBytes = action.Count * sizeOfT;
+		if (totalBytes > BufferManager.StackAllocationByteLimit)
+		{
+			BufferManager<T>.AllocHeap(ref action);
+			return;
+		}
+		Span<Byte> bytes = stackalloc Byte[totalBytes];
+#if NET7_0_OR_GREATER
+		bytes.Clear();
+#endif
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref T refT = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(bytes));
-		Span<T> span = MemoryMarshal.CreateSpan(ref refT, count);
+		Span<T> span = MemoryMarshal.CreateSpan(ref refT, action.Count);
+#else
+		void* ptr = Unsafe.AsPointer(ref MemoryMarshal.GetReference(bytes));
+		Span<T> span = MemoryMarshalCompat.CreateUnsafeSpan<T>(ptr, action.Count);
+#endif
 		ScopedBuffer<T> buffer = new(span, false, span.Length);
-		action(buffer, state);
+		action.Accept(buffer);
 	}
 	/// <summary>
-	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
+	/// Allocates a stack buffer with the required size for execution.
 	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
+	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, TFunction}"/>.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="count">Required buffer size.</param>
 	/// <param name="func">Function to execute.</param>
-	/// <returns><paramref name="func"/> result.</returns>
+	/// <param name="result">Output. Function result.</param>
+#if NET7_0_OR_GREATER
+	[SkipLocalsInit]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe TResult StackAlloc<T, TResult>(UInt16 count, ScopedBufferFunc<T, TResult> func)
-	{
-		Int32 sizeOfT = sizeof(T);
-		Span<Byte> bytes = stackalloc Byte[count * sizeOfT];
-		ref T refT = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(bytes));
-		Span<T> span = MemoryMarshal.CreateSpan(ref refT, count);
-		ScopedBuffer<T> buffer = new(span, false, span.Length);
-		return func(buffer);
-	}
-	/// <summary>
-	/// Allocates a stack buffer of size of <paramref name="count"/> elements.
-	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
-	/// <typeparam name="TState">Type of state object.</typeparam>
-	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="count">Required buffer size.</param>
-	/// <param name="state">State object.</param>
-	/// <param name="func">Function to execute.</param>
-	/// <returns><paramref name="func"/> result.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static unsafe TResult StackAlloc<T, TState, TResult>(UInt16 count, TState state,
-		ScopedBufferFunc<T, TState, TResult> func)
-#if NET9_0_OR_GREATER
-		where TState : allows ref struct
+	private static unsafe void StackAlloc<TFunction, TResult>(ref TFunction func, out TResult result)
+#if !NET9_0_OR_GREATER
+		where TFunction : IScopedBufferFunction<T, TResult>
+#else
+		where TFunction : IScopedBufferFunction<T, TResult>, allows ref struct
 #endif
 	{
 		Int32 sizeOfT = sizeof(T);
-		Span<Byte> bytes = stackalloc Byte[count * sizeOfT];
+		Int32 totalBytes = func.Count * sizeOfT;
+		if (totalBytes > BufferManager.StackAllocationByteLimit)
+		{
+			BufferManager<T>.AllocHeap(ref func, out result);
+			return;
+		}
+		Span<Byte> bytes = stackalloc Byte[totalBytes];
+#if NET7_0_OR_GREATER
+		bytes.Clear();
+#endif
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref T refT = ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetReference(bytes));
-		Span<T> span = MemoryMarshal.CreateSpan(ref refT, count);
+		Span<T> span = MemoryMarshal.CreateSpan(ref refT, func.Count);
+#else
+		void* ptr = Unsafe.AsPointer(ref MemoryMarshal.GetReference(bytes));
+		Span<T> span = MemoryMarshalCompat.CreateUnsafeSpan<T>(ptr, func.Count);
+#endif
 		ScopedBuffer<T> buffer = new(span, false, span.Length);
-		return func(buffer, state);
+		result = func.Apply(buffer);
 	}
-#pragma warning restore CS8500
 }

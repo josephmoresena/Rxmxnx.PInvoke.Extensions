@@ -1,6 +1,10 @@
 ﻿The `Rxmxnx.PInvoke.Extensions` library provides various methods and extensions to simplify working with unmanaged
 pointers and managed memory handling.
 
+For the capability overview, recipes, and API map, see the [extensions guide](../../../docs/api/extensions.md),
+[fixed memory](../../../docs/api/fixed-memory.md), [pointers](../../../docs/api/pointers.md), and
+[documentation hub](../../../docs/README.md).
+
 ---
 
 ## Managed Memory Handling
@@ -87,9 +91,9 @@ Console.WriteLine(Marshal.PtrToStringUTF8(lPtr));   // Output: "Rxmxnx.PInvoke.E
 Console.WriteLine(Marshal.ReadInt32(iPtr));         // Output: 20
 ```
 
-These methods should only be used with constants, literals, or pointers to stack-allocated memory,
-but they can also be used in scenarios involving native memory (known to be fixed) or managed memory allocated on the
-heap, fixed explicitly using `fixed` or `GCHandle.Alloc`.
+These methods should only be used with constants, literals, or pointers to stack-allocated memory, but they can also be
+used in scenarios involving native memory (known to be fixed) or managed memory allocated on the heap, fixed explicitly
+using `fixed` or `GCHandle.Alloc`.
 
 ```csharp
 Memory<Int32> values = new Int32[]

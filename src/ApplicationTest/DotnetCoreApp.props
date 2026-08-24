@@ -9,7 +9,7 @@
         <PublishTrimmed>true</PublishTrimmed>
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
         <TrimMode>full</TrimMode>
-        <NoWarn Condition="'$(PublishAotLegacy)' == 'true'">$(NoWran);IL3050;IL2026</NoWarn>
+        <NoWarn Condition="'$(PublishAotLegacy)' == 'true'">$(NoWarn);IL3050;IL2026</NoWarn>
     </PropertyGroup>
 
     <Import Project="NativeAot.props"/>
@@ -19,7 +19,7 @@
         <DebugSymbols>false</DebugSymbols>
         <DebugType>None</DebugType>
         <!-- Assembly name must specify that it was compiled with ReadyToRun -->
-        <AssemblyName Condition="$(PublishReadyToRun) == 'true'">$(AssemblyName).R2R</AssemblyName>
+        <AssemblyName Condition="'$(PublishReadyToRun)' == 'true'">$(AssemblyName).R2R</AssemblyName>
         <DefineConstants Condition="'$(PublishReadyToRun)' == 'true'">$(DefineConstants);R2R_EXECUTABLE</DefineConstants>
     </PropertyGroup>
     <PropertyGroup Condition="'$(PublishAot)' == 'true' Or '$(PublishAotLegacy)' == 'true' Or '$(IsNativeAotWebAssembly)' == 'true'">

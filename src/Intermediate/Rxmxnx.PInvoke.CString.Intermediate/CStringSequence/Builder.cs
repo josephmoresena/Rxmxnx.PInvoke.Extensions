@@ -23,9 +23,12 @@ public partial class CStringSequence
 		public Int32 Count => this._value.Count;
 
 		/// <summary>
-		/// Parameterless constructor.
+		/// Constructor.
 		/// </summary>
-		public Builder() => this._value = new([], new());
+		/// <param name="lengths">Lengths list.</param>
+		/// <param name="charBuffer">Characters buffer.</param>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Builder(List<Int32> lengths, CStringBuilder charBuffer) => this._value = new(lengths, charBuffer);
 
 		/// <summary>
 		/// Appends the specified UTF-8 text.
@@ -80,7 +83,7 @@ public partial class CStringSequence
 		/// <returns>The current instance after the append operation has completed.</returns>
 		public Builder Append(ReadOnlySpan<Char> value)
 		{
-			this._value.Append(value, Encoding.UTF8.GetByteCount(value));
+			this._value.Append(value, value.GetUtf8Count());
 			return this;
 		}
 		/// <summary>
@@ -201,7 +204,7 @@ public partial class CStringSequence
 #endif
 		public Builder Insert(Int32 index, ReadOnlySpan<Char> value)
 		{
-			this._value.Insert(index, value, Encoding.UTF8.GetByteCount(value));
+			this._value.Insert(index, value, value.GetUtf8Count());
 			return this;
 		}
 		/// <inheritdoc cref="CStringSequence.Builder.Value.RemoveAt(Int32)"/>

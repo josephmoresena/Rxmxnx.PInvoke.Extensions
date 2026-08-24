@@ -1,3 +1,7 @@
+#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
@@ -5,14 +9,6 @@ namespace Rxmxnx.PInvoke;
 /// </summary>
 public static partial class BufferManager
 {
-	/// <summary>
-	/// Current <see cref="IMetadataStorage"/> instance.
-	/// </summary>
-	internal static IMetadataStorage Storage
-	{
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get => MetadataStorage.Instance;
-	}
 	/// <summary>
 	/// Indicates whether metadata for any required buffer is auto-composed.
 	/// </summary>
@@ -39,80 +35,104 @@ public static partial class BufferManager
 #endif
 
 	/// <summary>
+	/// Current <see cref="IMetadataStorage"/> instance.
+	/// </summary>
+	internal static IMetadataStorage Storage
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => MetadataStorage.Instance;
+	}
+	/// <summary>
+	/// Maximum stack bytes usable per call.
+	/// </summary>
+	internal static readonly Int32 StackAllocationByteLimit = 3 * UInt16.MaxValue * IntPtr.Size / 2;
+
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="action"/>.
 	/// </summary>
 	/// <typeparam name="T">Type of items in allocated buffer.</typeparam>
-	/// <param name="count">Number of element in allocated buffer.</param>
+	/// <param name="count">Number of elements in allocated buffer.</param>
 	/// <param name="action">Action to perform with allocated buffer.</param>
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateMethods, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void Alloc<T>(UInt16 count, ScopedBufferAction<T> action, Boolean isMinimumCount = false)
-	{
-		if (typeof(T).IsValueType)
-			BufferManager.AllocValue(count, action, isMinimumCount);
-		else
-			BufferManager.AllocObject(count, action, isMinimumCount);
-	}
+		=> BufferManager<T>.Alloc(new ActionValue<T>(action) { Count = count, IsMinimalCount = isMinimumCount, });
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="action"/>.
 	/// </summary>
 	/// <typeparam name="T">Type of items in allocated buffer.</typeparam>
 	/// <typeparam name="TState">Type of state object.</typeparam>
-	/// <param name="count">Number of element in allocated buffer.</param>
+	/// <param name="count">Number of elements in allocated buffer.</param>
 	/// <param name="state">State object.</param>
 	/// <param name="action">Action to perform with allocated buffer.</param>
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateMethods, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static void Alloc<T, TState>(UInt16 count, TState state, ScopedBufferAction<T, TState> action,
 		Boolean isMinimumCount = false)
-#if NET9_0_OR_GREATER
-		where TState : allows ref struct
-#endif
-	{
-		if (typeof(T).IsValueType)
-			BufferManager.AllocValue(count, state, action, isMinimumCount);
-		else
-			BufferManager.AllocObject(count, state, action, isMinimumCount);
-	}
+		=> BufferManager<T>.Alloc(
+			new ActionValue<T, TState>(action, state) { Count = count, IsMinimalCount = isMinimumCount, });
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="func"/>.
 	/// </summary>
 	/// <typeparam name="T">Type of items in allocated buffer.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="count">Number of element in allocated buffer.</param>
+	/// <param name="count">Number of elements in allocated buffer.</param>
 	/// <param name="func">Function to execute with allocated buffer.</param>
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
 	/// <returns><paramref name="func"/> result.</returns>
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateMethods, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult Alloc<T, TResult>(UInt16 count, ScopedBufferFunc<T, TResult> func,
 		Boolean isMinimumCount = false)
-		=> typeof(T).IsValueType ?
-			BufferManager.AllocValue(count, func, isMinimumCount) :
-			BufferManager.AllocObject(count, func, isMinimumCount);
+	{
+		BufferManager<T>.Alloc(new FunctionValue<T, TResult>(func) { Count = count, IsMinimalCount = isMinimumCount, },
+		                       out TResult result);
+		return result;
+	}
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="func"/>.
 	/// </summary>
 	/// <typeparam name="T">Type of items in allocated buffer.</typeparam>
 	/// <typeparam name="TState">Type of state object.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="count">Number of element in allocated buffer.</param>
+	/// <param name="count">Number of elements in allocated buffer.</param>
 	/// <param name="state">State object.</param>
 	/// <param name="func">Function to execute with allocated buffer.</param>
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
 	/// <returns><paramref name="func"/> result.</returns>
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateMethods, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public static TResult Alloc<T, TState, TResult>(UInt16 count, TState state,
 		ScopedBufferFunc<T, TState, TResult> func, Boolean isMinimumCount = false)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
 #endif
-		=> typeof(T).IsValueType ?
-			BufferManager.AllocValue(count, state, func, isMinimumCount) :
-			BufferManager.AllocObject(count, state, func, isMinimumCount);
+	{
+		BufferManager<T>.Alloc(
+			new FunctionValue<T, TState, TResult>(func, state) { Count = count, IsMinimalCount = isMinimumCount, },
+			out TResult result);
+		return result;
+	}
+#endif
 
 	/// <summary>
 	/// Registers object buffer.
@@ -182,5 +202,126 @@ public static partial class BufferManager
 		// If unmanaged type, stackalloc should be used.
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
 		BufferManager.Storage.PrepareBinaryMetadata<T?>(count);
+	}
+}
+
+/// <summary>
+/// This class allows to allocate buffers on stack if possible.
+/// </summary>
+/// <typeparam name="T">Type of items in allocated buffer.</typeparam>
+public static partial class BufferManager<T>
+{
+	/// <summary>
+	/// Allocates a buffer with <see cref="IScopedBufferAction{T}.Count"/> elements and executes
+	/// <paramref name="action"/>.
+	/// </summary>
+	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/>.</typeparam>
+	/// <param name="action">Action to perform with allocated buffer.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void Alloc<TAction>(TAction? action)
+#if !NET9_0_OR_GREATER
+		where TAction : IScopedBufferAction<T>
+#else
+		where TAction : IScopedBufferAction<T>, allows ref struct
+#endif
+	{
+		if (action is null) return;
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+		if (typeof(T).IsValueType)
+#else
+		if (typeof(T).GetTypeInfo().IsValueType)
+#endif
+			BufferManager<T>.AllocValue(ref action);
+		else
+			BufferManager<T>.AllocObject(ref action);
+	}
+	/// <summary>
+	/// Allocates a buffer with <see cref="IScopedBufferFunction{T, TResult}.Count"/> elements and executes
+	/// <paramref name="func"/>.
+	/// </summary>
+	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
+	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, TResult}"/>.</typeparam>
+	/// <param name="func">Function to execute with allocated buffer.</param>
+	/// <param name="result">Output. Function result.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void Alloc<TResult, TFunction>(TFunction? func, out TResult result)
+#if !NET9_0_OR_GREATER
+		where TFunction : IScopedBufferFunction<T, TResult>
+#else
+		where TFunction : IScopedBufferFunction<T, TResult>, allows ref struct
+#endif
+	{
+		if (func is null)
+		{
+			Unsafe.SkipInit(out result);
+			return;
+		}
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+		if (typeof(T).IsValueType)
+#else
+		if (typeof(T).GetTypeInfo().IsValueType)
+#endif
+		{
+			BufferManager<T>.AllocValue(ref func, out result);
+			return;
+		}
+		BufferManager<T>.AllocObject(ref func, out result);
+	}
+
+	/// <summary>
+	/// Allocates a buffer with <see cref="IScopedBufferAction{T}.Count"/> elements and executes
+	/// <paramref name="action"/>.
+	/// </summary>
+	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/>.</typeparam>
+	/// <param name="action">Action to perform with allocated buffer.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void AllocWithReference<TAction>(ref TAction action)
+#if !NET9_0_OR_GREATER
+		where TAction : struct, IScopedBufferAction<T>
+#else
+		where TAction : struct, IScopedBufferAction<T>, allows ref struct
+#endif
+	{
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+		if (typeof(T).IsValueType)
+#else
+		if (typeof(T).GetTypeInfo().IsValueType)
+#endif
+			BufferManager<T>.AllocValue(ref action);
+		else
+			BufferManager<T>.AllocObject(ref action);
+	}
+	/// <summary>
+	/// Allocates a buffer with <see cref="IScopedBufferFunction{T, TResult}.Count"/> elements and executes
+	/// <paramref name="func"/>.
+	/// </summary>
+	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
+	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, TResult}"/>.</typeparam>
+	/// <param name="func">Function to execute with allocated buffer.</param>
+	/// <param name="result">Output. Function result.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void AllocWithReference<TResult, TFunction>(ref TFunction func, out TResult result)
+#if !NET9_0_OR_GREATER
+		where TFunction : struct, IScopedBufferFunction<T, TResult>
+#else
+		where TFunction : struct, IScopedBufferFunction<T, TResult>, allows ref struct
+#endif
+	{
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+		if (typeof(T).IsValueType)
+#else
+		if (typeof(T).GetTypeInfo().IsValueType)
+#endif
+		{
+			BufferManager<T>.AllocValue(ref func, out result);
+			return;
+		}
+		BufferManager<T>.AllocObject(ref func, out result);
 	}
 }

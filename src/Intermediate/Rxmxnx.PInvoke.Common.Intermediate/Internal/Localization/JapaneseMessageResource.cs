@@ -40,6 +40,7 @@ internal sealed class JapaneseMessageResource : IMessageResource
 	String IMessageResource.IndexOutOfSequence => "インデックスと長さはシーケンス内の位置を参照する必要があります。";
 	String IMessageResource.MissingMemoryInspector => "現在のプラットフォームではメモリ検査はサポートされていません。";
 	String IMessageResource.ReflectionDisabled => "この機能を使用するにはフルリフレクションモードが必要です。";
+	String IMessageResource.InvalidSpanLayout => "Span<T> のレイアウト内で固定可能なフィールドを特定できません。";
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"オブジェクトは {requiredTypeName} 型である必要があります。";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf) => $"現在のインスタンスは、{typeOf} 型の値を含むには不十分です。";
@@ -47,7 +48,7 @@ internal sealed class JapaneseMessageResource : IMessageResource
 		=> $"パラメータ {nameofSpan} の長さは {sizeOf} である必要があります。";
 	String IMessageResource.InvalidCopyUnmanagedType(String nameofSpan, String nameofValue)
 		=> $"{nameofSpan} に {nameofValue} をコピーするには十分な空きサイズがありません。";
-	String IMessageResource.InvalidLength(String nameofLength) => $"パラメータ {nameofLength} はゼロまたは正の整数である必要があります。";
+	String IMessageResource.InvalidLengthOrIndex(String nameofLength) => $"パラメータ {nameofLength} はゼロまたは正の整数である必要があります。";
 	String IMessageResource.NotUnmanagedType(Type type) => $"{type} は非管理型ではありません。";
 	String IMessageResource.NotValueType(Type type) => $"{type} は値型ではありません。";
 	String IMessageResource.NotReferenceType(Type type) => $"{type} は参照型ではありません。";

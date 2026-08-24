@@ -28,7 +28,7 @@ SOFTWARE.
 // Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Blc.Memory 10.0.8
 // (System.Numerics.BitOperations)
 
-#if !NETCOREAPP
+#if !NETCOREAPP3_0_OR_GREATER
 namespace System.Numerics;
 
 /// <summary>

@@ -3,7 +3,7 @@ namespace Rxmxnx.PInvoke.Internal.Localization;
 /// <summary>
 /// This interface exposes a message resource type.
 /// </summary>
-internal partial interface IMessageResource
+internal interface IMessageResource
 {
 	/// <summary>
 	/// Message for invalid list index exception.
@@ -81,6 +81,10 @@ internal partial interface IMessageResource
 	/// Message for reflection disabled.
 	/// </summary>
 	String ReflectionDisabled { get; }
+	/// <summary>
+	/// Message for invalid three-field span layout.
+	/// </summary>
+	String InvalidSpanLayout { get; }
 
 	/// <summary>
 	/// Message for invalid pointer value exception.
@@ -101,7 +105,7 @@ internal partial interface IMessageResource
 	/// <summary>
 	/// Message for invalid length exception.
 	/// </summary>
-	String InvalidLength(String nameofLength);
+	String InvalidLengthOrIndex(String nameofLength);
 	/// <summary>
 	/// Message for not unmanaged type exception.
 	/// </summary>

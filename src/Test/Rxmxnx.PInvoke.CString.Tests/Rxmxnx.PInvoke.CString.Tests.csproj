@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <Import Project="..\Tests.props"/>
-    <Import Condition="'$(TargetFramework)' == 'netstandard2.1'" Project="..\MonoTests.targets"/>
-    <Import Condition="'$(TargetFramework)' != 'netstandard2.1' And '$(MultipleFrameworkTest)' == 'true'" Project="..\DotnetCoreAppTests.targets"/>
+    <Import Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'netstandard2.1'" Project="..\MonoTests.targets"/>
+    <Import Condition="'$(TargetFramework)' != 'netstandard2.0' And '$(TargetFramework)' != 'netstandard2.1' And '$(MultipleFrameworkTest)' == 'true'" Project="..\DotnetCoreAppTests.targets"/>
 
     <ItemGroup>
-        <Using Condition="'$(TargetFramework)' != 'netstandard2.1'" Include="Xunit"/>
-        <Using Condition="'$(TargetFramework)' != 'netstandard2.1'" Include="Xunit.Sdk"/>
-        <Using Condition="'$(TargetFramework)' == 'netstandard2.1'" Include="NUnit.Framework"/>
+        <Using Condition="'$(TargetFrameworkIdentifier)' != '.NETStandard'" Include="Xunit"/>
+        <Using Condition="'$(TargetFrameworkIdentifier)' != '.NETStandard'" Include="Xunit.Sdk"/>
+        <Using Condition="'$(TargetFrameworkIdentifier)' == '.NETStandard'" Include="NUnit.Framework"/>
         <Using Include="AutoFixture"/>
         <Using Include="System.Buffers"/>
         <Using Include="System.Collections.Concurrent"/>
@@ -17,8 +17,6 @@
         <Using Include="System.Runtime.InteropServices"/>
         <Using Include="System.Reflection"/>
         <Using Include="System.Text"/>
-        <Using Include="System.Text.Json"/>
-        <Using Include="System.Text.Json.Serialization"/>
 
         <Using Include="Rxmxnx.PInvoke"/>
         <Using Include="Rxmxnx.PInvoke.Internal"/>
@@ -29,7 +27,6 @@
     <ItemGroup>
         <ProjectReference Include="..\..\Intermediate\Rxmxnx.PInvoke.CString.Intermediate\Rxmxnx.PInvoke.CString.Intermediate.csproj"/>
         <ProjectReference Include="..\Rxmxnx.PInvoke.CString.Tests.SourceGenerator\Rxmxnx.PInvoke.CString.Tests.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" SetTargetFramework="TargetFramework=netstandard2.0"/>
-        <!--<PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>-->
     </ItemGroup>
 
 </Project>

@@ -40,10 +40,15 @@ public sealed class JoinCStringTest
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		CString resultCString = CString.Join(separator, values);
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
+		String resultCStringCString = CString.GetBytes(resultCString).AsSpan()[..^1].ToUtf16();
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+#else
+		PInvokeAssert.True(expectedResultCString.AsSpan()
+		                                        .SequenceEqual(CString.GetBytes(resultCString).AsSpan()[..^1]));
+#endif
 	}
 	private static void EnumerableTest(CString? separator, String?[] strings, IEnumerable<CString?> values)
 	{
@@ -52,10 +57,15 @@ public sealed class JoinCStringTest
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		CString resultCString = CString.Join(separator, values);
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
+		String resultCStringCString = CString.GetBytes(resultCString).AsSpan()[..^1].ToUtf16();
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+#else
+		PInvokeAssert.True(expectedResultCString.AsSpan()
+		                                        .SequenceEqual(CString.GetBytes(resultCString).AsSpan()[..^1]));
+#endif
 	}
 	private static void ArrayRangeTest(CString? separator, String?[] strings, CString?[] values)
 	{
@@ -66,10 +76,15 @@ public sealed class JoinCStringTest
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		CString resultCString = CString.Join(separator, values, startIndex, count);
-		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
+		String resultCStringCString = CString.GetBytes(resultCString).AsSpan()[..^1].ToUtf16();
 
 		PInvokeAssert.Equal(expectedCString, resultCStringCString);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(expectedResultCString, CString.GetBytes(resultCString)[..^1]);
+#else
+		PInvokeAssert.True(expectedResultCString.AsSpan()
+		                                        .SequenceEqual(CString.GetBytes(resultCString).AsSpan()[..^1]));
+#endif
 	}
 	private static CString? GetCStringSeparator(TestMemoryHandle handle)
 	{

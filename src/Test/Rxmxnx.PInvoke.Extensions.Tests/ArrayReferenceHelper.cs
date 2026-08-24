@@ -1,6 +1,7 @@
 #if !NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Tests;
 
+[ExcludeFromCodeCoverage]
 internal static class ArrayReferenceHelper
 {
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

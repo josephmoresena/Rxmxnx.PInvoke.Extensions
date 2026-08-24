@@ -8,6 +8,7 @@ namespace Rxmxnx.PInvoke.Internal;
 #endif
 internal static class TrimInfo
 {
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	/// <summary>
 	/// Web Assembly .NET Architecture.
 	/// </summary>
@@ -15,6 +16,7 @@ internal static class TrimInfo
 	public const Architecture WasmArch = (Architecture)4;
 #else
 	public const Architecture WasmArch = Architecture.Wasm;
+#endif
 #endif
 
 	/// <summary>
@@ -57,6 +59,8 @@ internal static class TrimInfo
 #if NET5_0_OR_GREATER
 		return TrimInfo.IsDesktopTrimmedPlatform() || TrimInfo.IsMobileTrimmedPlatform() ||
 			TrimInfo.IsWebTrimmedPlatform();
+#elif UAP10_0
+		return true;
 #else
 		return false;
 #endif
@@ -72,7 +76,11 @@ internal static class TrimInfo
 	{
 		try
 		{
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 			return assemblyType.Assembly.GetType(typeFullName);
+#else
+			return assemblyType.GetTypeInfo().Assembly.GetType(typeFullName);
+#endif
 		}
 		catch (Exception)
 		{

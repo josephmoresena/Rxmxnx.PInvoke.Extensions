@@ -23,7 +23,6 @@ public sealed class SegmentTests
 		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(varIndex, zero));
 		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(zero, 1));
 		PInvokeAssert.Throws<ArgumentOutOfRangeException>(() => CString.Empty.Slice(varIndex, 1));
-		return;
 	}
 
 	[Fact]
@@ -118,7 +117,7 @@ public sealed class SegmentTests
 	}
 	private static ReadOnlySpan<Int32> GetIndices(ReadOnlySpan<Byte> source)
 	{
-		List<Int32> result = new(Encoding.UTF8.GetCharCount(source));
+		List<Int32> result = new(source.GetUtf16Count());
 		Int32 length = default;
 
 		while (length < source.Length)

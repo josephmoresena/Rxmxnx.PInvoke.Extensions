@@ -16,10 +16,13 @@ namespace Rxmxnx.PInvoke;
 #endif
 [DebuggerDisplay("{ToString()}")]
 [DebuggerTypeProxy(typeof(CStringDebugView))]
-#if NETCOREAPP
+#if NETCOREAPP || NET461_OR_GREATER
 [JsonConverter(typeof(JsonConverter))]
 #endif
-public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatable<String>
+public sealed partial class CString : IEquatable<CString>, IEquatable<String>
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+	, ICloneable
+#endif
 {
 	/// <summary>
 	/// Represents an empty UTF-8 string. This field is read-only.
@@ -158,6 +161,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// the new instance.
 	/// </param>
 	public CString(ReadOnlySpanFunc<Byte> func) : this(func, true) { }
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Object Clone()
@@ -169,6 +173,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		bytes[^1] = default;
 		return new CString(bytes, true);
 	}
+#endif
 
 	/// <inheritdoc/>
 	public Boolean Equals([NotNullWhen(true)] CString? other)
@@ -254,7 +259,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		{
 			0 => String.Empty.GetHashCode(),
 			_ when MarvinCompat.DefaultSeed.HasValue => MarvinCompat.GetHashCode(this.AsSpan()),
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 			<= StackAllocationHelper.StackallocByteThreshold => CString.GetStringHashCode(this.AsSpan()),
 #endif
 			_ when this.CachedValue is { } result => result.GetHashCode(),
@@ -269,8 +274,10 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// This method is used to support the use of a <see cref="CString"/> within a fixed statement.
 	/// It should not be used in typical code.
 	/// </remarks>
-	[EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	[Browsable(false)]
+#endif
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	public ref readonly Byte GetPinnableReference() => ref MemoryMarshal.GetReference(this._data.AsSpan());
 	/// <summary>
 	/// Copies the UTF-8 text of the current <see cref="CString"/> instance into a new byte array.
@@ -353,7 +360,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// <param name="source">A read-only span of UTF-8 characters.</param>
 	/// <returns>A new instance of the <see cref="CString"/> class.</returns>
 	public static CString Create(ReadOnlySpan<Byte> source)
-		=> source.Length == 0 ? CString.Empty : new(source.ToArray(), false);
+		=> source.Length == 0 ? CString.Empty : new([.. source,], false);
 	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using the
 	/// <see cref="ReadOnlySpanFunc{Byte}"/> delegate provided.
@@ -483,7 +490,11 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 	/// </returns>
 	public static CStringSequence? GetAssociatedSequence(CString? value, out Int32 index)
 	{
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		if (!CString.IsNullOrEmpty(value) && value._data is IWrapper.IBase<BufferItemState<CStringSequence>> state)
+#else
+		if (!CString.IsNullOrEmpty(value) && value._data is IWrapper<BufferItemState<CStringSequence>> state)
+#endif
 			return state.Value.GetSequence(out index);
 
 		index = -1;
@@ -527,6 +538,7 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		length += CString.FinalizeBuffer(helper.Bytes, TextUnescape.Unescape(helper.Bytes[..length]), helper.HasArray);
 		return new(helper, length);
 	}
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Returns the hash code for the provided read-only UTF-8 unit span.
 	/// </summary>
@@ -537,9 +549,10 @@ public sealed partial class CString : ICloneable, IEquatable<CString>, IEquatabl
 		{
 			0 => String.Empty.GetHashCode(),
 			_ when MarvinCompat.DefaultSeed.HasValue => MarvinCompat.GetHashCode(value),
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 			<= StackAllocationHelper.StackallocByteThreshold => CString.GetStringHashCode(value),
 #endif
 			_ => CString.ToUtf16(value).GetHashCode(),
 		};
+#endif
 }

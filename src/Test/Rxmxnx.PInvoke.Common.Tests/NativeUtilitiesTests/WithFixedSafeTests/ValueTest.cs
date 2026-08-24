@@ -7,7 +7,11 @@ public sealed class ValueTest
 {
 	private static readonly IFixture fixture = new Fixture();
 
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	private IReferenceableWrapper? _wraper;
+#else
+	private Object? _wraper;
+#endif
 
 	[Fact]
 	public void ByteTest() => this.Test<Byte>();
@@ -42,11 +46,21 @@ public sealed class ValueTest
 	[Fact]
 	public void UInt64Test() => this.Test<UInt64>();
 
+#pragma warning disable CS0612
 	private void Test<T>() where T : unmanaged
 	{
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		IReferenceableWrapper<T> value = IReferenceableWrapper.Create(ValueTest.fixture.Create<T>());
+#else
+		IReferenceableWrapper<T> value = WrapperFactory.CreateReadOnlyReferenceable(ValueTest.fixture.Create<T>());
+#endif
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Byte[] bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref Unsafe.AsRef(in value.Reference), 1))
 		                            .ToArray();
+#else
+
+		Byte[] bytes = NativeUtilities.ToBytes(in value.Reference);
+#endif
 
 		this._wraper = value;
 		NativeUtilities.WithSafeFixed(value.Reference, this.TestActionMethod);
@@ -54,13 +68,16 @@ public sealed class ValueTest
 		PInvokeAssert.Equal(bytes, NativeUtilities.WithSafeFixed(value.Reference, this.TestFuncMethod));
 		PInvokeAssert.Equal(bytes, NativeUtilities.WithSafeFixed(value.Reference, this, ValueTest.TestFuncMethod));
 	}
+#pragma warning restore CS0612
 
+	[Obsolete]
 	private unsafe void TestActionMethod<T>(in IReadOnlyFixedReference<T> fRef) where T : unmanaged
 	{
 		IReferenceableWrapper<T> wrapper = (IReferenceableWrapper<T>)this._wraper!;
 		Byte[] bytes = new ReadOnlySpan<Byte>(fRef.Pointer.ToPointer(), sizeof(T)).ToArray();
 		PInvokeAssert.Equal(wrapper.Value, fRef.Reference);
 		PInvokeAssert.Equal(wrapper.Value, Unsafe.Read<T>(fRef.Pointer.ToPointer()));
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(sizeof(T), fRef.Bytes.Length);
 		PInvokeAssert.Equal(bytes, fRef.Bytes.ToArray());
 
@@ -69,6 +86,7 @@ public sealed class ValueTest
 		PInvokeAssert.Equal(bytes, ctx.Values.ToArray());
 		PInvokeAssert.Equal(bytes, ctx.Bytes.ToArray());
 		PInvokeAssert.Equal(fRef.Pointer, ctx.Pointer);
+#endif
 
 		ValueTest.Test<T, Boolean>(fRef, bytes);
 		ValueTest.Test<T, Byte>(fRef, bytes);
@@ -89,6 +107,7 @@ public sealed class ValueTest
 		ValueTest.Test<T, UInt32>(fRef, bytes);
 		ValueTest.Test<T, UInt64>(fRef, bytes);
 	}
+#pragma warning disable CS0612
 	private unsafe Byte[] TestFuncMethod<T>(in IReadOnlyFixedReference<T> fRef) where T : unmanaged
 	{
 		this.TestActionMethod(fRef);
@@ -97,21 +116,32 @@ public sealed class ValueTest
 
 	private static void TestActionMethod<T>(in IReadOnlyFixedReference<T> fRef, ValueTest test) where T : unmanaged
 		=> test.TestActionMethod(fRef);
+#pragma warning restore CS0612
 	private static Byte[] TestFuncMethod<T>(in IReadOnlyFixedReference<T> fRef, ValueTest test) where T : unmanaged
 		=> test.TestFuncMethod(fRef);
+	[Obsolete]
 	private static unsafe void Test<T, T2>(IReadOnlyFixedReference<T> fRef, Byte[] bytes)
 		where T : unmanaged where T2 : unmanaged
 	{
 		if (sizeof(T) >= sizeof(T2))
 		{
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			IReadOnlyFixedReference<T2> fRef2 = fRef.Transformation<T2>(out IReadOnlyFixedMemory residual);
 			IReadOnlyFixedContext<Byte> ctx = fRef2.AsBinaryContext();
 			IReadOnlyFixedContext<Byte> ctxR = residual.AsBinaryContext();
-			Int32 count = bytes.Length / sizeof(T2);
+#else
+			IReadOnlyFixedReference<T2> fRef2 = fRef.Transformation<T2>();
+#endif
 
 			if (typeof(T) == typeof(T2))
 				PInvokeAssert.Equal((Object)fRef.Reference, fRef2.Reference);
-			else if (sizeof(T2) == sizeof(T2))
+			else if (sizeof(T) % sizeof(T2) == 0)
+#if (!NETSTANDARD2_1 || LEGACY) && !NETCOREAPP3_0_OR_GREATER
+				PInvokeAssert.Equal(
+					bytes,
+					new ReadOnlySpan<Byte>(Unsafe.AsPointer(ref Unsafe.AsRef(in fRef2.Reference)), bytes.Length)
+						.ToArray());
+#else
 				PInvokeAssert.Equal(bytes, fRef2.Bytes.ToArray());
 			else
 				PInvokeAssert.Equal(bytes, fRef2.Bytes.ToArray().Concat(residual.Bytes.ToArray()));
@@ -126,10 +156,15 @@ public sealed class ValueTest
 			PInvokeAssert.Equal(fRef2.Pointer, ctx.Pointer);
 			PInvokeAssert.Equal(bytes[sizeof(T2)..], ctxR.Bytes.ToArray());
 			PInvokeAssert.Equal(residual.Pointer, ctxR.Pointer);
+#endif
 		}
 		else
 		{
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 			PInvokeAssert.Throws<InsufficientMemoryException>(() => fRef.Transformation<T2>(out _));
+#else
+			PInvokeAssert.Throws<InsufficientMemoryException>(fRef.Transformation<T2>);
+#endif
 		}
 	}
 }

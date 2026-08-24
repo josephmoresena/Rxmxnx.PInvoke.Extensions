@@ -46,8 +46,13 @@ public static partial class TestCompiler
 	}
 	public static async Task CompileMono(DirectoryInfo projectDirectory, MonoLauncher monoLauncher, String outputPath)
 	{
-		FileInfo[] appProjectFiles = projectDirectory.GetDirectories("*.*ApplicationTest", SearchOption.AllDirectories)
-		                                             .SelectMany(d => d.GetFiles("*.*proj")).ToArray();
+		FileInfo[] appProjectFiles =
+		[
+			.. projectDirectory.GetDirectories("*.ApplicationTest", SearchOption.AllDirectories)
+			                   .SelectMany(d => d.GetFiles("*.*proj")),
+			.. projectDirectory.GetDirectories("*.ApplicationTest.Legacy", SearchOption.AllDirectories)
+			                   .SelectMany(d => d.GetFiles("*.*proj")),
+		];
 		foreach (FileInfo appProjectFile in appProjectFiles)
 		{
 			String appDirectory = appProjectFile.DirectoryName ?? String.Empty;
@@ -69,5 +74,76 @@ public static partial class TestCompiler
 			};
 			await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
 		}
+	}
+	[SupportedOSPlatform("WINDOWS")]
+	public static async Task CompileAppx(String msbuildPath, DirectoryInfo projectDirectory, String outputPath)
+	{
+		String[] appProjectFiles = projectDirectory
+		                           .GetDirectories("*.*ApplicationTest.Windows", SearchOption.AllDirectories)
+		                           .SelectMany(d => d.GetFiles("*.*proj")).Select(f => f.FullName).ToArray();
+		Int32 bundleCount = 0;
+		foreach (String appProjectFile in appProjectFiles)
+		{
+			DirectoryInfo tempDirectory = new(Path.Combine(Path.GetTempPath(), $"{Guid.CreateVersion7()}"));
+			ExecuteState<CompileAppxArgs> state = new()
+			{
+				ExecutablePath = msbuildPath,
+				ArgState = new() { ProjectPath = appProjectFile, OutputPath = tempDirectory.FullName, },
+				AppendArgs = CompileAppxArgs.Append,
+				Notifier = ConsoleNotifier.Notifier,
+			};
+
+			tempDirectory.Create();
+			Int32 result = await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
+			FileInfo[] bundles = tempDirectory.GetFiles("*.appxbundle", SearchOption.AllDirectories);
+			foreach (FileInfo appx in bundles)
+				appx.MoveTo(Path.Combine(outputPath, appx.Name), true);
+			bundleCount += bundles.Length;
+			tempDirectory.Delete(true);
+			if (result != 0)
+				ConsoleNotifier.Notifier.PrintError(
+					$"UWP compilation failed with exit code 0x{result:x8}.", default);
+			if (Utilities.ShowDiagnostics)
+				ConsoleNotifier.ShowDiskUsage();
+		}
+		if (bundleCount == 0)
+			ConsoleNotifier.Notifier.PrintError("No .appxbundle artifact was produced.", default);
+	}
+	[SupportedOSPlatform("WINDOWS")]
+	public static async Task<String[]> CompileFramework(DirectoryInfo projectDirectory)
+	{
+		FileInfo[] appProjectFiles = projectDirectory
+		                             .GetDirectories("*.ApplicationTest.Legacy", SearchOption.AllDirectories)
+		                             .SelectMany(static d => d.GetFiles("*.*proj")).ToArray();
+		foreach (FileInfo appProjectFile in appProjectFiles)
+		{
+			String appDirectory = appProjectFile.DirectoryName ?? String.Empty;
+			foreach (String platformTarget in TestCompiler.GetFrameworkPlatformTargets())
+			{
+				ExecuteState<CompileFrameworkArgs> state = new()
+				{
+					ExecutablePath = "dotnet",
+					WorkingDirectory = appDirectory,
+					ArgState = new()
+					{
+						ProjectFile = appProjectFile.FullName,
+						PlatformTarget = platformTarget,
+					},
+					AppendArgs = CompileFrameworkArgs.Append,
+					Notifier = ConsoleNotifier.Notifier,
+				};
+				Int32 result = await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
+				if (result != 0)
+					ConsoleNotifier.Notifier.PrintError(
+						$".NET Framework {platformTarget} legacy compilation failed with exit code 0x{result:x8}.",
+						default);
+				if (Utilities.ShowDiagnostics)
+					ConsoleNotifier.ShowDiskUsage();
+			}
+		}
+		String[] executablePaths = TestCompiler.GetFrameworkExecutables(projectDirectory);
+		if (executablePaths.Length == 0)
+			ConsoleNotifier.Notifier.PrintError("No .NET Framework legacy executables were produced.", default);
+		return executablePaths;
 	}
 }

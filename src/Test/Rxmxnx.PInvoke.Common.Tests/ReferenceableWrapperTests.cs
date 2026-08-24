@@ -57,16 +57,24 @@ public sealed class ReferenceableWrapperTests
 	{
 		T value = ReferenceableWrapperTests.fixture.Create<T>();
 		T value2 = ReferenceableWrapperTests.fixture.Create<T>();
+#if (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER) && !LEGACY
 		IReferenceableWrapper<T>? result = IReferenceableWrapper.Create(value);
 		IReferenceableWrapper<T> result2 = IReferenceableWrapper.Create(value);
+#else
+		IReferenceableWrapper<T>? result = WrapperFactory.CreateReferenceable(value);
+		IReferenceableWrapper<T> result2 = WrapperFactory.CreateReferenceable(value);
+#endif
 		ReferenceableWrapper<T> result3 = new(result);
 		ref readonly T refValue = ref result.Reference;
 		ref T mutableValueRef = ref Unsafe.AsRef(in result.Reference);
+		Boolean isEquatable = typeof(ReferenceableWrapper<T>).GetInterfaces()
+		                                                     .Any(i => i == typeof(IEquatable<IReferenceable<T>>));
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(value, result.Value);
 		PInvokeAssert.Equal(value, refValue);
-		PInvokeAssert.True(result.Equals(value));
-		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
+		PInvokeAssert.Equal(isEquatable, result.Equals(value));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
 #if NET8_0_OR_GREATER
 		Assert.True(Unsafe.AreSame(in result.Reference, ref mutableValueRef));
 		Assert.False(Unsafe.AreSame(in result.Reference, ref value));
@@ -75,7 +83,7 @@ public sealed class ReferenceableWrapperTests
 		PInvokeAssert.False(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref value));
 #endif
 		PInvokeAssert.False(result.Equals(result2));
-		PInvokeAssert.True(result.Equals(result3));
+		PInvokeAssert.Equal(isEquatable, result.Equals(result3));
 		PInvokeAssert.False(result.Equals(default(IReferenceable<T>)!));
 	}
 	private static void Nullable<T>(Boolean nullInput) where T : unmanaged
@@ -84,15 +92,23 @@ public sealed class ReferenceableWrapperTests
 		T? value2 = ReferenceableWrapperTests.fixture.Create<Boolean>() ?
 			ReferenceableWrapperTests.fixture.Create<T>() :
 			null;
+#if (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER) && !LEGACY
 		IReferenceableWrapper<T?>? result = IReferenceableWrapper.CreateNullable(value);
 		IReferenceableWrapper<T?> result2 = IReferenceableWrapper.CreateNullable(value);
+#else
+		IReferenceableWrapper<T?>? result = WrapperFactory.CreateReferenceableNullable(value);
+		IReferenceableWrapper<T?> result2 = WrapperFactory.CreateReferenceableNullable(value);
+#endif
 		ReferenceableWrapper<T?> result3 = new(result);
 		ref readonly T? refValue = ref result.Reference;
 		ref T? mutableValueRef = ref Unsafe.AsRef(in result.Reference);
+		Boolean isEquatable = typeof(ReferenceableWrapper<T[]>).GetInterfaces()
+		                                                       .Any(i => i == typeof(IEquatable<IReferenceable<T[]>>));
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(value, refValue);
 		PInvokeAssert.Equal(value, result.Value);
-		PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
+		if (isEquatable)
+			PInvokeAssert.Equal(Object.Equals(value, value2), result.Equals(value2));
 #if NET8_0_OR_GREATER
 		Assert.True(Unsafe.AreSame(in result.Reference, ref mutableValueRef));
 		Assert.False(Unsafe.AreSame(in result.Reference, ref value));
@@ -101,22 +117,31 @@ public sealed class ReferenceableWrapperTests
 		PInvokeAssert.False(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref value));
 #endif
 		PInvokeAssert.False(result.Equals(result2));
-		PInvokeAssert.True(result.Equals(result3));
+		PInvokeAssert.Equal(isEquatable, result.Equals(result3));
 		PInvokeAssert.False(result.Equals(default(IReferenceable<T>)));
 	}
 	private static void ObjectTest<T>() where T : unmanaged
 	{
 		T[] array = ReferenceableWrapperTests.fixture.CreateMany<T>().ToArray();
 		T[] array2 = ReferenceableWrapperTests.fixture.CreateMany<T>().ToArray();
+#if (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER) && !LEGACY
 		IReferenceableWrapper<T[]>? result = IReferenceableWrapper.CreateObject(array);
 		IReferenceableWrapper<T[]> result2 = IReferenceableWrapper.CreateObject(array);
+#else
+		IReferenceableWrapper<T[]>? result = WrapperFactory.CreateReferenceableObject(array);
+		IReferenceableWrapper<T[]> result2 = WrapperFactory.CreateReferenceableObject(array);
+#endif
 		ReferenceableWrapper<T[]> result3 = new(result);
 		ref readonly T[] refValue = ref result.Reference;
 		ref T[] mutableValueRef = ref Unsafe.AsRef(in result.Reference);
+		Boolean isEquatable = typeof(IReferenceableWrapper<T[]>).GetInterfaces()
+		                                                        .Any(i => i ==
+			                                                             typeof(IEquatable<
+				                                                             IReadOnlyReferenceable<T[]>>));
 		PInvokeAssert.NotNull(result);
 		PInvokeAssert.Equal(array, result.Value);
 		PInvokeAssert.Equal(array, refValue);
-		PInvokeAssert.True(result.Equals(array));
+		PInvokeAssert.Equal(isEquatable, result.Equals(array));
 		PInvokeAssert.Equal(Object.Equals(array, array2), result.Equals(array2));
 #if NET8_0_OR_GREATER
 		Assert.True(Unsafe.AreSame(in result.Reference, ref mutableValueRef));
@@ -126,7 +151,7 @@ public sealed class ReferenceableWrapperTests
 		PInvokeAssert.False(Unsafe.AreSame(ref Unsafe.AsRef(in result.Reference), ref array));
 #endif
 		PInvokeAssert.False(result.Equals(result2));
-		PInvokeAssert.True(result.Equals(result3));
+		PInvokeAssert.Equal(isEquatable, result.Equals(result3));
 		PInvokeAssert.False(result.Equals(default(IReferenceable<T>)));
 	}
 }

@@ -1,3 +1,7 @@
+#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
 namespace Rxmxnx.PInvoke.Tests;
 
 [TestFixture]
@@ -5,6 +9,7 @@ namespace Rxmxnx.PInvoke.Tests;
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed unsafe class MultipleAllocTest
 {
+#pragma warning disable CS0612
 	[Fact]
 	public void BooleanTest() => MultipleAllocTest.MultipleAlloc<Boolean>();
 	[Fact]
@@ -74,20 +79,27 @@ public sealed unsafe class MultipleAllocTest
 	public void Int64ArrayWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<Int64[]?>>();
 	[Fact]
 	public void StringWrapperTest() => MultipleAllocTest.MultipleAlloc<WrapperStruct<String?>>();
+#pragma warning restore CS0612
 
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+	[Obsolete]
+#endif
 	private static void MultipleAlloc<T>()
 	{
 		UInt16 count = (UInt16)(Math.Pow(2, PInvokeRandom.Shared.Next(2, 4)) - 1);
 		Span<IntPtr> span0 = stackalloc IntPtr[5];
+		Exception exception = new();
+		// ReSharper disable once InlineOutVariableDeclaration
+		// ReSharper disable once JoinDeclarationAndInitializer
+		Boolean inStack;
 		span0[0] = (IntPtr)Unsafe.AsPointer(ref MemoryMarshal.GetReference(span0));
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		ValPtr<IntPtr> ptrPtr = NativeUtilities.GetUnsafeValPtrFromRef(ref span0[0]);
 		BufferManager.Alloc<T>(count, MultipleAllocTest.Do);
 		BufferManager.Alloc<T, ValPtr<IntPtr>>(count, ptrPtr, MultipleAllocTest.Do);
-		Boolean inStack = BufferManager.Alloc<T, Boolean>(count, MultipleAllocTest.Get);
+		inStack = BufferManager.Alloc<T, Boolean>(count, MultipleAllocTest.Get);
 		PInvokeAssert.Equal(default, BufferManager.Alloc<T, ValPtr<IntPtr>, T>(count, ptrPtr, MultipleAllocTest.Get));
 		PInvokeAssert.True(inStack);
-
-		Exception exception = new();
 
 		PInvokeAssert.Equal(
 			exception, PInvokeAssert.ThrowsAny<Exception>(() => BufferManager.Alloc<T>(count, ThrowDo)));
@@ -100,12 +112,26 @@ public sealed unsafe class MultipleAllocTest
 			exception,
 			PInvokeAssert.ThrowsAny<Exception>(() => BufferManager.Alloc<T, Exception, T>(
 				                                   count, exception, ThrowGetEx)));
+#endif
+		BufferManager<T>.Alloc(new ScopedBufferAction<T>(count));
+		BufferManager<T>.Alloc(new ScopedBufferFunction<T>(count), out inStack);
+		PInvokeAssert.True(inStack);
+		PInvokeAssert.Equal(
+			exception,
+			PInvokeAssert.ThrowsAny<Exception>(() => BufferManager<T>.Alloc(
+				                                   new ScopedBufferAction<T>(count, exception))));
+		PInvokeAssert.Equal(
+			exception,
+			PInvokeAssert.ThrowsAny<Exception>(() => BufferManager<T>.Alloc(
+				                                   new ScopedBufferFunction<T>(count, exception), out inStack)));
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		return;
 
 		void ThrowDo(ScopedBuffer<T> buffer) => throw exception;
 		void ThrowDoEx(ScopedBuffer<T> buffer, Exception ex) => throw ex;
 		T ThrowGet(ScopedBuffer<T> buffer) => throw exception;
 		T ThrowGetEx(ScopedBuffer<T> buffer, Exception ex) => throw ex;
+#endif
 	}
 	private static void Do<T>(ScopedBuffer<T> buffer)
 	{
@@ -128,19 +154,43 @@ public sealed unsafe class MultipleAllocTest
 		PInvokeAssert.Equal(buffer.Span.Length, buffer.BufferMetadata.Size);
 		PInvokeAssert.InRange(buffer.BufferMetadata.ComponentCount, 0, 2);
 	}
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	private static void Do<T>(ScopedBuffer<T> buffer, ValPtr<IntPtr> ptrPtr)
 	{
 		MultipleAllocTest.Do(buffer);
 		PInvokeAssert.True(ptrPtr.Pointer == ptrPtr.Reference);
 	}
+#endif
 	private static Boolean Get<T>(ScopedBuffer<T> buffer)
 	{
 		MultipleAllocTest.Do(buffer);
 		return buffer.InStack;
 	}
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	private static T Get<T>(ScopedBuffer<T> buffer, ValPtr<IntPtr> ptrPtr)
 	{
 		MultipleAllocTest.Do(buffer, ptrPtr);
 		return buffer.Span[0];
+	}
+#endif
+
+	private readonly struct ScopedBufferAction<T>(UInt16 count, Exception? exception = default) : IScopedBufferAction<T>
+	{
+		public Boolean IsMinimalCount => false;
+		public UInt16 Count => count;
+		public void Accept(scoped ScopedBuffer<T> buffer)
+		{
+			if (exception is not null) throw exception;
+			MultipleAllocTest.Do(buffer);
+		}
+	}
+
+	private readonly struct ScopedBufferFunction<T>(UInt16 count, Exception? exception = default)
+		: IScopedBufferFunction<T, Boolean>
+	{
+		public Boolean IsMinimalCount => false;
+		public UInt16 Count => count;
+		public Boolean Apply(scoped ScopedBuffer<T> buffer)
+			=> exception is null ? MultipleAllocTest.Get(buffer) : throw exception;
 	}
 }

@@ -1,4 +1,4 @@
-﻿#if !NET5_0_OR_GREATER
+﻿#if !NET5_0_OR_GREATER && !UAP10_0
 namespace Rxmxnx.PInvoke;
 
 public static partial class SystemInfo
@@ -16,7 +16,7 @@ public static partial class SystemInfo
 			SystemInfo.isWindows = true;
 			return;
 		}
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 		if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
 #else
 		if (SystemInfo.IsOsPlatform(SystemInfo.freePlatform))
@@ -102,20 +102,29 @@ public static partial class SystemInfo
 		/// <returns>The name of the current Unix platform.</returns>
 		public static String? GetUnixName()
 		{
+			const Int32 bufferLength = 256 * 6;
 			try
 			{
+				Byte* bufferPtr = stackalloc Byte[bufferLength];
 				Span<Byte> buffer = stackalloc Byte[256 * 6];
-
-				fixed (Byte* bufferPtr = buffer)
-					Unix.GetKernelName((IntPtr)bufferPtr);
+				Unix.GetKernelName((IntPtr)bufferPtr);
 
 				Int32 nameLength = buffer.IndexOf((Byte)0);
 
-				if (nameLength <= 0)
-					return default;
+				// ReSharper disable once ConvertIfStatementToReturnStatement
+				if (nameLength <= 0) return default;
 
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 				ReadOnlySpan<Byte> ascii = buffer[..nameLength];
 				return Encoding.ASCII.GetString(ascii).ToLowerInvariant();
+#elif NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
+
+				return Encoding.ASCII.GetString(bufferPtr, nameLength).ToLowerInvariant();
+#elif NETFRAMEWORK
+				return Encoding.ASCII.GetString([.. buffer[..nameLength],]).ToLowerInvariant();
+#else
+				return Encoding.ASCII.GetString([.. buffer[..nameLength],], 0, nameLength).ToLowerInvariant();
+#endif
 			}
 			catch (Exception)
 			{

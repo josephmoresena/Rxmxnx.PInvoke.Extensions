@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.Tests.DelegateExtensionsTests;
 
+[ExcludeFromCodeCoverage]
 public abstract class DelegatesTests
 {
 	protected static readonly IFixture Fixture = new Fixture();

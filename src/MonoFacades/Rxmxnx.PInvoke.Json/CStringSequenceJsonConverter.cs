@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !NETCOREAPP2_0_OR_GREATER && !NET461_OR_GREATER && !UAP && !NET452_OR_GREATER
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -36,8 +37,7 @@ namespace Rxmxnx.PInvoke.Json
 		{
 			Boolean writeNull = value is null &&
 				options.DefaultIgnoreCondition != JsonIgnoreCondition.WhenWritingNull &&
-				options.DefaultIgnoreCondition != JsonIgnoreCondition.WhenWritingDefault &&
-				!options.IgnoreNullValues;
+				options.DefaultIgnoreCondition != JsonIgnoreCondition.WhenWritingDefault && !options.IgnoreNullValues;
 			if (writeNull)
 			{
 				writer.WriteNullValue();
@@ -60,3 +60,4 @@ namespace Rxmxnx.PInvoke.Json
 		}
 	}
 }
+#endif

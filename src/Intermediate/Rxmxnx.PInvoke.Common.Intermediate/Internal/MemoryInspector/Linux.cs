@@ -1,3 +1,4 @@
+#if !UAP10_0
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
@@ -51,7 +52,6 @@ internal partial class MemoryInspector
 		private void CreateMaps(FileState state, Boolean isReadOnly)
 		{
 			if (state.Index <= 3) return;
-
 			state.Offset = state.Buffer[..state.Index].IndexOf((Byte)MapsTokens.NewLine) + 1;
 			ReadOnlySpan<Byte> temp = state.Buffer[state.Offset..state.Index];
 			state.Auxiliar = temp.IndexOf((Byte)MapsTokens.Hyphen);
@@ -112,3 +112,4 @@ internal partial class MemoryInspector
 		}
 	}
 }
+#endif

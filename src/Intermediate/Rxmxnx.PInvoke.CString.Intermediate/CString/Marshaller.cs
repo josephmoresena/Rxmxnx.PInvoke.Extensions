@@ -9,8 +9,10 @@ public unsafe partial class CString
 	/// <summary>
 	/// Custom marshaller for <see cref="CString"/> to native null-terminated UTF-8 text.
 	/// </summary>
-	[EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	[Browsable(false)]
+#endif
+	[EditorBrowsable(EditorBrowsableState.Never)]
 #if NET7_0_OR_GREATER
 	[CustomMarshaller(typeof(CString), MarshalMode.Default, typeof(Marshaller))]
 #endif

@@ -16,11 +16,13 @@ public partial class Launcher
 		private Windows(DirectoryInfo outputDirectory, Boolean useMono, out Task initialize) : base(
 			outputDirectory, useMono)
 		{
-			this.Architectures = Enum.GetValues<Architecture>()
-			                         .Where(a => a == this.CurrentArch || a is Architecture.X86 ||
-				                                (a is Architecture.X64 && this.CurrentArch is not Architecture.X86))
-			                         .ToArray();
-			initialize = Windows.PrepareCompilers(this._cppCompilers, this.Architectures);
+			this.Architectures =
+			[
+				.. Enum.GetValues<Architecture>().Where(a => a == this.CurrentArch || a is Architecture.X86 ||
+					                                        (a is Architecture.X64 &&
+						                                        this.CurrentArch is not Architecture.X86)),
+			];
+			initialize = Windows.PrepareCompilers(this._cppCompilers, this.Architectures, this);
 			Windows.AppendMonoLauncher(
 				Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Mono"),
 				Architecture.X64, ref this._monoLaunchers);

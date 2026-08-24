@@ -1,11 +1,18 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+using IBasicWrapper = Rxmxnx.PInvoke.IWrapper.IBase<System.Range>;
+#else
+using IBasicWrapper = Rxmxnx.PInvoke.IWrapper<System.Range>;
+
+#endif
+
+namespace Rxmxnx.PInvoke;
 
 public partial class ValueRegion<T>
 {
 	/// <summary>
 	/// This class represents a memory slice that contains a sequence of values.
 	/// </summary>
-	private abstract class MemorySlice : ValueRegion<T>, IWrapper.IBase<Range>
+	private abstract class MemorySlice : ValueRegion<T>, IBasicWrapper
 	{
 		/// <summary>
 		/// Indicates whether the current instance represents a memory slice extracted from a larger memory region.
@@ -41,7 +48,7 @@ public partial class ValueRegion<T>
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
-		Range IWrapper.IBase<Range>.Value => new(this.Offset, this.End);
+		Range IBasicWrapper.Value => new(this.Offset, this.End);
 
 		/// <inheritdoc/>
 		public override ValueRegion<T> Slice(Int32 startIndex)

@@ -8,7 +8,9 @@ internal static class TextUnescape
 	/// <summary>
 	/// Retrieves the UTF-8 \u prefix for JSON decoding.
 	/// </summary>
+#if !PACKAGE
 	[ExcludeFromCodeCoverage]
+#endif
 	public static ReadOnlySpan<Byte> UnicodePrefix => "\\u"u8;
 
 	/// <summary>

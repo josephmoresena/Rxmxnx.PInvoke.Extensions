@@ -55,6 +55,8 @@
         <PackageReference Include="runtime.$(NETCoreSdkPortableRuntimeIdentifier).Microsoft.DotNet.ILCompiler.LLVM" Version="10.0.0-*"/>
         <LinkerArg Include="-sEXPORTED_RUNTIME_METHODS=[HEAPU8,HEAPU32,HEAP32,cwrap,stringToNewUTF8]"/>
         <LinkerArg Include="-sASSERTIONS"/>
+        <!-- ILCompiler.LLVM (net10) links C++ runtime objects (std::nothrow). emcc defaults to C. -->
+        <LinkerArg Include="-sDEFAULT_TO_CXX"/>
     </ItemGroup>
     <ItemGroup Condition="$([MSBuild]::IsOSPlatform('WINDOWS'))">
         <LinkerArg Include="/DEBUG:NONE"/>
@@ -79,7 +81,7 @@
         <KnownILCompilerPack Include="Microsoft.DotNet.ILCompiler"
                              TargetFramework="net6.0"
                              ILCompilerRuntimeIdentifiers="linux-arm64;linux-musl-arm64;linux-musl-x64;linux-x64;win-arm64;win-x64;osx-arm64;osx-x64"
-                             ILCompilerPackVersion="8.0.27"
+                             ILCompilerPackVersion="8.0.30"
                              ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"
                              Condition="$([MSBuild]::IsOSPlatform('OSX')) And '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'"/>
     </ItemGroup>
@@ -94,7 +96,7 @@
         <KnownILCompilerPack Include="Microsoft.DotNet.ILCompiler"
                              TargetFramework="net7.0"
                              ILCompilerRuntimeIdentifiers="linux-arm64;linux-musl-arm64;linux-musl-x64;linux-x64;win-arm64;win-x64;osx-arm64;osx-x64"
-                             ILCompilerPackVersion="8.0.27"
+                             ILCompilerPackVersion="8.0.30"
                              ILCompilerPackNamePattern="runtime.**RID**.Microsoft.DotNet.ILCompiler"
                              Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'"/>
     </ItemGroup>
@@ -102,5 +104,21 @@
     <ItemGroup Condition="'$(PublishAotLegacy)' == 'true'">
         <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.0-alpha.1.22074.1"/>
     </ItemGroup>
+
+    <Target Name="PatchNativeAotFindVcVarsAll" BeforeTargets="SetupOSSpecificProps" Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+        <ItemGroup>
+            <_NativeAotFindVcVarsAll Include="$(NuGetPackageRoot)microsoft.dotnet.ilcompiler\7.0.*\build\findvcvarsall.bat"/>
+        </ItemGroup>
+
+        <WriteLinesToFile
+                Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))"
+                File="%(_NativeAotFindVcVarsAll.Identity)"
+                Lines="$([System.Text.RegularExpressions.Regex]::Replace(
+                    $([System.IO.File]::ReadAllText('%(_NativeAotFindVcVarsAll.Identity)')),
+                    '(?m)^[^\r\n]*-version \[16\^,18\^\) \^[^\r\n]*(?:\r?\n|$)',
+                    ''
+                ))"
+                Overwrite="true"/>
+    </Target>
 
 </Project>

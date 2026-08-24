@@ -23,6 +23,7 @@
 
     <ItemGroup>
         <None Remove="Mono.ILLink.Descriptors.xml"/>
+        <Compile Include="$(MSBuildThisFileDirectory)\..\..\MonoFacades\Rxmxnx.PInvoke.Json\*.cs"/>
     </ItemGroup>
 
     <Import Project="..\Artifact.targets"/>

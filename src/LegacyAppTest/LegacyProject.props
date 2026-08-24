@@ -3,15 +3,18 @@
     <PropertyGroup>
         <Nullable>enable</Nullable>
         <DefineConstants>$(DefineConstants);CSHARP9_0;RELEASE_PACKAGE;XAMARIN</DefineConstants>
+        <DefineConstants Condition="'$(IsLegacyProject)' == 'true'">$(DefineConstants);LEGACY</DefineConstants>
         <LangVersion>9.0</LangVersion>
         <Deterministic>True</Deterministic>
+        <RxmxnxVersion>2.1</RxmxnxVersion>
+        <RxmxnxVersion Condition="'$(IsLegacyProject)' == 'true'">2.0</RxmxnxVersion>
     </PropertyGroup>
 
     <Import Project="$(MSBuildThisFileDirectory)..\MonoFacades\System.Text.Json.Mono.props"/>
     <ItemGroup>
         <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2"/>
         <Reference Include="Rxmxnx.PInvoke.Extensions">
-            <HintPath>$(MSBuildThisFileDirectory)..\..\package\Rxmxnx.PInvoke.Extensions\bin\Release\netstandard2.1\Rxmxnx.PInvoke.Extensions.dll</HintPath>
+            <HintPath>$(MSBuildThisFileDirectory)..\..\package\Rxmxnx.PInvoke.Extensions\bin\Release\netstandard$(RxmxnxVersion)\Rxmxnx.PInvoke.Extensions.dll</HintPath>
         </Reference>
     </ItemGroup>
 </Project>

@@ -24,9 +24,9 @@ internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer, IRead
 	/// <param name="ptr">Pointer to fixed memory block.</param>
 	/// <param name="binaryLength">Memory block size in bytes.</param>
 	/// <param name="isReadOnly">Indicates whether the memory block is read-only.</param>
-	/// <param name="isValid">Indicates whether current instance remains valid.</param>
-	protected ReadOnlyFixedMemory(void* ptr, Int32 binaryLength, Boolean isReadOnly, IMutableWrapper<Boolean> isValid) :
-		base(ptr, binaryLength, isReadOnly, isValid) { }
+	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
+	protected ReadOnlyFixedMemory(void* ptr, Int32 binaryLength, Boolean isReadOnly, FixedValueHandle handle) : base(
+		ptr, binaryLength, isReadOnly, handle) { }
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedMemory"/> instance using another instance as a template.
 	/// </summary>
@@ -40,10 +40,30 @@ internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer, IRead
 	/// <param name="offset">The offset to be added to the pointer to the memory block.</param>
 	protected ReadOnlyFixedMemory(ReadOnlyFixedMemory mem, Int32 offset) : base(mem, offset) { }
 
-	ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes => this.CreateReadOnlyBinarySpan();
-	ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects => this.CreateReadOnlyObjectSpan();
+	ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes
+	{
+#if !PACKAGE && !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
+		[ExcludeFromCodeCoverage]
+#endif
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => this.CreateReadOnlyBinarySpan();
+	}
+	ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects
+	{
+#if !PACKAGE && !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
+		[ExcludeFromCodeCoverage]
+#endif
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => this.CreateReadOnlyObjectSpan();
+	}
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+	[Obsolete]
+#endif
 	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
 	/// <inheritdoc cref="IReadOnlyFixedMemory.AsObjectContext()"/>
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+	[Obsolete]
+#endif
 	public virtual IReadOnlyFixedContext<Object> AsObjectContext()
 	{
 		this.ValidateReferenceOperation();
@@ -51,6 +71,9 @@ internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer, IRead
 	}
 
 	/// <inheritdoc cref="IReadOnlyFixedMemory.AsBinaryContext()"/>
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+	[Obsolete]
+#endif
 	public virtual IReadOnlyFixedContext<Byte> AsBinaryContext()
 	{
 		this.ValidateUnmanagedOperation();

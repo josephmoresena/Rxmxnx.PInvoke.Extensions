@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
+﻿#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP2_1_OR_GREATER
+namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -106,3 +107,4 @@ public sealed class TransformTest
 		PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in refValue), ref Unsafe.AsRef(in spanT[0])));
 	}
 }
+#endif

@@ -1,4 +1,5 @@
-﻿#if !NET6_0_OR_GREATER
+﻿#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if !NET6_0_OR_GREATER && (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER)
 using ArgumentNullException = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
 
@@ -7,24 +8,10 @@ namespace Rxmxnx.PInvoke;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
+#pragma warning disable CS0618
+#pragma warning disable CS0612
 public unsafe partial class CStringSequence
 {
-	/// <summary>
-	/// Creates an <see cref="MemoryHandle"/> instance by pinning the current instance.
-	/// </summary>
-	/// <returns>A <see cref="MemoryHandle"/> for the pinned memory.</returns>
-	/// <remarks>
-	/// This method pins the memory to prevent the garbage collector from moving it, which is essential for safe
-	/// operations on unmanaged memory.
-	/// Ensure that the <see cref="MemoryHandle"/> value returned is properly disposed to release the pinned memory
-	/// and avoid memory leaks.
-	/// </remarks>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public MemoryHandle Pin()
-	{
-		ReadOnlyMemory<Char> mem = this._value.AsMemory();
-		return mem.Pin();
-	}
 	/// <summary>
 	/// Creates an <see cref="IFixedPointer.IDisposable"/> instance by pinning the current instance, allowing safe
 	/// access to the fixed memory region.
@@ -40,7 +27,7 @@ public unsafe partial class CStringSequence
 	{
 		MemoryHandle handle = this.Pin();
 		// ReSharper disable once HeapView.BoxingAllocation
-		return new FixedContext<Char>(handle.Pointer, this._value.Length).ToDisposable(handle);
+		return new ReadOnlyFixedContext<Char>(handle.Pointer, this._value.Length).ToDisposable(handle);
 	}
 	/// <summary>
 	/// Executes a specified action using the current instance treated as a <see cref="ReadOnlyFixedMemoryList"/>.
@@ -52,6 +39,10 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the action execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public void WithSafeFixed(ReadOnlyFixedListAction action)
 	{
 		ArgumentNullException.ThrowIfNull(action);
@@ -81,6 +72,10 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the action execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public void WithSafeFixed<TState>(TState state, ReadOnlyFixedListAction<TState> action)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
@@ -112,6 +107,10 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the function execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public TResult WithSafeFixed<TResult>(ReadOnlyFixedListFunc<TResult> func)
 	{
 		ArgumentNullException.ThrowIfNull(func);
@@ -143,6 +142,10 @@ public unsafe partial class CStringSequence
 	/// Memory safety is ensured by unloading the memory after the function execution.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	[Obsolete(ObsoleteConstants.ObsoleteDelegateExtensions, ObsoleteConstants.ErrorDelegate)]
+#endif
 	public TResult WithSafeFixed<TState, TResult>(TState state, ReadOnlyFixedListFunc<TState, TResult> func)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
@@ -163,3 +166,6 @@ public unsafe partial class CStringSequence
 		}
 	}
 }
+#pragma warning restore CS0612
+#pragma warning restore CS0618
+#endif

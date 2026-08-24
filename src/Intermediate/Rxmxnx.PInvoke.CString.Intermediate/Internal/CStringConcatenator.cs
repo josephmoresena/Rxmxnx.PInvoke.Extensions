@@ -37,9 +37,11 @@ internal sealed class CStringConcatenator : BinaryConcatenator<CString>
 
 	/// <inheritdoc/>
 	protected override void WriteValue(CString? value) => value?.Write(this.Stream, false);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <inheritdoc/>
 	protected override Task WriteValueAsync(CString? value)
 		=> value?.WriteAsync(this.Stream, false, this.CancellationToken) ?? Task.CompletedTask;
+#endif
 	/// <inheritdoc/>
 	protected override Boolean IsEmpty(CString? value) => CString.IsNullOrEmpty(value) && !this._ignoreEmpty;
 	/// <inheritdoc/>

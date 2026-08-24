@@ -5,8 +5,10 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// Provides a set of extensions for basic operations with references to <see langword="unmanaged"/> values.
 /// </summary>
-[EditorBrowsable(EditorBrowsableState.Never)]
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 [Browsable(false)]
+#endif
+[EditorBrowsable(EditorBrowsableState.Never)]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
@@ -98,7 +100,7 @@ public static unsafe partial class ReferenceExtensions
 	public static ref TDestination Transform<TSource, TDestination>(this ref TSource refValue)
 		where TSource : unmanaged where TDestination : unmanaged
 		=> ref NativeUtilities.TransformReference<TSource, TDestination>(ref refValue);
-
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <summary>
 	/// Creates a <see cref="Span{Byte}"/> from a reference to an <see langword="unmanaged"/> value of
 	/// type <typeparamref name="TSource"/>.
@@ -111,4 +113,5 @@ public static unsafe partial class ReferenceExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<Byte> AsBytes<TSource>(this ref TSource refValue) where TSource : unmanaged
 		=> NativeUtilities.AsBinarySpan(ref refValue);
+#endif
 }
