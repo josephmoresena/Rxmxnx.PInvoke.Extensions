@@ -171,30 +171,6 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Diagnostics.CodeAnalysis.DoesNotReturnAttribute</Target>
-    <Left>lib/netcoreapp2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Diagnostics.CodeAnalysis.DoesNotReturnIfAttribute</Target>
-    <Left>lib/netcoreapp2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Diagnostics.CodeAnalysis.MaybeNullAttribute</Target>
-    <Left>lib/netcoreapp2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute</Target>
-    <Left>lib/netcoreapp2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Diagnostics.CodeAnalysis.NotNullAttribute</Target>
     <Left>lib/netcoreapp2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
@@ -322,30 +298,6 @@
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:System.Diagnostics.CodeAnalysis.DisallowNullAttribute</Target>
-    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Diagnostics.CodeAnalysis.DoesNotReturnAttribute</Target>
-    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Diagnostics.CodeAnalysis.DoesNotReturnIfAttribute</Target>
-    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Diagnostics.CodeAnalysis.MaybeNullAttribute</Target>
-    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0001</DiagnosticId>
-    <Target>T:System.Diagnostics.CodeAnalysis.MaybeNullWhenAttribute</Target>
     <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>

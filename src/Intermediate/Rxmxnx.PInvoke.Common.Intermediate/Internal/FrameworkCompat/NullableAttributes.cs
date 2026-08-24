@@ -45,14 +45,6 @@ internal sealed class AllowNullAttribute : Attribute;
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.Property)]
 internal sealed class DisallowNullAttribute : Attribute;
 
-/// <summary>Specifies that an output may be null even if the corresponding type disallows it.</summary>
-#if !PACKAGE
-[ExcludeFromCodeCoverage]
-[AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.Property |
-	AttributeTargets.ReturnValue)]
-internal sealed class MaybeNullAttribute : Attribute;
-#endif
-
 /// <summary>
 /// Specifies that an output will not be null even if the corresponding type allows it. Specifies that an input
 /// argument was not null when the call returns.
@@ -63,25 +55,6 @@ internal sealed class MaybeNullAttribute : Attribute;
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.Property |
 	AttributeTargets.ReturnValue)]
 internal sealed class NotNullAttribute : Attribute;
-
-/// <summary>
-/// Specifies that when a method returns <see cref="ReturnValue"/>, the parameter may be null even if the
-/// corresponding type disallows it.
-/// </summary>
-#if !PACKAGE
-[ExcludeFromCodeCoverage]
-[AttributeUsage(AttributeTargets.Parameter)]
-internal sealed class MaybeNullWhenAttribute : Attribute
-{
-	/// <summary>Gets the return value condition.</summary>
-	public Boolean ReturnValue { get; }
-	/// <summary>Initializes the attribute with the specified return value condition.</summary>
-	/// <param name="returnValue">
-	/// The return value condition. If the method returns this value, the associated parameter may be null.
-	/// </param>
-	public MaybeNullWhenAttribute(Boolean returnValue) => this.ReturnValue = returnValue;
-}
-#endif
 
 /// <summary>
 /// Specifies that when a method returns <see cref="ReturnValue"/>, the parameter will not be null even if the
@@ -119,15 +92,36 @@ internal sealed class NotNullIfNotNullAttribute : Attribute
 	public NotNullIfNotNullAttribute(String parameterName) => this.ParameterName = parameterName;
 }
 
-/// <summary>Applied to a method that will never return under any circumstance.</summary>
 #if !PACKAGE
+/// <summary>Specifies that an output may be null even if the corresponding type disallows it.</summary>
+[ExcludeFromCodeCoverage]
+[AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.Property |
+	AttributeTargets.ReturnValue)]
+internal sealed class MaybeNullAttribute : Attribute;
+
+/// <summary>
+/// Specifies that when a method returns <see cref="ReturnValue"/>, the parameter may be null even if the
+/// corresponding type disallows it.
+/// </summary>
+[ExcludeFromCodeCoverage]
+[AttributeUsage(AttributeTargets.Parameter)]
+internal sealed class MaybeNullWhenAttribute : Attribute
+{
+	/// <summary>Gets the return value condition.</summary>
+	public Boolean ReturnValue { get; }
+	/// <summary>Initializes the attribute with the specified return value condition.</summary>
+	/// <param name="returnValue">
+	/// The return value condition. If the method returns this value, the associated parameter may be null.
+	/// </param>
+	public MaybeNullWhenAttribute(Boolean returnValue) => this.ReturnValue = returnValue;
+}
+
+/// <summary>Applied to a method that will never return under any circumstance.</summary>
 [ExcludeFromCodeCoverage]
 [AttributeUsage(AttributeTargets.Method, Inherited = false)]
 internal sealed class DoesNotReturnAttribute : Attribute;
-#endif
 
 /// <summary>Specifies that the method will not return if the associated Boolean parameter is passed the specified value.</summary>
-#if !PACKAGE
 [ExcludeFromCodeCoverage]
 [AttributeUsage(AttributeTargets.Parameter)]
 internal sealed class DoesNotReturnIfAttribute : Attribute

@@ -111,6 +111,7 @@
         </ItemGroup>
 
         <WriteLinesToFile
+                Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))"
                 File="%(_NativeAotFindVcVarsAll.Identity)"
                 Lines="$([System.Text.RegularExpressions.Regex]::Replace(
                     $([System.IO.File]::ReadAllText('%(_NativeAotFindVcVarsAll.Identity)')),
