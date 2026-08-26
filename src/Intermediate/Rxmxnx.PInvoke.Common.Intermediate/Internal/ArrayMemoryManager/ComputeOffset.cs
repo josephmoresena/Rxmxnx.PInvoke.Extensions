@@ -296,7 +296,7 @@ internal partial class ArrayMemoryManager<T>
 		ReadOnlySpan<Int32> lb = ArrayCompat.GetLowerBounds(stackalloc Int32[array.Rank], array);
 		ref readonly T dataRef = ref (array as T[,,,,,,,,,,,,,,,,,,,,,,])![
 			lb[0], lb[1], lb[2], lb[3], lb[4], lb[5], lb[6], lb[7], lb[8], lb[9], lb[10], lb[11], lb[12], lb[13],
-			lb[14], lb[15], lb[16], lb[17], lb[18], lb[19], lb[20], lb[21], 0];
+			lb[14], lb[15], lb[16], lb[17], lb[18], lb[19], lb[20], lb[21], lb[22]];
 		return Unsafe.ByteOffset(ref pinnableRef.Data, ref Unsafe.AsRef(in dataRef));
 	}
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
@@ -310,7 +310,7 @@ internal partial class ArrayMemoryManager<T>
 		ReadOnlySpan<Int32> lb = ArrayCompat.GetLowerBounds(stackalloc Int32[array.Rank], array);
 		ref readonly T dataRef = ref (array as T[,,,,,,,,,,,,,,,,,,,,,,,])![
 			lb[0], lb[1], lb[2], lb[3], lb[4], lb[5], lb[6], lb[7], lb[8], lb[9], lb[10], lb[11], lb[12], lb[13],
-			lb[14], lb[15], lb[16], lb[17], lb[18], lb[19], lb[20], lb[21], 0, 0];
+			lb[14], lb[15], lb[16], lb[17], lb[18], lb[19], lb[20], lb[21], lb[22], lb[23]];
 		return Unsafe.ByteOffset(ref pinnableRef.Data, ref Unsafe.AsRef(in dataRef));
 	}
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
@@ -324,7 +324,7 @@ internal partial class ArrayMemoryManager<T>
 		ReadOnlySpan<Int32> lb = ArrayCompat.GetLowerBounds(stackalloc Int32[array.Rank], array);
 		ref readonly T dataRef = ref (array as T[,,,,,,,,,,,,,,,,,,,,,,,,])![
 			lb[0], lb[1], lb[2], lb[3], lb[4], lb[5], lb[6], lb[7], lb[8], lb[9], lb[10], lb[11], lb[12], lb[13],
-			lb[14], lb[15], lb[16], lb[17], lb[18], lb[19], lb[20], 0, 0, 0, 0];
+			lb[14], lb[15], lb[16], lb[17], lb[18], lb[19], lb[20], lb[21], lb[22], lb[23], lb[24]];
 		return Unsafe.ByteOffset(ref pinnableRef.Data, ref Unsafe.AsRef(in dataRef));
 	}
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
@@ -338,7 +338,7 @@ internal partial class ArrayMemoryManager<T>
 		ReadOnlySpan<Int32> lb = ArrayCompat.GetLowerBounds(stackalloc Int32[array.Rank], array);
 		ref readonly T dataRef = ref (array as T[,,,,,,,,,,,,,,,,,,,,,,,,,])![
 			lb[0], lb[1], lb[2], lb[3], lb[4], lb[5], lb[6], lb[7], lb[8], lb[9], lb[10], lb[11], lb[12], lb[13],
-			lb[14], lb[15], lb[16], lb[17], lb[18], lb[19], lb[20], 0, 0, 0, 0, 0];
+			lb[14], lb[15], lb[16], lb[17], lb[18], lb[19], lb[20], lb[21], lb[22], lb[23], lb[24], lb[25]];
 		return Unsafe.ByteOffset(ref pinnableRef.Data, ref Unsafe.AsRef(in dataRef));
 	}
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
@@ -352,7 +352,7 @@ internal partial class ArrayMemoryManager<T>
 		ReadOnlySpan<Int32> lb = ArrayCompat.GetLowerBounds(stackalloc Int32[array.Rank], array);
 		ref readonly T dataRef = ref (array as T[,,,,,,,,,,,,,,,,,,,,,,,,,,])![
 			lb[0], lb[1], lb[2], lb[3], lb[4], lb[5], lb[6], lb[7], lb[8], lb[9], lb[10], lb[11], lb[12], lb[13],
-			lb[14], lb[15], lb[16], lb[17], lb[18], lb[19], lb[20], 0, 0, 0, 0, 0, 0];
+			lb[14], lb[15], lb[16], lb[17], lb[18], lb[19], lb[20], lb[21], lb[22], lb[23], lb[24], lb[25], lb[26]];
 		return Unsafe.ByteOffset(ref pinnableRef.Data, ref Unsafe.AsRef(in dataRef));
 	}
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
