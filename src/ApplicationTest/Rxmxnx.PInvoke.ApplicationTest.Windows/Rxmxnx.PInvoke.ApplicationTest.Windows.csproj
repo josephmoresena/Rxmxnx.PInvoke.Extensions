@@ -185,13 +185,7 @@
         <AppxPackageVersion>$(PackageVersion)</AppxPackageVersion>
         <AppxBundlePackageVersion>$(PackageVersion)</AppxBundlePackageVersion>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(UsePackage)' == 'true' And '$(PackageVersion)' == '9999.99.99.99-tmp'">
-        <_Now>$([System.DateTime]::Now.ToString('yyyy.M.d'))</_Now>
-        <_Time>$([System.Int16]::Parse($([System.DateTime]::Now.ToString('Hmm'))))</_Time>
-        <AppxPackageVersion>$(_Now).$(_Time)</AppxPackageVersion>
-        <AppxBundlePackageVersion>$(AppxPackageVersion)</AppxBundlePackageVersion>
-    </PropertyGroup>
-    <Target Name="_PrepareAppxManifest" BeforeTargets="_ValidatePresenceOfAppxManifestItems" Condition="'$(UsePackage)' == 'true'">
+    <Target Name="_PrepareAppxManifest" BeforeTargets="_ValidatePresenceOfAppxManifestItems" Condition="'$(UsePackage)' == 'true' And '$(AppxPackageVersion)' != ''">
         <PropertyGroup>
             <AppxPatchedManifest>$(IntermediateOutputPath)Package.appxmanifest</AppxPatchedManifest>
         </PropertyGroup>
