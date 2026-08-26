@@ -45,7 +45,7 @@ internal static class ArrayCompat
 #endif
 	public static ReadOnlySpan<Int32> GetLowerBounds(Span<Int32> lowerBounds, Array array)
 	{
-		for (Int32 i = 0; i < array.Length; i++)
+		for (Int32 i = 0; i < array.Rank; i++)
 			lowerBounds[i] = array.GetLowerBound(i);
 		return lowerBounds;
 	}
