@@ -7,10 +7,7 @@
         xmlns:uap18="http://schemas.microsoft.com/appx/manifest/uap/windows10/18"
         IgnorableNamespaces="uap mp uap18">
 
-    <Identity
-            Name="487a3b81-026f-402b-88fa-50ded50dd7d9"
-            Publisher="CN=josephmoresena"
-            Version="1.0.0.0"/>
+    <Identity Name="487a3b81-026f-402b-88fa-50ded50dd7d9" Publisher="CN=josephmoresena"/>
 
     <mp:PhoneIdentity PhoneProductId="487a3b81-026f-402b-88fa-50ded50dd7d9"
                       PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
@@ -22,7 +19,7 @@
     </Properties>
 
     <Dependencies>
-        <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0"/>
+        <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.16299.0" MaxVersionTested="10.0.16299.0"/>
     </Dependencies>
 
     <Resources>

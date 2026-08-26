@@ -34,4 +34,19 @@ internal static class ArrayCompat
 		public static readonly T[] EmptyArray = [];
 	}
 #endif
+	/// <summary>
+	/// Retrieves a read-only span of lower bounds for each array dimension.
+	/// </summary>
+	/// <param name="lowerBounds">Destination lower bound span.</param>
+	/// <param name="array">Current array instance.</param>
+	/// <returns>A read-only view of <paramref name="lowerBounds"/>.</returns>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public static ReadOnlySpan<Int32> GetLowerBounds(Span<Int32> lowerBounds, Array array)
+	{
+		for (Int32 i = 0; i < array.Length; i++)
+			lowerBounds[i] = array.GetLowerBound(i);
+		return lowerBounds;
+	}
 }
