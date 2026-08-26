@@ -7,17 +7,18 @@ public class FixedValueHandleTests
 	[Fact]
 	public void Test()
 	{
-		IWrapper<Boolean> result = PInvokeAssert.IsType<IWrapper<Boolean>>(FixedValueHandle.EmptyDisposable);
-		PInvokeAssert.False(result.Value);
+		IWrapper<Boolean>? result = FixedValueHandle.EmptyDisposable as IWrapper<Boolean>;
+		PInvokeAssert.NotNull(result!);
+		PInvokeAssert.True(result.Value);
 		FixedValueHandle.EmptyDisposable.Dispose();
-		PInvokeAssert.False(result.Value);
+		PInvokeAssert.True(result.Value);
 		FixedValueHandle.EmptyDisposable.Dispose();
-		PInvokeAssert.False(result.Value);
+		PInvokeAssert.True(result.Value);
 		FixedValueHandle.EmptyDisposable.Dispose();
-		PInvokeAssert.False(result.Value);
+		PInvokeAssert.True(result.Value);
 		FixedValueHandle.EmptyDisposable.Dispose();
-		PInvokeAssert.False(result.Value);
+		PInvokeAssert.True(result.Value);
 		FixedValueHandle.EmptyDisposable.Dispose();
-		PInvokeAssert.False(result.Value);
+		PInvokeAssert.True(result.Value);
 	}
 }
