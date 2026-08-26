@@ -21,6 +21,7 @@
 		<WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
 		<AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
 		<PackageCertificateThumbprint>BE0F8266E600E117C72C20616FCCE5570EE1254C</PackageCertificateThumbprint>
+		<Version Condition="'$(PackageVersion)' = ''">$(PackageVersion)</Version>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
 		<DebugSymbols>true</DebugSymbols>
