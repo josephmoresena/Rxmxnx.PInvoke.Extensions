@@ -6,7 +6,7 @@
         <VisualStudioRunnerVersion Condition="'$(TargetFramework)' == 'netcoreapp2.0'">2.4.1</VisualStudioRunnerVersion>
         <VisualStudioRunnerVersion Condition="'$(TargetFramework)' != 'netcoreapp2.0'">2.4.3</VisualStudioRunnerVersion>
         <CoverletColectorVersion Condition="'$(TargetFramework)' == 'net452'">6.0.0</CoverletColectorVersion>
-        <CoverletColectorVersion Condition="'$(TargetFramework)' != 'net452'">6.0.4</CoverletColectorVersion> 
+        <CoverletColectorVersion Condition="'$(TargetFramework)' != 'net452'">6.0.4</CoverletColectorVersion>
         <TaskExtensionsVersion Condition="'$(TargetFramework)' == 'net461'">4.5.4</TaskExtensionsVersion>
         <TaskExtensionsVersion Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net462'))">4.6.3</TaskExtensionsVersion>
     </PropertyGroup>
