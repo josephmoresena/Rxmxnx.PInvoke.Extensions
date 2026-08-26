@@ -4,6 +4,7 @@
         <DefineConstants Condition="'$(PackageVersion)' != '9999.99.99.99-tmp'">$(DefineConstants);RELEASE_PACKAGE</DefineConstants>
         <PInvokeVersion Condition="'$(IsLegacyProject)' != 'true'">netstandard2.1</PInvokeVersion>
         <PInvokeVersion Condition="'$(IsLegacyProject)' == 'true'">netstandard2.0</PInvokeVersion>
+        <Version Condition="'$(UsePackage)' == 'true'">$(PackageVersion)</Version>
     </PropertyGroup>
     <ItemGroup Condition="'$(UsePackage)' != 'true'">
         <ProjectReference Include="$(MSBuildThisFileDirectory)Intermediate\Rxmxnx.PInvoke.Common.Intermediate\Rxmxnx.PInvoke.Common.Intermediate.csproj"/>
