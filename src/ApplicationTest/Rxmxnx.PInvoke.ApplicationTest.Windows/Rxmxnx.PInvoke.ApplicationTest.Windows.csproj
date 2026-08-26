@@ -4,7 +4,7 @@
     <PropertyGroup>
         <LangVersion>9.0</LangVersion>
         <Nullable>enable</Nullable>
-        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
         <ProjectGuid>{32A26FC7-9B6A-46CC-A178-F77A9AE62EA6}</ProjectGuid>
         <OutputType>AppContainerExe</OutputType>
@@ -174,17 +174,6 @@
         <VisualStudioVersion>14.0</VisualStudioVersion>
     </PropertyGroup>
     <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets"/>
-    <PropertyGroup Condition="'$(UsePackage)' == 'true' And '$(PackageVersion)' != '9999.99.99.99-tmp'">
-        <AppxPackageVersion>$(PackageVersion)</AppxPackageVersion>
-        <AppxBundlePackageVersion>$(PackageVersion)</AppxBundlePackageVersion>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(UsePackage)' == 'true' And '$(PackageVersion)' == '9999.99.99.99-tmp'">
-        <_Now>$([System.DateTime]::Now.ToString('yyyy.M.d'))</_Now>
-        <_MinutesSinceMidnight>$([System.DateTime]::Now.TimeOfDay.TotalMinutes)</_MinutesSinceMidnight>
-        <AppxPackageVersion>$(_Now).$([System.Math]::Floor($(_MinutesSinceMidnight)))</AppxPackageVersion>
-        <AppxBundlePackageVersion>$(AppxPackageVersion)</AppxBundlePackageVersion>
-    </PropertyGroup>
-
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -192,4 +181,27 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+    <PropertyGroup Condition="'$(UsePackage)' == 'true' And '$(PackageVersion)' != '9999.99.99.99-tmp'">
+        <AppxPackageVersion>$(PackageVersion)</AppxPackageVersion>
+        <AppxBundlePackageVersion>$(PackageVersion)</AppxBundlePackageVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(UsePackage)' == 'true' And '$(PackageVersion)' == '9999.99.99.99-tmp'">
+        <_Now>$([System.DateTime]::Now.ToString('yyyy.M.d'))</_Now>
+        <_Time>$([System.Int16]::Parse($([System.DateTime]::Now.ToString('Hmm'))))</_Time>
+        <AppxPackageVersion>$(_Now).$(_Time)</AppxPackageVersion>
+        <AppxBundlePackageVersion>$(AppxPackageVersion)</AppxBundlePackageVersion>
+    </PropertyGroup>
+    <Target Name="_PrepareAppxManifest" BeforeTargets="_ValidatePresenceOfAppxManifestItems" Condition="'$(UsePackage)' == 'true'">
+        <PropertyGroup>
+            <AppxPatchedManifest>$(IntermediateOutputPath)Package.appxmanifest</AppxPatchedManifest>
+        </PropertyGroup>
+        <Copy SourceFiles="@(AppxManifest)" DestinationFiles="$(AppxPatchedManifest)"/>
+        <XmlPoke XmlInputPath="$(AppxPatchedManifest)"
+                 Query="/*[local-name()='Package']/*[local-name()='Identity']/@Version"
+                 Value="$(AppxPackageVersion)"/>
+        <ItemGroup>
+            <AppxManifest Remove="@(AppxManifest)"/>
+            <AppxManifest Include="$(AppxPatchedManifest)"/>
+        </ItemGroup>
+    </Target>
 </Project>

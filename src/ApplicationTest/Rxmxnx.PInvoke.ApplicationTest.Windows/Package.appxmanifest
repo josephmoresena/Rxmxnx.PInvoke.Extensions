@@ -1,13 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-<Package
-        xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
-        xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
-        xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-        xmlns:uap18="http://schemas.microsoft.com/appx/manifest/uap/windows10/18"
-        IgnorableNamespaces="uap mp uap18">
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:uap18="http://schemas.microsoft.com/appx/manifest/uap/windows10/18"
+         IgnorableNamespaces="uap mp uap18">
 
-    <Identity Name="487a3b81-026f-402b-88fa-50ded50dd7d9" Publisher="CN=josephmoresena"/>
+    <Identity Name="487a3b81-026f-402b-88fa-50ded50dd7d9" Publisher="CN=josephmoresena" Version="1.0.0.0"/>
 
     <mp:PhoneIdentity PhoneProductId="487a3b81-026f-402b-88fa-50ded50dd7d9"
                       PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
@@ -27,16 +26,13 @@
     </Resources>
 
     <Applications>
-        <Application Id="App"
-                     Executable="$targetnametoken$.exe"
-                     EntryPoint="Rxmxnx.PInvoke.ApplicationTest.Windows.App" uap18:RuntimeBehavior="windowsApp"
-                     uap18:TrustLevel="appContainer">
-            <uap:VisualElements
-                    DisplayName="Rxmxnx.PInvoke.ApplicationTest.Windows"
-                    Square150x150Logo="Assets\Square150x150Logo.png"
-                    Square44x44Logo="Assets\Square44x44Logo.png"
-                    Description="Rxmxnx.PInvoke.ApplicationTest.Windows"
-                    BackgroundColor="transparent">
+        <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Rxmxnx.PInvoke.ApplicationTest.Windows.App"
+                     uap18:RuntimeBehavior="windowsApp" uap18:TrustLevel="appContainer">
+            <uap:VisualElements DisplayName="Rxmxnx.PInvoke.ApplicationTest.Windows"
+                                Square150x150Logo="Assets\Square150x150Logo.png"
+                                Square44x44Logo="Assets\Square44x44Logo.png"
+                                Description="Rxmxnx.PInvoke.ApplicationTest.Windows"
+                                BackgroundColor="transparent">
                 <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
                 <uap:SplashScreen Image="Assets\SplashScreen.png"/>
             </uap:VisualElements>
