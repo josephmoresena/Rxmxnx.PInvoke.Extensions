@@ -172,6 +172,9 @@
 	</ItemGroup>
 	<PropertyGroup>
 		<ApplicationVersion Condition="'$(UsePackage)' == 'true'">$(PackageVersion)</ApplicationVersion>
+		<AppxPackageVersion Condition="'$(UsePackage)' == 'true'">$(PackageVersion)</AppxPackageVersion>
+		<AppxBundlePackageVersion Condition="'$(UsePackage)' == 'true'">$(PackageVersion)</AppxBundlePackageVersion>
+		<ApplicationVersion Condition="'$(UsePackage)' == 'true'">$(PackageVersion)</ApplicationVersion>
 		<VisualStudioVersion Condition="'$(VisualStudioVersion)' == '' Or '$(VisualStudioVersion)' &lt; '14.0'">14.0</VisualStudioVersion>
 	</PropertyGroup>
 	<Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
