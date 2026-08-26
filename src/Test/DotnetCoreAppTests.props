@@ -1,95 +1,53 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
     <!-- LIMITED_LEGACY_SUPPORT -->
-    <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.3"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-        <PackageReference Include="coverlet.collector" Version="6.0.4">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
-
+    <PropertyGroup>
+        <TestSdkVersion>17.3.3</TestSdkVersion>
+        <VisualStudioRunnerVersion Condition="'$(TargetFramework)' == 'netcoreapp2.0'">2.4.1</VisualStudioRunnerVersion>
+        <VisualStudioRunnerVersion Condition="'$(TargetFramework)' != 'netcoreapp2.0'">2.4.3</VisualStudioRunnerVersion>
+        <CoverletColectorVersion Condition="'$(TargetFramework)' == 'net452'">6.0.0</CoverletColectorVersion>
+        <CoverletColectorVersion Condition="'$(TargetFramework)' != 'net452'">6.0.4</CoverletColectorVersion>
+        <TaskExtensionsVersion Condition="'$(TargetFramework)' == 'net461'">4.5.4</TaskExtensionsVersion>
+        <TaskExtensionsVersion Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net462'))">4.6.3</TaskExtensionsVersion>
+    </PropertyGroup>
     <!-- LEGACY_SUPPORT -->
-    <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'net5.0'">
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-        <PackageReference Include="coverlet.collector" Version="6.0.4">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
-
+    <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'net5.0'">
+        <TestSdkVersion>17.13.0</TestSdkVersion>
+        <VisualStudioRunnerVersion>2.4.5</VisualStudioRunnerVersion>
+    </PropertyGroup>
     <!-- OLD_SUPPORTED -->
-    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'">
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="3.0.2">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-        <PackageReference Include="coverlet.collector" Version="6.0.4">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
-
-    <!-- CURRENT_SUPPORTED -->
-    <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="4.0.0">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-        <PackageReference Include="coverlet.collector" Version="10.0.1">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
-
+    <PropertyGroup Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'">
+        <TestSdkVersion>17.13.0</TestSdkVersion>
+        <VisualStudioRunnerVersion>3.0.2</VisualStudioRunnerVersion>
+    </PropertyGroup>
     <!-- NETFRAMEWORK_SUPPORT -->
-    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.3"/>
-        <PackageReference Condition="!$([MSBuild]::IsOSPlatform('WINDOWS'))" Include="Microsoft.TestPlatform.ObjectModel" Version="17.3.3" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-        <PackageReference Condition="'$(TargetFramework)' == 'net452'" Include="coverlet.collector" Version="6.0.0">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-        <PackageReference Condition="'$(TargetFramework)' != 'net452'" Include="coverlet.collector" Version="6.0.4">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
-    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' And '$(TargetFramework)' != 'net452' And '$(TargetFramework)' != 'net46'">
-        <PackageReference Condition="'$(TargetFramework)' == 'net461'" Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
-        <PackageReference Condition="'$(TargetFramework)' != 'net461'" Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
-    </ItemGroup>
-    <!-- NETCOREAPP2.X_SUPPORT -->
-    <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0' Or '$(TargetFramework)' == 'netcoreapp2.1'">
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.3"/>
+    <PropertyGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' And $([MSBuild]::IsOSPlatform('WINDOWS'))">
+        <TestSdkVersion Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net462'))">18.9.0</TestSdkVersion>
+        <VisualStudioRunnerVersion Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net462'))">2.4.5</VisualStudioRunnerVersion>
+        <VisualStudioRunnerVersion Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net472'))">4.0.0</VisualStudioRunnerVersion>
+    </PropertyGroup>
+    <!-- CURRENT_SUPPORTED -->
+    <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+        <TestSdkVersion>18.9.0</TestSdkVersion>
+        <VisualStudioRunnerVersion>4.0.0</VisualStudioRunnerVersion>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETStandard'">
         <PackageReference Condition="'$(TargetFramework)' == 'netcoreapp2.0'" Include="Microsoft.NETCore.App" Version="2.0.9"/>
         <PackageReference Condition="'$(TargetFramework)' == 'netcoreapp2.1'" Include="Microsoft.NETCore.App" Version="2.1.30"/>
-        <PackageReference Condition="'$(TargetFramework)' == 'netcoreapp2.1'" Include="xunit.runner.visualstudio" Version="2.4.3">
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(TestSdkVersion)"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="$(VisualStudioRunnerVersion)">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Condition="'$(TargetFramework)' == 'netcoreapp2.0'" Include="xunit.runner.visualstudio" Version="2.4.1">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageReference>
-        <PackageReference Include="coverlet.collector" Version="6.0.4">
+        <PackageReference Include="coverlet.collector" Version="$(CoverletColectorVersion)">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+        <PackageReference Condition="'$(TaskExtensionsVersion)' != ''" Include="System.Threading.Tasks.Extensions" Version="$(TaskExtensionsVersion)"/>
+        <PackageReference Condition="!$([MSBuild]::IsOSPlatform('WINDOWS'))" Include="Microsoft.TestPlatform.ObjectModel" Version="$(TestSdkVersion)"/>
     </ItemGroup>
 
 </Project>
