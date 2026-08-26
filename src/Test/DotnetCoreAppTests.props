@@ -30,6 +30,7 @@
     <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
         <TestSdkVersion>18.9.0</TestSdkVersion>
         <VisualStudioRunnerVersion>4.0.0</VisualStudioRunnerVersion>
+        <CoverletColectorVersion>10.0.1</CoverletColectorVersion>
     </PropertyGroup>
 
     <ItemGroup Condition="'$(TargetFrameworkIdentifier)' != '.NETStandard'">
