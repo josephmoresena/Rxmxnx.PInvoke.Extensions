@@ -175,7 +175,9 @@
         <AppxBundlePackageVersion>$(PackageVersion)</AppxBundlePackageVersion>
     </PropertyGroup>
     <PropertyGroup Condition="'$(UsePackage)' == 'true' And '$(PackageVersion)' == '9999.99.99.99-tmp'">
-        <AppxPackageVersion>$([System.DateTime]::Now.ToString('yyyy.MM.dd.HHmm'))</AppxPackageVersion>
+        <_Now>$([System.DateTime]::Now.ToString('yyyy.M.d'))</_Now>
+        <_MinutesSinceMidnight>$([System.DateTime]::Now.TimeOfDay.TotalMinutes)</_MinutesSinceMidnight>
+        <AppxPackageVersion>$(_Now).$([System.Math]::Floor($(_MinutesSinceMidnight)))</AppxPackageVersion>
         <AppxBundlePackageVersion>$(AppxPackageVersion)</AppxBundlePackageVersion>
     </PropertyGroup>
     <PropertyGroup Condition="'$(VisualStudioVersion)' == '' Or '$(VisualStudioVersion)' &lt; '14.0'">
