@@ -57,7 +57,7 @@ internal class FixedValueHandle : IDisposable, IWrapper<Boolean>
 	/// </returns>
 	protected virtual Boolean Dispose(Boolean disposing)
 	{
-		if (this._isDisposed.GetValueOrDefault()) return false;
+		if (!this._isDisposed.HasValue || this._isDisposed.Value) return false;
 		this._isDisposed = true;
 		return true;
 	}

@@ -89,7 +89,9 @@ jobs:
           sudo apt install mono-complete mono-vbnc mono-dbg gdb libssl3
           mv ./ApplicationTest src/ApplicationTest
       - name: Clean test results
-        run: rm -rf TestResults/
+        run: |
+          rm -rf TestResults/
+          dotnet clean src --configuration Release
       - name: Build and analyze Sonar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any

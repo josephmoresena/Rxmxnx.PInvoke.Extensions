@@ -9,8 +9,10 @@ public partial class TestCompiler
 
 		public static void Append(CompileAppxArgs appxArgs, Collection<String> args)
 		{
-			String packageDir = appxArgs.OutputPath.TrimEnd(Path.DirectorySeparatorChar,
-			                                                Path.AltDirectorySeparatorChar) +
+			DateTime dt = DateTime.Now;
+			String appxVersion = $"{dt:yyyy.M.d}.{Int16.Parse(dt.ToString("Hmm"))}";
+			String packageDir =
+				appxArgs.OutputPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) +
 				Path.DirectorySeparatorChar;
 			args.Add("-restore");
 			args.Add(appxArgs.ProjectPath);
@@ -21,6 +23,8 @@ public partial class TestCompiler
 			args.Add("/p:GenerateAppxPackageOnBuild=true");
 			args.Add("/p:AppxPackageSigningEnabled=false");
 			args.Add($"/p:AppxPackageDir={packageDir}");
+			args.Add($"/p:AppxPackageVersion={appxVersion}");
+			args.Add($"/p:AppxBundlePackageVersion={appxVersion}");
 		}
 	}
 }
