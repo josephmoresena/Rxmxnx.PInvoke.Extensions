@@ -55,6 +55,11 @@ public readonly ref partial struct FixedPointerValue
 	public static Boolean TryCreateFixedValue(IFixedPointer instance, out FixedPointerValue value)
 	{
 		value = default;
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+		// Support Disposable<>
+		if (instance is IWrapper.IBase<FixedPointer> wrapper)
+			instance = wrapper.Value;
+#endif
 		if (instance is not FixedPointer ptr || ptr.IsFunction) return false;
 		value = new(instance.Pointer, ptr.BinaryLength)
 		{
