@@ -6,6 +6,9 @@ namespace Rxmxnx.PInvoke.Internal;
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
 #endif
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+[SecuritySafeCritical]
+#endif
 internal static class TrimInfo
 {
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
@@ -23,16 +26,25 @@ internal static class TrimInfo
 	/// Internal UTF-8 empty text.
 	/// </summary>
 	/// <returns>A read-only byte span of UTF-8 null-characters.</returns>
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+	[SecuritySafeCritical]
+#endif
 	public static ReadOnlySpan<Byte> EmptyUt8Text() => "\0\0\0"u8;
 	/// <summary>
 	/// Internal Windows New line UTF-8 sequence.
 	/// </summary>
 	/// <returns>A read-only byte span containing UTF-8 new line.</returns>
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+	[SecuritySafeCritical]
+#endif
 	public static ReadOnlySpan<Byte> WindowsNewLine() => "\r\n"u8;
 	/// <summary>
 	/// Internal non-Windows New line UTF-8 sequence.
 	/// </summary>
 	/// <returns>A read-only byte span containing UTF-8 new line.</returns>
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+	[SecuritySafeCritical]
+#endif
 	public static ReadOnlySpan<Byte> NonWindowsNewLine() => "\n"u8;
 	/// <summary>
 	/// Indicates whether <see cref="String"/> type name contains the <c>String</c> word.

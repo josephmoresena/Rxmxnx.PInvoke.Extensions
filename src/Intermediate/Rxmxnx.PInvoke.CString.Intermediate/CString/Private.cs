@@ -76,6 +76,9 @@ public partial class CString
 	/// </summary>
 	/// <returns>The <see cref="String"/> representation of the current instance.</returns>
 	[MethodImpl(MethodImplOptions.NoInlining)]
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+	[SecuritySafeCritical]
+#endif
 	private String CreateInternalString()
 	{
 		String result = CString.ToUtf16(this.AsSpan());

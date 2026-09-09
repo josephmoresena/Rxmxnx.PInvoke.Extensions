@@ -58,6 +58,9 @@ public partial class ValueRegion<T>
 		}
 
 		/// <inheritdoc/>
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+		[SecuritySafeCritical]
+#endif
 		internal override ReadOnlySpan<T> AsSpan()
 		{
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER

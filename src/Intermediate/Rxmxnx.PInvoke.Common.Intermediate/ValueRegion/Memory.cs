@@ -91,6 +91,9 @@ public partial class ValueRegion<T>
 			return true;
 		}
 		/// <inheritdoc/>
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal sealed override ReadOnlySpan<T> AsSpan() => this.Value.Span;
 		/// <inheritdoc/>

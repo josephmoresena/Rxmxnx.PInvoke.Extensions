@@ -134,6 +134,9 @@ public abstract partial class ValueRegion<T>
 	/// </summary>
 	/// <param name="region">The <see cref="ValueRegion{T}"/> to convert.</param>
 	/// <returns>A read-only span representation of the <see cref="ValueRegion{T}"/>.</returns>
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+	[SecuritySafeCritical]
+#endif
 	public static implicit operator ReadOnlySpan<T>(ValueRegion<T> region) => region.AsSpan();
 	/// <summary>
 	/// Converts the value of the current <see cref="ValueRegion{T}"/> to its equivalent array representation.

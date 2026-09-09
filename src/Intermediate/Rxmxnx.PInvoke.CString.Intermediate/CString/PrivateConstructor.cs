@@ -15,6 +15,9 @@ public partial class CString
 	/// <param name="useFullLength">
 	/// Indicates whether the total length of the referenced array should be used.
 	/// </param>
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+	[SecuritySafeCritical]
+#endif
 	private CString(IntPtr ptr, Int32 length, Boolean useFullLength)
 	{
 		this._isLocal = false;
@@ -114,6 +117,9 @@ public partial class CString
 	/// The zero-based starting index of the sub-range in <paramref name="value"/>.
 	/// </param>
 	/// <param name="length">The length of the sub-range.</param>
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+	[SecuritySafeCritical]
+#endif
 	private CString(CString value, Int32 startIndex, Int32 length)
 	{
 		this._isLocal = value._isLocal;

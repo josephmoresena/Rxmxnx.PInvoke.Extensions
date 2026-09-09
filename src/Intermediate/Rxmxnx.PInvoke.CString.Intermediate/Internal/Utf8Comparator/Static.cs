@@ -17,6 +17,9 @@ internal abstract unsafe partial class Utf8Comparator
 #if !PACKAGE && (!NETCOREAPP || NET7_0_OR_GREATER)
 	[ExcludeFromCodeCoverage]
 #endif
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static String GetStringFromUtf8(ReadOnlySpan<Byte> source) => source.ToUtf16();
 	/// <summary>

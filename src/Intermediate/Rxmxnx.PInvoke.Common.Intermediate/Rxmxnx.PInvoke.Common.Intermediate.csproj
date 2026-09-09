@@ -20,6 +20,7 @@
         <Using Include="System.Runtime.Intrinsics.Arm"/>
         <Using Include="System.Runtime.Serialization"/>
         <Using Include="System.Runtime.Versioning"/>
+        <Using Include="System.Security"/>
         <Using Include="System.Text"/>
         <Using Include="System.Text.Json"/>
 

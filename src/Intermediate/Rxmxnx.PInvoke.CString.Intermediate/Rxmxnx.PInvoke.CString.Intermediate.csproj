@@ -15,6 +15,7 @@
         <Using Include="System.Runtime.InteropServices"/>
         <Using Include="System.Runtime.InteropServices.Marshalling"/>
         <Using Include="System.Runtime.Versioning"/>
+        <Using Include="System.Security"/>
         <Using Include="System.Text"/>
         <Using Include="System.Text.Json"/>
         <Using Include="System.Text.Json.Serialization"/>
