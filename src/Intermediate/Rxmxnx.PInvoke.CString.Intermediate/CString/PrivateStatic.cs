@@ -151,6 +151,9 @@ public partial class CString
 #if NET7_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1121)]
 #endif

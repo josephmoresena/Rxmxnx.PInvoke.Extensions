@@ -40,6 +40,9 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 	/// <returns>
 	/// A new <see cref="FixedContextValue{T}"/> instance.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static FixedContextValue<T> CreateValue(IFixedMemory<T> instance)
 	{
 		if (FixedPointerValue.TryCreateFixedValue(instance, out FixedPointerValue value))

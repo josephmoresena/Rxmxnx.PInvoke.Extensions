@@ -45,6 +45,9 @@ internal readonly ref struct UtfReadHelper
 	/// Constructor. Used for heap allocation.
 	/// </summary>
 	/// <param name="length">Array length.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public UtfReadHelper(Int32 length) : this()
 	{
 		this._array = CString.CreateByteArray(length + 1);

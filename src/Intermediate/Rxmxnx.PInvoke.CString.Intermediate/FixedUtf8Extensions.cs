@@ -224,6 +224,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <typeparam name="TAction">Type of <see cref="IFixedPointerListAction"/>.</typeparam>
 	/// <param name="seq">Current <see cref="CStringSequence"/> instance.</param>
 	/// <param name="action">A <see cref="IFixedPointerListAction"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TAction>(this CStringSequence? seq, TAction? action)
 #if !NET9_0_OR_GREATER
@@ -261,6 +264,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <typeparam name="TAction">Type of <see cref="IFixedPointerListAction"/>.</typeparam>
 	/// <param name="seq">Current <see cref="CStringSequence"/> instance.</param>
 	/// <param name="action">A <see cref="IFixedPointerListAction"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -302,6 +308,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <param name="seq">Current <see cref="CStringSequence"/> instance.</param>
 	/// <param name="func">A <see cref="IFixedPointerListFunction{TResult}"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TFunction, TResult>(this CStringSequence? seq, TFunction? func, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -345,6 +354,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <param name="seq">Current <see cref="CStringSequence"/> instance.</param>
 	/// <param name="func">A <see cref="IFixedPointerListFunction{TResult}"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

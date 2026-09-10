@@ -106,6 +106,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The Boolean value to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(Boolean value)
 	{
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
@@ -126,6 +129,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The UTF-16-encoded code char to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(Char value)
 	{
 #if NET8_0_OR_GREATER
@@ -150,6 +156,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The value to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(Decimal value)
 	{
 #if NET8_0_OR_GREATER
@@ -172,6 +181,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The value to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(Double value)
 	{
 #if NET8_0_OR_GREATER
@@ -194,6 +206,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The value to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(Int16 value)
 	{
 #if NET8_0_OR_GREATER
@@ -216,6 +231,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The value to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(Int32 value)
 	{
 #if NET8_0_OR_GREATER
@@ -238,6 +256,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The value to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(Int64 value)
 	{
 #if NET8_0_OR_GREATER
@@ -260,6 +281,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The value to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(SByte value)
 	{
 #if NET8_0_OR_GREATER
@@ -282,6 +306,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The value to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(Single value)
 	{
 #if NET8_0_OR_GREATER
@@ -304,6 +331,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The value to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(UInt16 value)
 	{
 #if NET8_0_OR_GREATER
@@ -326,6 +356,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The value to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(UInt32 value)
 	{
 #if NET8_0_OR_GREATER
@@ -348,6 +381,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The value to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(UInt64 value)
 	{
 #if NET8_0_OR_GREATER
@@ -373,6 +409,9 @@ public sealed partial class CStringBuilder
 	/// Indicates whether <paramref name="value"/> should be treated as a number instead of UTF-8 unit.
 	/// </param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(Byte value, Boolean asNumber = false)
 	{
 #if NET8_0_OR_GREATER

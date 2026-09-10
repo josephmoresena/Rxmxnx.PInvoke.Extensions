@@ -51,8 +51,11 @@ public static partial class AotInfo
 	/// <returns>
 	/// <see langword="true"/> if Jit is enabled; otherwise, <see langword="false"/>.
 	/// </returns>
-	[UnconditionalSuppressMessage("Trimming", "IL2070")]
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	[UnconditionalSuppressMessage("Trimming", "IL2070")]
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS907)]

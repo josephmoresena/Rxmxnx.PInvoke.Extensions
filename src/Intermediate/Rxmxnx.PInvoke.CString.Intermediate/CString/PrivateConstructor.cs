@@ -51,6 +51,9 @@ public partial class CString
 	/// Indicates whether <paramref name="bytes"/> is a null-terminated UTF-8 text.
 	/// If this is <see langword="null"/> an internal function is used to determine the value.
 	/// </param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private CString(Byte[] bytes, Boolean? isNullTerminated = default)
 	{
 		this._isLocal = true;

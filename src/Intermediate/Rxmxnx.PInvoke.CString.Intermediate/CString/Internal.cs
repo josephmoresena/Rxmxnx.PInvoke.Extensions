@@ -20,6 +20,9 @@ public partial class CString
 	/// <param name="sequence">The <see cref="CStringSequence"/> containing current UTF-8 text.</param>
 	/// <param name="index">Index element of current UTF-8 text into <paramref name="sequence"/>.</param>
 	/// <param name="length">Current UTF-8 text length.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	internal CString(CStringSequence sequence, Int32 index, Int32 length)
 	{
 		BufferItemState<CStringSequence> state = new(sequence, index, length);

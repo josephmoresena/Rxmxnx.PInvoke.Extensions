@@ -60,6 +60,9 @@ internal static class BitOperations
 	/// Similar in behavior to the x86 instruction TZCNT.
 	/// </summary>
 	/// <param name="value">The value.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Int32 TrailingZeroCount(UInt32 value)
 	{

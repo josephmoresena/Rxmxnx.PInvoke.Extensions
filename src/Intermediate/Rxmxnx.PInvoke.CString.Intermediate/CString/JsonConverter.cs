@@ -28,6 +28,9 @@ public partial class CString
 #pragma warning restore CS8764
 			=> JsonConverter.Read(reader);
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 #endif

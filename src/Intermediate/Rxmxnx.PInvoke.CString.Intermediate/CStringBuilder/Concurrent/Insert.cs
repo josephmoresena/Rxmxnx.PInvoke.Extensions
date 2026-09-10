@@ -52,6 +52,9 @@ public partial class CStringBuilder
 		/// <param name="index">The position in this instance where insertion begins.</param>
 		/// <param name="value">The value to insert.</param>
 		/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public CStringBuilder Insert(Int32 index, Boolean value)
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 			=> this.Insert(index, value.ToString(CultureInfo.CurrentCulture));
@@ -65,6 +68,9 @@ public partial class CStringBuilder
 		/// <param name="index">The position in this instance where insertion begins.</param>
 		/// <param name="value">The value to insert.</param>
 		/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public CStringBuilder Insert(Int32 index, Char value)
 		{
 #if NET8_0_OR_GREATER
@@ -88,6 +94,9 @@ public partial class CStringBuilder
 		/// <param name="index">The position in this instance where insertion begins.</param>
 		/// <param name="value">The value to insert.</param>
 		/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public CStringBuilder Insert(Int32 index, Decimal value)
 		{
 #if NET8_0_OR_GREATER
@@ -107,6 +116,9 @@ public partial class CStringBuilder
 		/// <param name="index">The position in this instance where insertion begins.</param>
 		/// <param name="value">The value to insert.</param>
 		/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public CStringBuilder Insert(Int32 index, Double value)
 		{
 #if NET8_0_OR_GREATER
@@ -126,6 +138,9 @@ public partial class CStringBuilder
 		/// <param name="index">The position in this instance where insertion begins.</param>
 		/// <param name="value">The value to insert.</param>
 		/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public CStringBuilder Insert(Int32 index, Int16 value)
 		{
 #if NET8_0_OR_GREATER
@@ -145,6 +160,9 @@ public partial class CStringBuilder
 		/// <param name="index">The position in this instance where insertion begins.</param>
 		/// <param name="value">The value to insert.</param>
 		/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public CStringBuilder Insert(Int32 index, Int32 value)
 		{
 #if NET8_0_OR_GREATER
@@ -164,6 +182,9 @@ public partial class CStringBuilder
 		/// <param name="index">The position in this instance where insertion begins.</param>
 		/// <param name="value">The value to insert.</param>
 		/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public CStringBuilder Insert(Int32 index, Int64 value)
 		{
 #if NET8_0_OR_GREATER
@@ -183,6 +204,9 @@ public partial class CStringBuilder
 		/// <param name="index">The position in this instance where insertion begins.</param>
 		/// <param name="value">The value to insert.</param>
 		/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public CStringBuilder Insert(Int32 index, SByte value)
 		{
 #if NET8_0_OR_GREATER
@@ -202,6 +226,9 @@ public partial class CStringBuilder
 		/// <param name="index">The position in this instance where insertion begins.</param>
 		/// <param name="value">The value to insert.</param>
 		/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public CStringBuilder Insert(Int32 index, Single value)
 		{
 #if NET8_0_OR_GREATER
@@ -221,6 +248,9 @@ public partial class CStringBuilder
 		/// <param name="index">The position in this instance where insertion begins.</param>
 		/// <param name="value">The value to insert.</param>
 		/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public CStringBuilder Insert(Int32 index, UInt16 value)
 		{
 #if NET8_0_OR_GREATER
@@ -240,6 +270,9 @@ public partial class CStringBuilder
 		/// <param name="index">The position in this instance where insertion begins.</param>
 		/// <param name="value">The value to insert.</param>
 		/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public CStringBuilder Insert(Int32 index, UInt32 value)
 		{
 #if NET8_0_OR_GREATER
@@ -259,6 +292,9 @@ public partial class CStringBuilder
 		/// <param name="index">The position in this instance where insertion begins.</param>
 		/// <param name="value">The value to insert.</param>
 		/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public CStringBuilder Insert(Int32 index, UInt64 value)
 		{
 #if NET8_0_OR_GREATER
@@ -281,6 +317,9 @@ public partial class CStringBuilder
 		/// Indicates whether <paramref name="value"/> should be treated as a number instead of UTF-8 unit.
 		/// </param>
 		/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public CStringBuilder Insert(Int32 index, Byte value, Boolean asNumber = false)
 		{
 			// ReSharper disable once ConvertIfStatementToReturnStatement

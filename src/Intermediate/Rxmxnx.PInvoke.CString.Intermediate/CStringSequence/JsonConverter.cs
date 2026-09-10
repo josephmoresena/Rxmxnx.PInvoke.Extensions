@@ -9,6 +9,9 @@ public partial class CStringSequence
 	public sealed class JsonConverter : JsonConverter<CStringSequence>
 	{
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #pragma warning disable CS8764
 		public override CStringSequence? Read(ref Utf8JsonReader reader, Type typeToConvert,
 #pragma warning restore CS8764

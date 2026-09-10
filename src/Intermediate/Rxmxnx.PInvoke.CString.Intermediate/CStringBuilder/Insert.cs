@@ -420,6 +420,9 @@ public sealed partial class CStringBuilder
 	/// Indicates whether <paramref name="value"/> should be treated as a number instead of UTF-8 unit.
 	/// </param>
 	/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Insert(Int32 index, Byte value, Boolean asNumber = false)
 	{
 		// ReSharper disable once ConvertIfStatementToReturnStatement

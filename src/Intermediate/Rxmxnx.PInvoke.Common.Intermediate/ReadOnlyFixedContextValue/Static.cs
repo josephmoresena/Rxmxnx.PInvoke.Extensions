@@ -45,6 +45,9 @@ public readonly unsafe ref partial struct ReadOnlyFixedContextValue<T>
 	/// <returns>
 	/// A new <see cref="FixedContextValue{T}"/> instance.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif

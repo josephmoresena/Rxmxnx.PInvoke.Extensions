@@ -32,6 +32,9 @@ public partial class CString
 		/// Defines an implicit conversion of a given <see cref="Backing"/> instance to <see cref="CString"/>.
 		/// </summary>
 		/// <param name="backing">A <see cref="Backing"/> instance to implicitly convert.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[return: NotNullIfNotNull(nameof(backing))]
 		public static implicit operator CString?(Backing? backing)
 		{

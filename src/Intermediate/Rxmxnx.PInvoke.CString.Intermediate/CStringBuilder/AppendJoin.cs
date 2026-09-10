@@ -76,6 +76,9 @@ public sealed partial class CStringBuilder
 	/// A sequence that contains the UTF-8 texts to concatenate and append to the current instance.
 	/// </param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder AppendJoin(CString? separator, CStringSequence sequence)
 		=> this.AppendJoin(separator, new CStringSequence.Utf8View(sequence, true));
 	/// <summary>
@@ -122,6 +125,9 @@ public sealed partial class CStringBuilder
 	/// A collection that contains the UTF-8 texts to concatenate and append to the current instance.
 	/// </param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder AppendJoin(CString? separator, IEnumerable<CString?> values)
 	{
 		using IEnumerator<CString?> enumerator = values.GetEnumerator();

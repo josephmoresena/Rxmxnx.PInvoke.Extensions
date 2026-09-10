@@ -6,6 +6,9 @@ public sealed partial class CStringBuilder
 	/// Appends the default line terminator to the end of the current instance.
 	/// </summary>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder AppendLine()
 	{
 		this._chunk = this._chunk.Append(CString.NewLine);
@@ -57,10 +60,10 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The read-only span of characters to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
-	// ReSharper disable once MemberCanBePrivate.Global
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
+	// ReSharper disable once MemberCanBePrivate.Global
 	public CStringBuilder AppendLine(ReadOnlySpan<Char> value)
 	{
 		this._chunk = this._chunk.Append(value).Append(CString.NewLine);
@@ -86,6 +89,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The UTF-8 units read-only sequence to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

@@ -105,6 +105,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// </summary>
 	/// <param name="c">A UTF-8 char.</param>
 	/// <param name="count">The number of times <paramref name="c"/> is repeated to form the UTF-8 string.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CString(Byte c, Int32 count) : this(CString.CreateRepeatedSequence([c,], count), true) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
@@ -113,6 +116,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <param name="u0">The first UTF-8 unit.</param>
 	/// <param name="u1">The second UTF-8 unit.</param>
 	/// <param name="count">The number of times the sequence is repeated to form the UTF-8 string.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CString(Byte u0, Byte u1, Int32 count) : this(CString.CreateRepeatedSequence([u0, u1,], count), true) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
@@ -122,6 +128,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <param name="u1">The second UTF-8 unit.</param>
 	/// <param name="u2">The third UTF-8 unit.</param>
 	/// <param name="count">The number of times the sequence is repeated to form the UTF-8 string.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CString(Byte u0, Byte u1, Byte u2, Int32 count) : this(CString.CreateRepeatedSequence([u0, u1, u2,], count),
 	                                                              true) { }
 	/// <summary>
@@ -133,6 +142,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <param name="u2">The third UTF-8 unit.</param>
 	/// <param name="u3">The fourth UTF-8 unit.</param>
 	/// <param name="count">The number of times the sequence is repeated to form the UTF-8 string.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CString(Byte u0, Byte u1, Byte u2, Byte u3, Int32 count) : this(
 		CString.CreateRepeatedSequence([u0, u1, u2, u3,], count), true) { }
 	/// <summary>
@@ -141,6 +153,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// </summary>
 	/// <param name="c">A UTF-16 char.</param>
 	/// <param name="count">The number of times <paramref name="c"/> is repeated to form the UTF-8 string.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CString(Char c, Int32 count) : this(CString.CreateRepeatedSequence([c,], count), true) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
@@ -149,6 +164,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <param name="u0">The first UTF-16 unit.</param>
 	/// <param name="u1">The second UTF-16 unit.</param>
 	/// <param name="count">The number of times the sequence is repeated to form the UTF-8 string.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CString(Char u0, Char u1, Int32 count) : this(CString.CreateRepeatedSequence([u0, u1,], count), true) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class using the UTF-8 characters
@@ -307,11 +325,11 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 			_ => this.CreateInternalString(),
 		};
 	/// <inheritdoc/>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
+#endif
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
 #endif
 	public override Int32 GetHashCode()
 		=> this._length switch
@@ -372,6 +390,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <returns>
 	/// A <see cref="String"/> that represents the hexadecimal value of the current UTF-8 text.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public String ToHexString() => Convert.ToHexString(this).ToLowerInvariant();
 	/// <summary>
 	/// Returns an enumerator that iterates through the UTF-8 units of the current <see cref="CString"/>.
@@ -547,11 +568,11 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// This value is only reliable on supported platforms. On unsupported platforms or in case of inspection errors,
 	/// this property will always return <see langword="false"/>.
 	/// </remarks>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
+#endif
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
 #endif
 	public static Boolean IsImagePersistent([NotNullWhen(true)] CString? str)
 		=> str is not null && !MemoryInspector.MayBeNonLiteral(str._data.AsSpan());
@@ -608,6 +629,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// </summary>
 	/// <param name="escaped">A sequence containing escaped UTF-8 encoded text.</param>
 	/// <returns>A new <see cref="CString"/> instance containing the unescaped UTF-8 text.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Unescape(ReadOnlySequence<Byte> escaped)
 	{
 		if (escaped.IsEmpty) return CString.Empty;

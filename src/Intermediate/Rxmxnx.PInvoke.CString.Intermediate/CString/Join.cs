@@ -76,6 +76,9 @@ public partial class CString
 	/// Concatenated UTF-8 text with separators or an empty <see cref="CString"/> if the collection is empty.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
 #endif

@@ -44,6 +44,9 @@ public sealed partial class CStringBuilder
 	}
 	/// <inheritdoc cref="CStringBuilder.AppendJoin(CString, CStringSequence)"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

@@ -115,6 +115,9 @@ public static class UnmanagedValueExtensions
 	/// If the input array is <see langword="null"/>, the method returns <see langword="null"/>.
 	/// If the input array is empty, the method returns an empty array.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	[return: NotNullIfNotNull(nameof(array))]
 	public static Byte[]? ToBytes<TSource>(this TSource[]? array) where TSource : unmanaged
@@ -140,6 +143,9 @@ public static class UnmanagedValueExtensions
 	/// If the input array is <see langword="null"/>, the method returns <see langword="null"/>.
 	/// If the input array is empty, the method returns an empty array.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	[return: NotNullIfNotNull(nameof(array))]
 	public static TDestination[]? ToValues<TSource, TDestination>(this TSource[]? array)

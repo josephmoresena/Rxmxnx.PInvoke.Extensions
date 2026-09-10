@@ -645,6 +645,9 @@ public unsafe partial class CStringSequence
 	/// Finds the zero-based indices of isolated UTF-8 null-character using <paramref name="state"/>.
 	/// </summary>
 	/// <param name="state">A state sequence used as input/output of the find null indices.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static void FindNullIndices(ref NullState state)
 	{
 		Int32 index = 0;
