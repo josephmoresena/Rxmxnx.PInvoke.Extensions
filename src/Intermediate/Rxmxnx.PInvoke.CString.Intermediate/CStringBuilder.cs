@@ -2,6 +2,7 @@
 using Lock = System.Object;
 #endif
 
+// ReSharper disable MemberCanBePrivate.Global
 namespace Rxmxnx.PInvoke;
 
 /// <summary>

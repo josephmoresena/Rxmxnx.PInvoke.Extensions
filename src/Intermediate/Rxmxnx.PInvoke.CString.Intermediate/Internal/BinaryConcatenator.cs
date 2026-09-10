@@ -152,7 +152,7 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable
 				await this.Stream.DisposeAsync();
 #else
 			{
-				if (this.Stream is IAsyncDisposable { } ad)
+				if (this.Stream is IAsyncDisposable ad)
 					await ad.DisposeAsync();
 				else
 					this.Stream.Dispose();

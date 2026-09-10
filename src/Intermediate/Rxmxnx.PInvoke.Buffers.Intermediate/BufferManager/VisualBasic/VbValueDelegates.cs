@@ -8,6 +8,9 @@ public static partial class BufferManager
 	/// <typeparam name="T">Type of items in the buffer.</typeparam>
 	/// <param name="buffer">A <see cref="ScopedBuffer{T}"/> instance.</param>
 	/// <returns>A new <see cref="VbScopedBuffer{T}"/> instance from <paramref name="buffer"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static VbScopedBuffer<T> ToVbScopedBuffer<T>(this ScopedBuffer<T> buffer)
 		=> new(ref MemoryMarshal.GetReference(buffer.Span), (UInt16)buffer.Span.Length, buffer.BufferMetadata);
 
