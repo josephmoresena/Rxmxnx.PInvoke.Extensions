@@ -34,7 +34,7 @@ public partial class ValueRegion<T>
 			=> this._func = region._func;
 
 		/// <inheritdoc/>
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 		[SecuritySafeCritical]
 #endif
 		internal override ReadOnlySpan<T> AsSpan() => this._func()[this.Offset..this.End];
@@ -103,7 +103,7 @@ public partial class ValueRegion<T>
 		}
 
 		/// <inheritdoc/>
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 		[SecuritySafeCritical]
 #endif
 		internal override ReadOnlySpan<T> AsSpan() => this._func(this._state)[this.Offset..this.End];

@@ -29,7 +29,7 @@ public static unsafe class FixedUtf8Extensions
 	/// </summary>
 	/// <param name="chars">The span of characters to encode.</param>
 	/// <returns>The number of UTF-8 units produced by encoding the specified character span.</returns>
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -48,7 +48,7 @@ public static unsafe class FixedUtf8Extensions
 	/// </summary>
 	/// <param name="source">A read-only byte span to decode.</param>
 	/// <returns>The number of characters produced by decoding the UTF-8 encoded text.</returns>
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -70,7 +70,7 @@ public static unsafe class FixedUtf8Extensions
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -88,7 +88,7 @@ public static unsafe class FixedUtf8Extensions
 	/// </summary>
 	/// <param name="bytes">The read-only byte span containing the UTF-8 text to decode.</param>
 	/// <returns>A new <see cref="String"/> instance containing the decoded text.</returns>
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

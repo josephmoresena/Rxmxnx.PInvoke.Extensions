@@ -49,7 +49,7 @@ public partial class ValueRegion<T>
 		internal override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)
 			=> new FuncMemorySlice(this, startIndex, length);
 		/// <inheritdoc/>
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 		[SecuritySafeCritical]
 #endif
 		internal override ReadOnlySpan<T> AsSpan() => this._func();
@@ -141,7 +141,7 @@ public partial class ValueRegion<T>
 		internal override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)
 			=> new FuncMemorySlice<TState>(this, startIndex, length);
 		/// <inheritdoc/>
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 		[SecuritySafeCritical]
 #endif
 		internal override ReadOnlySpan<T> AsSpan() => this._func(this._state);

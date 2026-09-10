@@ -6,7 +6,7 @@ namespace Rxmxnx.PInvoke.Internal;
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
 #endif
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 [SecuritySafeCritical]
 #endif
 internal static class TrimInfo
@@ -26,7 +26,7 @@ internal static class TrimInfo
 	/// Internal UTF-8 empty text.
 	/// </summary>
 	/// <returns>A read-only byte span of UTF-8 null-characters.</returns>
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
 	public static ReadOnlySpan<Byte> EmptyUt8Text() => "\0\0\0"u8;
@@ -34,7 +34,7 @@ internal static class TrimInfo
 	/// Internal Windows New line UTF-8 sequence.
 	/// </summary>
 	/// <returns>A read-only byte span containing UTF-8 new line.</returns>
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
 	public static ReadOnlySpan<Byte> WindowsNewLine() => "\r\n"u8;
@@ -42,7 +42,7 @@ internal static class TrimInfo
 	/// Internal non-Windows New line UTF-8 sequence.
 	/// </summary>
 	/// <returns>A read-only byte span containing UTF-8 new line.</returns>
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
 	public static ReadOnlySpan<Byte> NonWindowsNewLine() => "\n"u8;

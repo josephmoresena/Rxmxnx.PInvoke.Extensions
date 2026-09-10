@@ -48,7 +48,7 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS907)]
 #endif
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 [SecuritySafeCritical]
 #endif
 internal static class MarvinCompat

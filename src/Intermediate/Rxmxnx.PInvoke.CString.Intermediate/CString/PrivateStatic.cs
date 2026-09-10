@@ -175,7 +175,7 @@ public partial class CString
 		utf8Length = Encoding.UTF8.GetByteCount(utf16Text);
 
 		Byte[] array = CString.CreateByteArray(utf8Length + 1);
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+#if !NETFRAMEWORK && !NETSTANDARD2_0
 		Span<Byte> bytes = array;
 		Utf8.FromUtf16(utf16Text, array, out Int32 _, out Int32 _);
 		bytes[^1] = default;
@@ -212,7 +212,7 @@ public partial class CString
 	/// </summary>
 	/// <param name="utf8Bytes">The UTF-8 text to encode to UTF-16.</param>
 	/// <returns>A <see cref="String"/> instance.</returns>
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
 	private static String ToUtf16(ReadOnlySpan<Byte> utf8Bytes)

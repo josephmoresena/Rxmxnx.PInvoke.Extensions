@@ -28,25 +28,25 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// Represents an empty UTF-8 string. This field is read-only.
 	/// </summary>
 	/// <remarks>This instance is a UTF-8 literal.</remarks>
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
 	public static readonly CString Empty;
 	/// <summary>
 	/// Represents a null-pointer UTF-8 string. This field is read-only.
 	/// </summary>
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
 	public static readonly CString Zero;
 	/// <inheritdoc cref="Environment.NewLine"/>
 	// ReSharper disable once MemberCanBePrivate.Global
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
 	public static readonly CString NewLine;
 
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
 	static CString()
@@ -273,7 +273,7 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
 	public override Int32 GetHashCode()
@@ -319,7 +319,7 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <returns>
 	/// A read-only span of bytes representing the UTF-8 units of the current <see cref="CString"/>.
 	/// </returns>
-#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
 	public ReadOnlySpan<Byte> AsSpan() => this._data.AsSpan()[..this._length];
