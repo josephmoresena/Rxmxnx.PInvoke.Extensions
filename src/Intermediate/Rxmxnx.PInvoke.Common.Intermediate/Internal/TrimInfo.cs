@@ -6,9 +6,6 @@ namespace Rxmxnx.PInvoke.Internal;
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
 #endif
-#if NETFRAMEWORK || NETSTANDARD2_0
-[SecuritySafeCritical]
-#endif
 internal static class TrimInfo
 {
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
@@ -53,6 +50,9 @@ internal static class TrimInfo
 	/// <see langword="true"/> if <see cref="String"/> type name contains the <c>String</c> word;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Boolean StringTypeNameContainsString()
 		=> typeof(String).ToString().AsSpan().EndsWith(nameof(String).AsSpan());

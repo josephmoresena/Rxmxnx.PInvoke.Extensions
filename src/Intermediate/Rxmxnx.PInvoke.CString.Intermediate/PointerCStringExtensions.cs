@@ -25,6 +25,9 @@ public static unsafe class PointerCStringExtensions
 	/// The reliability of the obtained information depends on the lifetime and validity of the pointer at the time
 	/// of method invocation.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static CString GetUnsafeCString(this IntPtr ptr, Int32 length)
 	{
@@ -46,6 +49,9 @@ public static unsafe class PointerCStringExtensions
 	/// The reliability of the obtained information depends on the lifetime and validity of the pointer at the time
 	/// of method invocation.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static CString GetUnsafeCString(this UIntPtr uptr, Int32 length)
 	{
@@ -67,6 +73,9 @@ public static unsafe class PointerCStringExtensions
 	/// The reliability of the obtained information depends on the lifetime and validity of the pointer at the time
 	/// of method invocation.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static CString GetUnsafeCString(this MemoryHandle handle, Int32 length)
 	{

@@ -77,6 +77,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
 		/// <param name="newData">Input. New data to append. Output. Remaining data to append.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void FillFirst(Chunk chunk, ref ReadOnlySpan<Byte> newData)
 		{
@@ -114,6 +117,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
 		/// <param name="newData">Input. New data to append. Output. Remaining data to append.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void FillFirst(Chunk chunk, ref ReadOnlySpan<Char> newData)
 		{
@@ -130,6 +136,9 @@ public partial class CStringBuilder
 		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
 		/// <param name="firstData">Input. First data to insert. Output. Remaining data to insert.</param>
 		/// <param name="nextData">Next data to insert. Output. Remaining data to insert.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void Fill(Chunk chunk, ref ReadOnlySpan<Byte> firstData, ref ReadOnlySpan<Byte> nextData)
 		{
@@ -162,6 +171,9 @@ public partial class CStringBuilder
 		/// <param name="chunks">A read-only <see cref="Chunk"/> span.</param>
 		/// <param name="firstData">First data bytes.</param>
 		/// <param name="nextData">Next data bytes.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void Fill(ReadOnlySpan<Chunk> chunks, ReadOnlySpan<Byte> firstData, ReadOnlySpan<Byte> nextData)
 		{
@@ -187,6 +199,9 @@ public partial class CStringBuilder
 		/// <param name="source">Source span to copy from; updated to represent the remaining data.</param>
 		/// <param name="destination">Destination <see cref="Byte"/> span</param>
 		/// <returns>The number of bytes copied.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static Int32 CopyLast(ref ReadOnlySpan<Byte> source, Span<Byte> destination)
 		{
@@ -201,6 +216,9 @@ public partial class CStringBuilder
 		/// <param name="start">The starting chunk where units will be copied from.</param>
 		/// <param name="end">The ending chunk where units will be copied from.</param>
 		/// <param name="destination">The writable span where units will be copied.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void CopyTo(CopyInfo start, CopyInfo end, Span<Byte> destination)
 		{

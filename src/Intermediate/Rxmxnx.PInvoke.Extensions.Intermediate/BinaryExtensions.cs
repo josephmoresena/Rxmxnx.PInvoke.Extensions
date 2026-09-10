@@ -37,6 +37,9 @@ public static unsafe class BinaryExtensions
 	/// <typeparam name="T">The type of the value to be retrieved.</typeparam>
 	/// <param name="array">The source byte array.</param>
 	/// <returns>The <typeparamref name="T"/> value read from the array.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static T ToValue<T>(this Byte[] array) where T : unmanaged => array.AsSpan().ToValue<T>();
 	/// <summary>
@@ -45,6 +48,9 @@ public static unsafe class BinaryExtensions
 	/// <typeparam name="T">The type of the value to be retrieved.</typeparam>
 	/// <param name="span">The source byte span.</param>
 	/// <returns>The <typeparamref name="T"/> value read from the span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static T ToValue<T>(this Span<Byte> span) where T : unmanaged => ((ReadOnlySpan<Byte>)span).ToValue<T>();
 	/// <summary>
@@ -53,6 +59,9 @@ public static unsafe class BinaryExtensions
 	/// <typeparam name="T">The type of the value to be retrieved.</typeparam>
 	/// <param name="span">The source read-only byte span.</param>
 	/// <returns>The <typeparamref name="T"/> value read from the span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static T ToValue<T>(this ReadOnlySpan<Byte> span) where T : unmanaged
 	{
@@ -82,6 +91,9 @@ public static unsafe class BinaryExtensions
 	/// <exception cref="InvalidCastException">
 	/// Thrown if the size of the binary span is greater than the size of the type <typeparamref name="T"/>.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref readonly T AsValue<T>(this ReadOnlySpan<Byte> span) where T : unmanaged
 	{
@@ -100,6 +112,9 @@ public static unsafe class BinaryExtensions
 	/// <exception cref="InvalidCastException">
 	/// Thrown if the size of the binary span is greater than the size of the type <typeparamref name="T"/>.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref T AsValue<T>(this Span<Byte> span) where T : unmanaged
 	{
@@ -112,6 +127,9 @@ public static unsafe class BinaryExtensions
 	/// </summary>
 	/// <param name="bytes">The source byte array.</param>
 	/// <returns>The hexadecimal string representation of the byte array.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static String AsHexString(this Byte[] bytes)
 	{
@@ -137,6 +155,9 @@ public static unsafe class BinaryExtensions
 	/// </summary>
 	/// <param name="value">The source byte.</param>
 	/// <returns>The hexadecimal string representation of the byte.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static String AsHexString(this Byte value)
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
@@ -154,6 +175,9 @@ public static unsafe class BinaryExtensions
 	/// </summary>
 	/// <param name="chars">Destination character span.</param>
 	/// <param name="value">The source byte.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static void CopyHexChars(Span<Char> chars, Byte value)
 	{
 		chars[0] = BinaryExtensions.hexValues[value >> 4];
@@ -164,6 +188,9 @@ public static unsafe class BinaryExtensions
 	/// </summary>
 	/// <param name="chars">Destination character span.</param>
 	/// <param name="bytes">The source byte array.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static void CopyHexChars(Span<Char> chars, Byte[] bytes)
 	{
 		for (Int32 i = 0; i < bytes.Length; i++)

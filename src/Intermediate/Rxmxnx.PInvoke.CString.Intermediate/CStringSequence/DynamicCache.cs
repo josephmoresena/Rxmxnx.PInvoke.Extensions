@@ -54,6 +54,9 @@ public partial class CStringSequence
 		private DynamicCache(Int32 count) => this._cache = new(Environment.ProcessorCount, count);
 
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public override void Clear()
 		{
 			Int32[] keys = [.. this._cache.Keys,];

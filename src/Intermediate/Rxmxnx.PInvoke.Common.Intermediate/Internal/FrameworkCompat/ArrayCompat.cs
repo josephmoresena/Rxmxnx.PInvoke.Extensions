@@ -40,6 +40,9 @@ internal static class ArrayCompat
 	/// <param name="lowerBounds">Destination lower bound span.</param>
 	/// <param name="array">Current array instance.</param>
 	/// <returns>A read-only view of <paramref name="lowerBounds"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

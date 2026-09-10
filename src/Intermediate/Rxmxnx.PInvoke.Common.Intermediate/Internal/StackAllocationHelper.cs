@@ -60,6 +60,9 @@ internal static class StackAllocationHelper
 	/// <param name="arr">Output. Rented array.</param>
 	/// <param name="clear">Indicates whether the array is required to be cleared.</param>
 	/// <returns>A span of the rented array with the specified length, cleared.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<T> RentArray<T>(Int32 length, out T[]? arr, Boolean clear) where T : unmanaged
 	{

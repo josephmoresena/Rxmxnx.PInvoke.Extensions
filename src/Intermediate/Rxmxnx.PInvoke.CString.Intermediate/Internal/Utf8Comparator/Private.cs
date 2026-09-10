@@ -54,6 +54,9 @@ internal partial class Utf8Comparator<TChar>
 	///     </item>
 	/// </list>
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private Int32 Compare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB, Boolean ignoreCase,
 		String? stringB = default)
@@ -90,6 +93,9 @@ internal partial class Utf8Comparator<TChar>
 	/// </returns>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	private Int32 Compare(CompareInfo compareInfo, CompareOptions options, ReadOnlySpan<Byte> textA,
 		ReadOnlySpan<TChar> textB, String? stringB)
@@ -159,6 +165,9 @@ internal partial class Utf8Comparator<TChar>
 	/// </returns>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	private Int32 OrdinalCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB, String? stringB)
 #if UAP
@@ -233,12 +242,15 @@ internal partial class Utf8Comparator<TChar>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private Boolean RuneEqual(Rune runeA, Rune runeB)
 	{
 		CompareOptions compareOptions = this.GetOptions(this._ignoreCase);
 		Boolean result = runeA == runeB;
 
-		// If the value of both runes are the same, no further comparison is necessary.
+		// If the value of both runes is the same, no further comparison is necessary.
 		if (result || compareOptions is CompareOptions.Ordinal)
 			return result;
 
@@ -263,6 +275,9 @@ internal partial class Utf8Comparator<TChar>
 	/// <param name="textB">The second text to compare.</param>
 	/// <param name="stringB">The second string instance.</param>
 	/// <returns>A  substring of <paramref name="stringB"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

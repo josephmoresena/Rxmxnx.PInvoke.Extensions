@@ -13,6 +13,9 @@ internal partial class ArrayMemoryManager<T>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset2(Array array)
 	{
@@ -24,6 +27,9 @@ internal partial class ArrayMemoryManager<T>
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset3(Array array)
@@ -37,6 +43,9 @@ internal partial class ArrayMemoryManager<T>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset4(Array array)
 	{
@@ -48,6 +57,9 @@ internal partial class ArrayMemoryManager<T>
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset5(Array array)
@@ -61,6 +73,9 @@ internal partial class ArrayMemoryManager<T>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset6(Array array)
 	{
@@ -72,6 +87,9 @@ internal partial class ArrayMemoryManager<T>
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset7(Array array)
@@ -85,6 +103,9 @@ internal partial class ArrayMemoryManager<T>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset8(Array array)
 	{
@@ -96,6 +117,9 @@ internal partial class ArrayMemoryManager<T>
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset9(Array array)
@@ -110,6 +134,9 @@ internal partial class ArrayMemoryManager<T>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset10(Array array)
 	{
@@ -123,6 +150,9 @@ internal partial class ArrayMemoryManager<T>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset11(Array array)
 	{
@@ -135,6 +165,9 @@ internal partial class ArrayMemoryManager<T>
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset12(Array array)
@@ -150,6 +183,9 @@ internal partial class ArrayMemoryManager<T>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset13(Array array)
 	{
@@ -163,6 +199,9 @@ internal partial class ArrayMemoryManager<T>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset14(Array array)
 	{
@@ -175,6 +214,9 @@ internal partial class ArrayMemoryManager<T>
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset15(Array array)
@@ -190,6 +232,9 @@ internal partial class ArrayMemoryManager<T>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset16(Array array)
 	{
@@ -203,6 +248,9 @@ internal partial class ArrayMemoryManager<T>
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset17(Array array)
@@ -218,6 +266,9 @@ internal partial class ArrayMemoryManager<T>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset18(Array array)
 	{
@@ -232,6 +283,9 @@ internal partial class ArrayMemoryManager<T>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset19(Array array)
 	{
@@ -245,6 +299,9 @@ internal partial class ArrayMemoryManager<T>
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset20(Array array)
@@ -261,6 +318,9 @@ internal partial class ArrayMemoryManager<T>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset21(Array array)
 	{
@@ -274,6 +334,9 @@ internal partial class ArrayMemoryManager<T>
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset22(Array array)
@@ -289,6 +352,9 @@ internal partial class ArrayMemoryManager<T>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset23(Array array)
 	{
@@ -302,6 +368,9 @@ internal partial class ArrayMemoryManager<T>
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset24(Array array)
@@ -317,6 +386,9 @@ internal partial class ArrayMemoryManager<T>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset25(Array array)
 	{
@@ -330,6 +402,9 @@ internal partial class ArrayMemoryManager<T>
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset26(Array array)
@@ -345,6 +420,9 @@ internal partial class ArrayMemoryManager<T>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset27(Array array)
 	{
@@ -358,6 +436,9 @@ internal partial class ArrayMemoryManager<T>
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset28(Array array)
@@ -374,6 +455,9 @@ internal partial class ArrayMemoryManager<T>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset29(Array array)
 	{
@@ -388,6 +472,9 @@ internal partial class ArrayMemoryManager<T>
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset30(Array array)
@@ -404,6 +491,9 @@ internal partial class ArrayMemoryManager<T>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset31(Array array)
 	{
@@ -418,6 +508,9 @@ internal partial class ArrayMemoryManager<T>
 	/// <inheritdoc cref="ArrayMemoryManager{T}.ComputeOffset2(Array)"/>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static IntPtr ComputeOffset32(Array array)

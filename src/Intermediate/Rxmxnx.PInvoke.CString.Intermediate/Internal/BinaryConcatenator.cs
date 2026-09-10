@@ -53,6 +53,9 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable
 	/// Writes the given <paramref name="value"/> into the current instance.
 	/// </summary>
 	/// <param name="value">A read-only span of UTF-8 bytes to be written.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public void Write(ReadOnlySpan<Byte> value) => this._binaryWrite(this, value);
 	/// <summary>
 	/// Writes the given <paramref name="value"/> into the current instance.
@@ -111,6 +114,9 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable
 	/// <see langword="true"/> if the <paramref name="value"/> is empty; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	protected virtual Boolean IsEmpty(ReadOnlySpan<Byte> value) => value.IsEmpty;
 	/// <summary>
 	/// Releases the unmanaged resources used by the <see cref="IDisposable"/> current instance,
@@ -168,6 +174,9 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable
 	/// The binary data of the UTF-8 text as a <see cref="Byte"/> array.
 	/// If the text length is 0, returns <see langword="null"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	protected Byte[]? ToArray(Boolean nullTerminated = false)
 	{
 		Byte[]? result = default;

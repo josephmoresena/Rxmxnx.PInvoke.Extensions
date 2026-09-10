@@ -185,6 +185,9 @@ public static unsafe partial class NativeUtilities
 	/// <typeparam name="TSource"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
 	/// <param name="value">A read-only reference to <typeparamref name="TSource"/> value.</param>
 	/// <returns><see cref="Byte"/> array.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Byte[] ToBytes<TSource>(in TSource value) where TSource : unmanaged
 	{
@@ -217,6 +220,9 @@ public static unsafe partial class NativeUtilities
 	/// Throws an exception when the length of <paramref name="destination"/> span minus the offset is less
 	/// than the size of <typeparamref name="TSource"/>.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void CopyBytes<TSource>(in TSource value, Span<Byte> destination, Int32 offset = 0)
 		where TSource : unmanaged
@@ -237,6 +243,9 @@ public static unsafe partial class NativeUtilities
 	/// </summary>
 	/// <typeparam name="TEnum">The type of the enumeration.</typeparam>
 	/// <returns>A read-only span that contains the values of the constants in <typeparamref name="TEnum"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static ReadOnlySpan<TEnum> GetEnumValuesSpan<TEnum>() where TEnum : struct, Enum
 		=> EnumValueHelper<TEnum>.Values.Span;
 	/// <summary>
@@ -245,6 +254,9 @@ public static unsafe partial class NativeUtilities
 	/// <typeparam name="TEnum">The type of the enumeration.</typeparam>
 	/// <returns>The span representation of the array.</returns>
 	/// <returns>A string read-only span of the names of the constants in <typeparamref name="TEnum"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static ReadOnlySpan<String> GetEnumNamesSpan<TEnum>() where TEnum : struct, Enum
 		=> EnumNameHelper<TEnum>.Values.Span;
 	/// <summary>

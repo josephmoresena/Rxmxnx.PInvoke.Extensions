@@ -73,10 +73,13 @@ public partial class CStringBuilder
 		/// The number of UTF-8 units copied to <paramref name="destination"/>. This value is the lesser of
 		/// the available UTF-8 units starting at <paramref name="index"/> and the length of the destination span.
 		/// </returns>
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Int32 CopyTo(Int32 index, Span<Byte> destination)
 		{
 #if NET9_0_OR_GREATER

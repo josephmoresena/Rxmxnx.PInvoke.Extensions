@@ -44,6 +44,9 @@ public partial class BufferTypeMetadata
 	/// <param name="action">A <see cref="IScopedBufferAction{T}"/> instance.</param>
 	/// <param name="metadata">A <see cref="BufferTypeMetadata"/> instance.</param>
 	/// <param name="spanLength">Required span length.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private protected static void Execute<T, TBuffer, TAction>(in TAction action, BufferTypeMetadata metadata,
 		Int32 spanLength) where TBuffer : struct
@@ -77,10 +80,13 @@ public partial class BufferTypeMetadata
 	/// <param name="metadata">A <see cref="BufferTypeMetadata"/> instance.</param>
 	/// <param name="spanLength">Required span length.</param>
 	/// <returns><paramref name="func"/> result.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 #endif
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private protected static TResult Execute<T, TBuffer, TFunction, TResult>(in TFunction func,
 		BufferTypeMetadata metadata, Int32 spanLength) where TBuffer : struct
 #if !NET9_0_OR_GREATER

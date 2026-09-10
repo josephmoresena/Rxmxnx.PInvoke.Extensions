@@ -30,6 +30,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <see langword="true"/> if the current span represents a literal o hardcoded memory region;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -48,6 +51,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <see langword="true"/> if the current span represents a literal o hardcoded memory region;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Boolean IsLiteral<T>(this ReadOnlySpan<T> span)
 	{
 		ref T refT = ref MemoryMarshal.GetReference(span);
@@ -65,6 +71,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <typeparam name="T">The type of the array.</typeparam>
 	/// <param name="array">The array to convert.</param>
 	/// <returns>The read-only span representation of the array.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static ReadOnlySpan<T> AsReadOnlySpan<T>(this T[]? array)
 #if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 		=> array is not null ? new(array) : default;
@@ -78,6 +87,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// This method creates a <see cref="Span{T}"/> even if <paramref name="array"/>
 	/// is an array of items of a type derived from <typeparamref name="T"/>.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Span<T> AsCovariantSpan<T>(this T[]? array)
 		=> array is not null ?
 #if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
@@ -100,6 +112,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <remarks>
 	/// On unsupported platforms or in case of inspection errors, this method will always return <see langword="true"/>.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -122,6 +137,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// collected by garbage collector.
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ValPtr<T> GetUnsafeValPtr<T>(this Span<T> span)
 	{
@@ -142,6 +160,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// collected by garbage collector.
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ReadOnlyValPtr<T> GetUnsafeValPtr<T>(this ReadOnlySpan<T> span)
 	{
@@ -163,6 +184,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// collected by garbage collector.
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IntPtr GetUnsafeIntPtr<T>(this Span<T> span)
 	{
@@ -183,6 +207,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// collected by garbage collector.
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IntPtr GetUnsafeIntPtr<T>(this ReadOnlySpan<T> span)
 	{
@@ -204,6 +231,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// collected by garbage collector.
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static UIntPtr GetUnsafeUIntPtr<T>(this Span<T> span)
 	{
@@ -224,6 +254,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// collected by garbage collector.
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static UIntPtr GetUnsafeUIntPtr<T>(this ReadOnlySpan<T> span)
 	{
@@ -238,6 +271,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <typeparam name="TSource">The type of the <see langword="unmanaged"/> value.</typeparam>
 	/// <param name="span">A span of <typeparamref name="TSource"/>.</param>
 	/// <returns>A binary span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<Byte> AsBytes<TSource>(this Span<TSource> span) where TSource : unmanaged
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
@@ -251,6 +287,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <typeparam name="TSource">The type of the <see langword="unmanaged"/> value.</typeparam>
 	/// <param name="span">A read-only span of <typeparamref name="TSource"/>.</param>
 	/// <returns>A binary span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ReadOnlySpan<Byte> AsBytes<TSource>(this ReadOnlySpan<TSource> span) where TSource : unmanaged
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
@@ -266,6 +305,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <typeparam name="TSource">The origin type of the <see langword="unmanaged"/> value.</typeparam>
 	/// <param name="span">A span of <typeparamref name="TSource"/>.</param>
 	/// <returns>A span of <typeparamref name="TDestination"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span)
 		where TSource : unmanaged where TDestination : unmanaged
@@ -282,6 +324,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <typeparam name="TSource">The origin type of the <see langword="unmanaged"/> value.</typeparam>
 	/// <param name="span">A read-only span of <typeparamref name="TSource"/>.</param>
 	/// <returns>A read-only span of <typeparamref name="TDestination"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ReadOnlySpan<TDestination> AsValues<TSource, TDestination>(this ReadOnlySpan<TSource> span)
 		where TSource : unmanaged where TDestination : unmanaged
@@ -301,6 +346,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <typeparamref name="TDestination"/>.
 	/// </param>
 	/// <returns>A span of <typeparamref name="TDestination"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span, out Span<Byte> residual)
 		where TSource : unmanaged where TDestination : unmanaged
@@ -329,6 +377,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <typeparamref name="TDestination"/>.
 	/// </param>
 	/// <returns>A read-only span of <typeparamref name="TDestination"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ReadOnlySpan<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span,
 		out ReadOnlySpan<Byte> residual) where TSource : unmanaged where TDestination : unmanaged
@@ -358,6 +409,9 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <typeparamref name="TDestination"/>.
 	/// </param>
 	/// <returns>A read-only span of <typeparamref name="TDestination"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ReadOnlySpan<TDestination> AsValues<TSource, TDestination>(this ReadOnlySpan<TSource> span,
 		out ReadOnlySpan<Byte> residual) where TSource : unmanaged where TDestination : unmanaged

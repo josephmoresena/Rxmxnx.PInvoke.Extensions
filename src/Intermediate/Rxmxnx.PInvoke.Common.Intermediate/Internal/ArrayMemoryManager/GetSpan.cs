@@ -5,6 +5,9 @@ internal partial class ArrayMemoryManager<T>
 {
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -30,6 +33,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -55,6 +61,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -81,6 +90,9 @@ internal partial class ArrayMemoryManager<T>
 #if !UAP || UAP10_0_16299
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -106,6 +118,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -131,6 +146,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -156,6 +174,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -181,6 +202,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -206,6 +230,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -231,6 +258,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -256,6 +286,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -281,6 +314,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -306,6 +342,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -331,6 +370,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -356,6 +398,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -381,6 +426,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -406,6 +454,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -431,6 +482,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -456,6 +510,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -481,6 +538,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -506,6 +566,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -531,6 +594,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -556,6 +622,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -581,6 +650,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -606,6 +678,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -631,6 +706,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -656,6 +734,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -681,6 +762,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -706,6 +790,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -731,6 +818,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -756,6 +846,9 @@ internal partial class ArrayMemoryManager<T>
 	}
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -788,6 +881,9 @@ internal partial class ArrayMemoryManager<T>
 	/// <param name="array">Array instance.</param>
 	/// <param name="managedRef">Reference to data.</param>
 	/// <returns>Created span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Span<T> CreateSpan(Array array, ref T managedRef)
 	{
 		ref Pinnable<T> refPinnable = ref Unsafe.As<Array, Pinnable<T>>(ref array);

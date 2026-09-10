@@ -23,19 +23,31 @@ internal sealed class CStringUtf8Comparator : Utf8Comparator<Byte>
 	private CStringUtf8Comparator(Boolean ignoreCase, CultureInfo? culture) : base(ignoreCase, culture) { }
 
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected override Rune? DecodeRune(ref ReadOnlySpan<Byte> source) => Utf8Comparator.DecodeRuneFromUtf8(ref source);
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && (!NETCOREAPP || NET7_0_OR_GREATER)
 	[ExcludeFromCodeCoverage]
 #endif
 	protected override String GetString(ReadOnlySpan<Byte> source) => Utf8Comparator.GetStringFromUtf8(source);
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && !NET7_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
 	protected override Int32 CountChars(ReadOnlySpan<Byte> source) => source.GetUtf16Count();
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && !NET7_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif

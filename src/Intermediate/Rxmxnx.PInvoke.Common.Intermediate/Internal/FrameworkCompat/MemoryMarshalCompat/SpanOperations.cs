@@ -16,6 +16,9 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// The number of <typeparamref name="T"/> elements that created span contains.
 	/// </param>
 	/// <returns>A safe span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && (NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER)
 	[ExcludeFromCodeCoverage]
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -48,6 +51,9 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// The number of <typeparamref name="T"/> elements that <paramref name="ptr"/> contains.
 	/// </param>
 	/// <returns>An unsafe span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && (NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER)
 	[ExcludeFromCodeCoverage]
 #endif
@@ -73,6 +79,9 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// <param name="ptr">An unmanaged pointer to data.</param>
 	/// <param name="length">The number of <typeparamref name="T"/> elements that <paramref name="ptr"/> contains.</param>
 	/// <returns>An unsafe read-only span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && (NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER)
 	[ExcludeFromCodeCoverage]
 #endif

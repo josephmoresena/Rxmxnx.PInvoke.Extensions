@@ -90,6 +90,9 @@ public partial class CString
 	/// </summary>
 	/// <param name="func"><see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns the UTF-8 string.</param>
 	/// <param name="isLiteral">Indicates whether returned span is from UTF-8 literal.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private CString(ReadOnlySpanFunc<Byte> func, Boolean isLiteral)
 	{
 		this._isLocal = false;

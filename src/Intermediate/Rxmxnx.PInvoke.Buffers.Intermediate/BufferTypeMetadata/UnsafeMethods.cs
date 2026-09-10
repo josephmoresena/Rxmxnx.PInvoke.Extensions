@@ -17,6 +17,9 @@ public unsafe partial class BufferTypeMetadata
 	/// <param name="buffer">A managed <typeparamref name="TBuffer"/> reference.</param>
 	/// <param name="spanLength">Required span length.</param>
 	/// <returns>A <typeparamref name="T"/> span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Span<T> CreateSpan<T, TBuffer>(ref TBuffer buffer, Int32 spanLength)
 		=> MemoryMarshalCompat.CreateUnsafeSpan<T>(Unsafe.AsPointer(ref buffer), spanLength);

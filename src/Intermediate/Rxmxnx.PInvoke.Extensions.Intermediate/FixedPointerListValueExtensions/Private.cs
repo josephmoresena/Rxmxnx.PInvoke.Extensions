@@ -19,6 +19,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span">A read-only <typeparamref name="T"/> span.</param>
 	/// <param name="typeRef">Output. Current type.</param>
 	/// <returns>A <see cref="FixedPointerInfo"/> instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static FixedPointerInfo CreateFixedPointerInfo<T>(this ReadOnlySpan<T> span, void* ptr, out Type typeRef)
 	{
@@ -43,6 +46,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="span">A read-only <typeparamref name="T"/> span.</param>
 	/// <param name="typeRef">Output. Current type.</param>
 	/// <returns>A <see cref="FixedPointerInfo"/> instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static FixedPointerInfo CreateFixedPointerInfo<T>(this Span<T> span, void* ptr, out Type typeRef)
 	{

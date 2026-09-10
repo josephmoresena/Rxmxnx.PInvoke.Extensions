@@ -32,6 +32,9 @@ internal partial class BinaryConcatenator<T>
 	/// Initializes the delegates of the current instance based on the separator's
 	/// presence.
 	/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void InitializeDelegates()
 	{
@@ -56,6 +59,9 @@ internal partial class BinaryConcatenator<T>
 	/// Writes the <paramref name="value"/> to the current instance.
 	/// </summary>
 	/// <param name="value">The UTF-8 bytes to write.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private void WriteValue(ReadOnlySpan<Byte> value)
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		=> this.Stream.Write(value);
@@ -71,6 +77,9 @@ internal partial class BinaryConcatenator<T>
 	/// </summary>
 	/// <param name="value">The UTF-8 bytes to write.</param>
 	/// <remarks>This method is used when the separator is not empty.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void InitialWrite(ReadOnlySpan<Byte> value)
 	{
@@ -102,6 +111,9 @@ internal partial class BinaryConcatenator<T>
 	/// This method is used when subsequent writes require a separator.
 	/// </summary>
 	/// <param name="value">The UTF-8 bytes to write.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void WriteWithSeparator(ReadOnlySpan<Byte> value)
 	{
@@ -126,6 +138,9 @@ internal partial class BinaryConcatenator<T>
 	/// <remarks>
 	/// This method is used when the value to write doesn't require a preceding separator.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void FinalWrite(ReadOnlySpan<Byte> value)
 	{

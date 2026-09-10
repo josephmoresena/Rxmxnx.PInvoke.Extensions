@@ -28,6 +28,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="newData">Data to append.</param>
 		/// <returns>The chunk into which the final portion of <paramref name="newData"/> was written.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Chunk Append(ReadOnlySpan<Byte> newData)
 		{
 			if (newData.IsEmpty) return this;
@@ -54,6 +57,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="newData">Data to append.</param>
 		/// <returns>The chunk into which the final portion of <paramref name="newData"/> was written.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Chunk Append(ReadOnlySequence<Byte> newData)
 		{
 			if (newData.IsEmpty) return this;
@@ -80,6 +86,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="newData">Data to append.</param>
 		/// <returns>The chunk into which the final portion of <paramref name="newData"/> was written.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Chunk Append(ReadOnlySpan<Char> newData)
 		{
 			if (newData.IsEmpty) return this;
@@ -170,6 +179,9 @@ public partial class CStringBuilder
 #if NET5_0_OR_GREATER
 		[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public void Insert(Int32 index, ReadOnlySpan<Char> newData)
 		{
 			Int32 bufferSize = Encoding.UTF8.GetMaxByteCount(newData.Length);
@@ -190,6 +202,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="index">Insertion index.</param>
 		/// <param name="newData">Bytes to insert.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public void Insert(Int32 index, ReadOnlySpan<Byte> newData)
 		{
 			Chunk? nextChunk = null;
@@ -285,6 +300,9 @@ public partial class CStringBuilder
 		/// The starting position in this instance where units will be copied from. The index is zero-based.
 		/// </param>
 		/// <param name="destination">The writable span where units will be copied.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public void CopyTo(Int32 sourceIndex, Span<Byte> destination)
 		{
 			if (destination.Length == 0) return;

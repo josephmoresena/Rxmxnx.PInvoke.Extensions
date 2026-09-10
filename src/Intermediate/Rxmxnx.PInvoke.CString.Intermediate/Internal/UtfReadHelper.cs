@@ -14,7 +14,13 @@ internal readonly ref struct UtfReadHelper
 	/// <summary>
 	/// Buffer span.
 	/// </summary>
-	public Span<Byte> Bytes { get; }
+	public Span<Byte> Bytes
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get;
+	}
 	/// <summary>
 	/// Indicates whether the current buffer is an array instance.
 	/// </summary>
@@ -23,7 +29,10 @@ internal readonly ref struct UtfReadHelper
 	/// <summary>
 	/// Constructor. Used for stack allocation.
 	/// </summary>
-	/// <param name="bytes">A stack alocated span.</param>
+	/// <param name="bytes">A stack allocated span.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public UtfReadHelper(Span<Byte> bytes)
 	{
 		this._array = default;
@@ -50,6 +59,9 @@ internal readonly ref struct UtfReadHelper
 	/// </summary>
 	/// <param name="textLength">UTF-8 text length in the buffer.</param>
 	/// <returns>A <see cref="Byte"/> array from current instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public Byte[] ToArray(Int32 textLength)
 	{
 		if (this._array is not null && StackAllocationHelper.IsReusableBuffer(this._array.Length, textLength))

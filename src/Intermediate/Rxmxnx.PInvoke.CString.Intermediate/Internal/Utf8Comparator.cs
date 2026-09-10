@@ -121,6 +121,9 @@ internal abstract partial class Utf8Comparator<TChar> : Utf8Comparator where TCh
 	///     </item>
 	/// </list>
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public Int32 Compare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB, String? stringB = default)
 		=> this._ordinal ?
 			this.OrdinalCompare(textA, textB, stringB) :
@@ -136,6 +139,9 @@ internal abstract partial class Utf8Comparator<TChar> : Utf8Comparator where TCh
 	/// <see langword="true"/> if the value of <paramref name="textA"/> is the same as the value of <paramref name="textB"/>;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public Boolean TextEquals(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB, String? stringB = default)
 	{
 		while (!textA.IsEmpty && !textB.IsEmpty)

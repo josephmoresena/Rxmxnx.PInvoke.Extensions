@@ -32,6 +32,9 @@ public partial class NativeUtilities
 	/// <returns>
 	/// <see langword="true"/> if the span was successfully created; otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -63,6 +66,9 @@ public partial class NativeUtilities
 	/// <returns>
 	/// <see langword="true"/> if the read-only span was successfully created; otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

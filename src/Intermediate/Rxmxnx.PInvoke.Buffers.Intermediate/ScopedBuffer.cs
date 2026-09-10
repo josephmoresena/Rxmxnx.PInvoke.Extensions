@@ -12,14 +12,20 @@ namespace Rxmxnx.PInvoke;
 public readonly ref struct ScopedBuffer<T>
 {
 	/// <summary>
-	/// Indicates whether current buffer is heap allocated.
+	/// Indicates whether the current buffer is heap allocated.
 	/// </summary>
 	private readonly Boolean _heapAllocated;
 
 	/// <summary>
 	/// Current buffer span.
 	/// </summary>
-	public Span<T> Span { get; }
+	public Span<T> Span
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get;
+	}
 	/// <summary>
 	/// Indicates whether current buffer is stack allocated.
 	/// </summary>
@@ -37,9 +43,12 @@ public readonly ref struct ScopedBuffer<T>
 	/// Constructor.
 	/// </summary>
 	/// <param name="span">Buffer span.</param>
-	/// <param name="heapAllocated">Indicates whether current buffer is heap allocated.</param>
+	/// <param name="heapAllocated">Indicates whether the current buffer is heap allocated.</param>
 	/// <param name="fullLength">Allocated buffer full length.</param>
 	/// <param name="metadata">Allocated buffer metadata.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	internal ScopedBuffer(Span<T> span, Boolean heapAllocated, Int32 fullLength, BufferTypeMetadata? metadata = default)
 	{
 		this.Span = span;

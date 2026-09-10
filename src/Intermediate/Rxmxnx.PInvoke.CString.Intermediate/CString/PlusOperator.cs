@@ -12,6 +12,9 @@ public partial class CString
 	/// A new <see cref="CString"/> instance containing the concatenation of  <paramref name="left"/> and
 	/// <paramref name="right"/> encoded as UTF-8.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString operator +(String? left, CString? right)
 	{
 		if (!String.IsNullOrEmpty(left) && CString.IsNullOrEmpty(right))
@@ -32,6 +35,9 @@ public partial class CString
 	/// A new <see cref="CString"/> instance containing the concatenation of <paramref name="left"/> and
 	/// <paramref name="right"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString operator +(CString? left, CString? right)
 	{
 		if (!CString.IsNullOrEmpty(left) && CString.IsNullOrEmpty(right))
@@ -49,6 +55,9 @@ public partial class CString
 	/// A new <see cref="CString"/> instance containing the concatenation of <paramref name="left"/> and
 	/// <paramref name="right"/> encoded as UTF-8.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString operator +(CString? left, String? right)
 	{
 		if (CString.IsNullOrEmpty(left) && !String.IsNullOrEmpty(right))
@@ -69,6 +78,9 @@ public partial class CString
 	/// A new <see cref="CString"/> instance containing the concatenation of <paramref name="leftSpan"/> and
 	/// <paramref name="right"/> encoded as UTF-8.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString operator +(ReadOnlySpan<Char> leftSpan, CString? right)
 	{
 		if (leftSpan.IsEmpty)
@@ -93,6 +105,9 @@ public partial class CString
 	/// A new <see cref="CString"/> instance containing the concatenation of <paramref name="leftSpan"/> and
 	/// <paramref name="right"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString operator +(ReadOnlySpan<Byte> leftSpan, CString? right)
 	{
 		if (leftSpan.IsEmpty)
@@ -117,6 +132,9 @@ public partial class CString
 	/// A new <see cref="CString"/> instance containing the concatenation of <paramref name="left"/> and
 	/// <paramref name="rightSpan"/> encoded as UTF-8.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString operator +(CString? left, ReadOnlySpan<Char> rightSpan)
 	{
 		if (rightSpan.IsEmpty)
@@ -141,6 +159,9 @@ public partial class CString
 	/// A new <see cref="CString"/> instance containing the concatenation of <paramref name="left"/> and
 	/// <paramref name="rightSpan"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString operator +(CString? left, ReadOnlySpan<Byte> rightSpan)
 	{
 		if (rightSpan.IsEmpty)

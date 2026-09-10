@@ -40,6 +40,9 @@ public partial class CString
 	/// </param>
 	/// <param name="length">The initial length of the segment.</param>
 	/// <returns>The final length of the segment, accounting for any trailing null characters.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private Int32 GetDataLength(Int32 offset, Int32 length)
 	{

@@ -17,5 +17,15 @@ internal ref struct NullState
 	/// <summary>
 	/// Current null span.
 	/// </summary>
-	public Span<Int32> Initial { get; set; }
+	public Span<Int32> Initial
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get;
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		set;
+	}
 }

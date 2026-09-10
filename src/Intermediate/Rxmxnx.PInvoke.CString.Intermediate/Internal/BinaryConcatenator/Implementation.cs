@@ -53,6 +53,9 @@ internal sealed class BinaryConcatenator : BinaryConcatenator<Byte?>
 	protected override Boolean IsEmpty([NotNullWhen(false)] Byte? value) => !value.HasValue;
 
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	protected override Boolean IsEmpty(ReadOnlySpan<Byte> value) => base.IsEmpty(value) && !this._ignoreEmpty;
 
 	/// <summary>

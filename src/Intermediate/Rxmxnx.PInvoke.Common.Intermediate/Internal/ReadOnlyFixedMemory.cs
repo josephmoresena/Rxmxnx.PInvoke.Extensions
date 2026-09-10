@@ -42,6 +42,9 @@ internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer, IRead
 
 	ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes
 	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE && !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 		[ExcludeFromCodeCoverage]
 #endif
@@ -50,6 +53,9 @@ internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer, IRead
 	}
 	ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects
 	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE && !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 		[ExcludeFromCodeCoverage]
 #endif

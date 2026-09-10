@@ -42,17 +42,26 @@ public sealed partial class CStringBuilder
 	/// Initializes a new instance of the <see cref="CStringBuilder"/> class.
 	/// </summary>
 	// <param name="value">The initial contents of this builder.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder(String? value) : this((ReadOnlySpan<Char>)value) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringBuilder"/> class.
 	/// </summary>
 	// <param name="value">The initial contents of this builder.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder(CString? value) : this((ReadOnlySpan<Byte>)value) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringBuilder"/> class.
 	/// </summary>
 	// <param name="value">The initial contents of this builder.</param>
 	// ReSharper disable once MemberCanBePrivate.Global
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder(ReadOnlySpan<Byte> value) : this(CStringBuilder.GetCapacityFor(value))
 		=> this._chunk = this._chunk.Append(value);
 	/// <summary>
@@ -60,6 +69,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	// <param name="value">The initial contents of this builder.</param>
 	// ReSharper disable once MemberCanBePrivate.Global
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder(ReadOnlySpan<Char> value) : this(CStringBuilder.GetCapacityFor(value))
 		=> this._chunk = this._chunk.Append(value);
 	/// <summary>
@@ -107,10 +119,13 @@ public sealed partial class CStringBuilder
 	/// The number of UTF-8 units copied to <paramref name="destination"/>. This value is the lesser of
 	/// the available UTF-8 units starting at <paramref name="index"/> and the length of the destination span.
 	/// </returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	// ReSharper disable once MemberCanBePrivate.Global
 	public Int32 CopyTo(Int32 index, Span<Byte> destination)
 	{
@@ -153,6 +168,9 @@ public sealed partial class CStringBuilder
 		=> new Concurrent(this.GetLock(), this).Remove(startIndex, length);
 	/// <inheritdoc cref="CStringBuilder.CopyTo(Int32, Span{Byte})"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -199,6 +217,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="nullTerminated">Indicates whether the returning array is UTF-8 null-terminated.</param>
 	/// <returns>A byte array containing all the usable bytes from current instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private Byte[] GetDataBytes(Boolean nullTerminated)
 	{
 		Int32 length = nullTerminated ? 1 : 0;
@@ -215,6 +236,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="initialValue">Initial builder value.</param>
 	/// <returns>Builder capacity.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static UInt16 GetCapacityFor(ReadOnlySpan<Byte> initialValue)
 	{
 		if (initialValue.Length < CStringBuilder.DefaultCapacity)
@@ -226,6 +250,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="initialValue">Initial builder value.</param>
 	/// <returns>Builder capacity.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static UInt16 GetCapacityFor(ReadOnlySpan<Char> initialValue)
 	{
 		Int32 byteCount = initialValue.GetUtf8Count();

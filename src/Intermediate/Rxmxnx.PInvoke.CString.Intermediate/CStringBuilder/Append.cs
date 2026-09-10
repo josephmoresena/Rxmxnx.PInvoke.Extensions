@@ -7,6 +7,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="sequence">A UTF-8 text sequence to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(CStringSequence? sequence)
 	{
 		CStringSequence.Utf8View view = new(sequence, false);
@@ -19,18 +22,27 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The UTF-8 text to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(CString? value) => !CString.IsNullOrEmpty(value) ? this.Append(value.AsSpan()) : this;
 	/// <summary>
 	/// Appends the UTF-8 representation of the specified string.
 	/// </summary>
 	/// <param name="value">The read-only character span to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(String? value) => !String.IsNullOrEmpty(value) ? this.Append(value.AsSpan()) : this;
 	/// <summary>
 	/// Appends the specified UTF-8 units read-only span to this instance.
 	/// </summary>
 	/// <param name="value">The UTF-8 units read-only span to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(ReadOnlySpan<Byte> value)
 	{
 		if (value.IsEmpty) return this;
@@ -53,6 +65,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The array of characters to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(Char[]? value)
 	{
 		if (value is null || value.Length == 0) return this;
@@ -63,6 +78,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The array of UTF-8 units to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(Byte[]? value)
 	{
 		if (value is null || value.Length == 0) return this;
@@ -74,6 +92,9 @@ public sealed partial class CStringBuilder
 	/// <param name="value">The read-only span of characters to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	// ReSharper disable once MemberCanBePrivate.Global
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(ReadOnlySpan<Char> value)
 	{
 		if (value.IsEmpty) return this;

@@ -14,6 +14,9 @@ public sealed partial class CStringBuilder
 	/// A sequence that contains the UTF-8 texts to concatenate and append to the current instance.
 	/// </param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder AppendJoin(CString? separator,
 #if !NET9_0_OR_GREATER
 		params CString?[] values
@@ -35,6 +38,9 @@ public sealed partial class CStringBuilder
 	/// </param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	// ReSharper disable once MemberCanBePrivate.Global
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder AppendJoin(ReadOnlySpan<Byte> separator,
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<CString?> values
@@ -84,6 +90,9 @@ public sealed partial class CStringBuilder
 	/// </param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
 	// ReSharper disable once MemberCanBePrivate.Global
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder AppendJoin(ReadOnlySpan<Byte> separator, CStringSequence.Utf8View sequenceView)
 	{
 #if NET9_0_OR_GREATER

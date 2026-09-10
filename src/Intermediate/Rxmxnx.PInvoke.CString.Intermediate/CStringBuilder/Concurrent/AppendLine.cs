@@ -10,6 +10,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="value">The read-only span of characters to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public CStringBuilder AppendLine(ReadOnlySpan<Char> value)
 		{
 #if NET9_0_OR_GREATER
@@ -26,6 +29,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="value">The UTF-8 units read-only span to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public CStringBuilder AppendLine(ReadOnlySpan<Byte> value)
 		{
 #if NET9_0_OR_GREATER

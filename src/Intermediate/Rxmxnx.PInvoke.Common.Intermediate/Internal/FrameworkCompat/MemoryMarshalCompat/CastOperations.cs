@@ -17,6 +17,9 @@ internal static partial class MemoryMarshalCompat
 	/// <typeparam name="TFrom">The type of the source span.</typeparam>
 	/// <typeparam name="TTo">The type of the target span.</typeparam>
 	/// <returns>The converted read-only span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static ReadOnlySpan<TTo> Cast<TFrom, TTo>(ReadOnlySpan<TFrom> span)
 		where TFrom : unmanaged where TTo : unmanaged
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
@@ -56,6 +59,9 @@ internal static partial class MemoryMarshalCompat
 	/// <typeparam name="TFrom">The type of the source span.</typeparam>
 	/// <typeparam name="TTo">The type of the target span.</typeparam>
 	/// <returns>The converted read-only span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Span<TTo> Cast<TFrom, TTo>(Span<TFrom> span) where TFrom : unmanaged where TTo : unmanaged
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		=> MemoryMarshal.Cast<TFrom, TTo>(span);

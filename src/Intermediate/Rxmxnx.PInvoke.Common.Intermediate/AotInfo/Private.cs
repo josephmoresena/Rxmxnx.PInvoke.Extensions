@@ -11,6 +11,9 @@ public static partial class AotInfo
 	/// Indicates whether the executing frame is AOT.
 	/// </summary>
 	/// <returns><see langword="true"/> if executing frame is AOT; otherwise, <see langword="false"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[UnconditionalSuppressMessage("Trimming", "IL2026")]
 	private static Boolean IsAotFrame()
 	{

@@ -50,6 +50,9 @@ public partial class CStringSequence
 			/// Appends the specified UTF-8 text span at the current position.
 			/// </summary>
 			/// <param name="utf8Text">The UTF-8 text to append.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			public void Append(ReadOnlySpan<Byte> utf8Text)
 			{
 				this._charBuffer.Append(utf8Text);
@@ -61,6 +64,9 @@ public partial class CStringSequence
 			/// Appends the specified UTF-8 text sequence at the current position.
 			/// </summary>
 			/// <param name="utf8Text">The UTF-8 text to append.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			public void Append(ReadOnlySequence<Byte> utf8Text)
 			{
 				Int32 utf8Length = (Int32)utf8Text.Length;
@@ -74,6 +80,9 @@ public partial class CStringSequence
 			/// </summary>
 			/// <param name="utf16Text">The UTF-16 text to append.</param>
 			/// <param name="utf8Length">The UTF-8 text length to append.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			public void Append(ReadOnlySpan<Char> utf16Text, Int32 utf8Length)
 			{
 				this._charBuffer.Append(utf16Text);
@@ -86,6 +95,9 @@ public partial class CStringSequence
 			/// </summary>
 			/// <param name="index">The zero-based index at which UTF-8 text should be inserted.</param>
 			/// <param name="utf8Text">The UTF-8 text to insert.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			public void Insert(Int32 index, ReadOnlySpan<Byte> utf8Text)
 			{
 				Int32 charIndex = Value.GetCharIndex(this._lengths, index);
@@ -101,6 +113,9 @@ public partial class CStringSequence
 			/// <param name="index">The zero-based index at which UTF-8 text should be inserted.</param>
 			/// <param name="utf16Text">The UTF-16 text to insert.</param>
 			/// <param name="utf8Length">The UTF-8 text length to append.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			public void Insert(Int32 index, ReadOnlySpan<Char> utf16Text, Int32 utf8Length)
 			{
 				Int32 charIndex = Value.GetCharIndex(this._lengths, index);
@@ -135,6 +150,9 @@ public partial class CStringSequence
 			/// </summary>
 			/// <param name="lengths">Output. Item length span.</param>
 			/// <returns>The UTF-8 value.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			public CString GetValue(out ReadOnlySpan<Int32> lengths)
 			{
 				Byte[] array = CString.CreateByteArray(this._charBuffer.Length);
@@ -152,10 +170,13 @@ public partial class CStringSequence
 			public Lock GetLock() => this._charBuffer.GetLock();
 
 			/// <summary>
-			/// Retrieves the sequence buffer and the lengths array from the current build.
+			/// Retrieves the sequence buffer and the length array from the current build.
 			/// </summary>
-			/// <param name="lengths">Output. Lengths array.</param>
+			/// <param name="lengths">Output. Length array.</param>
 			/// <returns>The sequence buffer.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			private String BuildState(out Int32[] lengths)
 			{
 				Int32 totalLength = 0;
@@ -194,6 +215,9 @@ public partial class CStringSequence
 			/// </summary>
 			/// <param name="span">Destination UTF-16 character buffer.</param>
 			/// <param name="builder">A <see cref="CStringBuilder"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			private static void CopyChars(Span<Char> span, CStringBuilder builder)
 			{
 				span[^1] = default;

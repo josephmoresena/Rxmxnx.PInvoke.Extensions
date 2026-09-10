@@ -46,6 +46,9 @@ public partial class CStringSequence
 #endif
 		}
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public override void Write(Utf8JsonWriter writer, CStringSequence? value, JsonSerializerOptions options)
 		{
 			Boolean writeNull = value is null && options.DefaultIgnoreCondition switch

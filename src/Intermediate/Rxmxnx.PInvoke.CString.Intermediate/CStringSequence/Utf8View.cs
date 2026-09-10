@@ -76,6 +76,9 @@ public partial class CStringSequence
 		/// <summary>
 		/// Creates an array of <see cref="CString"/> from current instance.
 		/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
@@ -139,14 +142,23 @@ public partial class CStringSequence
 			/// <summary>
 			/// Remaining lengths.
 			/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			private ReadOnlySpan<Int32> _remaining;
 			/// <summary>
 			/// Remaining UTF-8 buffer.
 			/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			private ReadOnlySpan<Byte> _buffer;
 			/// <summary>
 			/// Current item span.
 			/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			private ReadOnlySpan<Byte> _current;
 			/// <summary>
 			/// Indicates whether the current instance is active.
@@ -158,6 +170,9 @@ public partial class CStringSequence
 			/// </summary>
 			public ReadOnlySpan<Byte> Current
 			{
+#if NETFRAMEWORK || NETSTANDARD2_0
+				[SecuritySafeCritical]
+#endif
 				get
 				{
 					ValidationUtilities.ThrowIfInvalidEnumerator(this._instance is null, !this._active,
@@ -170,7 +185,7 @@ public partial class CStringSequence
 			/// Constructor.
 			/// </summary>
 			/// <param name="instance">A <see cref="CStringSequence"/> instance.</param>
-			/// <param name="excludeEmptyItems">Indicates whether current enumerator is only for non-empty items.</param>
+			/// <param name="excludeEmptyItems">Indicates whether the current enumerator is only for non-empty items.</param>
 			internal Enumerator(CStringSequence? instance, Boolean excludeEmptyItems)
 			{
 				this._excludeEmptyItems = excludeEmptyItems;
@@ -184,6 +199,9 @@ public partial class CStringSequence
 			/// <see langword="true"/> if the enumerator was successfully advanced to the next element;
 			/// <see langword="false"/> if the enumerator has passed the end of the enumeration.
 			/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			public Boolean MoveNext()
 			{
 				while (!this._remaining.IsEmpty)
@@ -211,6 +229,9 @@ public partial class CStringSequence
 			/// <summary>
 			/// Resets the enumerator to the beginning of the enumeration, starting over.
 			/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			public void Reset()
 			{
 				this._remaining = this._instance?._lengths;

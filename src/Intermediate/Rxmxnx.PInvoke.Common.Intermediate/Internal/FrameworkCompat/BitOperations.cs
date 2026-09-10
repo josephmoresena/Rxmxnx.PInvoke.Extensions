@@ -40,13 +40,20 @@ namespace System.Numerics;
 internal static class BitOperations
 {
 	private static ReadOnlySpan<Byte> TrailingZeroCountDeBruijn
-		=> // 32
-		[
-			00, 01, 28, 02, 29, 14, 24, 03,
-			30, 22, 20, 15, 25, 17, 04, 08,
-			31, 27, 13, 23, 21, 19, 16, 07,
-			26, 12, 18, 06, 11, 05, 10, 09,
-		];
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get
+		// 32
+			=>
+			[
+				00, 01, 28, 02, 29, 14, 24, 03,
+				30, 22, 20, 15, 25, 17, 04, 08,
+				31, 27, 13, 23, 21, 19, 16, 07,
+				26, 12, 18, 06, 11, 05, 10, 09,
+			];
+	}
 
 	/// <summary>
 	/// Count the number of trailing zero bits in an integer value.

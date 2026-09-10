@@ -231,6 +231,9 @@ public static unsafe class PointerExtensions
 	/// the span.
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<T> GetUnsafeSpan<T>(this IntPtr ptr, Int32 length) where T : unmanaged
 	{
@@ -255,6 +258,9 @@ public static unsafe class PointerExtensions
 	/// the span.
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<T> GetUnsafeSpan<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
 	{
@@ -279,6 +285,9 @@ public static unsafe class PointerExtensions
 	/// the span.
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<T> GetUnsafeSpan<T>(this MemoryHandle handle, Int32 length)
 	{
@@ -303,6 +312,9 @@ public static unsafe class PointerExtensions
 	/// the span.
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4144)]
@@ -330,6 +342,9 @@ public static unsafe class PointerExtensions
 	/// the span.
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4144)]
@@ -357,6 +372,9 @@ public static unsafe class PointerExtensions
 	/// the span.
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4144)]
@@ -554,6 +572,9 @@ public static unsafe class PointerExtensions
 	/// If the memory containing the UTF-16 text is moved or deallocated, accessing the span can cause unexpected behavior
 	/// or application crashes.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static ReadOnlySpan<Char> GetUnsafeReadOnlySpanFromNullTerminated(this ReadOnlyValPtr<Char> char0)
 		=> MemoryMarshal.CreateReadOnlySpanFromNullTerminated(char0);
 	/// <summary>
@@ -569,6 +590,9 @@ public static unsafe class PointerExtensions
 	/// If the memory containing the UTF-8 text is moved or deallocated, accessing the span can cause unexpected behavior
 	/// or application crashes.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static ReadOnlySpan<Byte> GetUnsafeReadOnlySpanFromNullTerminated(this ReadOnlyValPtr<Byte> char0)
 		=> MemoryMarshal.CreateReadOnlySpanFromNullTerminated(char0);
 
@@ -622,6 +646,9 @@ public static unsafe class PointerExtensions
 	/// The reliability of the obtained information depends on the lifetime and validity of the pointer at the time
 	/// of method invocation.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static String GetStringFromCharPointer(Char* chrPtr, Int32 length)
 		=> length == default ? new(chrPtr) : new ReadOnlySpan<Char>(chrPtr, length).ToString();

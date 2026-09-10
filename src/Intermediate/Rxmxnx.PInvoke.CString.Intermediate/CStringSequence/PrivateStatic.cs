@@ -40,6 +40,9 @@ public unsafe partial class CStringSequence
 	/// <summary>
 	/// Static constructor.
 	/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3963)]
 #endif
@@ -72,6 +75,9 @@ public unsafe partial class CStringSequence
 	/// <returns>
 	/// A <see cref="String"/> instance that contains the binary information of the UTF-8 text sequence.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static String CreateBuffer(ReadOnlySpan<CString?> values)
 	{
@@ -99,6 +105,9 @@ public unsafe partial class CStringSequence
 	/// <param name="span">Span of UTF-8 text pointers.</param>
 	/// <param name="lengths">UTF-8 text lengths.</param>
 	/// <returns>Created buffer.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static String CreateBuffer(ReadOnlySpan<ReadOnlyValPtr<Byte>> span, Int32[] lengths)
 	{
 		fixed (void* ptrSpan = &MemoryMarshal.GetReference(span))
@@ -110,6 +119,9 @@ public unsafe partial class CStringSequence
 	/// <param name="ptrSpan">Pointer to pointer span.</param>
 	/// <param name="lengths">UTF-8 text lengths.</param>
 	/// <returns>Created buffer.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static String CreateBuffer(void* ptrSpan, Int32[] lengths)
 	{
 		Int32 bufferLength = CStringSequence.GetBufferLength(lengths.AsSpan());
@@ -129,6 +141,9 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="charSpan">A <see cref="Span{Char}"/> instance.</param>
 	/// <param name="info">A <see cref="SpanCreationInfo"/> value.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static void CreateBuffer(Span<Char> charSpan, SpanCreationInfo info)
 	{
 		Int32 offset = 0;
@@ -153,6 +168,9 @@ public unsafe partial class CStringSequence
 	/// <param name="state">
 	/// The collection of <see cref="CString"/> items whose contents are to be copied.
 	/// </param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static void CopyText(Span<Char> charSpan, CStringSpanState state)
 	{
@@ -182,7 +200,10 @@ public unsafe partial class CStringSequence
 	/// <param name="charSpan">
 	/// The writable <see cref="Char"/> span that is the destination of the copy operation.
 	/// </param>
-	/// <param name="helper">Helper value with pointer to UTF-8 source text.</param>
+	/// <param name="helper">Helper value with a pointer to UTF-8 source text.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static void CopyText(Span<Char> charSpan, CopyTextHelper helper)
 	{
 		Span<Byte> byteSpan = MemoryMarshal.AsBytes(charSpan);
@@ -226,6 +247,9 @@ public unsafe partial class CStringSequence
 	/// <typeparam name="TState">The type of the element to pass to the action of the state.</typeparam>
 	/// <param name="buffer">The UTF-16 buffer where the sequence is created.</param>
 	/// <param name="helper">The state object used for creation.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static void CreateCStringSequence<TState>(Span<Char> buffer, SequenceCreationHelper<TState> helper)
 #if NET9_0_OR_GREATER
@@ -239,6 +263,9 @@ public unsafe partial class CStringSequence
 	/// <typeparam name="TState">The type of the element to pass to the action of the state.</typeparam>
 	/// <param name="buffer">The byte buffer where the sequence is created.</param>
 	/// <param name="helper">The state object used for creation.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static void CreateCStringSequence<TState>(Span<Byte> buffer, SequenceCreationHelper<TState> helper)
 #if NET9_0_OR_GREATER
 		where TState : allows ref struct
@@ -261,6 +288,9 @@ public unsafe partial class CStringSequence
 	/// A <see cref="CString"/> instance equivalent to <paramref name="str"/>, or <see langword="null"/> if
 	/// <paramref name="str"/> is <see langword="null"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[return: NotNullIfNotNull(nameof(str))]
 	private static CString? CreateTransitive(String? str)
 #if NET7_0_OR_GREATER
@@ -287,6 +317,9 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="list">A collection of UTF-8 texts.</param>
 	/// <returns>An array representing the length of each UTF-8 text in the collection.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Int32[] GetLengthArray(ReadOnlySpan<CString?> list)
 	{
 		Int32[] result = CStringSequence.CreateIntArray(list.Length);
@@ -299,6 +332,9 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="list">A collection of Null-terminated UTF-8 text pointers.</param>
 	/// <returns>An array representing the length of each UTF-8 text in the collection.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Int32[] GetLengthArray(ReadOnlySpan<ReadOnlyValPtr<Byte>> list)
 	{
 		Int32[] result = CStringSequence.CreateIntArray(list.Length);
@@ -321,6 +357,9 @@ public unsafe partial class CStringSequence
 	/// <param name="lengths">The lengths of the UTF-8 text sequence.</param>
 	/// <param name="totalNonEmpty">Output. Count of non-empty UTF-8 texts.</param>
 	/// <returns>Instance cache.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static IList<CString?> CreateCache(ReadOnlySpan<Int32> lengths, out Int32 totalNonEmpty)
 	{
 		List<Int32> emptyIndices =
@@ -353,6 +392,9 @@ public unsafe partial class CStringSequence
 	/// <param name="lastNonEmpty">Output. Index of last non-empty UTF-8 text.</param>
 	/// <param name="skipLast">Output. Count of useless elements at the end of resulting list.</param>
 	/// <returns>A list containing the indices of all empty UTF-8 in the sequence.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static List<Int32> GetEmptyIndexList(ReadOnlySpan<Int32> lengths, out Int32 totalNonEmpty,
 		out Int32 lastNonEmpty, out Int32 skipLast)
 	{
@@ -382,6 +424,9 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="lengths">The lengths of the UTF-8 text sequence to create.</param>
 	/// <returns><see cref="String"/> buffer length.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Int32 GetBufferLength(ReadOnlySpan<Int32> lengths)
 	{
 		Int32 bytesLength = CStringSequence.GetTotalBytes(lengths);
@@ -393,6 +438,9 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="buffer">A buffer of a UTF-8 sequence.</param>
 	/// <returns>A new <see cref="CStringSequence"/> instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static CStringSequence CreateFrom(ReadOnlySpan<Byte> buffer)
 	{
 		CStringSequence.Trim(ref buffer);
@@ -423,6 +471,9 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="buffer">A buffer of a UTF-8 sequence.</param>
 	/// <returns>A new <see cref="CStringSequence"/> instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static CStringSequence CreateFrom(String buffer)
 	{
 		ReadOnlySpan<Byte> source = MemoryMarshal.AsBytes(buffer.AsSpan());
@@ -434,6 +485,9 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="buffer">A buffer of a UTF-8 sequence.</param>
 	/// <returns>The number of consecutive UTF-8 null-characters in <paramref name="buffer"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Int32 GetZeros(ReadOnlySpan<Byte> buffer)
 	{
 		Int32 zeros = 0;
@@ -448,6 +502,9 @@ public unsafe partial class CStringSequence
 	/// A reference to a <see cref="ReadOnlySpan{Byte}"/> that will be updated to exclude leading and trailing
 	/// UTF-8 null-characters.
 	/// </param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static void Trim(ref ReadOnlySpan<Byte> bufferSpan)
 	{
 		Int32 zeros = CStringSequence.GetZeros(bufferSpan);
@@ -461,6 +518,9 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="nulls">Collection of the indices UTF-8 null-character in buffer.</param>
 	/// <returns>Sequence lengths array.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Int32[] GetLengths(List<Int32> nulls)
 	{
 #if NET5_0_OR_GREATER
@@ -477,6 +537,9 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="nulls">Collection of the indices UTF-8 null-character in buffer.</param>
 	/// <returns>Sequence lengths array.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Int32[] GetLengths(ReadOnlySpan<Int32> nulls)
 	{
 		if (nulls.IsEmpty) return [];
@@ -499,6 +562,9 @@ public unsafe partial class CStringSequence
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Int32[] GetLengths(ReadOnlySpan<Byte> buffer)
 	{
 		const Int32 maxStackNulls = StackAllocationHelper.StackallocByteThreshold / sizeof(Int32);
@@ -519,6 +585,9 @@ public unsafe partial class CStringSequence
 	/// <param name="nulls">Collection of the indices UTF-8 null-character in buffer.</param>
 	/// <param name="extraNulls">Additional collection of the indices UTF-8 null-character in buffer.</param>
 	/// <returns>Sequence lengths array.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Int32[] GetLengths(ReadOnlySpan<Int32> nulls, List<Int32> extraNulls)
 	{
 		if (nulls.IsEmpty) return [];
@@ -548,6 +617,9 @@ public unsafe partial class CStringSequence
 	/// A <see cref="List{Int32}"/> containing the zero-based positions of null bytes that are not part of a
 	/// consecutive sequence of zeros.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static List<Int32> GetNulls(Int32 offset, ReadOnlySpan<Byte> buffer)
 	{
 		List<Int32> nulls = [];
@@ -600,6 +672,9 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="values">The collection of text.</param>
 	/// <returns>Number of required bytes.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Int32 GetTotalBytes(ReadOnlySpan<CString?> values)
 	{
 		Int32 totalBytes = 0;
@@ -615,6 +690,9 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="lengths">The lengths of the UTF-8 text sequence.</param>
 	/// <returns>Number of required bytes.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Int32 GetTotalBytes(ReadOnlySpan<Int32> lengths)
 	{

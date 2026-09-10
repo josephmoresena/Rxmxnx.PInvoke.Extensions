@@ -31,6 +31,9 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 	/// </summary>
 	public Span<T> Values
 	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get
 		{
@@ -40,7 +43,7 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 		}
 	}
 	/// <summary>
-	/// Indicates whether current memory block is null-referenced or empty.
+	/// Indicates whether the current memory block is null-referenced or empty.
 	/// </summary>
 	public Boolean IsNullOrEmpty => this._value.IsNullOrEmpty;
 	/// <summary>
@@ -48,6 +51,9 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 	/// </summary>
 	public Span<Byte> Bytes
 	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		get
 		{
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
@@ -66,6 +72,9 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 	/// </summary>
 	public Span<Object> Objects
 	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		get
 		{
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER

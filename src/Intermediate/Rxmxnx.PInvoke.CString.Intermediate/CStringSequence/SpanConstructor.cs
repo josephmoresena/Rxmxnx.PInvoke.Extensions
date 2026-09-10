@@ -11,6 +11,9 @@ public unsafe partial class CStringSequence
 	/// from <paramref name="span0"/>.
 	/// </summary>
 	/// <param name="span0">A read-only binary span containing UTF-8 text.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringSequence(ReadOnlySpan<Byte> span0)
 	{
 		this._lengths = [span0.Length,];
@@ -24,6 +27,9 @@ public unsafe partial class CStringSequence
 	/// </summary>
 	/// <param name="span0">1st UTF-8 span.</param>
 	/// <param name="span1">2nd UTF-8 span.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringSequence(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1)
 	{
 		this._lengths = [span0.Length, span1.Length,];
@@ -39,6 +45,9 @@ public unsafe partial class CStringSequence
 	/// <param name="span0">1st UTF-8 span.</param>
 	/// <param name="span1">2nd UTF-8 span.</param>
 	/// <param name="span2">3rd UTF-8 span.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringSequence(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2)
 	{
 		this._lengths = [span0.Length, span1.Length, span2.Length,];
@@ -56,6 +65,9 @@ public unsafe partial class CStringSequence
 	/// <param name="span1">2nd UTF-8 span.</param>
 	/// <param name="span2">3rd UTF-8 span.</param>
 	/// <param name="span3">4th UTF-8 span.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringSequence(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2,
 		ReadOnlySpan<Byte> span3)
 	{
@@ -76,6 +88,9 @@ public unsafe partial class CStringSequence
 	/// <param name="span2">3rd UTF-8 span.</param>
 	/// <param name="span3">4th UTF-8 span.</param>
 	/// <param name="span4">5th UTF-8 span.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringSequence(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2,
 		ReadOnlySpan<Byte> span3, ReadOnlySpan<Byte> span4)
 	{
@@ -98,6 +113,9 @@ public unsafe partial class CStringSequence
 	/// <param name="span3">4th UTF-8 span.</param>
 	/// <param name="span4">5th UTF-8 span.</param>
 	/// <param name="span5">6th UTF-8 span.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringSequence(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2,
 		ReadOnlySpan<Byte> span3, ReadOnlySpan<Byte> span4, ReadOnlySpan<Byte> span5)
 	{
@@ -122,6 +140,9 @@ public unsafe partial class CStringSequence
 	/// <param name="span4">5th UTF-8 span.</param>
 	/// <param name="span5">6th UTF-8 span.</param>
 	/// <param name="span6">7th UTF-8 span.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringSequence(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2,
 		ReadOnlySpan<Byte> span3, ReadOnlySpan<Byte> span4, ReadOnlySpan<Byte> span5, ReadOnlySpan<Byte> span6)
 	{
@@ -149,6 +170,9 @@ public unsafe partial class CStringSequence
 	/// <param name="span5">6th UTF-8 span.</param>
 	/// <param name="span6">7th UTF-8 span.</param>
 	/// <param name="span7">8th UTF-8 span.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringSequence(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2,
 		ReadOnlySpan<Byte> span3, ReadOnlySpan<Byte> span4, ReadOnlySpan<Byte> span5, ReadOnlySpan<Byte> span6,
 		ReadOnlySpan<Byte> span7)

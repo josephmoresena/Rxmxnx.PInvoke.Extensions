@@ -62,25 +62,31 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	private const Byte unicodeCategoryMask = 0x1F;
 
 	private static ReadOnlySpan<Byte> AsciiCharInfo
-		=>
-		[
-			0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x8E, 0x8E, 0x8E, 0x8E, 0x8E, 0x0E,
-			0x0E,
-			0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E,
-			0x0E,
-			0x8B, 0x18, 0x18, 0x18, 0x1A, 0x18, 0x18, 0x18, 0x14, 0x15, 0x18, 0x19, 0x18, 0x13, 0x18,
-			0x18,
-			0x48, 0x48, 0x48, 0x48, 0x48, 0x48, 0x48, 0x48, 0x48, 0x48, 0x18, 0x18, 0x19, 0x19, 0x19,
-			0x18,
-			0x18, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40,
-			0x40,
-			0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x14, 0x18, 0x15, 0x1B,
-			0x12,
-			0x1B, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41,
-			0x41,
-			0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x14, 0x19, 0x15, 0x19,
-			0x0E,
-		];
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get
+			=>
+			[
+				0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x8E, 0x8E, 0x8E, 0x8E, 0x8E, 0x0E,
+				0x0E,
+				0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E, 0x0E,
+				0x0E,
+				0x8B, 0x18, 0x18, 0x18, 0x1A, 0x18, 0x18, 0x18, 0x14, 0x15, 0x18, 0x19, 0x18, 0x13, 0x18,
+				0x18,
+				0x48, 0x48, 0x48, 0x48, 0x48, 0x48, 0x48, 0x48, 0x48, 0x48, 0x18, 0x18, 0x19, 0x19, 0x19,
+				0x18,
+				0x18, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40,
+				0x40,
+				0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x14, 0x18, 0x15, 0x1B,
+				0x12,
+				0x1B, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41,
+				0x41,
+				0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x14, 0x19, 0x15, 0x19,
+				0x0E,
+			];
+	}
 
 	private readonly UInt32 _value;
 
@@ -218,6 +224,9 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// </summary>
 	public Int32 Value => (Int32)this._value;
 
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Rune ChangeCaseCultureAware(Rune rune, CultureInfo culture, Boolean toUpper)
 	{
 		Span<Char> original = stackalloc Char[Rune.MaxUtf16CharsPerRune];
@@ -271,6 +280,9 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// the data could not be successfully decoded. This pattern provides convenient automatic U+FFFD substitution of
 	/// invalid sequences while iterating through the loop.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static OperationStatus DecodeFromUtf16(ReadOnlySpan<Char> source, out Rune result, out Int32 charsConsumed)
 	{
 		if (!source.IsEmpty)
@@ -339,6 +351,9 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// the data could not be successfully decoded. This pattern provides convenient automatic U+FFFD substitution of
 	/// invalid sequences while iterating through the loop.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static OperationStatus DecodeFromUtf8(ReadOnlySpan<Byte> source, out Rune result, out Int32 bytesConsumed)
 	{
 		Int32 index = 0;
@@ -446,6 +461,9 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// iteration of the loop, the caller should slice off the final <paramref name="charsConsumed"/> elements of
 	/// the <paramref name="source"/> buffer.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static OperationStatus DecodeLastFromUtf16(ReadOnlySpan<Char> source, out Rune result,
 		out Int32 charsConsumed)
 	{
@@ -495,6 +513,9 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// iteration of the loop, the caller should slice off the final <paramref name="bytesConsumed"/> elements of
 	/// the <paramref name="source"/> buffer.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static OperationStatus DecodeLastFromUtf8(ReadOnlySpan<Byte> source, out Rune value, out Int32 bytesConsumed)
 	{
 		Int32 index = source.Length - 1;
@@ -550,6 +571,9 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// <exception cref="ArgumentException">
 	/// If <paramref name="destination"/> is not large enough to hold the output.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public Int32 EncodeToUtf16(Span<Char> destination)
 		=> this.TryEncodeToUtf16(destination, out Int32 charsWritten) ?
 			charsWritten :
@@ -563,6 +587,9 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// <exception cref="ArgumentException">
 	/// If <paramref name="destination"/> is not large enough to hold the output.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public Int32 EncodeToUtf8(Span<Byte> destination)
 		=> this.TryEncodeToUtf8(destination, out Int32 bytesWritten) ?
 			bytesWritten :
@@ -586,6 +613,9 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// </summary>
 	public static Boolean IsValid(UInt32 value) => UnicodeUtility.IsValidUnicodeScalar(value);
 
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	internal static Int32 ReadFirstRuneFromUtf16Buffer(ReadOnlySpan<Char> input)
 	{
 		if (input.IsEmpty) return -1;
@@ -603,6 +633,9 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// <summary>
 	/// Returns a <see cref="string"/> representation of this <see cref="System.Text.Rune"/> instance.
 	/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public override String ToString()
 	{
 		if (this.IsBmp) return ((Char)this._value).ToString();
@@ -676,10 +709,16 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// The <see cref="Utf16SequenceLength"/> property can be queried ahead of time to determine
 	/// the required size of the <paramref name="destination"/> buffer.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Boolean TryEncodeToUtf16(Span<Char> destination, out Int32 charsWritten)
 		=> Rune.TryEncodeToUtf16(this, destination, out charsWritten);
 
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Boolean TryEncodeToUtf16(Rune value, Span<Char> destination, out Int32 charsWritten)
 	{
 		if (!destination.IsEmpty)
@@ -715,10 +754,16 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// The <see cref="Utf8SequenceLength"/> property can be queried ahead of time to determine
 	/// the required size of the <paramref name="destination"/> buffer.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Boolean TryEncodeToUtf8(Span<Byte> destination, out Int32 bytesWritten)
 		=> Rune.TryEncodeToUtf8(this, destination, out bytesWritten);
 
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Boolean TryEncodeToUtf8(Rune value, Span<Byte> destination, out Int32 bytesWritten)
 	{
 		if (!destination.IsEmpty)
@@ -789,6 +834,9 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 		return Rune.GetUnicodeCategoryNonAscii(value);
 	}
 
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static UnicodeCategory GetUnicodeCategoryNonAscii(Rune value)
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		=> CharUnicodeInfo.GetUnicodeCategory(value.Value);

@@ -39,6 +39,9 @@ public partial class CString
 	/// <see langword="true"/> if the read-only span represents a null-terminated UTF-8 string; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean IsNullTerminatedSpan(ReadOnlySpan<Byte> data, out Int32 textLength)
 	{
@@ -57,6 +60,9 @@ public partial class CString
 	/// A <see cref="Byte"/> array that represents a null-terminated UTF-8 string composed of the
 	/// read-only span repeated the specified number of times.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Byte[] CreateRepeatedSequence(ReadOnlySpan<Byte> seq, Int32 count)
 	{
@@ -79,6 +85,9 @@ public partial class CString
 	/// A <see cref="Byte"/> array that represents a null-terminated UTF-8 string composed of the
 	/// read-only span repeated the specified number of times.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Byte[] CreateRepeatedSequence(ReadOnlySpan<Char> seq, Int32 count)
 	{
@@ -103,6 +112,9 @@ public partial class CString
 	/// </summary>
 	/// <param name="separator">The character to make up the <see cref="String"/>.</param>
 	/// <returns>A <see cref="String"/> that consists of a single instance of the specified character.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static String CreateSeparator(Char separator)
 #if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
@@ -170,6 +182,9 @@ public partial class CString
 	/// <param name="utf16Text">The UTF-16 text to initialize de region.</param>
 	/// <param name="utf8Length">Output. UTF-8 length of <paramref name="utf16Text"/>.</param>
 	/// <returns>The managed region with <paramref name="utf16Text"/> UTF-8 representation.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static ValueRegion<Byte> CreateUtf8Region(String utf16Text, out Int32 utf8Length)
 	{
 		utf8Length = Encoding.UTF8.GetByteCount(utf16Text);
@@ -192,6 +207,9 @@ public partial class CString
 	/// <param name="unusedCount">Unused byte count.</param>
 	/// <param name="clearUnused">Indicates whether the current unused bytes should be cleared.</param>
 	/// <returns>Additive inverse of the number of unused bytes at the end of the buffer.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Int32 FinalizeBuffer(Span<Byte> buffer, Int32 unusedCount, Boolean clearUnused)
 	{
 		Span<Byte> unusedBytes = buffer[^unusedCount..];

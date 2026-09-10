@@ -49,6 +49,9 @@ public partial class NativeUtilities
 	/// <typeparam name="T">The type of items in the array.</typeparam>
 	/// <param name="array">A <see typeparamref="T"/> array.</param>
 	/// <returns>A reference to the element at index 0.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	internal static ref T GetArrayDataReference<T>(T[] array)
 		=> ref array.Length > 0 ?
 			ref Unsafe.AsRef(in array[0]) :
@@ -94,6 +97,9 @@ public partial class NativeUtilities
 	/// <typeparam name="TBuffer">A <see cref="ValueType"/> buffer type.</typeparam>
 	/// <param name="buffer">Managed reference to <typeparamref name="TBuffer"/> value.</param>
 	/// <returns>Created <see cref="Type"/> span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET5_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif

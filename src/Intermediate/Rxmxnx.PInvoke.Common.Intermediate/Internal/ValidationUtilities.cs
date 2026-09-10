@@ -232,6 +232,9 @@ internal static unsafe class ValidationUtilities
 	/// <exception cref="InvalidCastException">
 	/// Thrown if the size of the binary span is greater than <paramref name="sizeOf"/>.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidBinarySpanSize(ReadOnlySpan<Byte> span, Int32 sizeOf,
 		[CallerArgumentExpression(nameof(span))] String nameofSpan = ValidationUtilities.emptyString)
@@ -319,6 +322,9 @@ internal static unsafe class ValidationUtilities
 	/// Thrown if the destination span does not have enough space to contain the binary representation of the
 	/// <see langword="unmanaged"/> value.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && (NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER)
 	[ExcludeFromCodeCoverage]
 #endif

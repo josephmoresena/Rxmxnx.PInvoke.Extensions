@@ -138,8 +138,11 @@ internal static class BuffersHelper
 	/// Retrieves the components sizes for given <paramref name="count"/>.
 	/// </summary>
 	/// <param name="components">Components buffer.</param>
-	/// <param name="count">Amount of items in required buffer.</param>
-	/// <returns>Enumeration of components sizes.</returns>
+	/// <param name="count">Number of items in the required buffer.</param>
+	/// <returns>Enumeration of components' sizes.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Span<UInt16> GetBinaryComponents(Span<UInt16> components, UInt16 count)
 	{
 		Int32 found = 0;
@@ -313,6 +316,9 @@ internal static class BuffersHelper
 	/// <returns>
 	/// The first available metadata entry within the specified range; otherwise, <see langword="null"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]

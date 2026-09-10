@@ -36,6 +36,9 @@ public partial class CStringSequence
 		/// <summary>
 		/// Retrieves the span of the UTF-8 text represented by this state.
 		/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static ReadOnlySpan<Byte> GetSpan(CStringStringState state) => Encoding.UTF8.GetBytes(state._value);
 #endif

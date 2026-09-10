@@ -46,6 +46,9 @@ internal static class ConvertCompat
 	/// </summary>
 	/// <param name="bytes">A span of 8-bit unsigned integers.</param>
 	/// <returns>The string representation in hex of the elements in <paramref name="bytes"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static unsafe String ToHexString(ReadOnlySpan<Byte> bytes)
 	{
 #if !PACKAGE || !NET5_0_OR_GREATER
@@ -77,6 +80,9 @@ internal static class ConvertCompat
 	}
 
 	#region CORECLR
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static void ToCharsBuffer(Byte value, Span<Char> buffer, Int32 startingIndex = 0)
 	{

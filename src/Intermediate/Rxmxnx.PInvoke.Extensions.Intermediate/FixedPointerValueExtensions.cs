@@ -79,6 +79,9 @@ public static unsafe class FixedPointerValueExtensions
 	/// <typeparam name="TAction">Type of <see cref="IFixedAction"/>.</typeparam>
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TAction>(this Span<T> span, TAction? action)
 #if !NET9_0_OR_GREATER
@@ -103,6 +106,9 @@ public static unsafe class FixedPointerValueExtensions
 	/// <typeparam name="TAction">Type of <see cref="IFixedAction"/>.</typeparam>
 	/// <param name="span">The current read-only span of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TAction>(this ReadOnlySpan<T> span, TAction? action)
 #if !NET9_0_OR_GREATER
@@ -127,6 +133,9 @@ public static unsafe class FixedPointerValueExtensions
 	/// <typeparam name="TAction">Type of <see cref="IFixedAction"/>.</typeparam>
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -154,6 +163,9 @@ public static unsafe class FixedPointerValueExtensions
 	/// <typeparam name="TAction">Type of <see cref="IFixedAction"/>.</typeparam>
 	/// <param name="span">The current read-only span of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -183,6 +195,9 @@ public static unsafe class FixedPointerValueExtensions
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TResult, TFunction>(this Span<T> span, TFunction? func, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -216,6 +231,9 @@ public static unsafe class FixedPointerValueExtensions
 	/// <param name="span">The current read-only span of type <typeparamref name="T"/>.</param>
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TResult, TFunction>(this ReadOnlySpan<T> span, TFunction? func,
 		out TResult result)
@@ -250,6 +268,9 @@ public static unsafe class FixedPointerValueExtensions
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -282,6 +303,9 @@ public static unsafe class FixedPointerValueExtensions
 	/// <param name="span">The current read-only span of type <typeparamref name="T"/>.</param>
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

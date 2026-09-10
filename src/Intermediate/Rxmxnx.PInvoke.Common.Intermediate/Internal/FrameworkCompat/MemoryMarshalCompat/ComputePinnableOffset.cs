@@ -79,6 +79,9 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// <exception cref="PlatformNotSupportedException">
 	/// The runtime uses a non-compact span representation whose <c>_pinnable</c> field cannot be identified.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Int32 ComputePinnableOffset()
 	{
 		if (sizeof(Span<Byte>) <= 2 * sizeof(IntPtr)) return -1;
@@ -121,6 +124,9 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// <exception cref="PlatformNotSupportedException">
 	/// The runtime uses a non-compact span representation whose <c>_pinnable</c> field cannot be identified.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Int32 ComputePinnableOffset(Span<Object> arrays, in Span<Byte> span0, in Span<Byte> span1)
 	{
 		fixed (void* pSpan0 = &span0)
@@ -143,6 +149,9 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// <exception cref="PlatformNotSupportedException">
 	/// The runtime uses a non-compact span representation whose <c>_pinnable</c> field cannot be identified.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Int32 ComputePinnableOffset(Span<Object> arrays, in ReadOnlySpan<Byte> span0,
 		in ReadOnlySpan<Byte> span1)
 	{
@@ -163,6 +172,9 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// <returns>
 	/// The zero-based byte offset of the <c>_pinnable</c> field within the runtime span representation.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Int32 ComputePinnableOffset(Span<Object> arrays, void* pSpan0, void* pSpan1)
 	{
 		ReadOnlySpan<Byte> spanXorSpan =
@@ -185,6 +197,9 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// <exception cref="PlatformNotSupportedException">
 	/// The runtime uses a non-compact span representation whose <c>_pinnable</c> field cannot be identified.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Int32 ComputeReadOnlyPinnableOffset()
 	{
 		B2 buffer = new();
@@ -219,6 +234,9 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// <returns>
 	/// A read-only view of <paramref name="spanXor"/> containing the computed XOR bytes.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static ReadOnlySpan<Byte> GetSpanXorSpan(Span<Byte> spanXor, void* firstSpanPtr, void* secondSpanPtr)
 	{

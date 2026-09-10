@@ -158,6 +158,9 @@ public static partial class BufferManager<T>
 	/// </summary>
 	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/>.</typeparam>
 	/// <param name="action">Method to execute.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -190,6 +193,9 @@ public static partial class BufferManager<T>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
 	/// <param name="func">Function to execute.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -222,6 +228,9 @@ public static partial class BufferManager<T>
 	/// <param name="action">Method to execute.</param>
 #if NET7_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #pragma warning disable CS8500
@@ -262,6 +271,9 @@ public static partial class BufferManager<T>
 	/// <param name="result">Output. Function result.</param>
 #if NET7_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static unsafe void StackAlloc<TFunction, TResult>(ref TFunction func, out TResult result)

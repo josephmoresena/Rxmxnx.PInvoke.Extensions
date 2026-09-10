@@ -66,6 +66,9 @@ public partial class CString
 		/// <remarks>
 		/// <paramref name="isNull"/> flag is ignored if <paramref name="value"/> is not an empty span.
 		/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 #endif
@@ -99,6 +102,9 @@ public partial class CString
 		/// <param name="buffer">Buffer to write to.</param>
 		/// <param name="clearUnused">Indicates whether the current unused bytes should be cleared.</param>
 		/// <returns>Adjustment value for text length.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static Int32 ReadBytes(Utf8JsonReader reader, Span<Byte> buffer, Boolean clearUnused)
 		{

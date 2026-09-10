@@ -11,6 +11,9 @@ public partial class CStringBuilder
 		/// <param name="index">The position in this instance where insertion begins.</param>
 		/// <param name="value">The read-only span of characters to insert.</param>
 		/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public CStringBuilder Insert(Int32 index, ReadOnlySpan<Char> value)
 		{
 			if (value.IsEmpty) return builder;
@@ -28,6 +31,9 @@ public partial class CStringBuilder
 		/// <param name="index">The position in this instance where insertion begins.</param>
 		/// <param name="value">The read-only span of characters to insert.</param>
 		/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public CStringBuilder Insert(Int32 index, ReadOnlySpan<Byte> value)
 		{
 			if (value.IsEmpty) return builder;

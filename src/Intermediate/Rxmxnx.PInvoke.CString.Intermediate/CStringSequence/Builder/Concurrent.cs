@@ -10,6 +10,9 @@ public partial class CStringSequence
 		public Int32 ConcurrentCount() => new Concurrent(this._value).Count;
 		/// <inheritdoc cref="CStringSequence.Builder.Append(CString?)"/>
 		/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Builder ConcurrentAppend(CString? value)
 		{
 			Concurrent concurrent = new(this._value);
@@ -21,6 +24,9 @@ public partial class CStringSequence
 		}
 		/// <inheritdoc cref="CStringSequence.Builder.Append(String?)"/>
 		/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Builder ConcurrentAppend(String? value)
 		{
 			Concurrent concurrent = new(this._value);
@@ -32,6 +38,9 @@ public partial class CStringSequence
 		}
 		/// <inheritdoc cref="CStringSequence.Builder.Append(ReadOnlySpan{Byte})"/>
 		/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Builder ConcurrentAppend(ReadOnlySpan<Byte> value)
 		{
 			Concurrent concurrent = new(this._value);
@@ -48,6 +57,9 @@ public partial class CStringSequence
 		}
 		/// <inheritdoc cref="CStringSequence.Builder.Append(ReadOnlySpan{Char})"/>
 		/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Builder ConcurrentAppend(ReadOnlySpan<Char> value)
 		{
 			Concurrent concurrent = new(this._value);
@@ -58,6 +70,9 @@ public partial class CStringSequence
 		/// <remarks>This operation is thread-safe.</remarks>
 #if NET5_0_OR_GREATER
 		[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
 #endif
 		public Builder ConcurrentAppendEscaped(ReadOnlySpan<Byte> escaped)
 		{
@@ -89,6 +104,9 @@ public partial class CStringSequence
 #if NET5_0_OR_GREATER
 		[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Builder ConcurrentAppendEscaped(ReadOnlySequence<Byte> escaped)
 		{
 			Concurrent concurrent = new(this._value);
@@ -117,6 +135,9 @@ public partial class CStringSequence
 		}
 		/// <inheritdoc cref="CStringSequence.Builder.Insert(Int32, CString?)"/>
 		/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Builder ConcurrentInsert(Int32 index, CString? value)
 		{
 			Concurrent concurrent = new(this._value);
@@ -128,6 +149,9 @@ public partial class CStringSequence
 		}
 		/// <inheritdoc cref="CStringSequence.Builder.Insert(Int32, String?)"/>
 		/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Builder ConcurrentInsert(Int32 index, String? value)
 		{
 			Concurrent concurrent = new(this._value);
@@ -139,6 +163,9 @@ public partial class CStringSequence
 		}
 		/// <inheritdoc cref="CStringSequence.Builder.Insert(Int32, ReadOnlySpan{Byte})"/>
 		/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
@@ -150,6 +177,9 @@ public partial class CStringSequence
 		}
 		/// <inheritdoc cref="CStringSequence.Builder.Insert(Int32, ReadOnlySpan{Char})"/>
 		/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
@@ -239,6 +269,9 @@ public partial class CStringSequence
 					this._value.InsertNull(index);
 			}
 			/// <inheritdoc cref="Value.Append(ReadOnlySpan{Byte})"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			public void Append(ReadOnlySpan<Byte> utf8Text)
 			{
 #if NET9_0_OR_GREATER
@@ -259,6 +292,9 @@ public partial class CStringSequence
 					this._value.Append(utf8Text);
 			}
 			/// <inheritdoc cref="Value.Append(ReadOnlySpan{Char}, Int32)"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			public void Append(ReadOnlySpan<Char> utf16Text, Int32 utf8Length)
 			{
 #if NET9_0_OR_GREATER
@@ -269,6 +305,9 @@ public partial class CStringSequence
 					this._value.Append(utf16Text, utf8Length);
 			}
 			/// <inheritdoc cref="Value.Insert(Int32, ReadOnlySpan{Byte})"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			public void Insert(Int32 index, ReadOnlySpan<Byte> utf8Text)
 			{
 #if NET9_0_OR_GREATER
@@ -279,6 +318,9 @@ public partial class CStringSequence
 					this._value.Insert(index, utf8Text);
 			}
 			/// <inheritdoc cref="Value.Insert(Int32, ReadOnlySpan{Char}, Int32)"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			public void Insert(Int32 index, ReadOnlySpan<Char> utf16Text, Int32 utf8Length)
 			{
 #if NET9_0_OR_GREATER

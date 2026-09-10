@@ -13,7 +13,17 @@ internal ref struct FileState
 	/// <summary>
 	/// Read buffer.
 	/// </summary>
-	public Span<Byte> Buffer { get; set; }
+	public Span<Byte> Buffer
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get; 
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		set;
+	}
 	/// <summary>
 	/// Count of read bytes.
 	/// </summary>
@@ -35,5 +45,8 @@ internal ref struct FileState
 	/// Constructor.
 	/// </summary>
 	/// <param name="buffer">Read buffer.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public FileState(Span<Byte> buffer) => this.Buffer = buffer;
 }

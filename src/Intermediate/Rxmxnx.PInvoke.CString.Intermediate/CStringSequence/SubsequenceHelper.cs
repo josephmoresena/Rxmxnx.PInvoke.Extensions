@@ -32,6 +32,9 @@ public partial class CStringSequence
 		/// The zero-based index in the parent sequence at which the subsequence begins.
 		/// </param>
 		/// <param name="length">The number of strings in the subsequence.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public SubsequenceHelper(CStringSequence sequence, Int32 startIndex, Int32 length)
 		{
 			this._startIndex = startIndex;
@@ -43,6 +46,9 @@ public partial class CStringSequence
 		/// Creates a new <see cref="CStringSequence"/> instance using the data stored in this helper.
 		/// </summary>
 		/// <returns>A new <see cref="CStringSequence"/> that contains the subsequence.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public CStringSequence CreateSequence()
 		{
 			Int32 length = CStringSequence.GetBufferLength(this._lengths.AsSpan());
@@ -62,6 +68,9 @@ public partial class CStringSequence
 		/// Retrieves the binary span for the current subsequence.
 		/// </summary>
 		/// <returns>The binary span for the current subsequence.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		private ReadOnlySpan<Byte> GetBinarySpan()
 			=> this._sequence.GetBinarySpan(this._startIndex, this._lengths.Length);
 
@@ -73,6 +82,9 @@ public partial class CStringSequence
 		/// <param name="helper">
 		/// The helper instance that contains the binary data of the subsequence.
 		/// </param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void CopyBytes(Span<Char> destination, SubsequenceHelper helper)
 		{

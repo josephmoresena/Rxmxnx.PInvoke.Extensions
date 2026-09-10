@@ -44,8 +44,20 @@ internal sealed partial class FixedContext<T> : FixedMemory, IObsoleteFixedConte
 	/// <inheritdoc/>
 	public override Boolean IsFunction => false;
 
-	Span<T> IFixedMemory<T>.Values => this.CreateSpan<T>(this.Count);
-	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => this.CreateReadOnlySpan<T>(this.Count);
+	Span<T> IFixedMemory<T>.Values
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => this.CreateSpan<T>(this.Count);
+	}
+	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => this.CreateReadOnlySpan<T>(this.Count);
+	}
 
 #if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 	ReadOnlyValPtr<T> IReadOnlyFixedMemory<T>.ValuePointer => (ReadOnlyValPtr<T>)(this as IFixedPointer).Pointer;

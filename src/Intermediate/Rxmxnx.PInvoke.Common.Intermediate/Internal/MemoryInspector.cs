@@ -64,6 +64,9 @@ internal abstract unsafe partial class MemoryInspector
 	/// <see langword="true"/> if the given span represents a literal o hardcoded memory region;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public Boolean IsLiteral<T>(ReadOnlySpan<T> span)
 	{
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
@@ -106,6 +109,9 @@ internal abstract unsafe partial class MemoryInspector
 	/// <see langword="true"/> if the given span represents memory that is not part of a hardcoded literal;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

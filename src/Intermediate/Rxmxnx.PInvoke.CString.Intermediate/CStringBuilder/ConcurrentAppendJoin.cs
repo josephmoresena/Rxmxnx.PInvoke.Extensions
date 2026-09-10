@@ -4,6 +4,9 @@ public sealed partial class CStringBuilder
 {
 	/// <inheritdoc cref="CStringBuilder.AppendJoin(CString, CString[])"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -17,6 +20,9 @@ public sealed partial class CStringBuilder
 		=> this.ConcurrentAppendJoin(separator, values.AsSpan());
 	/// <inheritdoc cref="CStringBuilder.AppendJoin(ReadOnlySpan{Byte}, ReadOnlySpan{CString})"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -45,6 +51,9 @@ public sealed partial class CStringBuilder
 		=> this.ConcurrentAppendJoin(separator, new CStringSequence.Utf8View(sequence, true));
 	/// <inheritdoc cref="CStringBuilder.AppendJoin(ReadOnlySpan{Byte}, CStringSequence.Utf8View)"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

@@ -15,6 +15,9 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 	/// </summary>
 	/// <param name="ptr">Unmanaged fixed pointer.</param>
 	/// <param name="count">Count of <typeparamref name="T"/> items in the fixed memory block.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	internal FixedContextValue(void* ptr, Int32 count)
 	{
 		if (ptr == default) return;
@@ -36,6 +39,9 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 	/// <param name="handle">A <see cref="MemoryHandle"/> instance.</param>
 	/// <param name="count">Count of <typeparamref name="T"/> items in the fixed memory block.</param>
 	/// <param name="disposable">Output. Disposable instance to release memory fixing.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal FixedContextValue(MemoryHandle handle, Int32 count, out IDisposable disposable)
 	{
@@ -66,6 +72,9 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 	/// <param name="valPtr">A <see cref="ValPtr{T}"/> instance.</param>
 	/// <param name="count">Count of <typeparamref name="T"/> items in the fixed memory block.</param>
 	/// <param name="disposable">Output. Disposable instance to release memory fixing.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal FixedContextValue(ValPtr<T> valPtr, Int32 count, out IDisposable disposable)
 	{
@@ -94,6 +103,9 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 	/// Internal constructor.
 	/// </summary>
 	/// <param name="value">Internal value.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	internal FixedContextValue(FixedPointerValue value)
 	{
 		this._value = value;
@@ -114,6 +126,9 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 	/// <param name="valPtr">A <see cref="ValPtr{T}"/> instance.</param>
 	/// <param name="count">Count of <typeparamref name="T"/> items in the fixed memory block.</param>
 	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private FixedContextValue(ValPtr<T> valPtr, Int32 count, FixedValueHandle handle)
 	{
 		this._value = new(valPtr.Pointer, count * sizeof(T))

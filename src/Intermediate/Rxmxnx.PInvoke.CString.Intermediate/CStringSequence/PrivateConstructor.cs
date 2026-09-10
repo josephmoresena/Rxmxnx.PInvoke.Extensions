@@ -20,6 +20,9 @@ public partial class CStringSequence
 	/// the values in the existing <see cref="CStringSequence"/>.
 	/// </summary>
 	/// <param name="sequence">The <see cref="CStringSequence"/> instance to copy.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private CStringSequence(CStringSequence sequence)
 	{
 		this._lengths = (Int32[])sequence._lengths.Clone();
@@ -38,6 +41,9 @@ public partial class CStringSequence
 	/// <param name="lengths">
 	/// The collection of lengths for each text in the buffer. Used for interpreting the buffer content.
 	/// </param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private CStringSequence(String value, Int32[] lengths)
 	{
 		this._value = value;
@@ -48,6 +54,9 @@ public partial class CStringSequence
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class with UTF-8 text pointers.
 	/// </summary>
 	/// <param name="values">A UTF-8 text pointer span.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private CStringSequence(ReadOnlySpan<ReadOnlyValPtr<Byte>> values)
 	{
 		this._lengths = CStringSequence.GetLengthArray(values);

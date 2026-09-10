@@ -16,11 +16,31 @@ public readonly ref struct FixedPointerValueList
 	/// <summary>
 	/// Read-only span with fixed pointer information.
 	/// </summary>
-	internal ReadOnlySpan<FixedPointerInfo> Information { get; init; }
+	internal ReadOnlySpan<FixedPointerInfo> Information
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get;
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		init;
+	}
 	/// <summary>
 	/// Span of <see cref="ReadOnlyFixedMemory"/> instances.
 	/// </summary>
-	internal Span<ReadOnlyFixedMemory?> Instances { get; init; }
+	internal Span<ReadOnlyFixedMemory?> Instances
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get;
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		init;
+	}
 	/// <summary>
 	/// Indicates whether the current list is for read-only memory blocks.
 	/// </summary>
@@ -148,6 +168,9 @@ public readonly ref struct FixedPointerValueList
 		/// <summary>
 		/// Internal enumerator.
 		/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		private ReadOnlySpan<FixedPointerInfo>.Enumerator _enumerator;
 
 		/// <summary>

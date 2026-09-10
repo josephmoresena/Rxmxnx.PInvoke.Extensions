@@ -15,6 +15,9 @@ public unsafe ref partial struct ReadOnlyFixedContextValue<T>
 	/// </summary>
 	/// <param name="ptr">Unmanaged fixed pointer.</param>
 	/// <param name="count">Count of <typeparamref name="T"/> items in the fixed memory block.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	internal ReadOnlyFixedContextValue(void* ptr, Int32 count)
 	{
 		if (ptr == default) return;
@@ -37,6 +40,9 @@ public unsafe ref partial struct ReadOnlyFixedContextValue<T>
 	/// <param name="count">Count of <typeparamref name="T"/> items in the fixed memory block.</param>
 	/// <param name="isReadOnly">Indicates whether the memory block is read-only.</param>
 	/// <param name="disposable">Output. Disposable instance to release memory fixing.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal ReadOnlyFixedContextValue(MemoryHandle handle, Int32 count, Boolean isReadOnly, out IDisposable disposable)
 	{
@@ -67,6 +73,9 @@ public unsafe ref partial struct ReadOnlyFixedContextValue<T>
 	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> instance.</param>
 	/// <param name="count">Count of <typeparamref name="T"/> items in the fixed memory block.</param>
 	/// <param name="disposable">Output. Disposable instance to release memory fixing.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal ReadOnlyFixedContextValue(ReadOnlyValPtr<T> valPtr, Int32 count, out IDisposable disposable)
 	{
@@ -97,6 +106,9 @@ public unsafe ref partial struct ReadOnlyFixedContextValue<T>
 	/// Internal constructor.
 	/// </summary>
 	/// <param name="value">Internal value.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	internal ReadOnlyFixedContextValue(FixedPointerValue value)
 	{
 		this._value = value;
@@ -117,6 +129,9 @@ public unsafe ref partial struct ReadOnlyFixedContextValue<T>
 	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> instance.</param>
 	/// <param name="count">Count of <typeparamref name="T"/> items in the fixed memory block.</param>
 	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private ReadOnlyFixedContextValue(ReadOnlyValPtr<T> valPtr, Int32 count, FixedValueHandle handle)
 	{
 		this._value = new(valPtr.Pointer, count * sizeof(T))

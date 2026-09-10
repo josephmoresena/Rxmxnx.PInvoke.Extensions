@@ -45,7 +45,13 @@ internal sealed partial class ReadOnlyFixedContext<T> : ReadOnlyFixedMemory, IOb
 	/// <inheritdoc/>
 	public override Boolean IsFunction => false;
 
-	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values => this.CreateReadOnlySpan<T>(this.Count);
+	ReadOnlySpan<T> IReadOnlyFixedMemory<T>.Values
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => this.CreateReadOnlySpan<T>(this.Count);
+	}
 
 #if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 	ReadOnlyValPtr<T> IReadOnlyFixedMemory<T>.ValuePointer => (ReadOnlyValPtr<T>)(this as IFixedPointer).Pointer;

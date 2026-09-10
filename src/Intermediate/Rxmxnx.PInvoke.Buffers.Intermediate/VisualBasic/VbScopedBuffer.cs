@@ -93,6 +93,9 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 	/// Creates a <see cref="ScopedBuffer{T}"/> from current instance.
 	/// </summary>
 	/// <returns>A <see cref="ScopedBuffer{T}"/> instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public ScopedBuffer<T> ToValue()
 	{
 		ValidationUtilities.ThrowIfInvalidPointer(this._isValid);

@@ -88,7 +88,13 @@ internal readonly struct StandardBackend : IMetadataStorageBackend
 #if !PACKAGE
 		/// <inheritdoc/>
 		[ExcludeFromCodeCoverage]
-		public Span<BufferTypeMetadata<T>?> Span => new(MainBinaryStore<T>.initial);
+		public Span<BufferTypeMetadata<T>?> Span
+		{
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
+			get => new(MainBinaryStore<T>.initial);
+		}
 #endif
 		/// <inheritdoc/>
 #if !PACKAGE && NET5_0_OR_GREATER

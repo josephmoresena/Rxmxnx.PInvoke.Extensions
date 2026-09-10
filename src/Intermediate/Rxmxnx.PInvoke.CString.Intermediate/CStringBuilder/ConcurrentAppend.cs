@@ -15,6 +15,9 @@ public sealed partial class CStringBuilder
 	}
 	/// <inheritdoc cref="CStringBuilder.Append(CString?)"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -22,6 +25,9 @@ public sealed partial class CStringBuilder
 		=> CString.IsNullOrEmpty(value) ? this : new Concurrent(this.GetLock(), this).Append(value.AsSpan());
 	/// <inheritdoc cref="CStringBuilder.Append(String?)"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -29,6 +35,9 @@ public sealed partial class CStringBuilder
 		=> String.IsNullOrEmpty(value) ? this : new Concurrent(this.GetLock(), this).Append(value.AsSpan());
 	/// <inheritdoc cref="CStringBuilder.Append(ReadOnlySpan{Byte})"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -43,6 +52,9 @@ public sealed partial class CStringBuilder
 		=> value.IsEmpty ? this : new Concurrent(this.GetLock(), this).Append(value);
 	/// <inheritdoc cref="CStringBuilder.Append(Char[])"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -50,6 +62,9 @@ public sealed partial class CStringBuilder
 		=> value is null || value.Length == 0 ? this : new Concurrent(this.GetLock(), this).Append(value.AsSpan());
 	/// <inheritdoc cref="CStringBuilder.Append(Byte[])"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -57,6 +72,9 @@ public sealed partial class CStringBuilder
 		=> value is null || value.Length == 0 ? this : new Concurrent(this.GetLock(), this).Append(value.AsSpan());
 	/// <inheritdoc cref="CStringBuilder.Append(ReadOnlySpan{Char})"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

@@ -49,6 +49,9 @@ internal static unsafe class Utf8
 	/// in <paramref name="source"/> will be replaced with U+FFFD in <paramref name="destination"/>, and
 	/// this method will not return <see cref="OperationStatus.InvalidData"/>.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static OperationStatus FromUtf16(ReadOnlySpan<Char> source, Span<Byte> destination, out Int32 charsRead,
 		out Int32 bytesWritten, Boolean replaceInvalidSequences = true, Boolean isFinalBlock = true)
 	{
@@ -111,6 +114,9 @@ internal static unsafe class Utf8
 	/// in <paramref name="source"/> will be replaced with U+FFFD in <paramref name="destination"/>, and
 	/// this method will not return <see cref="OperationStatus.InvalidData"/>.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static OperationStatus ToUtf16(ReadOnlySpan<Byte> source, Span<Char> destination, out Int32 bytesRead,
 		out Int32 charsWritten, Boolean replaceInvalidSequences = true, Boolean isFinalBlock = true)
 	{

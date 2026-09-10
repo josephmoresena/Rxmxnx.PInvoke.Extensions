@@ -24,6 +24,9 @@ public partial class CString
 	/// Defines an implicit conversion of a given <see cref="CString"/> to a read-only span of bytes.
 	/// </summary>
 	/// <param name="value">A <see cref="CString"/> to implicitly convert.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static implicit operator ReadOnlySpan<Byte>(CString? value) => value is not null ? value.AsSpan() : default;
 
 	/// <summary>

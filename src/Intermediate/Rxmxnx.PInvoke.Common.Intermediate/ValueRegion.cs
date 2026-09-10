@@ -17,7 +17,13 @@ public abstract partial class ValueRegion<T>
 	/// </exception>
 	/// <returns>The element at the specified index within the memory region.</returns>
 	[IndexerName("Item")]
-	public virtual T this[Int32 index] => this.AsSpan()[index];
+	public virtual T this[Int32 index]
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => this.AsSpan()[index];
+	}
 	/// <summary>
 	/// Indicates whether the current instance represents a subregion of a memory region.
 	/// </summary>
@@ -27,6 +33,9 @@ public abstract partial class ValueRegion<T>
 	/// Copies the contents of this memory region into a new array.
 	/// </summary>
 	/// <returns>An array containing the copied data from the current memory region.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public virtual T[] ToArray() => this.AsSpan().ToArray();
 	/// <summary>
 	/// Tries to create a new <see cref="GCHandle"/> for current value region.

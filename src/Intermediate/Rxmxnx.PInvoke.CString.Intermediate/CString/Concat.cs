@@ -24,6 +24,9 @@ public partial class CString
 	/// The resulting <see cref="CString"/> will contain a representation of the data from <paramref name="span0"/>
 	/// followed by the data from <paramref name="span1"/>.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Concat(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1)
 	{
 		using BinaryConcatenator helper = new();
@@ -47,6 +50,9 @@ public partial class CString
 	/// The resulting <see cref="CString"/> will contain a representation of the data from <paramref name="span0"/>,
 	/// followed by the data from <paramref name="span1"/>, and finally the data from <paramref name="span2"/>.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Concat(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2)
 	{
 		using BinaryConcatenator helper = new();
@@ -74,6 +80,9 @@ public partial class CString
 	/// followed by the data from <paramref name="span1"/>, <paramref name="span2"/>, and finally the data from
 	/// <paramref name="span3"/>.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Concat(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2,
 		ReadOnlySpan<Byte> span3)
 	{
@@ -104,6 +113,9 @@ public partial class CString
 	/// followed by the data from <paramref name="span1"/>, <paramref name="span2"/>, <paramref name="span3"/>, and finally
 	/// the data from <paramref name="span4"/>.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Concat(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2,
 		ReadOnlySpan<Byte> span3, ReadOnlySpan<Byte> span4)
 	{
@@ -137,6 +149,9 @@ public partial class CString
 	/// <paramref name="span4"/>,
 	/// and finally the data from <paramref name="span5"/>.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Concat(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2,
 		ReadOnlySpan<Byte> span3, ReadOnlySpan<Byte> span4, ReadOnlySpan<Byte> span5)
 	{
@@ -173,6 +188,9 @@ public partial class CString
 	/// <paramref name="span4"/>,
 	/// <paramref name="span5"/>, and finally the data from <paramref name="span6"/>.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Concat(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2,
 		ReadOnlySpan<Byte> span3, ReadOnlySpan<Byte> span4, ReadOnlySpan<Byte> span5, ReadOnlySpan<Byte> span6)
 	{
@@ -211,6 +229,9 @@ public partial class CString
 	/// <paramref name="span4"/>,
 	/// <paramref name="span5"/>, <paramref name="span6"/>, and finally the data from <paramref name="span7"/>.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Concat(ReadOnlySpan<Byte> span0, ReadOnlySpan<Byte> span1, ReadOnlySpan<Byte> span2,
 		ReadOnlySpan<Byte> span3, ReadOnlySpan<Byte> span4, ReadOnlySpan<Byte> span5, ReadOnlySpan<Byte> span6,
 		ReadOnlySpan<Byte> span7)
@@ -239,6 +260,9 @@ public partial class CString
 	/// during concatenation.
 	/// </remarks>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Concat(
 #if !NET9_0_OR_GREATER
 		params CString?[] values
@@ -262,6 +286,9 @@ public partial class CString
 	/// during concatenation.
 	/// </remarks>
 	// ReSharper disable once MemberCanBePrivate.Global
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Concat(
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<CString?> values
@@ -287,6 +314,9 @@ public partial class CString
 	/// during concatenation.
 	/// </remarks>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2368)]
 #endif
@@ -313,6 +343,9 @@ public partial class CString
 	/// during concatenation.
 	/// </remarks>
 	// ReSharper disable once MemberCanBePrivate.Global
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Concat(
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<Byte[]?> values

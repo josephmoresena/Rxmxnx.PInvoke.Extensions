@@ -18,6 +18,9 @@ public static unsafe class FixedUtf8Extensions
 	/// </summary>
 	/// <param name="value">A <see cref="String"/> instance.</param>
 	/// <returns>The number of UTF-8 units produced by encoding the specified <see cref="String"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -384,6 +387,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <param name="source">A <see cref="CStringSequence"/> instance.</param>
 	/// <param name="bytePtr">Destination pointer.</param>
 	/// <returns>Initialized <see cref="FixedPointerInfo"/> read-only span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -400,6 +406,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <param name="source">A <see cref="CStringSequence"/> instance.</param>
 	/// <param name="span">Destination span.</param>
 	/// <returns>Initialized <see cref="FixedPointerInfo"/> read-only span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -435,6 +444,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <param name="bytes">The read-only byte span containing the UTF-8 text to decode.</param>
 	/// <param name="chars">Temporal UTF-16 buffer.</param>
 	/// <returns>A new <see cref="String"/> instance containing the decoded text.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static String DecodeUtf8(ReadOnlySpan<Byte> bytes, Span<Char> chars)
 	{
 		Int32 strLen;
