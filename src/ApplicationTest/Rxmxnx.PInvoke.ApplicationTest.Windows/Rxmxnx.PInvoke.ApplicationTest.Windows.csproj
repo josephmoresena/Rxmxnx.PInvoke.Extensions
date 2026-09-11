@@ -193,6 +193,16 @@
         <PropertyGroup>
             <AppxPatchedManifest>$(IntermediateOutputPath)Package.appxmanifest</AppxPatchedManifest>
         </PropertyGroup>
+        <PropertyGroup Condition="$([System.String]::Copy('$(AppxPackageVersion)').Split('.').Length &lt;= 3)">
+            <AppxVersionMajor>0</AppxVersionMajor>
+            <AppxVersionMinor>0</AppxVersionMinor>
+            <AppxVersionBuild>0</AppxVersionBuild>
+            <AppxVersionRevision>0</AppxVersionRevision>
+            <AppxVersionMajor Condition="'$(AppxPackageVersion)' != ''">$([System.String]::Copy('$(AppxPackageVersion)').Split('.')[0])</AppxVersionMajor>
+            <AppxVersionMinor Condition="$([System.String]::Copy('$(AppxPackageVersion)').Split('.').Length &gt; 1)">$([System.String]::Copy('$(AppxPackageVersion)').Split('.')[1])</AppxVersionMinor>
+            <AppxVersionBuild Condition="$([System.String]::Copy('$(AppxPackageVersion)').Split('.').Length &gt; 2)">$([System.String]::Copy('$(AppxPackageVersion)').Split('.')[2])</AppxVersionBuild>
+            <AppxPackageVersion>$(AppxVersionMajor).$(AppxVersionMinor).$(AppxVersionBuild).0</AppxPackageVersion>
+        </PropertyGroup>
         <Copy SourceFiles="@(AppxManifest)" DestinationFiles="$(AppxPatchedManifest)"/>
         <XmlPoke XmlInputPath="$(AppxPatchedManifest)"
                  Query="/*[local-name()='Package']/*[local-name()='Identity']/@Version"
