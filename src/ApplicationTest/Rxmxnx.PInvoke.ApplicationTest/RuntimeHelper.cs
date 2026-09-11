@@ -140,7 +140,16 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 			writer.WriteLine($"UI Culture: {CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}");
 #if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
-			writer.WriteLine($"System Path: {Environment.SystemDirectory}");
+			try
+			{
+				writer.WriteLine($"System Path: {Environment.SystemDirectory}");
+			}
+			catch (Exception ex)
+			{
+				writer.WriteLine("**Unable to retrieve system path**");
+				if (!AotInfo.IsReflectionDisabled)
+					writer.WriteLine(ex);
+			}
 			writer.WriteLine($"Current Path: {Environment.CurrentDirectory}");
 #endif
 			writer.WriteLine($"Process Arch: {RuntimeInformation.ProcessArchitecture.GetName()}");
