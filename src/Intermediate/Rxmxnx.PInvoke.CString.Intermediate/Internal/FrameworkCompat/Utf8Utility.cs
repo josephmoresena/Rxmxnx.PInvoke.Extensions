@@ -34,6 +34,9 @@ namespace System.Text.Unicode;
 /// <summary>
 /// Provides static methods for UTF-8 encoding.
 /// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+[SecurityCritical]
+#endif
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
 #endif

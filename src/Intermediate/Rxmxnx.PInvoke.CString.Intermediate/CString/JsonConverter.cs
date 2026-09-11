@@ -20,6 +20,9 @@ public partial class CString
 #endif
 
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 #endif
@@ -49,6 +52,10 @@ public partial class CString
 		/// <returns>The converted value.</returns>
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
+		// ReSharper disable once MemberCanBePrivate.Global
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
 #endif
 		// ReSharper disable once MemberCanBePrivate.Global
 		public static CString? Read(Utf8JsonReader reader)

@@ -52,6 +52,9 @@ internal static unsafe partial class Utf8Utility
 	/// <remarks>
 	/// Returns a pointer to the end of <paramref name="pInputBuffer"/> if the buffer is well-formed.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Byte* GetPointerToFirstInvalidByte(Byte* pInputBuffer, Int32 inputLength,
 		out Int32 utf16CodeUnitCountAdjustment, out Int32 scalarCountAdjustment)
 	{
