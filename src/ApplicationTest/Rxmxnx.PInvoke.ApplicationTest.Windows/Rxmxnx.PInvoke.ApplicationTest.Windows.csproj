@@ -197,7 +197,7 @@
             <AppxVersionMajor>0</AppxVersionMajor>
             <AppxVersionMinor>0</AppxVersionMinor>
             <AppxVersionBuild>0</AppxVersionBuild>
-            <AppxVersionMajor Condition="'$(AppxPackageVersion)' != ''">$([System.String]::Copy('$(AppxPackageVersion)').Split('.')[0])</AppxVersionMajor>
+            <AppxVersionMajor>$([System.String]::Copy('$(AppxPackageVersion)').Split('.')[0])</AppxVersionMajor>
             <AppxVersionMinor Condition="$([System.String]::Copy('$(AppxPackageVersion)').Split('.').Length) &gt; 1">$([System.String]::Copy('$(AppxPackageVersion)').Split('.')[1])</AppxVersionMinor>
             <AppxVersionBuild Condition="$([System.String]::Copy('$(AppxPackageVersion)').Split('.').Length) &gt; 2">$([System.String]::Copy('$(AppxPackageVersion)').Split('.')[2])</AppxVersionBuild>
             <AppxPackageVersion>$(AppxVersionMajor).$(AppxVersionMinor).$(AppxVersionBuild).0</AppxPackageVersion>
