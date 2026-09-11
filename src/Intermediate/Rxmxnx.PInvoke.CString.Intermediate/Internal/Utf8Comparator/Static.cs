@@ -1,3 +1,7 @@
+#if NET462_OR_GREATER || NETSTANDARD2_0
+using Utf8 = Rxmxnx.PInvoke.Internal.FrameworkCompat.Utf8Compat;
+#endif
+
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
@@ -28,7 +32,7 @@ internal abstract unsafe partial class Utf8Comparator
 	/// <param name="source">A read-only span of <see cref="byte"/> elements representing a UTF-8 encoded text.</param>
 	/// <param name="destination">The character span receiving the decoded bytes.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
-	[SecuritySafeCritical]
+	[SecurityCritical]
 #endif
 #if !PACKAGE && NETCOREAPP && !NET7_0_OR_GREATER
 	[ExcludeFromCodeCoverage]

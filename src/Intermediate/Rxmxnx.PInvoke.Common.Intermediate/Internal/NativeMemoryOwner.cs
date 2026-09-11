@@ -83,6 +83,9 @@ internal sealed unsafe class NativeMemoryOwner : FixedValueHandle
 	/// Output. The <see cref="FixedContextValue{T}"/> instance representing the pinned memory.
 	/// </param>
 	/// <returns>An <see cref="IDisposable"/> instance representing the allocated memory releasing.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static IDisposable CreateContext<T>(Int32 count, out FixedContextValue<T> fixedContext) where T : unmanaged
 	{
 		if (count == 0)

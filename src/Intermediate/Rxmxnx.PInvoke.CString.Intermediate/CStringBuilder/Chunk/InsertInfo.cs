@@ -13,11 +13,25 @@ public partial class CStringBuilder
 			/// <summary>
 			/// Total number of newly allocated chunks.
 			/// </summary>
-			public Byte Chunks { get; init; }
+			public Byte Chunks
+			{
+				get;
+#if NETFRAMEWORK || NETSTANDARD2_0
+				[SecurityCritical]
+#endif
+				init;
+			}
 			/// <summary>
 			/// Number of bytes written into the last chunk.
 			/// </summary>
-			public Int32 LastCount { get; init; }
+			public Int32 LastCount
+			{
+				get;
+#if NETFRAMEWORK || NETSTANDARD2_0
+				[SecurityCritical]
+#endif
+				init;
+			}
 		}
 	}
 }

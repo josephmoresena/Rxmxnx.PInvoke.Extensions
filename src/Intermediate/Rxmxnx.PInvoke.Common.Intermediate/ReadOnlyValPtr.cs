@@ -44,20 +44,41 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 	/// <summary>
 	/// Internal pointer as an <see cref="IntPtr"/>.
 	/// </summary>
-	public IntPtr Pointer => new(this._value);
+	public IntPtr Pointer
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => new(this._value);
+	}
 	/// <summary>
 	/// Indicates whether the current pointer is <see langword="null"/>.
 	/// </summary>
-	public Boolean IsZero => IntPtr.Zero == (IntPtr)this._value;
+	public Boolean IsZero
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => IntPtr.Zero == (IntPtr)this._value;
+	}
 	/// <summary>
 	/// A read-only reference to the value pointed to by this instance.
 	/// </summary>
-	public ref readonly T Reference => ref Unsafe.AsRef<T>(this._value);
+	public ref readonly T Reference
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => ref Unsafe.AsRef<T>(this._value);
+	}
 
 	/// <summary>
 	/// Private constructor.
 	/// </summary>
 	/// <param name="value">Unsafe pointer.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	internal ReadOnlyValPtr(void* value) => this._value = value;
 
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
@@ -67,6 +88,9 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 	/// <param name="info">A <see cref="SerializationInfo"/> instance.</param>
 	/// <param name="context">A <see cref="StreamingContext"/> instance.</param>
 	/// <exception cref="ArgumentException">If invalid pointer value.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -86,6 +110,9 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 		=> ValidationUtilities.ThrowIfInvalidSerialization(info, this._value);
 #endif
@@ -94,6 +121,9 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 	public Boolean Equals(ReadOnlyValPtr<T> other) => this.Pointer == other.Pointer;
 
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public override Boolean Equals([NotNullWhen(true)] Object? obj)
 		=> obj switch
 		{
@@ -102,6 +132,9 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 			_ => false,
 		};
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public override Int32 GetHashCode() => new IntPtr(this._value).GetHashCode();
 	/// <inheritdoc/>
 	public override String ToString() => this.Pointer.ToString();
@@ -165,16 +198,25 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 	/// Defines an explicit conversion of a given <see cref="IntPtr"/> to a read-only value pointer.
 	/// </summary>
 	/// <param name="ptr">An <see cref="IntPtr"/> to explicitly convert.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static explicit operator ReadOnlyValPtr<T>(IntPtr ptr) => new(ptr.ToPointer());
 	/// <summary>
 	/// Defines an explicit conversion of a given pointer to a read-only value pointer.
 	/// </summary>
 	/// <param name="ptr">A pointer to explicitly convert.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static explicit operator ReadOnlyValPtr<T>(void* ptr) => new(ptr);
 	/// <summary>
 	/// Defines an implicit conversion of a given pointer to a read-only value pointer.
 	/// </summary>
 	/// <param name="ptr">A pointer to implicitly convert.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static implicit operator ReadOnlyValPtr<T>(T* ptr) => new(ptr);
 	/// <summary>
 	/// Defines an implicit conversion of a given <see cref="ReadOnlyValPtr{T}"/> to a pointer.
@@ -185,11 +227,17 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 	/// Defines an implicit conversion of a given <see cref="ReadOnlyValPtr{T}"/> to a pointer.
 	/// </summary>
 	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> to implicitly convert.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static implicit operator void*(ReadOnlyValPtr<T> valPtr) => valPtr._value;
 	/// <summary>
 	/// Defines an implicit conversion of a given <see cref="ReadOnlyValPtr{T}"/> to a pointer.
 	/// </summary>
 	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> to implicitly convert.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static implicit operator T*(ReadOnlyValPtr<T> valPtr) => (T*)valPtr._value;
 
 	/// <summary>
@@ -201,6 +249,9 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 	/// <see langword="true"/> if <paramref name="value1"/> equals <paramref name="value2"/>;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Boolean operator ==(ReadOnlyValPtr<T> value1, ReadOnlyValPtr<T> value2)
 		=> value1._value == value2._value;
 	/// <summary>
@@ -213,6 +264,9 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
 	/// <inheritdoc cref="IntPtr.op_Inequality(IntPtr, IntPtr)"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Boolean operator !=(ReadOnlyValPtr<T> value1, ReadOnlyValPtr<T> value2)
 		=> value1._value != value2._value;
 	/// <summary>

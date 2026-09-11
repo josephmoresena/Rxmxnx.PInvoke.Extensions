@@ -1,3 +1,7 @@
+#if NET462_OR_GREATER || NETSTANDARD2_0
+using Utf8 = Rxmxnx.PInvoke.Internal.FrameworkCompat.Utf8Compat;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 public partial class CStringBuilder
@@ -31,9 +35,12 @@ public partial class CStringBuilder
 		/// <param name="capacity">Current chunk capacity.</param>
 		/// <param name="required">Required new bytes.</param>
 		/// <param name="constantLength">
-		/// Indicates whether the required chunk capacity are equals to <paramref name="capacity"/>.
+		/// Indicates whether the required chunk capacity is equal to <paramref name="capacity"/>.
 		/// </param>
 		/// <returns>Information for data insertion.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		private static InsertInfo GetInsertInfo(Int32 capacity, Int32 required, Boolean constantLength)
 		{
 			Byte count = 0;
@@ -57,6 +64,9 @@ public partial class CStringBuilder
 		/// Indicates whether the next array is the same size of <paramref name="current"/>.
 		/// </param>
 		/// <returns>The array of insertion chunks.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		private static Chunk[] GetInsertChunks(Chunk current, InsertInfo info, Int32 initialCount, Boolean sameSize)
 		{
 			Chunk[] chunks = new Chunk[info.Chunks + 1];
@@ -97,9 +107,6 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
 		/// <param name="newData">Input. New data to append. Output. Remaining data to append.</param>
-#if NETFRAMEWORK || NETSTANDARD2_0
-		[SecuritySafeCritical]
-#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif

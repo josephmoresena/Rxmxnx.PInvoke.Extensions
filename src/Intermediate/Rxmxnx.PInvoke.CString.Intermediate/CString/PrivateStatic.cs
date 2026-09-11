@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if NET462_OR_GREATER || NETSTANDARD2_0
+using Utf8 = Rxmxnx.PInvoke.Internal.FrameworkCompat.Utf8Compat;
+#endif
+
+namespace Rxmxnx.PInvoke;
 
 public partial class CString
 {
@@ -8,7 +12,7 @@ public partial class CString
 	/// <typeparam name="TState">Type of the state object.</typeparam>
 	/// <param name="state">Function state parameter.</param>
 	/// <param name="getSpan">Function to retrieve utf-8 span from the state.</param>
-	/// <param name="isNullTerminated">Indicates whether resulting UTF-8 text is null-terminated.</param>
+	/// <param name="isNullTerminated">Indicates whether the resulting UTF-8 text is null-terminated.</param>
 	/// <param name="length">UTF-8 text length.</param>
 	/// <returns>
 	/// A new instance of the <see cref="CString"/> class.
@@ -193,14 +197,9 @@ public partial class CString
 		utf8Length = Encoding.UTF8.GetByteCount(utf16Text);
 
 		Byte[] array = CString.CreateByteArray(utf8Length + 1);
-#if !NETFRAMEWORK && !NETSTANDARD2_0
 		Span<Byte> bytes = array;
 		Utf8.FromUtf16(utf16Text, array, out Int32 _, out Int32 _);
 		bytes[^1] = default;
-#else
-		Encoding.UTF8.GetBytes(utf16Text, 0, utf16Text.Length, array, 0);
-		array[^1] = default;
-#endif
 		return ValueRegion<Byte>.Create(array);
 	}
 	/// <summary>

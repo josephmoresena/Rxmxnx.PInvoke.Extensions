@@ -36,7 +36,10 @@ using UIntPtr = nuint;
 
 // ReSharper disable once BuiltInTypeReferenceStyle
 using IntPtr = nint;
+#endif
 
+#if NET462_OR_GREATER || NETSTANDARD2_0
+using Utf8 = Rxmxnx.PInvoke.Internal.FrameworkCompat.Utf8Compat;
 #endif
 
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
@@ -49,7 +52,7 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS907)]
 #endif
 #if NETFRAMEWORK || NETSTANDARD2_0
-[SecuritySafeCritical]
+[SecurityCritical]
 #endif
 internal static class MarvinCompat
 {
@@ -84,9 +87,6 @@ internal static class MarvinCompat
 	/// <returns>A 32-bit signed integer hash code.</returns>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
-#endif
-#if NETFRAMEWORK || NETSTANDARD2_0
-	[SecuritySafeCritical]
 #endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
@@ -128,9 +128,6 @@ internal static class MarvinCompat
 	/// <returns>A 32-bit signed integer hash code.</returns>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
-#endif
-#if NETFRAMEWORK || NETSTANDARD2_0
-	[SecuritySafeCritical]
 #endif
 	private static Int32 ComputeUtf8Hash32(ReadOnlySpan<Byte> value, UInt32 p0, UInt32 p1)
 	{

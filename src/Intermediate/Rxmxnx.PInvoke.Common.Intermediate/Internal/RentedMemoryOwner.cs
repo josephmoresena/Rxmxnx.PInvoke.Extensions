@@ -108,6 +108,9 @@ internal sealed unsafe class RentedMemoryOwner<T> : FixedValueHandle.Memory
 	/// </param>
 	/// <param name="arrayLength">Output. Rented array length.</param>
 	/// <returns>An <see cref="IDisposable"/> instance representing the pinned memory.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IDisposable CreateContext(ArrayPool<T> arrayPool, Int32 count, Boolean clearArray,
 		out FixedContextValue<T> fixedContext, out Int32 arrayLength)

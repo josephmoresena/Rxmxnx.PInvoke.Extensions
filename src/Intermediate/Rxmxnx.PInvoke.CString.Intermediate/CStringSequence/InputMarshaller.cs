@@ -123,7 +123,7 @@ public unsafe partial class CStringSequence
 		/// Initializes the UTF-8 array for all items on <paramref name="source"/>.
 		/// </summary>
 		/// <param name="source">A <see cref="CStringSequence"/> instance.</param>
-		/// <param name="arrayBuffer">Buffer of output array.</param>
+		/// <param name="arrayBuffer">Buffer of an output array.</param>
 		private static void InitializeUtf8Array(CStringSequence source, Span<ReadOnlyValPtr<Byte>> arrayBuffer)
 		{
 			ReadOnlyValPtr<Byte> emptyPtr = InputMarshaller.GetAddress(in CString.Empty.GetPinnableReference());
@@ -150,7 +150,7 @@ public unsafe partial class CStringSequence
 		/// Initializes the UTF-8 array for non-empty items on <paramref name="source"/>.
 		/// </summary>
 		/// <param name="source">A <see cref="CStringSequence"/> instance.</param>
-		/// <param name="arrayBuffer">Buffer of output array.</param>
+		/// <param name="arrayBuffer">Buffer of an output array.</param>
 #if NET5_0_OR_GREATER
 		[SkipLocalsInit]
 #endif
@@ -167,7 +167,7 @@ public unsafe partial class CStringSequence
 		/// Allocates unmanaged memory for the text array.
 		/// </summary>
 		/// <param name="source">A <see cref="CStringSequence"/></param>
-		/// <param name="includeEmpty">Indicates whether output array should contain empty texts.</param>
+		/// <param name="includeEmpty">Indicates whether the output array should contain empty texts.</param>
 		/// <param name="length">Output. Array length.</param>
 		/// <returns>Pointer to unmanaged memory for the text array.</returns>
 		private static IntPtr Alloc(CStringSequence source, Boolean includeEmpty, out Int32 length)

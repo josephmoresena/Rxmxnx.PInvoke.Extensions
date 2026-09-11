@@ -51,6 +51,9 @@ public static unsafe class PointerExtensions
 	/// </summary>
 	/// <param name="ptr">The <see cref="IntPtr"/> instance to convert.</param>
 	/// <returns>The <see cref="UIntPtr"/> instance that represents the same pointer as this instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static UIntPtr ToUIntPtr(this MemoryHandle ptr) => (UIntPtr)ptr.Pointer;
 	/// <summary>
@@ -65,6 +68,9 @@ public static unsafe class PointerExtensions
 	/// </summary>
 	/// <param name="uptr">The <see cref="UIntPtr"/> instance to convert.</param>
 	/// <returns>The <see cref="IntPtr"/> instance that represents the same pointer as this instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IntPtr ToIntPtr(this MemoryHandle uptr) => (IntPtr)uptr.Pointer;
 
@@ -98,6 +104,9 @@ public static unsafe class PointerExtensions
 	/// </summary>
 	/// <param name="handle">The <see cref="UIntPtr"/> pointing to the start of UTF-16 text in memory.</param>
 	/// <returns>A <see cref="String"/> representation of the UTF-16 text in memory.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static String? GetUnsafeString(this MemoryHandle handle) => handle.GetUnsafeString(0);
 	/// <summary>
@@ -153,6 +162,9 @@ public static unsafe class PointerExtensions
 	/// </param>
 	/// <returns>A <see cref="String"/> representation of the UTF-16 text in memory.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static String? GetUnsafeString(this MemoryHandle handle, Int32 length)
 	{
@@ -209,6 +221,9 @@ public static unsafe class PointerExtensions
 	/// <param name="length">The number of <typeparamref name="T"/> values to include in the array.</param>
 	/// <returns>A new array of <typeparamref name="T"/>, or <see langword="null"/> if the pointer is zero.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static T[]? GetUnsafeArray<T>(this MemoryHandle handle, Int32 length) where T : unmanaged
 	{
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);

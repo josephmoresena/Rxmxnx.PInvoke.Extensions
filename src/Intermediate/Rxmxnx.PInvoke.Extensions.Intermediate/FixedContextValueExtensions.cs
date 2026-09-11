@@ -70,6 +70,9 @@ public static unsafe class FixedContextValueExtensions
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -105,6 +108,9 @@ public static unsafe class FixedContextValueExtensions
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IDisposable RentFixed<T>(this ArrayPool<T> arrayPool, Int32 count,
 		out FixedContextValue<T> fixedContext, Boolean clearArray, out Int32 arrayLength) where T : unmanaged
