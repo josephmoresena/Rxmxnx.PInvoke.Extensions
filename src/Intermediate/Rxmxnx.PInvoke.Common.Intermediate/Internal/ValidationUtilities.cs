@@ -724,7 +724,10 @@ internal static unsafe class ValidationUtilities
 	/// Throws an exception if the current token type is invalid for string type.
 	/// </summary>
 	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
-	/// <exception cref="JsonException">Throws an exception if the current token type is invalid for string type.</exception>
+	/// <exception cref="JsonException">Throws an exception if the current token type is invalid for a string type.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -740,7 +743,10 @@ internal static unsafe class ValidationUtilities
 	/// Throws an exception if the current token type is invalid for array type.
 	/// </summary>
 	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
-	/// <exception cref="JsonException">Throws an exception if the current token type is invalid for array type.</exception>
+	/// <exception cref="JsonException">Throws an exception if the current token type is invalid for an array type.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -754,13 +760,16 @@ internal static unsafe class ValidationUtilities
 	}
 
 	/// <summary>
-	/// Throws an exception if the current token type is invalid for expected type.
+	/// Throws an exception if the current token type is invalid for the expected type.
 	/// </summary>
 	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
 	/// <param name="expectedToken">Expected token type name.</param>
 	/// <exception cref="JsonException">
-	/// Throws an exception if the current token type is invalid for expected type.
+	/// Throws an exception if the current token type is invalid for the expected type.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

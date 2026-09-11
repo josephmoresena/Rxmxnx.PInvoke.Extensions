@@ -266,6 +266,9 @@ public partial class CStringSequence
 		/// Creates a new <see cref="CStringSequence"/> instance using the current builder state.
 		/// </summary>
 		/// <returns>A new <see cref="CStringSequence"/> instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringSequence Build() => this._value.CreateSequence();
 

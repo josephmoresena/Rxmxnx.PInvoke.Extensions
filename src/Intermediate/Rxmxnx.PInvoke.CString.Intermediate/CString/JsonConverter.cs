@@ -6,6 +6,9 @@ public partial class CString
 	/// <summary>
 	/// JSON converter for <see cref="CString"/> class.
 	/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	public sealed class JsonConverter : JsonConverter<CString>
 	{
 #if NET6_0_OR_GREATER
@@ -21,7 +24,7 @@ public partial class CString
 
 		/// <inheritdoc/>
 #if NETFRAMEWORK || NETSTANDARD2_0
-		[SecuritySafeCritical]
+		[SecurityCritical]
 #endif
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
@@ -32,7 +35,7 @@ public partial class CString
 			=> JsonConverter.Read(reader);
 		/// <inheritdoc/>
 #if NETFRAMEWORK || NETSTANDARD2_0
-		[SecuritySafeCritical]
+		[SecurityCritical]
 #endif
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
@@ -50,12 +53,11 @@ public partial class CString
 		/// </summary>
 		/// <param name="reader">The reader.</param>
 		/// <returns>The converted value.</returns>
-#if !PACKAGE
-		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
-#endif
-		// ReSharper disable once MemberCanBePrivate.Global
 #if NETFRAMEWORK || NETSTANDARD2_0
 		[SecuritySafeCritical]
+#endif
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 #endif
 		// ReSharper disable once MemberCanBePrivate.Global
 		public static CString? Read(Utf8JsonReader reader)
@@ -67,7 +69,7 @@ public partial class CString
 			return isEmpty ? CString.Empty : new(reader);
 		}
 		/// <summary>
-		/// Writes a UTF-8 text bytes as JSON string.
+		/// Writes the UTF-8 text bytes as JSON string.
 		/// </summary>
 		/// <param name="writer">The writer to write to.</param>
 		/// <param name="value">UTF-8 text bytes.</param>
@@ -112,9 +114,6 @@ public partial class CString
 		/// <param name="buffer">Buffer to write to.</param>
 		/// <param name="clearUnused">Indicates whether the current unused bytes should be cleared.</param>
 		/// <returns>Adjustment value for text length.</returns>
-#if NETFRAMEWORK || NETSTANDARD2_0
-		[SecuritySafeCritical]
-#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static Int32 ReadBytes(Utf8JsonReader reader, Span<Byte> buffer, Boolean clearUnused)
 		{

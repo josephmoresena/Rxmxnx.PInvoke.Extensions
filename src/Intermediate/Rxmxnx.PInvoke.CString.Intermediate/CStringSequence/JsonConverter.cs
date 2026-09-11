@@ -6,11 +6,14 @@ public partial class CStringSequence
 	/// <summary>
 	/// JSON converter for <see cref="CStringSequence"/> class.
 	/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	public sealed class JsonConverter : JsonConverter<CStringSequence>
 	{
 		/// <inheritdoc/>
 #if NETFRAMEWORK || NETSTANDARD2_0
-		[SecuritySafeCritical]
+		[SecurityCritical]
 #endif
 #pragma warning disable CS8764
 		public override CStringSequence? Read(ref Utf8JsonReader reader, Type typeToConvert,
@@ -50,7 +53,7 @@ public partial class CStringSequence
 		}
 		/// <inheritdoc/>
 #if NETFRAMEWORK || NETSTANDARD2_0
-		[SecuritySafeCritical]
+		[SecurityCritical]
 #endif
 		public override void Write(Utf8JsonWriter writer, CStringSequence? value, JsonSerializerOptions options)
 		{

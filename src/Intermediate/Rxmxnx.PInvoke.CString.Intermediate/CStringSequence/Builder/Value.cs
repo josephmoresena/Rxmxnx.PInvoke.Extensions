@@ -30,9 +30,12 @@ public partial class CStringSequence
 			public Int32 Count => this._lengths.Count;
 
 			/// <summary>
-			/// Retrieves the <see cref="CStringSequence"/> representation of current instance.
+			/// Retrieves the <see cref="CStringSequence"/> representation of the current instance.
 			/// </summary>
 			/// <returns>A <see cref="CStringSequence"/> instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			public CStringSequence CreateSequence()
 				=> this._lengths.Count != 0 ?
 					new(this.BuildState(out Int32[] stateLengths), stateLengths) :

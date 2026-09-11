@@ -58,6 +58,9 @@ internal sealed unsafe class RentedMemoryOwner<T> : FixedValueHandle.Memory
 	/// <summary>
 	/// Releases the rented array allocation.
 	/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

@@ -172,6 +172,9 @@ public partial class CString
 	/// Initializes a new instance of the <see cref="CString"/> class reading a String from <paramref name="reader"/>.
 	/// </summary>
 	/// <param name="reader">A <see cref="Utf8JsonReader"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	private CString(Utf8JsonReader reader)
 	{
 		this._isLocal = true;
