@@ -61,6 +61,9 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// </summary>
 	/// <param name="pinnable">The managed pinnable instance.</param>
 	/// <param name="pSpan">Pointer to the span layout.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static void SetPinnableField(Object pinnable, void* pSpan)
 	{

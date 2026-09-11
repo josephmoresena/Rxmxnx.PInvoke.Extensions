@@ -250,6 +250,9 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// When specified, only binary capacities smaller than this value are considered.
 	/// </param>
 	/// <returns>The smallest qualifying binary buffer metadata; otherwise, <see langword="null"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]

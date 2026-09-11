@@ -31,6 +31,9 @@ internal abstract unsafe partial class MemoryInspector
 	/// <summary>
 	/// Static constructor.
 	/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3963)]
 #endif
@@ -75,7 +78,7 @@ internal abstract unsafe partial class MemoryInspector
 		return this.IsLiteral(byteSpan);
 	}
 	/// <summary>
-	/// Indicates whether given span represents a literal or hardcoded memory region.
+	/// Indicates whether a given span represents a literal or hardcoded memory region.
 	/// </summary>
 	/// <param name="span">A read-only span of bytes.</param>
 	/// <returns>
@@ -92,13 +95,16 @@ internal abstract unsafe partial class MemoryInspector
 			return this.IsReadOnlyAddress(ptr);
 	}
 	/// <summary>
-	/// Indicates whether given pointer references to a read-only memory section.
+	/// Indicates whether a given pointer references to a read-only memory section.
 	/// </summary>
 	/// <param name="ptr">A native pointer.</param>
 	/// <returns>
 	/// <see langword="true"/> if the given pointers references to a read-only memory section;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	public abstract Boolean IsReadOnlyAddress(void* ptr);
 
 	/// <summary>

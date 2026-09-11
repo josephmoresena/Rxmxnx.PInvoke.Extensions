@@ -1,9 +1,12 @@
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// A <see cref="ManagedMemoryManager{T}"/> implementation for abstract array.
+/// A <see cref="ManagedMemoryManager{T}"/> implementation for an abstract array.
 /// </summary>
 /// <typeparam name="T">The type of the array.</typeparam>
+#if NETFRAMEWORK || NETSTANDARD2_0
+[SecurityCritical]
+#endif
 internal sealed partial class ArrayMemoryManager<T> : ManagedMemoryManager<T>
 {
 	/// <summary>
@@ -23,10 +26,16 @@ internal sealed partial class ArrayMemoryManager<T> : ManagedMemoryManager<T>
 #endif
 
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected override GCHandle AllocPinned() => GCHandle.Alloc(this._array, GCHandleType.Pinned);
 	/// <param name="pinnable"></param>
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected override ref T GetMemoryReference(out Pinnable<T>? pinnable)
 	{

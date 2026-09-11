@@ -30,6 +30,9 @@ public readonly ref partial struct FixedPointerValue
 	/// <inheritdoc cref="IFixedPointer.Pointer"/>
 	public IntPtr Pointer
 	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecurityCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get
 		{
@@ -43,25 +46,53 @@ public readonly ref partial struct FixedPointerValue
 	/// </summary>
 	internal Int32 Size => this._byteCount - this._offset;
 	/// <summary>
-	/// Indicates whether current memory block is null-referenced or empty.
+	/// Indicates whether the current memory block is null-referenced or empty.
 	/// </summary>
 	internal Boolean IsNullOrEmpty => this._ptr == IntPtr.Zero || this.Size == 0;
 	/// <summary>
 	/// Current memory block handle.
 	/// </summary>
-	internal FixedValueHandle? Handle { get; init; }
+	internal FixedValueHandle? Handle
+	{
+		get;
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecurityCritical]
+#endif
+		init;
+	}
 	/// <summary>
 	/// The type of memory block.
 	/// </summary>
-	internal Type? Type { get; init; }
+	internal Type? Type
+	{
+		get;
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecurityCritical]
+#endif
+		init;
+	}
 	/// <summary>
-	/// Indicates whether current memory block is unmanaged.
+	/// Indicates whether the current memory block is unmanaged.
 	/// </summary>
-	internal Boolean IsUnmanaged { get; init; }
+	internal Boolean IsUnmanaged
+	{
+		get;
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecurityCritical]
+#endif
+		init;
+	}
 	/// <summary>
 	/// Indicates whether the current instance is read-only.
 	/// </summary>
-	internal Boolean IsReadOnly { get; init; }
+	internal Boolean IsReadOnly
+	{
+		get;
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecurityCritical]
+#endif
+		init;
+	}
 
 	/// <summary>
 	/// Creates a new <see cref="FixedPointerValue"/> from current instance applying <paramref name="offset"/>.

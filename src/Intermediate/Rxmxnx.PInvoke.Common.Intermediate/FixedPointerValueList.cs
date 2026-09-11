@@ -145,7 +145,13 @@ public readonly ref struct FixedPointerValueList
 		/// </summary>
 		public FixedPointerValue Value { get; internal init; }
 		/// <inheritdoc cref="IFixedPointer.Pointer"/>
-		public IntPtr Pointer => this.Value.Pointer;
+		public IntPtr Pointer
+		{
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
+			get => this.Value.Pointer;
+		}
 		/// <summary>
 		/// The type of memory block.
 		/// </summary>

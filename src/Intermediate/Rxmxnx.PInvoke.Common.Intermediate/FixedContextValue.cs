@@ -21,11 +21,23 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 	private readonly FixedPointerValue _value;
 
 	/// <inheritdoc cref="IFixedPointer.Pointer"/>
-	public IntPtr Pointer => this._value.Pointer;
+	public IntPtr Pointer
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => this._value.Pointer;
+	}
 	/// <summary>
 	/// Gets the value pointer to the fixed block of memory.
 	/// </summary>
-	public ValPtr<T> ValuePointer => (ValPtr<T>)this._value.Pointer;
+	public ValPtr<T> ValuePointer
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => (ValPtr<T>)this._value.Pointer;
+	}
 	/// <summary>
 	/// Gets a <typeparamref name="T"/> span over the fixed block of memory.
 	/// </summary>

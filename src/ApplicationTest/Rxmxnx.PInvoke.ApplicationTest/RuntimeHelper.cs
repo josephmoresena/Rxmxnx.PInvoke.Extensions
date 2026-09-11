@@ -205,7 +205,16 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			writer.WriteLine($"Buffer AutoComposition Enabled: {BufferManager.BufferAutoCompositionEnabled}");
 			if (!SystemInfo.IsWebRuntime)
 			{
-				writer.WriteLine($"String constant: {RuntimeHelper.runtimeName.AsSpan().IsLiteral()}");
+				try
+				{
+					writer.WriteLine($"String constant: {RuntimeHelper.runtimeName.AsSpan().IsLiteral()}");
+				}
+				catch (Exception ex)
+				{
+					writer.WriteLine("**Unable to retrieve runtime string constant info**");
+					if (!AotInfo.IsReflectionDisabled)
+						writer.WriteLine(ex);
+				}
 				writer.WriteLine($"CString.Empty literal: {CString.IsImagePersistent(CString.Empty)}");
 			}
 			writer.WriteLine($"Hardcoded Array literal: {!RuntimeHelper.Null.AsSpan().MayBeNonLiteral()}");

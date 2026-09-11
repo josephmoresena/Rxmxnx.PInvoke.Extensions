@@ -11,6 +11,9 @@ public readonly ref partial struct FixedPointerValue
 	/// <see langword="true"/> if <paramref name="value1"/> equals <paramref name="value2"/>;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1066)]
@@ -52,6 +55,9 @@ public readonly ref partial struct FixedPointerValue
 	/// <see langword="true"/> if <paramref name="instance"/> was successfully converted to
 	/// <see cref="FixedPointerValue"/> value; otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Boolean TryCreateFixedValue(IFixedPointer instance, out FixedPointerValue value)
 	{
 		value = default;

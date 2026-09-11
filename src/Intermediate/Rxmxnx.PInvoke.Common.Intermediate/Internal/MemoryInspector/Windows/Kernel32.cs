@@ -2,6 +2,9 @@ namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class MemoryInspector
 {
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	private sealed partial class Windows
 	{
 		/// <summary>

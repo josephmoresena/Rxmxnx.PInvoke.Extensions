@@ -18,6 +18,9 @@ public readonly ref partial struct FixedPointerValue
 	/// </summary>
 	/// <param name="value">Original <see cref="FixedPointerValue"/> instance.</param>
 	/// <param name="offset">Memory offset to apply.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private FixedPointerValue(FixedPointerValue value, Int32 offset)
 	{
 		this._ptr = value._ptr;
