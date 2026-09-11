@@ -67,8 +67,12 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		/// </summary>
 		/// <param name="sender">The Frame which failed navigation</param>
 		/// <param name="e">Details about the navigation failure</param>
-		private static void OnNavigationFailed(Object sender, NavigationFailedEventArgs e) 
+		private static void OnNavigationFailed(Object sender, NavigationFailedEventArgs e)
+#if !CSHARP9_0
+			=> throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
+#else
 			=> throw new("Failed to load Page " + e.SourcePageType.FullName);
+#endif
 		/// <summary>
 		/// Invoked when application execution is being suspended.  Application state is saved
 		/// without knowing whether the application will be terminated or resumed with the contents

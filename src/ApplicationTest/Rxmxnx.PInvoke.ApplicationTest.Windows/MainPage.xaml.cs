@@ -26,7 +26,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					TextWrapping = TextWrapping.Wrap,
 					HorizontalAlignment = HorizontalAlignment.Stretch,
 					VerticalAlignment = VerticalAlignment.Stretch,
+#if !CSHARP9_0
+					Margin = new Thickness(15),
+#else
 					Margin = new(15),
+#endif
 				},
 				HorizontalAlignment = HorizontalAlignment.Stretch,
 				VerticalAlignment = VerticalAlignment.Stretch,
@@ -37,8 +41,13 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 
 		private static String GetRuntimeInfo()
 		{
+#if !CSHARP9_0
 			StringBuilder sb = new();
 			using (StringWriter writer = new(sb))
+#else
+			StringBuilder sb = new StringBuilder();
+			using (StringWriter writer = new StringWriter(sb))
+#endif
 				FeatureHelper.MainEntryPoint(writer);
 			return sb.ToString();
 		}
