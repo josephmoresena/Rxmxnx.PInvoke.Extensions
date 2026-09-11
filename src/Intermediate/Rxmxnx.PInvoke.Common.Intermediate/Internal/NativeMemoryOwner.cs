@@ -17,6 +17,9 @@ internal sealed unsafe class NativeMemoryOwner : FixedValueHandle
 	/// Constructor.
 	/// </summary>
 	/// <param name="byteLength">Allocation size in bytes.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	private NativeMemoryOwner(Int32 byteLength)
 	{
 #if !NET6_0_OR_GREATER
@@ -42,6 +45,9 @@ internal sealed unsafe class NativeMemoryOwner : FixedValueHandle
 	/// <summary>
 	/// Releases the native memory allocation.
 	/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private void Release()
 	{
 		if (this._pointer == IntPtr.Zero) return;

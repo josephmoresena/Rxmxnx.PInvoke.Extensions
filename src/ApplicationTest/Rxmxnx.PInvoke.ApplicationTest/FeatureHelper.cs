@@ -25,6 +25,8 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			FeatureHelper.BufferFeature(writer);
 			FeatureHelper.UnicodeFeature(writer);
 			FeatureHelper.GuidFeature(writer);
+			FeatureHelper.RentFeature(writer);
+			FeatureHelper.AllocFeature(writer);
 		}
 
 		#region FeatureMethods
@@ -197,7 +199,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			FeatureHelper.Print(uuid, writer);
 			uuid.Reference = Guid.NewGuid();
 			FeatureHelper.Print(uuid, writer);
-
+		}
+		private static void RentFeature(TextWriter writer)
+		{
 			writer.WriteLine("=== Fixed Rent ===");
 			using IDisposable _ =
 				ArrayPool<Int64>.Shared.RentFixed(10, out FixedContextValue<Int64> fRent, false, out Int32 arrayLength);
@@ -220,6 +224,29 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			}
 #endif
 			FeatureHelper.Print(fRent, writer);
+		}
+		private static void AllocFeature(TextWriter writer)
+		{
+			writer.WriteLine("=== Alloc ===");
+			using IDisposable _ = NativeUtilities.HeapAlloc(20, out FixedContextValue<Int32> heap);
+#if NET5_0_OR_GREATER
+			writer.WriteLine($"Address: 0x{heap.Pointer:X}");
+#else
+			writer.WriteLine($"Address: 0x{heap.Pointer.ToString("X")}");
+#endif
+#if !NET9_0_OR_GREATER
+			foreach (ref Int32 rInt in heap.Values)
+#else
+			Span<Int32>.Enumerator enumerator = heap.Values.GetEnumerator();
+			while (enumerator.MoveNext())
+			{
+				ref Int32 rInt = ref enumerator.Current;
+#endif
+				rInt = RuntimeHelper.Shared.Next();
+#if NET9_0_OR_GREATER
+			}
+#endif
+			FeatureHelper.Print(heap, writer);
 		}
 		#endregion
 
