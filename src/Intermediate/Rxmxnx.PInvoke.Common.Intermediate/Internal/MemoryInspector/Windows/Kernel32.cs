@@ -24,11 +24,17 @@ internal partial class MemoryInspector
 				if (result != default) return;
 				Kernel32.SetLastError(0);
 			}
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SuppressUnmanagedCodeSecurity]
+#endif
 #pragma warning disable SYSLIB1054
 			[DllImport("kernel32.dll")]
 			public static extern UIntPtr VirtualQuery(void* lpAddress, out MemoryInfo memInfo, UIntPtr dwLength);
 
 			[DllImport("kernel32.dll")]
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SuppressUnmanagedCodeSecurity]
+#endif
 			private static extern void SetLastError(UInt32 dwErrCode);
 #pragma warning restore SYSLIB1054
 		}
