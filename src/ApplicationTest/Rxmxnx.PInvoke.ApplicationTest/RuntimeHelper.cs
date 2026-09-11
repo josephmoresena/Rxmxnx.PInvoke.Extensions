@@ -117,8 +117,26 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			writer.WriteLine($"OS Arch: {RuntimeInformation.OSArchitecture.GetName()}");
 #if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 			writer.WriteLine($"OS Version: {Environment.OSVersion}");
-			writer.WriteLine($"Computer: {Environment.MachineName}");
-			writer.WriteLine($"User: {Environment.UserName}");
+			try
+			{
+				writer.WriteLine($"Computer: {Environment.MachineName}");
+			}
+			catch (Exception ex)
+			{
+				writer.WriteLine("**Unable to retrieve computer**");
+				if (!AotInfo.IsReflectionDisabled)
+					writer.WriteLine(ex);
+			}
+			try
+			{
+				writer.WriteLine($"User: {Environment.UserName}");
+			}
+			catch (Exception ex)
+			{
+				writer.WriteLine("**Unable to retrieve user**");
+				if (!AotInfo.IsReflectionDisabled)
+					writer.WriteLine(ex);
+			}
 #endif
 			writer.WriteLine($"UI Culture: {CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}");
 #if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
