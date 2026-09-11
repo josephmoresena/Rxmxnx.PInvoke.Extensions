@@ -37,7 +37,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			if (rootFrame is null)
 			{
 				// Create a Frame to act as the navigation context and navigate to the first page
+#if !CSHARP9_0
 				rootFrame = new();
+#else
+				rootFrame = new Frame();
+#endif
 				rootFrame.NavigationFailed += App.OnNavigationFailed;
 
 				if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)

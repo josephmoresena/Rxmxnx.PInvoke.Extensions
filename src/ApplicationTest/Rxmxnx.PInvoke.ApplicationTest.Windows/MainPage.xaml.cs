@@ -42,11 +42,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		private static String GetRuntimeInfo()
 		{
 #if !CSHARP9_0
-			StringBuilder sb = new();
-			using (StringWriter writer = new(sb))
-#else
 			StringBuilder sb = new StringBuilder();
 			using (StringWriter writer = new StringWriter(sb))
+#else
+			StringBuilder sb = new();
+			using (StringWriter writer = new(sb))
 #endif
 				FeatureHelper.MainEntryPoint(writer);
 			return sb.ToString();
