@@ -331,7 +331,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		private static ReadOnlySpan<Byte> NullBytes()
 		{
 			Byte[] utf8 = { (Byte)'N', (Byte)'u', (Byte)'l', (Byte)'l', (Byte)'\0', };
-#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET461 && !WINDOWS_UWP
+#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && (NET462_OR_GREATER || WINDOWS_UWP)
 			return utf8.AsSpan()[..^1];
 #else
 			return utf8.AsSpan().Slice(0, utf8.Length - 1);
