@@ -8,11 +8,17 @@ internal static class EnumValueHelper<TEnum> where TEnum : struct, Enum
 	/// <summary>
 	/// Internal array.
 	/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static readonly ReadOnlyMemory<TEnum> Values;
 
 	/// <summary>
 	/// Static constructor.
 	/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3963)]
 #endif

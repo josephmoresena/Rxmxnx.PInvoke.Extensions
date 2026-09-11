@@ -97,6 +97,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
 		/// <param name="newData">Input. New data to append. Output. Remaining data to append.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif

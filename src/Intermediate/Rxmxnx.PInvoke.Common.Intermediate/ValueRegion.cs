@@ -102,6 +102,9 @@ public abstract partial class ValueRegion<T>
 	/// <see langword="true"/> if <paramref name="memory"/> instance represents the current instance; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	internal virtual Boolean TryGetMemory(out ReadOnlyMemory<T> memory)
 	{
 		Unsafe.SkipInit(out memory);

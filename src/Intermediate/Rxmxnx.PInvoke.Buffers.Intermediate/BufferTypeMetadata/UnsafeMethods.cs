@@ -35,6 +35,9 @@ public unsafe partial class BufferTypeMetadata
 	/// <see cref="GC.KeepAlive"/>, which is for objects). Always writes the first element; writes
 	/// the last only when <paramref name="spanLength"/> is greater than 1.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	private static void Clear<T, TBuffer>(ref TBuffer buffer, Int32 spanLength) where TBuffer : struct
 	{

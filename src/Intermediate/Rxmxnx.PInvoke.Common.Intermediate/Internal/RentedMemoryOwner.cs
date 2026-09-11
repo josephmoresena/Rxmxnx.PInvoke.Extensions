@@ -29,6 +29,9 @@ internal sealed unsafe class RentedMemoryOwner<T> : FixedValueHandle.Memory
 	/// <param name="array">Rented array..</param>
 	/// <param name="clearArray">Indicates whether the contents of the buffer should be cleared before reuse.</param>
 	/// <param name="arrayLength">Output. Rented array length.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private RentedMemoryOwner(ArrayPool<T> arrayPool, T[] array, Boolean clearArray, out Int32 arrayLength) : base(
 		new ReadOnlyMemory<T>(array).Pin())
 	{

@@ -49,6 +49,9 @@ public partial class CStringSequence
 		}
 		/// <inheritdoc cref="CStringSequence.Builder.Append(ReadOnlySequence{Byte})"/>
 		/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Builder ConcurrentAppend(ReadOnlySequence<Byte> value)
 		{
 			Concurrent concurrent = new(this._value);
@@ -282,6 +285,9 @@ public partial class CStringSequence
 					this._value.Append(utf8Text);
 			}
 			/// <inheritdoc cref="Value.Append(ReadOnlySequence{Byte})"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			public void Append(ReadOnlySequence<Byte> utf8Text)
 			{
 #if NET9_0_OR_GREATER

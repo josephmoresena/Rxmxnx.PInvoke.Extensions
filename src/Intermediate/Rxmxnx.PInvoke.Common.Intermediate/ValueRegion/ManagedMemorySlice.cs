@@ -47,6 +47,9 @@ public partial class ValueRegion<T>
 		private protected override T[]? AsArray() => !this.IsMemorySlice ? this._array : default;
 
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		internal override Boolean TryGetMemory(out ReadOnlyMemory<T> memory)
 		{
 			memory = new(this._array, this.Offset, this.End - this.Offset);

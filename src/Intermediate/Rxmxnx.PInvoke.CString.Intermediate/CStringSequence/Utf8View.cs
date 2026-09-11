@@ -131,7 +131,7 @@ public partial class CStringSequence
 #endif
 		{
 			/// <summary>
-			/// Indicates whether current enumeration include empty items.
+			/// Indicates whether current enumeration includes empty items.
 			/// </summary>
 			private readonly Boolean _excludeEmptyItems;
 			/// <summary>
@@ -186,6 +186,9 @@ public partial class CStringSequence
 			/// </summary>
 			/// <param name="instance">A <see cref="CStringSequence"/> instance.</param>
 			/// <param name="excludeEmptyItems">Indicates whether the current enumerator is only for non-empty items.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			internal Enumerator(CStringSequence? instance, Boolean excludeEmptyItems)
 			{
 				this._excludeEmptyItems = excludeEmptyItems;

@@ -19,7 +19,13 @@ public abstract partial class BufferTypeMetadata<T>
 	/// <summary>
 	/// Current buffer components.
 	/// </summary>
-	internal ReadOnlyMemory<BufferTypeMetadata<T>> Components { get; }
+	internal ReadOnlyMemory<BufferTypeMetadata<T>> Components
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get;
+	}
 
 	/// <summary>
 	/// Constructor.

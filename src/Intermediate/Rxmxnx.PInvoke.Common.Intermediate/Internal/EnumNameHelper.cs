@@ -11,6 +11,9 @@ internal static class EnumNameHelper<TEnum> where TEnum : struct, Enum
 	/// <summary>
 	/// Internal array.
 	/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #pragma warning disable S2743
 	// ReSharper disable once StaticMemberInGenericType
 	public static readonly ReadOnlyMemory<String> Values;
@@ -19,6 +22,9 @@ internal static class EnumNameHelper<TEnum> where TEnum : struct, Enum
 	/// <summary>
 	/// Static constructor.
 	/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3963)]
 #endif

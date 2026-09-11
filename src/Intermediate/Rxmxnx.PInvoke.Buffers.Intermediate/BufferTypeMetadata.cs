@@ -6,7 +6,7 @@ namespace Rxmxnx.PInvoke;
 public abstract partial class BufferTypeMetadata
 {
 	/// <summary>
-	/// Indicates whether current type is binary space.
+	/// Indicates whether the current type is binary space.
 	/// </summary>
 	public Boolean IsBinary { get; }
 	/// <summary>
@@ -48,9 +48,21 @@ public abstract partial class BufferTypeMetadata
 public abstract partial class BufferTypeMetadata<T> : BufferTypeMetadata
 {
 	/// <inheritdoc/>
-	public sealed override BufferTypeMetadata this[Int32 index] => this.Components.Span[index];
+	public sealed override BufferTypeMetadata this[Int32 index]
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => this.Components.Span[index];
+	}
 	/// <inheritdoc/>
-	public sealed override Int32 ComponentCount => this.Components.Length;
+	public sealed override Int32 ComponentCount
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => this.Components.Length;
+	}
 
 	/// <summary>
 	/// Retrieves the <see cref="BufferTypeMetadata{T}"/> instance from <typeparamref name="TBuffer"/>.

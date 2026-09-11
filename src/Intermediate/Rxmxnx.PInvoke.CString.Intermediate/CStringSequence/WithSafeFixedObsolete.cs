@@ -38,6 +38,9 @@ public unsafe partial class CStringSequence
 	/// Ensure that the <see cref="MemoryHandle"/> value returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public MemoryHandle Pin()
 	{

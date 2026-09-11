@@ -159,6 +159,9 @@ internal static class BuffersHelper
 	/// <typeparam name="T">The type of items in the buffer</typeparam>
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET7_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -232,6 +235,9 @@ internal static class BuffersHelper
 	/// <param name="componentB">A <see cref="BufferTypeMetadata"/> instance.</param>
 	/// <param name="isBinary">Output. Indicates whether resulting composition type is binary.</param>
 	/// <returns>Resulting composition type capacity.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Int32 GetCapacity<T>(BufferTypeMetadata<T> componentA, BufferTypeMetadata<T> componentB,
 		out Boolean isBinary)
 	{

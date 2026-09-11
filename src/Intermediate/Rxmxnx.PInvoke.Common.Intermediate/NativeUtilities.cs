@@ -140,6 +140,9 @@ public static unsafe partial class NativeUtilities
 	/// types
 	/// that have the same size in memory.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref readonly TDestination Transform<TSource, TDestination>(in TSource value)
 		where TSource : unmanaged where TDestination : unmanaged
@@ -172,6 +175,9 @@ public static unsafe partial class NativeUtilities
 	/// types
 	/// that have the same size in memory.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref TDestination TransformReference<TSource, TDestination>(ref TSource refValue)
 		where TSource : unmanaged where TDestination : unmanaged

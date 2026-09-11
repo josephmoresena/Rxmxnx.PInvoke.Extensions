@@ -72,6 +72,9 @@ public sealed partial class CStringBuilder
 		=> new Concurrent(this.GetLock(), this).AppendLine(value);
 	/// <inheritdoc cref="CStringBuilder.AppendLine(ReadOnlySequence{Byte})"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

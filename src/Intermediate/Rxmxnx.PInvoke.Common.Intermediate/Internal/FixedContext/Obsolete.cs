@@ -8,6 +8,9 @@ internal sealed partial class FixedContext<T>
 #if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IFixedMemory residual)
 	{
 		Unsafe.SkipInit(out residual);
@@ -17,6 +20,9 @@ internal sealed partial class FixedContext<T>
 	}
 #if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
@@ -28,6 +34,9 @@ internal sealed partial class FixedContext<T>
 	}
 #if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
 	IFixedContext<TDestination> IFixedContext<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 	{

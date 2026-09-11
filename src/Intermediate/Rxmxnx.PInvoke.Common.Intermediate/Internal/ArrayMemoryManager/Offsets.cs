@@ -23,6 +23,9 @@ internal partial class ArrayMemoryManager<T>
 	/// </summary>
 	/// <param name="array">A <see cref="Array"/> instance.</param>
 	/// <returns>A managed reference to the array offset.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static ref IntPtr? GetArrayOffset(Array array)
 	{

@@ -13,7 +13,13 @@ public partial class CString
 		private readonly Boolean _useFullLength;
 
 		/// <inheritdoc/>
-		protected sealed override ReadOnlyMemory<Byte> Value { get; }
+		protected sealed override ReadOnlyMemory<Byte> Value
+		{
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
+			get;
+		}
 
 		/// <summary>
 		/// Constructor.
@@ -22,6 +28,9 @@ public partial class CString
 		/// <param name="useFullLength">
 		/// Indicates whether the total length of <see cref="Backing.Value"/> should be used.
 		/// </param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		protected Backing(ReadOnlyMemory<Byte> memory, Boolean useFullLength)
 		{
 			this.Value = memory;
@@ -84,6 +93,9 @@ public partial class CString
 		/// <see langword="true"/> if <paramref name="memory"/> instance represents <paramref name="value"/>; otherwise,
 		/// <see langword="false"/>.
 		/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		protected static Boolean TryGetMemory(CString? value, Boolean includeNullTermination,
 			out ReadOnlyMemory<Byte> memory)
 		{

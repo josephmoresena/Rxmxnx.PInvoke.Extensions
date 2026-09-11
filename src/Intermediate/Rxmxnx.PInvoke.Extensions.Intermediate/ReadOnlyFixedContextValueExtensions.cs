@@ -37,6 +37,9 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IDisposable GetFixedContext<T>(this ReadOnlyMemory<T> mem,
 		out ReadOnlyFixedContextValue<T> fixedContext)

@@ -54,6 +54,9 @@ public sealed partial class CStringBuilder
 	/// </summary>
 	/// <param name="value">The UTF-8 units read-only sequence to append.</param>
 	/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Append(ReadOnlySequence<Byte> value)
 	{
 		if (value.IsEmpty) return this;

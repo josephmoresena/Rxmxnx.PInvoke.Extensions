@@ -43,6 +43,9 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 
 	ref T IReferenceable<T>.Reference => ref this.CreateReference<T>();
 	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.CreateReadOnlyReference<T>();
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IFixedMemory residual)
 	{
 		Unsafe.SkipInit(out residual);
@@ -50,6 +53,9 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 			this.GetTransformation<TDestination>(out Unsafe.As<IFixedMemory, FixedOffset>(ref residual));
 		return result;
 	}
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 	{
 		Unsafe.SkipInit(out residual);
@@ -57,6 +63,9 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 			this.GetTransformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, FixedOffset>(ref residual));
 		return result;
 	}
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
 	{

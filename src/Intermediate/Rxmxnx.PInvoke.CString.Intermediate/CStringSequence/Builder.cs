@@ -86,6 +86,9 @@ public partial class CStringSequence
 		/// </summary>
 		/// <param name="value">The UTF-8 text to append.</param>
 		/// <returns>The current instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Builder Append(ReadOnlySequence<Byte> value)
 		{
 			this._value.Append(value);

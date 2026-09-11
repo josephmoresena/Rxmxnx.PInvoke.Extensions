@@ -10,7 +10,13 @@ public partial class ValueRegion<T>
 		/// <summary>
 		/// Memory instance.
 		/// </summary>
-		protected abstract ReadOnlyMemory<T> Value { get; }
+		protected abstract ReadOnlyMemory<T> Value
+		{
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
+			get;
+		}
 
 		/// <inheritdoc/>
 #if !PACKAGE
@@ -34,11 +40,17 @@ public partial class ValueRegion<T>
 		}
 
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public sealed override Boolean TryAlloc(GCHandleType type, out GCHandle handle)
 			=> MemoryMarshal.TryGetArray(this.Value, out ArraySegment<T> segment) && segment.Array is not null ?
 				ManagedRegion.TryAlloc(segment.Array, type, out handle) :
 				base.TryAlloc(type, out handle);
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public sealed override IPinnable? GetPinnable(out Int32 offset)
 		{
 			Boolean hasArray = MemoryMarshal.TryGetArray(this.Value, out _);
@@ -48,12 +60,18 @@ public partial class ValueRegion<T>
 			return default;
 		}
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public sealed override ValueRegion<T> Slice(Int32 startIndex) => this.Slice(this.Value[startIndex..]);
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
@@ -61,6 +79,9 @@ public partial class ValueRegion<T>
 		public sealed override ValueRegion<T> Slice(Int32 startIndex, Int32 length)
 			=> this.Slice(this.Value.Slice(startIndex, length));
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
@@ -77,6 +98,9 @@ public partial class ValueRegion<T>
 		protected abstract ValueRegion<T> Slice(ReadOnlyMemory<T> memory);
 
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		private protected sealed override T[]? AsArray()
 		{
 			if (!MemoryMarshal.TryGetArray(this.Value, out ArraySegment<T> segment)) return base.AsArray();
@@ -85,6 +109,9 @@ public partial class ValueRegion<T>
 		}
 
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		internal sealed override Boolean TryGetMemory(out ReadOnlyMemory<T> memory)
 		{
 			memory = this.Value;
@@ -97,6 +124,9 @@ public partial class ValueRegion<T>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal sealed override ReadOnlySpan<T> AsSpan() => this.Value.Span;
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal sealed override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)
 			=> this.Slice(this.Value.Slice(startIndex, length));
@@ -116,6 +146,9 @@ public partial class ValueRegion<T>
 		/// <returns>
 		/// <see langword="true"/> if the method succeeded; otherwise, <see langword="false"/>.
 		/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private Boolean TryGetMemoryManager([NotNullWhen(true)] out MemoryManager<T>? manager, out Int32 start,
 			out Int32 length)

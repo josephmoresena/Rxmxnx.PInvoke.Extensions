@@ -5,6 +5,9 @@ internal partial class ReadOnlyFixedContext<T>
 #if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	IReadOnlyFixedContext<TDestination> IReadOnlyFixedContext<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
 	{

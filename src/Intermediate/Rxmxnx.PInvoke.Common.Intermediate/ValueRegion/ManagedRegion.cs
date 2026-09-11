@@ -37,6 +37,9 @@ public partial class ValueRegion<T>
 		private protected override T[] AsArray() => this._array;
 
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		internal override Boolean TryGetMemory(out ReadOnlyMemory<T> memory)
 		{
 			memory = new(this._array);

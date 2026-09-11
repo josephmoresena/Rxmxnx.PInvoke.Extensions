@@ -45,6 +45,9 @@ public sealed partial class CStringBuilder
 		=> value.IsEmpty ? this : new Concurrent(this.GetLock(), this).Append(value);
 	/// <inheritdoc cref="CStringBuilder.Append(ReadOnlySequence{Byte})"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
