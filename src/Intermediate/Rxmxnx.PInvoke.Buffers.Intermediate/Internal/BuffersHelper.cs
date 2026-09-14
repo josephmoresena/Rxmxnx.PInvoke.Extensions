@@ -406,9 +406,9 @@ internal static class BuffersHelper
 #if NETFRAMEWORK || NETSTANDARD2_0
 		catch (SecurityException)
 		{
-			if (SystemInfo.UsesNativeSpan || SystemInfo.IsMonoRuntime)
+			if (SystemInfo.UsesNativeSpan || SystemInfo.IsMonoRuntime || AotInfo.IsNativeAot)
 				throw;
-			// Allow .NET Framework and .NET Core 2.0
+			// Allow .NET Framework, .NET Core 2.0 (Not CoreRT)
 		}
 #endif
 		catch (TargetInvocationException tie)

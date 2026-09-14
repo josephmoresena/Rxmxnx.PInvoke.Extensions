@@ -56,7 +56,11 @@ public partial class BufferTypeMetadata
 		where TAction : IScopedBufferAction<T>, allows ref struct
 #endif
 	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		TBuffer buffer = default;
+#else
 		TBuffer buffer = new();
+#endif
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
 		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
@@ -95,7 +99,11 @@ public partial class BufferTypeMetadata
 		where TFunction : IScopedBufferFunction<T, TResult>, allows ref struct
 #endif
 	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		TBuffer buffer = default;
+#else
 		TBuffer buffer = new();
+#endif
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
 		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);

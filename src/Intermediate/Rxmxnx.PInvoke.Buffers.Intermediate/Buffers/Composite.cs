@@ -63,7 +63,7 @@ public struct Composite<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAcc
 	}
 #else
 	/// <summary>
-	/// Creates the <see cref="BufferTypeMetadata{T}"/> instance for current type.
+	/// Creates the <see cref="BufferTypeMetadata{T}"/> instance for the current type.
 	/// </summary>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 	private static BufferTypeMetadata<T> CreateBufferMetadata()
