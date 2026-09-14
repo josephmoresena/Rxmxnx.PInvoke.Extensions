@@ -37,9 +37,6 @@
             </Properties>
         </ProjectReference>
     </ItemGroup>
-    <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' Or '$(TargetFramework)' == 'netstandard2.0'">
-        <AssemblyAttribute Include="System.Security.AllowPartiallyTrustedCallersAttribute"/>
-    </ItemGroup>
 
     <UsingTask TaskName="ValuePointerPatchTask"
                AssemblyFile="Rxmxnx.PInvoke.Extensions.IlPatcher\bin\$(Configuration)\netstandard2.0\Rxmxnx.PInvoke.Extensions.IlPatcher.dll"/>
