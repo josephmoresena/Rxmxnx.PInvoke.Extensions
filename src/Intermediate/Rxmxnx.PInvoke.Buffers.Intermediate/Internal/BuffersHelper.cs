@@ -216,17 +216,17 @@ internal static class BuffersHelper
 #endif
 		return BuffersHelper.GetStaticMetadata<T, TBuffer>();
 	}
+#if !PACKAGE
 	/// <summary>
 	/// Retrieves metadata required for a buffer of <paramref name="bufferType"/> type.
 	/// </summary>
 	/// <param name="bufferType">Type of buffer.</param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
-#if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
-#endif
 	public static BufferTypeMetadata<T> GetMetadata<T>(
 		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] Type bufferType)
 		=> bufferType == typeof(Atomic<T>) ? Atomic<T>.TypeMetadata : BuffersHelper.GetMetadataFromType<T>(bufferType);
+#endif
 	/// <summary>
 	/// Retrieves the capacity of a composite buffer of <paramref name="componentA"/> and <paramref name="componentB"/>.
 	/// </summary>
@@ -297,7 +297,8 @@ internal static class BuffersHelper
 			result = ManagedBinaryBuffer<T>.GetMetadata(genericType);
 		}
 #else
-		if (!BuffersHelper.GetMetadata<T>(typeofB).IsBinary || !BuffersHelper.BufferAutoCompositionEnabled)
+		if (typeofB != typeof(Atomic<T>) && !BuffersHelper.GetMetadataFromType<T>(typeofB).IsBinary ||
+		    !BuffersHelper.BufferAutoCompositionEnabled)
 			// Avoid using reflection for Atomic<T> metadata retrieving.
 			return default;
 		BufferTypeMetadata<T>? result = default;
@@ -380,6 +381,9 @@ internal static class BuffersHelper
 	/// <typeparam name="T">The type of items in the buffer</typeparam>
 	/// <param name="bufferType">Type of buffer.</param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[UnconditionalSuppressMessage("Trimming", "IL2070")]
 	private static BufferTypeMetadata<T> GetMetadataFromType<T>(
 		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] Type bufferType)
