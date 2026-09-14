@@ -325,7 +325,19 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				_ => $"{architecture}",
 			};
 #if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
-		private static String GetAssemblyName(this Assembly assembly) => $"{assembly.FullName} {assembly.Location}";
+		private static String GetAssemblyName(this Assembly assembly)
+		{
+			String? location;
+			try
+			{
+				location = assembly.Location;
+			}
+			catch (Exception)
+			{
+				location = "**Unable to retrieve assembly location**";
+			}
+			return $"{assembly.FullName} {location}";
+		}
 #endif
 #if !CSHARP9_0
 		private static ReadOnlySpan<Byte> NullBytes()
