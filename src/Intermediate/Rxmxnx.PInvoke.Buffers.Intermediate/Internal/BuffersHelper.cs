@@ -403,6 +403,14 @@ internal static class BuffersHelper
 				result = (BufferTypeMetadata?)typeMetadataInfo?.GetValue(null);
 			}
 		}
+#if NETFRAMEWORK || NETSTANDARD2_0
+		catch (SecurityException)
+		{
+			if (SystemInfo.UsesNativeSpan || SystemInfo.IsMonoRuntime)
+				throw;
+			// Allow .NET Framework and .NET Core 2.0
+		}
+#endif
 		catch (TargetInvocationException tie)
 		{
 			if (tie.InnerException is not null)

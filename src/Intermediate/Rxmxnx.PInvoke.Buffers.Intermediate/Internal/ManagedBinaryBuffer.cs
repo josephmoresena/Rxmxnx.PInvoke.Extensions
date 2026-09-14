@@ -48,6 +48,9 @@ internal static class ManagedBinaryBuffer<T>
 	/// This method allocates in heap a <paramref name="bufferType"/> instance to retrieve the
 	/// <see cref="BufferTypeMetadata{T}"/> instance.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
