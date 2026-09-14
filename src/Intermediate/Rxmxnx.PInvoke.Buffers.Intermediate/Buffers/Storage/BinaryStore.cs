@@ -46,7 +46,11 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 #endif
 	static BinaryStore()
 	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		BinaryStore<TMain, T>.initial = default;
+#else
 		BinaryStore<TMain, T>.initial = new();
+#endif
 #if NET8_0_OR_GREATER
 		if (BinaryStore<TMain, T>.initial.SlotCount == 0)
 		{
@@ -134,7 +138,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// Retrieves the fundamental component of size <paramref name="space"/>.
 	/// </summary>
 	/// <param name="storage">A <see cref="MetadataStorage"/> instance.</param>
-	/// <param name="space">Size of fundamental component.</param>
+	/// <param name="space">Size of a fundamental component.</param>
 	/// <returns>A <see cref="BufferTypeMetadata"/> instance.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static BufferTypeMetadata<T>? GetFundamental(IMetadataStorage storage, UInt16 space)
@@ -217,7 +221,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// <summary>
 	/// Retrieves the nearest fundamental component to <paramref name="space"/> size.
 	/// </summary>
-	/// <param name="space">Size of fundamental component.</param>
+	/// <param name="space">Size of a fundamental component.</param>
 	/// <returns>A <see cref="BufferTypeMetadata"/> instance.</returns>
 	private static BufferTypeMetadata<T> GetMaxBinarySpace(UInt16 space)
 	{
