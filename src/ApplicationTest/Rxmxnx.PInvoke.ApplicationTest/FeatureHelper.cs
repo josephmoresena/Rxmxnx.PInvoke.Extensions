@@ -139,7 +139,13 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			}
 			catch (Exception ex)
 			{
-				writer.WriteLine($"**Unable to perform conversion: {ex.Message}**");
+				if (!AotInfo.IsReflectionDisabled)
+				{
+					writer.WriteLine("**Unable to perform conversion**");
+					writer.WriteLine(ex);
+				}
+				else
+					writer.WriteLine($"**Unable to perform conversion: {ex.Message}**");
 			}
 			writer.WriteLine("=== Enumerable sequences ===");
 			foreach (CString value in sequence)
