@@ -102,6 +102,10 @@ public static partial class AotInfo
 					case "Microsoft.MacCatalyst":
 					case "Microsoft.tvOS":
 					case "Microsoft.watchOS":
+#if NETSTANDARD2_0
+					// .NET Native detection
+					case "SharedLibrary.McgInterop":
+#endif
 						return false;
 #if !NET5_0_OR_GREATER
 					case "Mono.Android":
@@ -151,7 +155,7 @@ public static partial class AotInfo
 		EmitCheck:
 #if NET5_0_OR_GREATER
 		if (TrimInfo.IsDesktopTrimmedPlatform() || OperatingSystem.IsAndroid())
-			return false; // Avoid use System.Reflection.Emit on .NET 5.0
+			return false; // Avoid using System.Reflection.Emit on .NET 5.0
 #endif
 		// System.Reflection.Emit is not allowed in AOT/IL2CPP.
 		return EmitInfo.IsEmitAllowed;
