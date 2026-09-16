@@ -51,9 +51,9 @@ public static partial class BufferManager
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="action"/>.
 	/// </summary>
-	/// <typeparam name="T">Type of items in allocated buffer.</typeparam>
-	/// <param name="count">Number of elements in allocated buffer.</param>
-	/// <param name="action">Action to perform with allocated buffer.</param>
+	/// <typeparam name="T">Type of items in the allocated buffer.</typeparam>
+	/// <param name="count">Number of elements in the allocated buffer.</param>
+	/// <param name="action">Action to perform with the allocated buffer.</param>
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
@@ -66,11 +66,11 @@ public static partial class BufferManager
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="action"/>.
 	/// </summary>
-	/// <typeparam name="T">Type of items in allocated buffer.</typeparam>
+	/// <typeparam name="T">Type of items in the allocated buffer.</typeparam>
 	/// <typeparam name="TState">Type of state object.</typeparam>
-	/// <param name="count">Number of elements in allocated buffer.</param>
+	/// <param name="count">Number of elements in the allocated buffer.</param>
 	/// <param name="state">State object.</param>
-	/// <param name="action">Action to perform with allocated buffer.</param>
+	/// <param name="action">Action to perform with the allocated buffer.</param>
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
 	/// </param>
@@ -85,9 +85,9 @@ public static partial class BufferManager
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="func"/>.
 	/// </summary>
-	/// <typeparam name="T">Type of items in allocated buffer.</typeparam>
+	/// <typeparam name="T">Type of items in the allocated buffer.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="count">Number of elements in allocated buffer.</param>
+	/// <param name="count">Number of elements in the allocated buffer.</param>
 	/// <param name="func">Function to execute with allocated buffer.</param>
 	/// <param name="isMinimumCount">
 	/// Indicates whether <paramref name="count"/> is just the minimum limit.
@@ -107,10 +107,10 @@ public static partial class BufferManager
 	/// <summary>
 	/// Allocates a buffer with <paramref name="count"/> elements and executes <paramref name="func"/>.
 	/// </summary>
-	/// <typeparam name="T">Type of items in allocated buffer.</typeparam>
+	/// <typeparam name="T">Type of items in the allocated buffer.</typeparam>
 	/// <typeparam name="TState">Type of state object.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="count">Number of elements in allocated buffer.</param>
+	/// <param name="count">Number of elements in the allocated buffer.</param>
 	/// <param name="state">State object.</param>
 	/// <param name="func">Function to execute with allocated buffer.</param>
 	/// <param name="isMinimumCount">
@@ -150,7 +150,10 @@ public static partial class BufferManager
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void Register<T, [DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBuffer>()
 		where TBuffer : struct, IManagedBuffer<T> where T : struct
-		=> BufferManager.Storage.RegisterBuffer<T, TBuffer>();
+	{
+		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
+		BufferManager.Storage.RegisterBuffer<T, TBuffer>();
+	}
 	/// <summary>
 	/// Registers <typeparamref name="T"/> buffer.
 	/// </summary>
@@ -160,7 +163,10 @@ public static partial class BufferManager
 	public static void RegisterNullable<T,
 		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBuffer>()
 		where TBuffer : struct, IManagedBuffer<T?> where T : struct
-		=> BufferManager.Storage.RegisterBuffer<T?, TBuffer>();
+	{
+		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
+		BufferManager.Storage.RegisterBuffer<T?, TBuffer>();
+	}
 	/// <summary>
 	/// Prepares the binary buffer metadata needed to allocate <paramref name="count"/> objects.
 	/// </summary>
