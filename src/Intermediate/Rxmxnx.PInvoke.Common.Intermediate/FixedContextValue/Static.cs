@@ -1,4 +1,4 @@
-#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER && !UAP10_0_16299
 using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
 #endif
 
@@ -55,12 +55,13 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 	}
 
 	/// <summary>
-	/// Retrieves an <see langword="unsafe"/> <see cref="FixedContextValue{T}"/> instance from current reference pointer.
+	/// Retrieves an <see langword="unsafe"/> <see cref="FixedContextValue{T}"/> instance from the current reference
+	/// pointer.
 	/// </summary>
 	/// <typeparam name="TDisposable">Type of <see cref="IDisposable"/> instance.</typeparam>
 	/// <param name="ptr">Current <see cref="ValPtr{T}"/> value.</param>
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
-	/// <param name="disposable">Object to dispose in order to free <see langword="unmanaged"/> resources.</param>
+	/// <param name="disposable">Object to dispose to free <see langword="unmanaged"/> resources.</param>
 	/// <param name="fixedContext">
 	/// Output. The <see cref="FixedContextValue{T}"/> instance representing the fixed memory.
 	/// </param>
@@ -69,7 +70,7 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 	/// The instance obtained is "unsafe" as it doesn't guarantee that the referenced values
 	/// won't be moved or collected by garbage collector.
 	/// The <paramref name="disposable"/> parameter allows for custom management of resource cleanup.
-	/// This object will be disposed of when the fixed reference is disposed.
+	/// This object will be disposed of when the reference is unfixed.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static IDisposable CreateDisposable<TDisposable>(ValPtr<T> ptr, Int32 count, TDisposable disposable,

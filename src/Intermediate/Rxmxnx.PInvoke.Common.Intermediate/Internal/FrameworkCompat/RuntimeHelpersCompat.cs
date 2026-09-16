@@ -13,10 +13,10 @@ internal static class RuntimeHelpersCompat
 	/// </summary>
 	/// <typeparam name="T">The type.</typeparam>
 	/// <returns>
-	/// <see langword="true"/> if the given type is reference type or value type that contains references; otherwise,
+	/// <see langword="true"/> if the given type is a reference type or value type that contains references; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
-#if NETSTANDARD2_1 || NETCOREAPP2_0_OR_GREATER
+#if NETSTANDARD2_1 || NETCOREAPP2_0_OR_GREATER || UAP10_0_16299
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Boolean IsReferenceOrContainsReferences<T>() => RuntimeHelpers.IsReferenceOrContainsReferences<T>();
 #else

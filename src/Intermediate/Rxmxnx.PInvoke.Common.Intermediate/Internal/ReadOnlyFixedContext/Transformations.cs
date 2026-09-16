@@ -1,4 +1,4 @@
-#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER && !UAP10_0_16299
 using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
 #endif
 
@@ -11,7 +11,7 @@ internal unsafe partial class ReadOnlyFixedContext<T>
 {
 #pragma warning disable CS8500
 	/// <summary>
-	/// Transforms the current memory context into a different type, and provides a fixed offset that represents the
+	/// Transforms the current memory context into a different type and provides a fixed offset that represents the
 	/// remaining portion of memory not included in the newly formed context.
 	/// </summary>
 	/// <typeparam name="TDestination">The type into which the current memory context should be transformed.</typeparam>

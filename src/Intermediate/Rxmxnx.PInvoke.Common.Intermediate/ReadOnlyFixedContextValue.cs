@@ -1,4 +1,4 @@
-#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER && !UAP10_0_16299
 using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
 #endif
 
