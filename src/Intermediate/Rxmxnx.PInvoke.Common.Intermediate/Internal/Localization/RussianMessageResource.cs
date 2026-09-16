@@ -71,4 +71,6 @@ internal sealed class RussianMessageResource : IMessageResource
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Неожиданный тип токена: {currentToken}. Ожидаемый тип токена: {expectedToken}.";
 	String IMessageResource.NotObjectType(Type type) => $"{type} — это ref struct; упаковка объекта не допускается.";
+	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type)
+		=> $"Буфер типа {bufferType} не может быть преобразован в буфер типа {type}.";
 }

@@ -72,4 +72,6 @@ internal sealed class PortugueseMessageResource : IMessageResource
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Tipo de token inesperado: {currentToken}. Tipo de token esperado: {expectedToken}.";
 	String IMessageResource.NotObjectType(Type type) => $"{type} é uma ref struct; o boxing de objeto não é permitido.";
+	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type)
+		=> $"Um buffer de {bufferType} não pode ser convertido em um buffer de {type}.";
 }

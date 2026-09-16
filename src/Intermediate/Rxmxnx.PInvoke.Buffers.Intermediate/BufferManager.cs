@@ -5,7 +5,7 @@ using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCom
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// This class allows to allocate buffers on stack if possible.
+/// This class allows you to allocate buffers on the stack if possible.
 /// </summary>
 public static partial class BufferManager
 {
@@ -150,11 +150,7 @@ public static partial class BufferManager
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void Register<T, [DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBuffer>()
 		where TBuffer : struct, IManagedBuffer<T> where T : struct
-	{
-		// If unmanaged type, stackalloc should be used.
-		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
-		BufferManager.Storage.RegisterBuffer<T, TBuffer>();
-	}
+		=> BufferManager.Storage.RegisterBuffer<T, TBuffer>();
 	/// <summary>
 	/// Registers <typeparamref name="T"/> buffer.
 	/// </summary>
@@ -164,15 +160,11 @@ public static partial class BufferManager
 	public static void RegisterNullable<T,
 		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBuffer>()
 		where TBuffer : struct, IManagedBuffer<T?> where T : struct
-	{
-		// If unmanaged type, stackalloc should be used.
-		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
-		BufferManager.Storage.RegisterBuffer<T?, TBuffer>();
-	}
+		=> BufferManager.Storage.RegisterBuffer<T?, TBuffer>();
 	/// <summary>
 	/// Prepares the binary buffer metadata needed to allocate <paramref name="count"/> objects.
 	/// </summary>
-	/// <param name="count">Amount of items in required buffer.</param>
+	/// <param name="count">Number of items in the required buffer.</param>
 	/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void PrepareBinaryBuffer(UInt16 count) => BufferManager.Storage.PrepareBinaryMetadata<Object>(count);
@@ -180,7 +172,7 @@ public static partial class BufferManager
 	/// Prepares the binary buffer metadata needed to allocate <paramref name="count"/> <typeparamref name="T"/> items.
 	/// </summary>
 	/// <typeparam name="T">Type of items in the buffer.</typeparam>
-	/// <param name="count">Amount of items in required buffer.</param>
+	/// <param name="count">Number of items in the required buffer.</param>
 	/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void PrepareBinaryBuffer<T>(UInt16 count) where T : struct
@@ -194,7 +186,7 @@ public static partial class BufferManager
 	/// items.
 	/// </summary>
 	/// <typeparam name="T">Type of nullable items in the buffer.</typeparam>
-	/// <param name="count">Amount of items in required buffer.</param>
+	/// <param name="count">Number of items in the required buffer.</param>
 	/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void PrepareBinaryBufferNullable<T>(UInt16 count) where T : struct
@@ -206,9 +198,9 @@ public static partial class BufferManager
 }
 
 /// <summary>
-/// This class allows to allocate buffers on stack if possible.
+/// This class allows you to allocate buffers on the stack if possible.
 /// </summary>
-/// <typeparam name="T">Type of items in allocated buffer.</typeparam>
+/// <typeparam name="T">Type of items in the allocated buffer.</typeparam>
 public static partial class BufferManager<T>
 {
 	/// <summary>
@@ -216,7 +208,7 @@ public static partial class BufferManager<T>
 	/// <paramref name="action"/>.
 	/// </summary>
 	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/>.</typeparam>
-	/// <param name="action">Action to perform with allocated buffer.</param>
+	/// <param name="action">Action to perform with the allocated buffer.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void Alloc<TAction>(TAction? action)
 #if !NET9_0_OR_GREATER
@@ -273,7 +265,7 @@ public static partial class BufferManager<T>
 	/// <paramref name="action"/>.
 	/// </summary>
 	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/>.</typeparam>
-	/// <param name="action">Action to perform with allocated buffer.</param>
+	/// <param name="action">Action to perform with the allocated buffer.</param>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

@@ -63,6 +63,15 @@ public abstract partial class BufferTypeMetadata<T> : BufferTypeMetadata
 #endif
 		get => this.Components.Length;
 	}
+	/// <summary>
+	/// Size of a single element.
+	/// </summary>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+#pragma warning disable CS8500
+	internal unsafe Int32 SizeOfElement => sizeof(T);
+#pragma warning restore CS8500
 
 	/// <summary>
 	/// Retrieves the <see cref="BufferTypeMetadata{T}"/> instance from <typeparamref name="TBuffer"/>.

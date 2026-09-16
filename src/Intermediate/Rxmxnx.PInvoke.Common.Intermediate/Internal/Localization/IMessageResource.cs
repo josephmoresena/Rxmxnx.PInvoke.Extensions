@@ -10,7 +10,7 @@ internal interface IMessageResource
 	/// </summary>
 	String InvalidListIndexMessage { get; }
 	/// <summary>
-	/// Message for invalid sequence index exception.
+	/// Message for an invalid sequence index exception.
 	/// </summary>
 	String InvalidSequenceIndex { get; }
 	/// <summary>
@@ -82,12 +82,12 @@ internal interface IMessageResource
 	/// </summary>
 	String ReflectionDisabled { get; }
 	/// <summary>
-	/// Message for invalid three-field span layout.
+	/// Message for an invalid three-field span layout.
 	/// </summary>
 	String InvalidSpanLayout { get; }
 
 	/// <summary>
-	/// Message for invalid pointer value exception.
+	/// Message for an invalid pointer value exception.
 	/// </summary>
 	String InvalidType(String requiredTypeName);
 	/// <summary>
@@ -95,7 +95,7 @@ internal interface IMessageResource
 	/// </summary>
 	String InvalidRefTypePointer(Type typeOf);
 	/// <summary>
-	/// Message for invalid binary span size exception.
+	/// Message for an invalid binary span size exception.
 	/// </summary>
 	String InvalidBinarySpanSize(String nameofSpan, Int32 sizeOf);
 	/// <summary>
@@ -131,7 +131,7 @@ internal interface IMessageResource
 	/// </summary>
 	String ReferencesTypeButUnmanaged(Type itemType, Type arrayType);
 	/// <summary>
-	/// Message for unmanaged type item but containing array references exception.
+	/// Message for unmanaged type item but array containing references exception.
 	/// </summary>
 	String UnmanagedTypeButContainsReferences(Type itemType, Type arrayType);
 	/// <summary>
@@ -143,11 +143,15 @@ internal interface IMessageResource
 	/// </summary>
 	String MissingBufferMetadataException(Type bufferType);
 	/// <summary>
-	/// Message for invalid string token exception.
+	/// Message for an invalid string token exception.
 	/// </summary>
 	String InvalidToken(String currentToken, String expectedToken);
 	/// <summary>
-	/// Message for not object type.
+	/// Message for a not object type.
 	/// </summary>
 	String NotObjectType(Type type);
+	/// <summary>
+	/// Message for an invalid nested buffer type operation.
+	/// </summary>
+	String InvalidNestedBuffer(Type bufferType, Type type);
 }

@@ -76,4 +76,6 @@ internal sealed class FrenchMessageResource : IMessageResource
 		=> $"Type de jeton inattendu : {currentToken}. Type de jeton attendu : {expectedToken}.";
 	String IMessageResource.NotObjectType(Type type)
 		=> $"{type} est une ref struct ; la boxing d'objet n'est pas autorisée.";
+	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type)
+		=> $"Un tampon de type {bufferType} ne peut pas être converti en tampon de type {type}.";
 }

@@ -46,9 +46,9 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 #endif
 
 	/// <summary>
-	/// Retrieves the <see cref="BufferTypeMetadata{T}"/> instance for current type.
+	/// Retrieves the <see cref="BufferTypeMetadata{T}"/> instance for the current type.
 	/// </summary>
-	/// <returns>The <see cref="BufferTypeMetadata{T}"/> instance for current type.</returns>
+	/// <returns>The <see cref="BufferTypeMetadata{T}"/> instance for the current type.</returns>
 	private static BufferTypeMetadata<NonBinarySpace<TArray, T>, T> GetMetadata()
 	{
 		Boolean isItemUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>();
