@@ -7,6 +7,7 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 /// </summary>
 [SecurityCritical]
 #if !PACKAGE
+[ExcludeFromCodeCoverage]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 internal static unsafe class Utf8Compat

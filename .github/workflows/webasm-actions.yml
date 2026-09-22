@@ -41,8 +41,8 @@ jobs:
           mkdir artifacts
           sudo git clone https://github.com/emscripten-core/emsdk.git /opt/emsdk
           cd /opt/emsdk
-          sudo ./emsdk install latest
-          sudo ./emsdk activate latest
+          sudo ./emsdk install 3.1.56
+          sudo ./emsdk activate 3.1.56
           sudo chmod -R 777 /opt/emsdk
       - name: Web-Compile ApplicationTest
         shell: bash

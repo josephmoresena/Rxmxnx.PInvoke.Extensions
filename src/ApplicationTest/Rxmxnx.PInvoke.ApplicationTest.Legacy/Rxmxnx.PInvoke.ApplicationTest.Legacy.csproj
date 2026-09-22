@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <LangVersion Condition="'$(MSBuildVersion)' &lt; '16.8.0'">8.0</LangVersion>
+        <LangVersion Condition="$([MSBuild]::VersionLessThan('$(MSBuildVersion)', '16.8.0'))">8.0</LangVersion>
         <LangVersion Condition="'$(LangVersion)' != '8.0'">9.0</LangVersion>
         <Nullable>enable</Nullable>
         <ImplicitUsings>disable</ImplicitUsings>

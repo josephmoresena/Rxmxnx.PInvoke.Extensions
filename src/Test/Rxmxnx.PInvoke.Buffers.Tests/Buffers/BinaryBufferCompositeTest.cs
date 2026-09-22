@@ -33,6 +33,7 @@ public sealed class BinaryBufferCompositeTest
 		BufferTypeMetadata<T> atomicMetadata = BinaryBufferCompositeTest.GetMetadata<Atomic<T>, T>();
 		BufferTypeMetadata<T> composite2Metadata =
 			BinaryBufferCompositeTest.GetMetadata<Composite<Atomic<T>, Atomic<T>, T>, T>();
+		Int32 sizeOf = Unsafe.SizeOf<T>();
 
 		Type binary = BinaryBufferCompositeTest.compositeType.MakeGenericType(typeofAtomic, typeofComposite2, typeofT);
 		Type nonBinary1 =
@@ -61,6 +62,9 @@ public sealed class BinaryBufferCompositeTest
 		PInvokeAssert.Equal(nonBinaryMetadata3, binaryMetadata.Double(BufferManager.Storage));
 		PInvokeAssert.Null(atomicMetadata.Compose(BufferManager.Storage, nonBinaryMetadata3));
 		PInvokeAssert.Null(nonBinaryMetadata3.Compose(BufferManager.Storage, atomicMetadata));
+		PInvokeAssert.StrictEqual(atomicMetadata, BufferTypeMetadata<T>.GetMetadata<Atomic<T>>());
+		PInvokeAssert.StrictEqual(composite2Metadata,
+		                          BufferTypeMetadata<T>.GetMetadata<Composite<Atomic<T>, Atomic<T>, T>>());
 
 		PInvokeAssert.True(binaryMetadata.IsBinary);
 		PInvokeAssert.Equal(2, binaryMetadata.ComponentCount);
@@ -107,6 +111,15 @@ public sealed class BinaryBufferCompositeTest
 		]);
 		foreach (BufferTypeMetadata<T> metadata in binaryMetadata.Components.Span)
 			PInvokeAssert.Equal(metadata, BuffersHelper.GetMetadata<T>(metadata.BufferType));
+		
+		PInvokeAssert.Equal(sizeOf, atomicMetadata.SizeOfElement);
+		PInvokeAssert.Equal(sizeOf, composite2Metadata.SizeOfElement);
+		PInvokeAssert.Equal(sizeOf, binaryMetadata.SizeOfElement);
+		PInvokeAssert.Equal(sizeOf, nonBinaryMetadata1.SizeOfElement);
+		PInvokeAssert.Equal(sizeOf, nonBinaryMetadata2.SizeOfElement);
+		PInvokeAssert.Equal(sizeOf, nonBinaryMetadata3.SizeOfElement);
+		PInvokeAssert.Equal(sizeOf, nonBinaryMetadata4.SizeOfElement);
+		PInvokeAssert.Equal(sizeOf, nonBinaryMetadata5.SizeOfElement);
 	}
 	private static BufferTypeMetadata<T> GetMetadata<TBuffer, T>()
 		where TBuffer : struct, IManagedBinaryBuffer<TBuffer, T>
