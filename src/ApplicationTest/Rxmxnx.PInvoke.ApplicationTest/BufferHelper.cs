@@ -7,6 +7,9 @@ using Rxmxnx.PInvoke.Buffers;
 using System.Diagnostics.CodeAnalysis;
 
 #endif
+#if NET452_OR_GREATER || NETSTANDARD2_0
+using System.Runtime.CompilerServices;
+#endif
 
 namespace Rxmxnx.PInvoke.ApplicationTest
 {
