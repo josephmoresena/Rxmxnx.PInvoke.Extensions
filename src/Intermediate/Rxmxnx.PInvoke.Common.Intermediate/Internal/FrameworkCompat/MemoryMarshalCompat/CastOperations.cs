@@ -21,8 +21,8 @@ internal static partial class MemoryMarshalCompat
 	[SecuritySafeCritical]
 #endif
 	public static ReadOnlySpan<TTo> Cast<TFrom, TTo>(ReadOnlySpan<TFrom> span) where TFrom : struct
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		where TTo : unmanaged
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		=> MemoryMarshal.Cast<TFrom, TTo>(span);
 #else
 	{
@@ -63,8 +63,8 @@ internal static partial class MemoryMarshalCompat
 	[SecuritySafeCritical]
 #endif
 	public static Span<TTo> Cast<TFrom, TTo>(Span<TFrom> span) where TFrom : struct
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		where TTo : unmanaged
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		=> MemoryMarshal.Cast<TFrom, TTo>(span);
 #else
 	{
