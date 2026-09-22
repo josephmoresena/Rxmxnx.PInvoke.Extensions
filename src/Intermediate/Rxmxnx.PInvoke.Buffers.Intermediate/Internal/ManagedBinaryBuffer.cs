@@ -53,6 +53,7 @@ internal static class ManagedBinaryBuffer<T>
 #endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS907)]
 #endif
 	[UnconditionalSuppressMessage("Trimming", "IL2067")]
 	public static BufferTypeMetadata<T>? GetMetadata(

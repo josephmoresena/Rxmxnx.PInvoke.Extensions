@@ -26,6 +26,10 @@ public abstract partial class BufferTypeMetadata
 	/// </summary>
 	public abstract Int32 SizeOf { get; }
 	/// <summary>
+	/// Size of a single element.
+	/// </summary>
+	public abstract Int32 SizeOfElement { get; }
+	/// <summary>
 	/// Retrieves a component from current metadata at the specified zero-based <paramref name="index"/>.
 	/// </summary>
 	/// <param name="index">The zero-based index of the component to retrieve.</param>
@@ -70,7 +74,7 @@ public abstract partial class BufferTypeMetadata<T> : BufferTypeMetadata
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 #pragma warning disable CS8500
-	internal unsafe Int32 SizeOfElement => sizeof(T);
+	public override unsafe Int32 SizeOfElement => sizeof(T);
 #pragma warning restore CS8500
 
 	/// <summary>
