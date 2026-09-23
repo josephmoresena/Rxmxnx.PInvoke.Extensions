@@ -7,9 +7,6 @@ using Rxmxnx.PInvoke.Buffers;
 using System.Diagnostics.CodeAnalysis;
 
 #endif
-#if NET452_OR_GREATER || NETSTANDARD2_0
-using System.Runtime.CompilerServices;
-#endif
 
 namespace Rxmxnx.PInvoke.ApplicationTest
 {
@@ -167,12 +164,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			return static writer =>
 			{
 				BufferManager.Register<TBuffer>();
-#if NET452_OR_GREATER || NETSTANDARD2_0
-				Byte fakeBufer = default;
-				writer.WriteLine($"{Unsafe.As<Byte, TBuffer>(ref fakeBufer).Metadata.Size} buffer registered.");
-#else
-				writer.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
-#endif
+				writer.WriteLine($"{default(TBuffer).Metadata.Size} buffer registered.");
 			};
 #endif
 		}
@@ -185,12 +177,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			return static writer =>
 			{
 				BufferManager.Register<T, TBuffer>();
-#if NET452_OR_GREATER || NETSTANDARD2_0
-				Byte fakeBufer = default;
-				writer.WriteLine($"{Unsafe.As<Byte, TBuffer>(ref fakeBufer).Metadata.Size} buffer registered.");
-#else
-				writer.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
-#endif
+				writer.WriteLine($"{default(TBuffer).Metadata.Size} buffer registered.");
 			};
 #endif
 		}
@@ -203,12 +190,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			return static writer =>
 			{
 				BufferManager.RegisterNullable<T, TBuffer>();
-#if NET452_OR_GREATER || NETSTANDARD2_0
-				Byte fakeBufer = default;
-				writer.WriteLine($"{Unsafe.As<Byte, TBuffer>(ref fakeBufer).Metadata.Size} buffer registered.");
-#else
-				writer.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
-#endif
+				writer.WriteLine($"{default(TBuffer).Metadata.Size} buffer registered.");
 			};
 #endif
 		}
@@ -216,33 +198,18 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		private static void Register<TBuffer>(TextWriter writer) where TBuffer : struct, IManagedBinaryBuffer<Object>
 		{
 			BufferManager.Register<TBuffer>();
-#if NET452_OR_GREATER || NETSTANDARD2_0
-			Byte fakeBufer = default;
-			writer.WriteLine($"{Unsafe.As<Byte, TBuffer>(ref fakeBufer).Metadata.Size} buffer registered.");
-#else
-			writer.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
-#endif
+			writer.WriteLine($"{default(TBuffer).Metadata.Size} buffer registered.");
 		}
 		private static void RegisterValue<TBuffer, T>(TextWriter writer) where TBuffer : struct, IManagedBinaryBuffer<T> where T : struct
 		{
 			BufferManager.Register<T, TBuffer>();
-#if NET452_OR_GREATER || NETSTANDARD2_0
-			Byte fakeBufer = default;
-			writer.WriteLine($"{Unsafe.As<Byte, TBuffer>(ref fakeBufer).Metadata.Size} buffer registered.");
-#else
-			writer.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
-#endif
+			writer.WriteLine($"{default(TBuffer).Metadata.Size} buffer registered.");
 		}
 		private static void RegisterNullableValue<TBuffer, T>(TextWriter writer) where TBuffer : struct, IManagedBinaryBuffer<T?>
 			where T : struct
 		{
 			BufferManager.RegisterNullable<T, TBuffer>();
-#if NET452_OR_GREATER || NETSTANDARD2_0
-			Byte fakeBufer = default;
-			writer.WriteLine($"{Unsafe.As<Byte, TBuffer>(ref fakeBufer).Metadata.Size} buffer registered.");
-#else
-			writer.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
-#endif
+			writer.WriteLine($"{default(TBuffer).Metadata.Size} buffer registered.");
 		}
 #endif
 	}
