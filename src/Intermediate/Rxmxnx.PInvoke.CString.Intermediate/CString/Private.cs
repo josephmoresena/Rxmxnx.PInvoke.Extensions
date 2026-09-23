@@ -24,7 +24,7 @@ public partial class CString
 	private WeakReference<String>? _strValue;
 
 	/// <summary>
-	/// Retrieves the cached value of current instance.
+	/// Retrieves the cached value of the current instance.
 	/// </summary>
 	private String? CachedValue
 		=> this._strValue is not null && this._strValue.TryGetTarget(out String? result) ? result : default;
@@ -40,6 +40,9 @@ public partial class CString
 	/// </param>
 	/// <param name="length">The initial length of the segment.</param>
 	/// <returns>The final length of the segment, accounting for any trailing null characters.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private Int32 GetDataLength(Int32 offset, Int32 length)
 	{
@@ -76,6 +79,9 @@ public partial class CString
 	/// </summary>
 	/// <returns>The <see cref="String"/> representation of the current instance.</returns>
 	[MethodImpl(MethodImplOptions.NoInlining)]
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private String CreateInternalString()
 	{
 		String result = CString.ToUtf16(this.AsSpan());

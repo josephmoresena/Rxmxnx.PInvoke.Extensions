@@ -18,6 +18,9 @@ public partial class CString
 	/// during concatenation.
 	/// </remarks>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Concat(
 #if !NET9_0_OR_GREATER
 		params String?[] values
@@ -41,6 +44,9 @@ public partial class CString
 	/// during concatenation.
 	/// </remarks>
 	// ReSharper disable once MemberCanBePrivate.Global
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Concat(
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<String?> values

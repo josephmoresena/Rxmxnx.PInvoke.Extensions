@@ -31,6 +31,7 @@ public partial class NativeUtilities
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			foreach (Delegate d in NativeUtilities.GetInvocationSpan(method))
 #else
+			// ReSharper disable once LoopCanBeConvertedToQuery
 			foreach (Delegate d in method.GetInvocationList())
 #endif
 			{

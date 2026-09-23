@@ -16,7 +16,7 @@ namespace Rxmxnx.PInvoke;
 #endif
 public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<FuncPtr<TDelegate>>
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
-	, ISerializable 
+	, ISerializable
 #endif
 	where TDelegate : Delegate
 {
@@ -33,26 +33,47 @@ public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEq
 	/// <summary>
 	/// Internal pointer as an <see cref="IntPtr"/>.
 	/// </summary>
-	public IntPtr Pointer => new(this._value);
+	public IntPtr Pointer
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => new(this._value);
+	}
 	/// <summary>
 	/// Indicates whether the current pointer is <see langword="null"/>.
 	/// </summary>
-	public Boolean IsZero => IntPtr.Zero == (IntPtr)this._value;
+	public Boolean IsZero
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => IntPtr.Zero == (IntPtr)this._value;
+	}
 
 	/// <summary>
 	/// A managed delegate using the method address pointed to by this instance.
 	/// </summary>
 	public TDelegate Invoke
-#if NETSTANDARD1_2_OR_GREATER || NETCOREAPP || NET451_OR_GREATER || UAP10_0
-		=> !this.IsZero ? Marshal.GetDelegateForFunctionPointer<TDelegate>(this.Pointer) : default!;
-#else
-		=> !this.IsZero ? (TDelegate)Marshal.GetDelegateForFunctionPointer(this.Pointer, typeof(TDelegate)) : default!;
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
 #endif
+		get
+#if NETSTANDARD1_2_OR_GREATER || NETCOREAPP || NET451_OR_GREATER || UAP10_0
+			=> !this.IsZero ? Marshal.GetDelegateForFunctionPointer<TDelegate>(this.Pointer) : default!;
+#else
+			=> !this.IsZero ? (TDelegate)Marshal.GetDelegateForFunctionPointer(this.Pointer, typeof(TDelegate)) : default!;
+#endif
+	}
 
 	/// <summary>
 	/// Private constructor.
 	/// </summary>
 	/// <param name="value">Unsafe pointer.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private FuncPtr(void* value) => this._value = value;
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	/// <summary>
@@ -61,6 +82,9 @@ public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEq
 	/// <param name="info">A <see cref="SerializationInfo"/> instance.</param>
 	/// <param name="context">A <see cref="StreamingContext"/> instance.</param>
 	/// <exception cref="ArgumentException">If invalid pointer value.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -77,6 +101,9 @@ public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEq
 #endif
 
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -88,9 +115,15 @@ public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEq
 	public Boolean Equals(FuncPtr<TDelegate> other) => this.Pointer == other.Pointer;
 
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public override Boolean Equals([NotNullWhen(true)] Object? obj)
 		=> obj is FuncPtr<TDelegate> other && this._value == other._value;
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public override Int32 GetHashCode() => new IntPtr(this._value).GetHashCode();
 	/// <inheritdoc/>
 	public override String ToString() => this.Pointer.ToString();
@@ -120,16 +153,25 @@ public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEq
 	/// Defines an explicit conversion of a given <see cref="IntPtr"/> to a read-only value pointer.
 	/// </summary>
 	/// <param name="ptr">A pointer to explicitly convert.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static explicit operator FuncPtr<TDelegate>(void* ptr) => new(ptr);
 	/// <summary>
 	/// Defines an implicit conversion of a given <see cref="FuncPtr{T}"/> to a pointer.
 	/// </summary>
 	/// <param name="valPtr">A <see cref="FuncPtr{T}"/> to implicitly convert.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static implicit operator IntPtr(FuncPtr<TDelegate> valPtr) => new(valPtr._value);
 	/// <summary>
 	/// Defines an implicit conversion of a given <see cref="FuncPtr{T}"/> to a pointer.
 	/// </summary>
 	/// <param name="valPtr">A <see cref="FuncPtr{T}"/> to implicitly convert.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static implicit operator void*(FuncPtr<TDelegate> valPtr) => valPtr._value;
 
 	/// <summary>
@@ -141,6 +183,9 @@ public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEq
 	/// <see langword="true"/> if <paramref name="value1"/> equals <paramref name="value2"/>;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Boolean operator ==(FuncPtr<TDelegate> value1, FuncPtr<TDelegate> value2)
 		=> value1._value == value2._value;
 	/// <summary>
@@ -153,6 +198,9 @@ public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEq
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
 	/// <inheritdoc cref="IntPtr.op_Inequality(IntPtr, IntPtr)"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Boolean operator !=(FuncPtr<TDelegate> value1, FuncPtr<TDelegate> value2)
 		=> value1._value != value2._value;
 }

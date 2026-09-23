@@ -40,6 +40,9 @@ public static unsafe class FixedContextValueExtensions
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IDisposable GetFixedContext<T>(this Memory<T> mem, out FixedContextValue<T> fixedContext)
 	{
@@ -67,6 +70,9 @@ public static unsafe class FixedContextValueExtensions
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -102,6 +108,9 @@ public static unsafe class FixedContextValueExtensions
 	/// Ensure that the <see cref="IDisposable"/> object returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IDisposable RentFixed<T>(this ArrayPool<T> arrayPool, Int32 count,
 		out FixedContextValue<T> fixedContext, Boolean clearArray, out Int32 arrayLength) where T : unmanaged
@@ -122,6 +131,9 @@ public static unsafe class FixedContextValueExtensions
 	/// <typeparam name="TAction">Type of <see cref="IFixedContextAction{T}"/>.</typeparam>
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TAction>(this Span<T> span, TAction? action)
 #if !NET9_0_OR_GREATER
@@ -146,6 +158,9 @@ public static unsafe class FixedContextValueExtensions
 	/// <typeparam name="TAction">Type of <see cref="IFixedContextAction{T}"/>.</typeparam>
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TAction>(this T[]? arr, TAction? action)
 #if !NET9_0_OR_GREATER
@@ -176,6 +191,9 @@ public static unsafe class FixedContextValueExtensions
 	/// <typeparam name="TAction">Type of <see cref="IFixedContextAction{T}"/>.</typeparam>
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -203,6 +221,9 @@ public static unsafe class FixedContextValueExtensions
 	/// <typeparam name="TAction">Type of <see cref="IFixedContextAction{T}"/>.</typeparam>
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -240,6 +261,9 @@ public static unsafe class FixedContextValueExtensions
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TFunction, TResult>(this Span<T> span, TFunction? func, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -270,6 +294,9 @@ public static unsafe class FixedContextValueExtensions
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TResult, TFunction>(this T[]? arr, TFunction? func, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -304,6 +331,9 @@ public static unsafe class FixedContextValueExtensions
 	/// <param name="span">The current span of type <typeparamref name="T"/>.</param>
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -333,6 +363,9 @@ public static unsafe class FixedContextValueExtensions
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

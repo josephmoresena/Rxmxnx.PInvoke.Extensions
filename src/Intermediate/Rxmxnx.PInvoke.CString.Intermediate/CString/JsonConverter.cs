@@ -20,6 +20,9 @@ public partial class CString
 #endif
 
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 #endif
@@ -28,6 +31,9 @@ public partial class CString
 #pragma warning restore CS8764
 			=> JsonConverter.Read(reader);
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 #endif
@@ -44,6 +50,9 @@ public partial class CString
 		/// </summary>
 		/// <param name="reader">The reader.</param>
 		/// <returns>The converted value.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 #endif
@@ -57,7 +66,7 @@ public partial class CString
 			return isEmpty ? CString.Empty : new(reader);
 		}
 		/// <summary>
-		/// Writes a UTF-8 text bytes as JSON string.
+		/// Writes the UTF-8 text bytes as JSON string.
 		/// </summary>
 		/// <param name="writer">The writer to write to.</param>
 		/// <param name="value">UTF-8 text bytes.</param>
@@ -66,6 +75,9 @@ public partial class CString
 		/// <remarks>
 		/// <paramref name="isNull"/> flag is ignored if <paramref name="value"/> is not an empty span.
 		/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
 #endif
@@ -84,6 +96,9 @@ public partial class CString
 		/// </summary>
 		/// <param name="reader">A <see cref="Utf8JsonReader"/> instance.</param>
 		/// <returns>The length of the UTF-8 text bytes from the reader.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecurityCritical]
+#endif
 		internal static Int32 GetLength(Utf8JsonReader reader)
 		{
 			Boolean isSequence = reader.HasValueSequence;
@@ -99,6 +114,9 @@ public partial class CString
 		/// <param name="buffer">Buffer to write to.</param>
 		/// <param name="clearUnused">Indicates whether the current unused bytes should be cleared.</param>
 		/// <returns>Adjustment value for text length.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecurityCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal static Int32 ReadBytes(Utf8JsonReader reader, Span<Byte> buffer, Boolean clearUnused)
 		{

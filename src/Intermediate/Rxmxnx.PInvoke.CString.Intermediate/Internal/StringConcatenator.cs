@@ -52,6 +52,9 @@ internal sealed class StringConcatenator : BinaryConcatenator<String>
 	/// <inheritdoc/>
 	protected override Boolean IsEmpty(String? value) => String.IsNullOrEmpty(value) && !this._ignoreEmpty;
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

@@ -18,14 +18,14 @@ internal interface IMetadataStorage
 	/// Retrieves metadata required for a buffer with <paramref name="count"/> items.
 	/// </summary>
 	/// <typeparam name="T">The type of items in the buffer.</typeparam>
-	/// <param name="count">Amount of items in required buffer.</param>
+	/// <param name="count">Number of items in the required buffer.</param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 	BufferTypeMetadata<T>? GetMetadata<T>(UInt16 count);
 	/// <summary>
-	/// Prepares internal metadata cache for allocations of <paramref name="count"/> items.
+	/// Prepares an internal metadata cache for allocations of <paramref name="count"/> items.
 	/// </summary>
 	/// <typeparam name="T">The type of items in the buffer.</typeparam>
-	/// <param name="count">Amount of items in required buffer.</param>
+	/// <param name="count">Number of items in the required buffer.</param>
 	/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
 	void PrepareBinaryMetadata<T>(UInt16 count);
 	/// <summary>
@@ -48,7 +48,7 @@ internal interface IMetadataStorage
 	/// Prints metadata dictionary.
 	/// </summary>
 	/// <typeparam name="T">The type of items in the buffer.</typeparam>
-	/// <param name="trace">Indicates whether trace should be written.</param>
+	/// <param name="trace">Indicates whether a trace should be written.</param>
 	void PrintMetadata<T>(Boolean trace);
 #endif
 }

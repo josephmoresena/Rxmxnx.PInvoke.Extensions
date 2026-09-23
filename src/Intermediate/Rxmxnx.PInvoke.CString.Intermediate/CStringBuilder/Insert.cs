@@ -9,6 +9,9 @@ public sealed partial class CStringBuilder
 	/// <param name="index">The position in this instance where insertion begins.</param>
 	/// <param name="value">The string to insert.</param>
 	/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Insert(Int32 index, String? value)
 		=> !String.IsNullOrEmpty(value) ? this.Insert(index, value.AsSpan()) : this;
 	/// <summary>
@@ -17,6 +20,9 @@ public sealed partial class CStringBuilder
 	/// <param name="index">The position in this instance where insertion begins.</param>
 	/// <param name="value">The UTF-8 text to insert.</param>
 	/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Insert(Int32 index, CString? value)
 		=> !CString.IsNullOrEmpty(value) ? this.Insert(index, value.AsSpan()) : this;
 	/// <summary>
@@ -26,6 +32,9 @@ public sealed partial class CStringBuilder
 	/// <param name="index">The position in this instance where insertion begins.</param>
 	/// <param name="value">The character array to insert.</param>
 	/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -37,6 +46,9 @@ public sealed partial class CStringBuilder
 	/// <param name="index">The position in this instance where insertion begins.</param>
 	/// <param name="value">The array of UTF-8 units to insert.</param>
 	/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -50,6 +62,9 @@ public sealed partial class CStringBuilder
 	/// <param name="value">The read-only span of characters to insert.</param>
 	/// <returns>A reference to this instance after the insert operation has completed.</returns>
 	// ReSharper disable once MemberCanBePrivate.Global
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Insert(Int32 index, ReadOnlySpan<Char> value)
 	{
 		if (value.IsEmpty) return this;
@@ -62,6 +77,9 @@ public sealed partial class CStringBuilder
 	/// <param name="index">The position in this instance where insertion begins.</param>
 	/// <param name="value">The read-only span of characters to insert.</param>
 	/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Insert(Int32 index, ReadOnlySpan<Byte> value)
 	{
 		if (value.IsEmpty) return this;
@@ -402,6 +420,9 @@ public sealed partial class CStringBuilder
 	/// Indicates whether <paramref name="value"/> should be treated as a number instead of UTF-8 unit.
 	/// </param>
 	/// <returns>A reference to this instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringBuilder Insert(Int32 index, Byte value, Boolean asNumber = false)
 	{
 		// ReSharper disable once ConvertIfStatementToReturnStatement

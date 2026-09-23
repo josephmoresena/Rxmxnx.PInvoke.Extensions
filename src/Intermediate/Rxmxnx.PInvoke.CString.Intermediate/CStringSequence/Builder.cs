@@ -12,7 +12,13 @@ public partial class CStringSequence
 		/// <summary>
 		/// UTF-8 null character span.
 		/// </summary>
-		private static ReadOnlySpan<Byte> NullChar => "\0"u8;
+		private static ReadOnlySpan<Byte> NullChar
+		{
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
+			get => "\0"u8;
+		}
 
 		/// <summary>
 		/// Internal lengths list.
@@ -35,6 +41,9 @@ public partial class CStringSequence
 		/// </summary>
 		/// <param name="value">The UTF-8 text to append.</param>
 		/// <returns>The current instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Builder Append(CString? value)
 		{
 			if (value is null || value.IsZero)
@@ -48,6 +57,9 @@ public partial class CStringSequence
 		/// </summary>
 		/// <param name="value">The string to append.</param>
 		/// <returns>The current instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Builder Append(String? value)
 		{
 			if (value is null)
@@ -61,6 +73,9 @@ public partial class CStringSequence
 		/// </summary>
 		/// <param name="value">The UTF-8 text to append.</param>
 		/// <returns>The current instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Builder Append(ReadOnlySpan<Byte> value)
 		{
 			this._value.Append(value);
@@ -71,6 +86,9 @@ public partial class CStringSequence
 		/// </summary>
 		/// <param name="value">The UTF-8 text to append.</param>
 		/// <returns>The current instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Builder Append(ReadOnlySequence<Byte> value)
 		{
 			this._value.Append(value);
@@ -81,6 +99,9 @@ public partial class CStringSequence
 		/// </summary>
 		/// <param name="value">The UTF-16 text to append.</param>
 		/// <returns>The current instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Builder Append(ReadOnlySpan<Char> value)
 		{
 			this._value.Append(value, value.GetUtf8Count());
@@ -93,6 +114,9 @@ public partial class CStringSequence
 		/// <returns>The current instance after the append operation has completed.</returns>
 #if NET5_0_OR_GREATER
 		[SkipLocalsInit]
+#endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
 #endif
 		public Builder AppendEscaped(ReadOnlySpan<Byte> escaped)
 		{
@@ -126,6 +150,9 @@ public partial class CStringSequence
 #if NET5_0_OR_GREATER
 		[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Builder AppendEscaped(ReadOnlySequence<Byte> escaped)
 		{
 			if (escaped.IsEmpty)
@@ -157,6 +184,9 @@ public partial class CStringSequence
 		/// <param name="index">The zero-based index at which item should be inserted.</param>
 		/// <param name="value">The UTF-8 text to insert.</param>
 		/// <returns>The current instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Builder Insert(Int32 index, CString? value)
 		{
 			if (value is null || value.IsZero)
@@ -171,6 +201,9 @@ public partial class CStringSequence
 		/// <param name="index">The zero-based index at which item should be inserted.</param>
 		/// <param name="value">The string to insert.</param>
 		/// <returns>The current instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Builder Insert(Int32 index, String? value)
 		{
 			if (value is null)
@@ -185,6 +218,9 @@ public partial class CStringSequence
 		/// <param name="index">The zero-based index at which item should be inserted.</param>
 		/// <param name="value">The UTF-8 text to insert.</param>
 		/// <returns>The current instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
@@ -199,6 +235,9 @@ public partial class CStringSequence
 		/// <param name="index">The zero-based index at which item should be inserted.</param>
 		/// <param name="value">The UTF-16 text to insert.</param>
 		/// <returns>The current instance after the insert operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
@@ -227,12 +266,18 @@ public partial class CStringSequence
 		/// Creates a new <see cref="CStringSequence"/> instance using the current builder state.
 		/// </summary>
 		/// <returns>A new <see cref="CStringSequence"/> instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringSequence Build() => this._value.CreateSequence();
 
 		/// <summary>
 		/// Creates an array of <see cref="CString"/> from current instance.
 		/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif

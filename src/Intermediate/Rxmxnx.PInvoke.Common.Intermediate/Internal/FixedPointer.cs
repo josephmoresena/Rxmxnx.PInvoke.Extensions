@@ -1,4 +1,4 @@
-﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER && !UAP10_0_16299
 using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
 #endif
 
@@ -35,7 +35,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	private readonly void* _ptr;
 
 	/// <summary>
-	/// Indicates whether current memory block is unmanaged.
+	/// Indicates whether the current memory block is unmanaged.
 	/// </summary>
 	// ReSharper disable once MemberCanBeProtected.Global
 	public abstract Boolean IsUnmanaged { get; }
@@ -52,7 +52,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// </summary>
 	public abstract Boolean IsFunction { get; }
 	/// <summary>
-	/// Indicates whether current memory block is null-referenced or empty.
+	/// Indicates whether the current memory block is null-referenced or empty.
 	/// </summary>
 	public Boolean IsNullOrEmpty => this._ptr == IntPtr.Zero.ToPointer() || this._binaryLength - this.BinaryOffset == 0;
 
@@ -70,7 +70,13 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	// ReSharper disable once MemberCanBePrivate.Global
 	public Boolean IsValid => this._handle.Value;
 
-	IntPtr IFixedPointer.Pointer => (IntPtr)this.GetMemoryOffset();
+	IntPtr IFixedPointer.Pointer
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => (IntPtr)this.GetMemoryOffset();
+	}
 
 	/// <summary>
 	/// Constructs a new FixedPointer instance pointing to a fixed memory block.
@@ -89,14 +95,14 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		this.IsReadOnly = isReadOnly;
 	}
 	/// <summary>
-	/// Constructs a new FixedPointer instance pointing to a fixed memory block, with specified validity.
+	/// Constructs a new FixedPointer instance pointing to a fixed memory block with specified validity.
 	/// </summary>
 	/// <param name="ptr">The pointer to a fixed memory block.</param>
 	/// <param name="binaryLength">The size of the memory block in bytes.</param>
 	/// <param name="isReadOnly">A Boolean value indicating whether the memory block is read-only.</param>
 	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
 	/// <remarks>
-	/// This constructor allows to set the validity of the instance during the construction of the object.
+	/// This constructor allows setting the validity of the instance during the construction of the object.
 	/// </remarks>
 	protected FixedPointer(void* ptr, Int32 binaryLength, Boolean isReadOnly, FixedValueHandle handle)
 	{
@@ -146,6 +152,9 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// <returns>
 	/// A reference to a <typeparamref name="T"/> value over the memory block.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ref T CreateReference<T>()
 #if NET9_0_OR_GREATER
@@ -166,6 +175,9 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// A read-only reference to a <typeparamref name="T"/> value over the memory
 	/// block.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ref readonly T CreateReadOnlyReference<T>()
 #if NET9_0_OR_GREATER
@@ -184,6 +196,9 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// <typeparam name="TValue">The type of the objects in the span.</typeparam>
 	/// <param name="length">Span length.</param>
 	/// <returns>A <see cref="Span{TValue}"/> instance over the memory block.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Span<TValue> CreateSpan<TValue>(Int32 length)
 	{
@@ -202,6 +217,9 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// <typeparam name="TValue">The type of the objects in the read-only span.</typeparam>
 	/// <param name="length">Span length.</param>
 	/// <returns>A <see cref="ReadOnlySpan{TValue}"/> instance over the memory block.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ReadOnlySpan<TValue> CreateReadOnlySpan<TValue>(Int32 length)
 	{
@@ -217,6 +235,9 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// Creates a <see cref="Span{Byte}"/> instance over the memory block.
 	/// </summary>
 	/// <returns>A <see cref="Span{TValue}"/> instance over the memory block.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Span<Byte> CreateBinarySpan()
 	{
@@ -229,6 +250,9 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// Creates a <see cref="Span{Object}"/> instance over the memory block.
 	/// </summary>
 	/// <returns>A <see cref="Span{Object}"/> instance over the memory block.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Span<Object> CreateObjectSpan()
 	{
@@ -246,6 +270,9 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// Creates a <see cref="ReadOnlySpan{Byte}"/> instance over the memory block.
 	/// </summary>
 	/// <returns>A <see cref="ReadOnlySpan{TValue}"/> instance over the memory block.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ReadOnlySpan<Byte> CreateReadOnlyBinarySpan()
 	{
@@ -258,6 +285,9 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// Creates a <see cref="ReadOnlySpan{Object}"/> instance over the memory block.
 	/// </summary>
 	/// <returns>A <see cref="ReadOnlySpan{Object}"/> instance over the memory block.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ReadOnlySpan<Object> CreateReadOnlyObjectSpan()
 	{
@@ -276,6 +306,9 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// </summary>
 	/// <typeparam name="TDelegate">A <see cref="Delegate"/> type.</typeparam>
 	/// <returns>A <typeparamref name="TDelegate"/> instance over the memory block.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	public TDelegate CreateDelegate<TDelegate>() where TDelegate : Delegate
 	{
 		this.ValidateFunctionOperation();
@@ -309,7 +342,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// <summary>
 	/// Validates any operation over the fixed memory block.
 	/// </summary>
-	/// <param name="isReadOnly">Indicates whether current operation is read-only one.</param>
+	/// <param name="isReadOnly">Indicates whether the current operation is a read-only one.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected void ValidateOperation(Boolean isReadOnly = false)
 	{
@@ -353,7 +386,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected Int32 GetCount(Int32 sizeOf) => this._binaryLength / sizeOf;
 	/// <summary>
-	/// Validates the size of the referenced value type from current instance.
+	/// Validates the size of the referenced value type from the current instance.
 	/// </summary>
 	/// <param name="typeOf">CLR Type.</param>
 	/// <param name="sizeOf">Type size in bytes.</param>
@@ -371,9 +404,12 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		ValidationUtilities.ThrowIfInvalidPointer(this._handle);
 	}
 	/// <summary>
-	/// Retrieves the memory offset for current instance.
+	/// Retrieves the memory offset for the current instance.
 	/// </summary>
 	/// <returns>Pointer to offset memory.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void* GetMemoryOffset()
 	{

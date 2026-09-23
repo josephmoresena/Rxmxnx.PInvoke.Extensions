@@ -19,14 +19,23 @@ public abstract partial class BufferTypeMetadata<T>
 	/// <summary>
 	/// Current buffer components.
 	/// </summary>
-	internal ReadOnlyMemory<BufferTypeMetadata<T>> Components { get; }
+	internal ReadOnlyMemory<BufferTypeMetadata<T>> Components
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get;
+	}
 
 	/// <summary>
 	/// Constructor.
 	/// </summary>
-	/// <param name="isBinary">Indicates if current buffer is binary.</param>
+	/// <param name="isBinary">Indicates if the current buffer is binary.</param>
 	/// <param name="components">Buffer's components.</param>
 	/// <param name="capacity">Buffer's capacity.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private protected BufferTypeMetadata(Boolean isBinary, BufferTypeMetadata<T>[] components, UInt16 capacity) :
 		base(isBinary, capacity)
 		=> this.Components = components;

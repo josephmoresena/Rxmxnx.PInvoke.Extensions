@@ -34,6 +34,9 @@ public sealed partial class CStringSequence : IEquatable<CStringSequence>
 	/// from a collection of strings.
 	/// </summary>
 	/// <param name="values">The collection of strings.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringSequence(
 #if !NET9_0_OR_GREATER
 		params String?[] values
@@ -46,6 +49,9 @@ public sealed partial class CStringSequence : IEquatable<CStringSequence>
 	/// collection of UTF-8 strings.
 	/// </summary>
 	/// <param name="values">The collection of <see cref="CString"/> instances.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringSequence(
 #if !NET9_0_OR_GREATER
 		params CString?[] values
@@ -58,6 +64,9 @@ public sealed partial class CStringSequence : IEquatable<CStringSequence>
 	/// read-only span of UTF-8 strings.
 	/// </summary>
 	/// <param name="values">The collection of <see cref="CString"/> instances.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringSequence(
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<CString?> values
@@ -75,6 +84,9 @@ public sealed partial class CStringSequence : IEquatable<CStringSequence>
 	/// read-only span of strings.
 	/// </summary>
 	/// <param name="values">The collection of strings.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CStringSequence(
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<String?> values
@@ -143,6 +155,9 @@ public sealed partial class CStringSequence : IEquatable<CStringSequence>
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	[Browsable(false)]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public ref readonly Byte GetPinnableReference()
 	{
@@ -154,6 +169,9 @@ public sealed partial class CStringSequence : IEquatable<CStringSequence>
 	/// Returns a <see cref="CString"/> that represents the current sequence.
 	/// </summary>
 	/// <returns>A <see cref="CString"/> that represents the current sequence.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CString ToCString()
 	{
 		if (this._nonEmptyCount == 0) return CString.Empty;
@@ -166,6 +184,9 @@ public sealed partial class CStringSequence : IEquatable<CStringSequence>
 	/// </summary>
 	/// <param name="nullTerminated">Indicates whether the resulting <see cref="CString"/> is null-terminated.</param>
 	/// <returns>A <see cref="CString"/> that represents the current sequence.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CString ToCString(Boolean nullTerminated)
 	{
 		if (nullTerminated) return this.ToCString();
@@ -190,6 +211,9 @@ public sealed partial class CStringSequence : IEquatable<CStringSequence>
 	/// <see langword="true"/> if <paramref name="value"/> is directly associated with the current instance; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public Boolean TryGetIndex(CString? value, out Int32 index)
 	{
 		if (!CString.IsNullOrEmpty(value))
@@ -214,6 +238,9 @@ public sealed partial class CStringSequence : IEquatable<CStringSequence>
 	/// <param name="state">The element to pass to the <paramref name="action"/>.</param>
 	/// <param name="action">A callback to initialize each <see cref="CString"/>.</param>
 	/// <returns>The created UTF-8 text sequence.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CStringSequence Create<TState>(TState state, CStringSequenceCreationAction<TState> action,
 		params Int32?[] lengths)
 #if NET9_0_OR_GREATER
@@ -248,6 +275,9 @@ public sealed partial class CStringSequence : IEquatable<CStringSequence>
 	/// <remarks>
 	/// This method does not perform any encoding conversion. The input is interpreted as a UTF-8 buffer.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if PACKAGE
 	[Obsolete("Obsolete to avoid encoding confusion. Use Create(ReadOnlySpan<byte> value) instead.", true)]
 #endif
@@ -264,6 +294,9 @@ public sealed partial class CStringSequence : IEquatable<CStringSequence>
 	///     <item>Any non-consecutive UTF-8 null character will be considered an element separator.</item>
 	///     <item>Any consecutive UTF-8 null characters will be considered part of the next element.</item>
 	/// </list>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CStringSequence Create(ReadOnlySpan<Byte> value)
 		=> value.IsEmpty ? CStringSequence.Empty : CStringSequence.CreateFrom(value);
 	/// <summary>
@@ -275,6 +308,9 @@ public sealed partial class CStringSequence : IEquatable<CStringSequence>
 	/// The reliability of the returned <see cref="CStringSequence"/> depends on the lifetime and validity of the
 	/// pointer at the time of method invocation.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CStringSequence GetUnsafe(ReadOnlySpan<ReadOnlyValPtr<Byte>> values)
 		=> values.Length == 0 ? CStringSequence.Empty : new(values);
 	/// <summary>
@@ -293,6 +329,9 @@ public sealed partial class CStringSequence : IEquatable<CStringSequence>
 	///         </item>
 	///     </list>
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[return: NotNullIfNotNull(nameof(value))]
 	public static CStringSequence? Parse(String? value)
 	{

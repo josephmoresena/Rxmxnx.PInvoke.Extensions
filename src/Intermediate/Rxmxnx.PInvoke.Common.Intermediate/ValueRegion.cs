@@ -17,7 +17,13 @@ public abstract partial class ValueRegion<T>
 	/// </exception>
 	/// <returns>The element at the specified index within the memory region.</returns>
 	[IndexerName("Item")]
-	public virtual T this[Int32 index] => this.AsSpan()[index];
+	public virtual T this[Int32 index]
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => this.AsSpan()[index];
+	}
 	/// <summary>
 	/// Indicates whether the current instance represents a subregion of a memory region.
 	/// </summary>
@@ -27,6 +33,9 @@ public abstract partial class ValueRegion<T>
 	/// Copies the contents of this memory region into a new array.
 	/// </summary>
 	/// <returns>An array containing the copied data from the current memory region.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public virtual T[] ToArray() => this.AsSpan().ToArray();
 	/// <summary>
 	/// Tries to create a new <see cref="GCHandle"/> for current value region.
@@ -93,6 +102,9 @@ public abstract partial class ValueRegion<T>
 	/// <see langword="true"/> if <paramref name="memory"/> instance represents the current instance; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	internal virtual Boolean TryGetMemory(out ReadOnlyMemory<T> memory)
 	{
 		Unsafe.SkipInit(out memory);
@@ -134,6 +146,9 @@ public abstract partial class ValueRegion<T>
 	/// </summary>
 	/// <param name="region">The <see cref="ValueRegion{T}"/> to convert.</param>
 	/// <returns>A read-only span representation of the <see cref="ValueRegion{T}"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static implicit operator ReadOnlySpan<T>(ValueRegion<T> region) => region.AsSpan();
 	/// <summary>
 	/// Converts the value of the current <see cref="ValueRegion{T}"/> to its equivalent array representation.

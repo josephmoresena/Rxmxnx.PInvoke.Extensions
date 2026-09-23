@@ -17,7 +17,7 @@ public partial class CStringSequence
 		/// </summary>
 		public CStringSequenceCreationAction<TState> Action { get; init; }
 		/// <summary>
-		/// State element that is passed to creation method.
+		/// State the element passed to the creation method.
 		/// </summary>
 		public TState State { get; init; }
 		/// <summary>
@@ -30,6 +30,9 @@ public partial class CStringSequence
 		/// </summary>
 		/// <param name="span">The buffer used for the UTF-8 text.</param>
 		/// <param name="index">The index of the current text in the sequence.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void InvokeAction(Span<Byte> span, Int32 index) => this.Action(span, index, this.State);
 	}

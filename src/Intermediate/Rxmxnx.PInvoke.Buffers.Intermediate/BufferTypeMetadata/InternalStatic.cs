@@ -1,3 +1,7 @@
+#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER && !UAP10_0_16299
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 public partial class BufferTypeMetadata
@@ -27,7 +31,7 @@ public partial class BufferTypeMetadata
 		return BufferTypeMetadata.errors.Contains(composition);
 	}
 	/// <summary>
-	/// Sets as error the current composition.
+	/// Sets as an error the current composition.
 	/// </summary>
 	/// <param name="composition">A <see cref="Composition"/> instance.</param>
 	private protected static void SetError(Composition composition)
@@ -36,7 +40,7 @@ public partial class BufferTypeMetadata
 		BufferTypeMetadata.errors.Add(composition);
 	}
 	/// <summary>
-	/// Executes <paramref name="action"/> using a buffer of current type.
+	/// Executes <paramref name="action"/> using a buffer of the current type.
 	/// </summary>
 	/// <typeparam name="T">The type of items in the buffer.</typeparam>
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
@@ -44,6 +48,9 @@ public partial class BufferTypeMetadata
 	/// <param name="action">A <see cref="IScopedBufferAction{T}"/> instance.</param>
 	/// <param name="metadata">A <see cref="BufferTypeMetadata"/> instance.</param>
 	/// <param name="spanLength">Required span length.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private protected static void Execute<T, TBuffer, TAction>(in TAction action, BufferTypeMetadata metadata,
 		Int32 spanLength) where TBuffer : struct
@@ -53,7 +60,12 @@ public partial class BufferTypeMetadata
 		where TAction : IScopedBufferAction<T>, allows ref struct
 #endif
 	{
+		Debug.Assert(RuntimeHelpers.IsReferenceOrContainsReferences<TBuffer>());
+#if NETFRAMEWORK || NETSTANDARD2_0
+		TBuffer buffer = default;
+#else
 		TBuffer buffer = new();
+#endif
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
 		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);
@@ -67,7 +79,7 @@ public partial class BufferTypeMetadata
 #endif
 	}
 	/// <summary>
-	/// Executes <paramref name="func"/> using a buffer of current type.
+	/// Executes <paramref name="func"/> using a buffer of the current type.
 	/// </summary>
 	/// <typeparam name="T">The type of items in the buffer.</typeparam>
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
@@ -77,10 +89,13 @@ public partial class BufferTypeMetadata
 	/// <param name="metadata">A <see cref="BufferTypeMetadata"/> instance.</param>
 	/// <param name="spanLength">Required span length.</param>
 	/// <returns><paramref name="func"/> result.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 #endif
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private protected static TResult Execute<T, TBuffer, TFunction, TResult>(in TFunction func,
 		BufferTypeMetadata metadata, Int32 spanLength) where TBuffer : struct
 #if !NET9_0_OR_GREATER
@@ -89,7 +104,12 @@ public partial class BufferTypeMetadata
 		where TFunction : IScopedBufferFunction<T, TResult>, allows ref struct
 #endif
 	{
+		Debug.Assert(RuntimeHelpers.IsReferenceOrContainsReferences<TBuffer>());
+#if NETFRAMEWORK || NETSTANDARD2_0
+		TBuffer buffer = default;
+#else
 		TBuffer buffer = new();
+#endif
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref T valRef = ref Unsafe.As<TBuffer, T>(ref buffer);
 		Span<T> memMarshal = MemoryMarshal.CreateSpan(ref valRef, spanLength);

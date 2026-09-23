@@ -4,10 +4,13 @@ namespace Rxmxnx.PInvoke.Internal;
 /// A <see cref="MemoryManager{T}"/> managed class.
 /// </summary>
 /// <typeparam name="T">The type of the memory.</typeparam>
+#if NETFRAMEWORK || NETSTANDARD2_0
+[SecurityCritical]
+#endif
+[Preserve(AllMembers = true)]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-[Preserve(AllMembers = true)]
 internal abstract unsafe class ManagedMemoryManager<T> : MemoryManager<T>
 {
 	/// <summary>
@@ -39,6 +42,9 @@ internal abstract unsafe class ManagedMemoryManager<T> : MemoryManager<T>
 	protected ManagedMemoryManager(Int32? count) => this._count = count;
 
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	public override Span<T> GetSpan()
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		=> this._count.HasValue ? MemoryMarshal.CreateSpan(ref this.GetMemoryReference(out _), this._count.Value) : default;
@@ -50,6 +56,9 @@ internal abstract unsafe class ManagedMemoryManager<T> : MemoryManager<T>
 	}
 #endif
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	public override MemoryHandle Pin(Int32 elementIndex = 0)
 	{
 #if NET9_0_OR_GREATER
@@ -68,6 +77,9 @@ internal abstract unsafe class ManagedMemoryManager<T> : MemoryManager<T>
 		}
 	}
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	public sealed override void Unpin()
 	{
 #if NET9_0_OR_GREATER
@@ -85,6 +97,9 @@ internal abstract unsafe class ManagedMemoryManager<T> : MemoryManager<T>
 	}
 
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

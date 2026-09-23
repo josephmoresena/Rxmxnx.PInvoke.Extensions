@@ -58,9 +58,9 @@
     </ItemGroup>
     <!-- FRAMEWORK_SUPPORT -->
     <ItemGroup Condition="'$(TargetFramework)' == 'net462' Or '$(TargetFramework)' == 'net470' Or '$(TargetFramework)' == 'net471' Or '$(TargetFramework)' == 'net472'">
-        <PackageReference Include="Microsoft.Bcl.Memory" Version="10.0.11"/>
+        <PackageReference Include="Microsoft.Bcl.Memory" Version="10.0.12"/>
         <PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0"/>
-        <PackageReference Include="System.Text.Json" Version="10.0.11"/>
+        <PackageReference Include="System.Text.Json" Version="10.0.12"/>
     </ItemGroup>
     <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
         <PackageReference Include="System.ValueTuple" Version="4.6.2"/>

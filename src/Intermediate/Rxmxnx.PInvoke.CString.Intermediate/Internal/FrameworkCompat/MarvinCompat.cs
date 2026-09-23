@@ -33,9 +33,13 @@ SOFTWARE.
 using UIntPtr = nuint;
 
 #elif !NETCOREAPP3_1_OR_GREATER
+
 // ReSharper disable once BuiltInTypeReferenceStyle
 using IntPtr = nint;
+#endif
 
+#if NET462_OR_GREATER || NETSTANDARD2_0
+using Utf8 = Rxmxnx.PInvoke.Internal.FrameworkCompat.Utf8Compat;
 #endif
 
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
@@ -43,6 +47,9 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 /// <summary>
 /// Marvin hash class.
 /// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+[SecurityCritical]
+#endif
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS907)]
@@ -78,11 +85,11 @@ internal static class MarvinCompat
 	/// </summary>
 	/// <param name="value">A read-only UTF-8 unit span.</param>
 	/// <returns>A 32-bit signed integer hash code.</returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
+#endif
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	public static Int32 GetHashCode(ReadOnlySpan<Byte> value)
@@ -270,6 +277,7 @@ internal static class MarvinCompat
 		goto DoFinalRoundsAndReturn;
 	}
 #endif
+
 	/// <summary>
 	/// Compute a Marvin hash and collapse it into a 32-bit hash.
 	/// </summary>

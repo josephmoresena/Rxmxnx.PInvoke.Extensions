@@ -69,7 +69,13 @@ internal sealed unsafe partial class FixedDelegate<TDelegate> : FixedDelegate, I
 		FixedDelegate<TDelegate>.GetMethodPointer(method, out GCHandle handle), handle) { }
 
 	FuncPtr<TDelegate> IFixedMethod<TDelegate>.FunctionPointer => this.CreateFuncPointer<TDelegate>();
-	TDelegate IFixedMethod<TDelegate>.Method => this.CreateDelegate<TDelegate>();
+	TDelegate IFixedMethod<TDelegate>.Method
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => this.CreateDelegate<TDelegate>();
+	}
 
 	/// <summary>
 	/// Gets the pointer to the method delegate provided, while creating a <see cref="GCHandle"/> to
@@ -80,6 +86,9 @@ internal sealed unsafe partial class FixedDelegate<TDelegate> : FixedDelegate, I
 	/// Output. A <see cref="GCHandle"/> to prevent the delegate from being collected by the garbage collector.
 	/// </param>
 	/// <returns>Pointer to the provided delegate of the method.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static void* GetMethodPointer(TDelegate method, out GCHandle handle)
 	{
 		handle = GCHandle.Alloc(method, GCHandleType.Normal);

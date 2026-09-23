@@ -22,6 +22,9 @@ public partial class CString
 	/// <paramref name="value"/> has zero elements.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Join(Byte separator,
 #if !NET9_0_OR_GREATER
 		params CString?[] value
@@ -48,6 +51,9 @@ public partial class CString
 	/// by the <paramref name="separator"/> character. -or- <see cref="Empty"/> if
 	/// <paramref name="value"/> has zero elements.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Join(Byte separator,
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<CString?> value
@@ -70,6 +76,9 @@ public partial class CString
 	/// Concatenated UTF-8 text with separators or an empty <see cref="CString"/> if the collection is empty.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
 #endif
@@ -96,6 +105,9 @@ public partial class CString
 	/// <exception cref="ArgumentOutOfRangeException">
 	/// Thrown if <paramref name="startIndex"/> or <paramref name="count"/> is out of range.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Join(Byte separator, CString?[] value, Int32 startIndex, Int32 count)
 	{
 		ArgumentNullException.ThrowIfNull(value);
@@ -118,6 +130,9 @@ public partial class CString
 	/// <paramref name="value"/> has zero elements.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Join(ReadOnlySpan<Byte> separator,
 #if !NET9_0_OR_GREATER
 		params CString?[] value
@@ -145,6 +160,9 @@ public partial class CString
 	/// <paramref name="value"/> has zero elements.
 	/// </returns>
 	// ReSharper disable once MemberCanBePrivate.Global
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static unsafe CString Join(ReadOnlySpan<Byte> separator,
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<CString?> value
@@ -168,6 +186,9 @@ public partial class CString
 	/// Concatenated UTF-8 text with separators or an empty <see cref="CString"/> if the collection is empty.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="values"/> is <see langword="null"/>.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
 #endif
@@ -206,6 +227,9 @@ public partial class CString
 	/// <exception cref="ArgumentOutOfRangeException">
 	/// Thrown if <paramref name="startIndex"/> or <paramref name="count"/> is out of range.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Join(ReadOnlySpan<Byte> separator, CString?[] value, Int32 startIndex, Int32 count)
 	{
 		ArgumentNullException.ThrowIfNull(value);
@@ -228,6 +252,9 @@ public partial class CString
 	/// <paramref name="value"/> has zero elements.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Join(CString? separator,
 #if !NET9_0_OR_GREATER
 		params CString?[] value
@@ -255,6 +282,9 @@ public partial class CString
 	/// <paramref name="value"/> has zero elements.
 	/// </returns>
 	// ReSharper disable once MemberCanBePrivate.Global
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Join(CString? separator,
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<CString?> value
@@ -314,6 +344,9 @@ public partial class CString
 	/// <exception cref="ArgumentOutOfRangeException">
 	/// Thrown if <paramref name="startIndex"/> or <paramref name="count"/> is out of range.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Join(CString? separator, CString?[] value, Int32 startIndex, Int32 count)
 	{
 		ArgumentNullException.ThrowIfNull(value);

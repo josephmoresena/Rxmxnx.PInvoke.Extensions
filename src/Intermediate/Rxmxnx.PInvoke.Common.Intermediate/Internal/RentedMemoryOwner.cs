@@ -29,6 +29,9 @@ internal sealed unsafe class RentedMemoryOwner<T> : FixedValueHandle.Memory
 	/// <param name="array">Rented array..</param>
 	/// <param name="clearArray">Indicates whether the contents of the buffer should be cleared before reuse.</param>
 	/// <param name="arrayLength">Output. Rented array length.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private RentedMemoryOwner(ArrayPool<T> arrayPool, T[] array, Boolean clearArray, out Int32 arrayLength) : base(
 		new ReadOnlyMemory<T>(array).Pin())
 	{
@@ -55,6 +58,9 @@ internal sealed unsafe class RentedMemoryOwner<T> : FixedValueHandle.Memory
 	/// <summary>
 	/// Releases the rented array allocation.
 	/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -105,6 +111,9 @@ internal sealed unsafe class RentedMemoryOwner<T> : FixedValueHandle.Memory
 	/// </param>
 	/// <param name="arrayLength">Output. Rented array length.</param>
 	/// <returns>An <see cref="IDisposable"/> instance representing the pinned memory.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IDisposable CreateContext(ArrayPool<T> arrayPool, Int32 count, Boolean clearArray,
 		out FixedContextValue<T> fixedContext, out Int32 arrayLength)

@@ -17,6 +17,9 @@ public static unsafe partial class NativeUtilities
 	/// <typeparam name="T">Type of referenced value</typeparam>
 	/// <param name="value">A <typeparamref name="T"/> reference.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedReferenceAction{T}"/> delegate.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeReadOnlyFixed<T>(ref T value, ReadOnlyFixedReferenceAction<T> action)
 #if NET9_0_OR_GREATER
@@ -46,6 +49,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="value">A <typeparamref name="T"/> reference.</param>
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedReferenceAction{T, TArg}"/> delegate.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeReadOnlyFixed<T, TArg>(ref T value, TArg arg,
 		ReadOnlyFixedReferenceAction<T, TArg> action)
@@ -76,6 +82,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="value">A <typeparamref name="T"/> reference.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedReferenceFunc{T, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeReadOnlyFixed<T, TResult>(ref T value, ReadOnlyFixedReferenceFunc<T, TResult> func)
 #if NET9_0_OR_GREATER
@@ -107,6 +116,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedReferenceFunc{T, TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeReadOnlyFixed<T, TArg, TResult>(ref T value, TArg arg,
 		ReadOnlyFixedReferenceFunc<T, TArg, TResult> func)

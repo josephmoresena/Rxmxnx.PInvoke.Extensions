@@ -11,6 +11,9 @@ public static partial class AotInfo
 	/// Indicates whether the executing frame is AOT.
 	/// </summary>
 	/// <returns><see langword="true"/> if executing frame is AOT; otherwise, <see langword="false"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[UnconditionalSuppressMessage("Trimming", "IL2026")]
 	private static Boolean IsAotFrame()
 	{
@@ -48,8 +51,11 @@ public static partial class AotInfo
 	/// <returns>
 	/// <see langword="true"/> if Jit is enabled; otherwise, <see langword="false"/>.
 	/// </returns>
-	[UnconditionalSuppressMessage("Trimming", "IL2070")]
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	[UnconditionalSuppressMessage("Trimming", "IL2070")]
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS907)]
@@ -96,6 +102,10 @@ public static partial class AotInfo
 					case "Microsoft.MacCatalyst":
 					case "Microsoft.tvOS":
 					case "Microsoft.watchOS":
+#if NETSTANDARD2_0
+					// .NET Native detection
+					case "SharedLibrary.McgInterop":
+#endif
 						return false;
 #if !NET5_0_OR_GREATER
 					case "Mono.Android":
@@ -145,7 +155,7 @@ public static partial class AotInfo
 		EmitCheck:
 #if NET5_0_OR_GREATER
 		if (TrimInfo.IsDesktopTrimmedPlatform() || OperatingSystem.IsAndroid())
-			return false; // Avoid use System.Reflection.Emit on .NET 5.0
+			return false; // Avoid using System.Reflection.Emit on .NET 5.0
 #endif
 		// System.Reflection.Emit is not allowed in AOT/IL2CPP.
 		return EmitInfo.IsEmitAllowed;

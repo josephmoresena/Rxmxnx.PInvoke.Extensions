@@ -61,6 +61,9 @@ public partial class CString
 		/// </summary>
 		/// <param name="state">Current item sequence state.</param>
 		/// <returns>The binary span for the specified state.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public static ReadOnlySpan<Byte> GetSpan(BufferItemState<TBuffer> state)
 			=> state._utf8.Buffer.Slice(state._offset, state._length);
 	}

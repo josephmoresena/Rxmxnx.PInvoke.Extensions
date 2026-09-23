@@ -13,10 +13,10 @@ internal static class RuntimeHelpersCompat
 	/// </summary>
 	/// <typeparam name="T">The type.</typeparam>
 	/// <returns>
-	/// <see langword="true"/> if the given type is reference type or value type that contains references; otherwise,
+	/// <see langword="true"/> if the given type is a reference type or value type that contains references; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
-#if NETSTANDARD2_1 || NETCOREAPP2_0_OR_GREATER
+#if NETSTANDARD2_1 || NETCOREAPP2_0_OR_GREATER || UAP10_0_16299
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Boolean IsReferenceOrContainsReferences<T>() => RuntimeHelpers.IsReferenceOrContainsReferences<T>();
 #else
@@ -35,13 +35,13 @@ internal static class RuntimeHelpersCompat
 #endif
 	private static Boolean IsReferenceOrContainsReferences(Type type)
 	{
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK
 		if (type.IsPrimitive || RuntimeHelpersCompat.IsPointerType(type))
 #else
 		if (type.GetTypeInfo().IsPrimitive || RuntimeHelpersCompat.IsPointerType(type))
 #endif
 			return false;
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK
 		if (!type.IsValueType)
 #else
 		if (!type.GetTypeInfo().IsValueType)
@@ -50,7 +50,7 @@ internal static class RuntimeHelpersCompat
 		if (Nullable.GetUnderlyingType(type) is { } underlyingType)
 			type = underlyingType;
 		// ReSharper disable once ConvertIfStatementToReturnStatement
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK
 		if (type.IsEnum)
 #else
 		if (type.GetTypeInfo().IsEnum)
@@ -68,7 +68,7 @@ internal static class RuntimeHelpersCompat
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean IsPointerType(Type type)
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK
 		=> type.IsPointer || type == typeof(IntPtr) || type == typeof(UIntPtr);
 #else
 		=> type.GetTypeInfo().IsPointer || type == typeof(IntPtr) || type == typeof(UIntPtr);

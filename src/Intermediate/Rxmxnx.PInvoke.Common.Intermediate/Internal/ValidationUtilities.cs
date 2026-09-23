@@ -1,9 +1,10 @@
-﻿#if NETCOREAPP && !NET5_0_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
+﻿#if (NETCOREAPP && !NET5_0_OR_GREATER) || NET461_OR_GREATER || UAP10_0_16299
 using Enum = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
 #endif
 #if !NET6_0_OR_GREATER
 using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
+
 #if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP && !NETFRAMEWORK && !UAP10_0_16299
 using InsufficientMemoryException = System.OutOfMemoryException;
 #endif
@@ -71,7 +72,7 @@ internal static unsafe class ValidationUtilities
 	/// Thrown if the fixed pointer instance is not guaranteed to be safe.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void ThrowIfInvalidPointer(IWrapper<Boolean> isValid) 
+	public static void ThrowIfInvalidPointer(IWrapper<Boolean> isValid)
 		=> ValidationUtilities.ThrowIfInvalidPointer(isValid.Value);
 	/// <summary>
 	/// Validates if a pointer is fixed in memory and safe to use.
@@ -98,6 +99,9 @@ internal static unsafe class ValidationUtilities
 	/// <exception cref="ArgumentException">
 	/// Throws an exception if <paramref name="info"/> contains an invalid <see langword="unmanaged"/> pointer.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -116,6 +120,9 @@ internal static unsafe class ValidationUtilities
 	/// <exception cref="ArgumentNullException">
 	/// Throws an exception if <paramref name="info"/> is <see langword="null"/>.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -134,7 +141,7 @@ internal static unsafe class ValidationUtilities
 	/// </summary>
 	/// <param name="obj">A <see cref="Object"/> instance.</param>
 	/// <param name="ptr">An <see cref="IntPtr"/> value.</param>
-	/// <param name="nameofPtr">Name of value pointer type.</param>
+	/// <param name="nameofPtr">Name of a value pointer type.</param>
 	/// <typeparam name="T">Type of referenced value.</typeparam>
 	/// <returns>A <see cref="Int32"/> value that indicates the relative order of the objects being compared.</returns>
 	/// <exception cref="ArgumentException">Throws an exception if <paramref name="obj"/> is not a value pointer.</exception>
@@ -186,12 +193,12 @@ internal static unsafe class ValidationUtilities
 	}
 
 	/// <summary>
-	/// Validates that a non-read-only operation is not attempted on a fixed memory pointer instance that is read-only.
+	/// Validates that a non-read-only operation is not attempted on a read-only fixed memory pointer instance.
 	/// </summary>
 	/// <param name="isReadOnlyOperation">Indicates whether the operation to be performed is read-only.</param>
 	/// <param name="isReadOnly">Indicates whether the fixed pointer instance is read-only.</param>
 	/// <exception cref="InvalidOperationException">
-	/// Thrown if a non-read-only operation is attempted on a fixed memory pointer instance that is read-only.
+	/// Thrown if a non-read-only operation is attempted on a fixed read-only memory pointer instance.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfReadOnlyPointer(Boolean isReadOnlyOperation, Boolean isReadOnly)
@@ -202,14 +209,14 @@ internal static unsafe class ValidationUtilities
 	}
 
 	/// <summary>
-	/// Validates that the binary size of the fixed memory pointer instance is sufficient to contain at least one
+	/// Validates that the binary size of the fixed memory pointer instance is enough to contain at least one
 	/// <paramref name="typeOf"/> value.
 	/// </summary>
 	/// <param name="binaryLength">Binary size of the fixed memory pointer instance.</param>
 	/// <param name="typeOf">CLR Type.</param>
 	/// <param name="sizeOf">Type size in bytes.</param>
 	/// <exception cref="InsufficientMemoryException">
-	/// Thrown if the binary size of the fixed memory pointer instance is insufficient to contain at least one
+	/// Thrown if the binary size of the fixed memory pointer instance is not enough to contain at least one
 	/// <paramref name="typeOf"/> value.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -232,6 +239,9 @@ internal static unsafe class ValidationUtilities
 	/// <exception cref="InvalidCastException">
 	/// Thrown if the size of the binary span is greater than <paramref name="sizeOf"/>.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidBinarySpanSize(ReadOnlySpan<Byte> span, Int32 sizeOf,
 		[CallerArgumentExpression(nameof(span))] String nameofSpan = ValidationUtilities.emptyString)
@@ -319,6 +329,9 @@ internal static unsafe class ValidationUtilities
 	/// Thrown if the destination span does not have enough space to contain the binary representation of the
 	/// <see langword="unmanaged"/> value.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && (NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER)
 	[ExcludeFromCodeCoverage]
 #endif
@@ -553,7 +566,7 @@ internal static unsafe class ValidationUtilities
 		throw new InvalidOperationException(message);
 	}
 	/// <summary>
-	/// Throws an exception if <paramref name="type"/> is not reference type.
+	/// Throws an exception if <paramref name="type"/> is not a reference type.
 	/// </summary>
 	/// <param name="type">CLR type.</param>
 	/// <exception cref="InvalidOperationException">
@@ -707,12 +720,32 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = MessageResource.GetInstance();
 		throw new PlatformNotSupportedException(resource.ReflectionDisabled);
 	}
+	/// <summary>
+	/// Throws an exception a sequence of buffer instance cannot be treated as a nested buffer of the specified type.
+	/// </summary>
+	/// <param name="bufferType">Type of the managed buffer.</param>
+	/// <param name="type">Type of the element.</param>
+	/// <param name="size">Size of the buffer.</param>
+	/// <param name="sizeOfBuffer">Size of the Buffer type.</param>
+	/// <param name="sizeOf">Size of the type.</param>
+	/// <exception cref="ArgumentException">
+	/// Throws an exception a sequence of buffer instance cannot be treated as a nested buffer of the specified type.
+	/// </exception>
+	public static void ThrowIfNotNestedBuffer(Type bufferType, Type type, UInt16 size, Int32 sizeOfBuffer, Int32 sizeOf)
+	{
+		if (sizeOfBuffer / sizeOf == size) return;
+		IMessageResource resource = MessageResource.GetInstance();
+		throw new ArgumentException(resource.InvalidNestedBuffer(bufferType, type));
+	}
 #if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	/// <summary>
-	/// Throws an exception if the current token type is invalid for string type.
+	/// Throws an exception if the current token type is invalid for a string type.
 	/// </summary>
 	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
-	/// <exception cref="JsonException">Throws an exception if the current token type is invalid for string type.</exception>
+	/// <exception cref="JsonException">Throws an exception if the current token type is invalid for a string type.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -725,10 +758,13 @@ internal static unsafe class ValidationUtilities
 		ValidationUtilities.ThrowIfInvalidToken(tokenType, expectedTokenTypeName);
 	}
 	/// <summary>
-	/// Throws an exception if the current token type is invalid for array type.
+	/// Throws an exception if the current token type is invalid for an array type.
 	/// </summary>
 	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
-	/// <exception cref="JsonException">Throws an exception if the current token type is invalid for array type.</exception>
+	/// <exception cref="JsonException">Throws an exception if the current token type is invalid for an array type.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -742,13 +778,16 @@ internal static unsafe class ValidationUtilities
 	}
 
 	/// <summary>
-	/// Throws an exception if the current token type is invalid for expected type.
+	/// Throws an exception if the current token type is invalid for the expected type.
 	/// </summary>
 	/// <param name="tokenType">A <see cref="JsonTokenType"/> value.</param>
 	/// <param name="expectedToken">Expected token type name.</param>
 	/// <exception cref="JsonException">
-	/// Throws an exception if the current token type is invalid for expected type.
+	/// Throws an exception if the current token type is invalid for the expected type.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

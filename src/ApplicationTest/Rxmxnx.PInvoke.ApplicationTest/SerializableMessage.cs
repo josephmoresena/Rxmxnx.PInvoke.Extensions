@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Rxmxnx.PInvoke.ApplicationTest
 {
-#if !CSHARP9_0 || UAP && !WINDOWS_UWP
+#if !CSHARP9_0
 	public sealed class SerializableMessage<T>
 #else
 	public sealed record SerializableMessage<T>

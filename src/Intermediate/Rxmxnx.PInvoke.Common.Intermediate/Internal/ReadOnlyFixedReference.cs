@@ -1,6 +1,7 @@
-﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER && !UAP10_0_16299
 using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
 #endif
+
 #if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP && !NETFRAMEWORK && !UAP10_0_16299
 using InsufficientMemoryException = System.OutOfMemoryException;
 #endif
@@ -41,7 +42,16 @@ internal sealed unsafe partial class ReadOnlyFixedReference<T> : ReadOnlyFixedMe
 	/// <param name="mem">Instance of <see cref="FixedMemory"/> to be referenced.</param>
 	private ReadOnlyFixedReference(ReadOnlyFixedMemory mem) : base(mem) { }
 
-	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.CreateReadOnlyReference<T>();
+	ref readonly T IReadOnlyReferenceable<T>.Reference
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => ref this.CreateReadOnlyReference<T>();
+	}
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
 	{
@@ -62,8 +72,8 @@ internal sealed unsafe partial class ReadOnlyFixedReference<T> : ReadOnlyFixedMe
 	/// new type.
 	/// </returns>
 	/// <exception cref="InsufficientMemoryException">
-	/// Thrown when the size of the current reference is not sufficient to
-	/// accommodate the new type. For example, if an attempt is made to transform a 2-byte reference into a 4-byte type.
+	/// Thrown when the size of the current reference is not enough to accommodate the new type. For example, if an
+	/// attempt is made to transform a 2-byte reference into a 4-byte type.
 	/// </exception>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
@@ -92,8 +102,8 @@ internal sealed unsafe partial class ReadOnlyFixedReference<T> : ReadOnlyFixedMe
 	/// new type.
 	/// </returns>
 	/// <exception cref="InsufficientMemoryException">
-	/// Thrown when the size of the current reference is not sufficient to
-	/// accommodate the new type. For example, if an attempt is made to transform a 2-byte reference into a 4-byte type.
+	/// Thrown when the size of the current reference is not enough to accommodate the new type. For example,
+	/// if an attempt is made to transform a 2-byte reference into a 4-byte type.
 	/// </exception>
 	public ReadOnlyFixedReference<TDestination> GetTransformation<TDestination>(out ReadOnlyFixedOffset fixedOffset)
 	{

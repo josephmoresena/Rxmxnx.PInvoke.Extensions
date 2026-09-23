@@ -46,6 +46,9 @@ public static unsafe partial class ReferenceExtensions
 	/// unaffected by garbage collection.
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IntPtr GetUnsafeIntPtr<T>(ref this T refValue) where T : unmanaged
 	{
@@ -67,6 +70,9 @@ public static unsafe partial class ReferenceExtensions
 	/// unaffected by garbage collection.
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static UIntPtr GetUnsafeUIntPtr<T>(ref this T refValue) where T : unmanaged
 	{

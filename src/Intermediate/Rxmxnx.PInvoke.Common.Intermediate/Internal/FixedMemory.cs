@@ -42,6 +42,9 @@ internal abstract unsafe partial class FixedMemory : ReadOnlyFixedMemory, IEquat
 
 	Span<Byte> IFixedMemory.Bytes
 	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE && !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 		[ExcludeFromCodeCoverage]
 #endif
@@ -50,6 +53,9 @@ internal abstract unsafe partial class FixedMemory : ReadOnlyFixedMemory, IEquat
 	}
 	Span<Object> IFixedMemory.Objects
 	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE && !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 		[ExcludeFromCodeCoverage]
 #endif
@@ -58,6 +64,9 @@ internal abstract unsafe partial class FixedMemory : ReadOnlyFixedMemory, IEquat
 	}
 	ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes
 	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE && !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 		[ExcludeFromCodeCoverage]
 #endif
@@ -66,6 +75,9 @@ internal abstract unsafe partial class FixedMemory : ReadOnlyFixedMemory, IEquat
 	}
 	ReadOnlySpan<Object> IReadOnlyFixedMemory.Objects
 	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE && !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 		[ExcludeFromCodeCoverage]
 #endif

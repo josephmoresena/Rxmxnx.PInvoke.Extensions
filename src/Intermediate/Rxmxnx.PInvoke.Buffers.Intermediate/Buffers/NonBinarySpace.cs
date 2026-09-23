@@ -1,4 +1,4 @@
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER && !UAP10_0_16299
 using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
 #endif
 
@@ -46,9 +46,9 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 #endif
 
 	/// <summary>
-	/// Retrieves the <see cref="BufferTypeMetadata{T}"/> instance for current type.
+	/// Retrieves the <see cref="BufferTypeMetadata{T}"/> instance for the current type.
 	/// </summary>
-	/// <returns>The <see cref="BufferTypeMetadata{T}"/> instance for current type.</returns>
+	/// <returns>The <see cref="BufferTypeMetadata{T}"/> instance for the current type.</returns>
 	private static BufferTypeMetadata<NonBinarySpace<TArray, T>, T> GetMetadata()
 	{
 		Boolean isItemUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>();

@@ -48,14 +48,39 @@ internal static class ManagedBinaryBuffer<T>
 	/// This method allocates in heap a <paramref name="bufferType"/> instance to retrieve the
 	/// <see cref="BufferTypeMetadata{T}"/> instance.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS907)]
 #endif
 	[UnconditionalSuppressMessage("Trimming", "IL2067")]
 	public static BufferTypeMetadata<T>? GetMetadata(
 		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] Type? bufferType)
 	{
 		if (bufferType is null) return default;
+#if NETFRAMEWORK || NETSTANDARD2_0
+		// ReSharper disable once InvertIf
+		if (!SystemInfo.UsesNativeSpan && !SystemInfo.IsMonoRuntime && !AotInfo.IsNativeAot)
+			// .NET Framework and .NET Core 2.0 (not CoreRT)
+			try
+			{
+				Type typeofHelper = typeof(BuffersHelper);
+				MethodInfo? nonGeneric = typeofHelper.GetMethod(nameof(BuffersHelper.GetStaticMetadata),
+				                                                BuffersHelper.GetMetadataFlags);
+				if (nonGeneric is null) goto ActivatorApproach;
+				MethodInfo generic = nonGeneric.MakeGenericMethod(typeof(T), bufferType);
+				Func<BufferTypeMetadata<T>> getStaticMetadata =
+					(Func<BufferTypeMetadata<T>>)generic.CreateDelegate(typeof(Func<BufferTypeMetadata<T>>));
+				return getStaticMetadata();
+			}
+			catch (Exception)
+			{
+				// ignored
+			}
+		ActivatorApproach:
+#endif
 		try
 		{
 			// This allocates a buffer in heap temporally.

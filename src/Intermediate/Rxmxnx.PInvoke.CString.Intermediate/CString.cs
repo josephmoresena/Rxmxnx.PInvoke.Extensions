@@ -28,21 +28,36 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// Represents an empty UTF-8 string. This field is read-only.
 	/// </summary>
 	/// <remarks>This instance is a UTF-8 literal.</remarks>
-	public static readonly CString Empty = new(ValueRegion<Byte>.Create(TrimInfo.EmptyUt8Text), true, true, 0);
+	public static readonly CString Empty;
 	/// <summary>
 	/// Represents a null-pointer UTF-8 string. This field is read-only.
 	/// </summary>
-	public static readonly CString Zero = new(IntPtr.Zero, 0, true);
+	public static readonly CString Zero;
 	/// <inheritdoc cref="Environment.NewLine"/>
-	// ReSharper disable once MemberCanBePrivate.Global
-	public static readonly CString NewLine =
-#if NET5_0_OR_GREATER
-		OperatingSystem.IsWindows() ?
-#else
-		RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+	public static readonly CString NewLine;
+
+	/// <summary>
+	/// Static constructor.
+	/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
 #endif
-			new(ValueRegion<Byte>.Create(TrimInfo.WindowsNewLine), true, true, 2) :
-			new(ValueRegion<Byte>.Create(TrimInfo.NonWindowsNewLine), true, true, 1);
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3963)]
+#endif
+	static CString()
+	{
+		CString.Empty = new(ValueRegion<Byte>.Create(TrimInfo.EmptyUt8Text), true, true, 0);
+		CString.Zero = new(IntPtr.Zero, 0, true);
+		CString.NewLine =
+#if NET5_0_OR_GREATER
+			OperatingSystem.IsWindows() ?
+#else
+			RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+#endif
+				new(ValueRegion<Byte>.Create(TrimInfo.WindowsNewLine), true, true, 2) :
+				new(ValueRegion<Byte>.Create(TrimInfo.NonWindowsNewLine), true, true, 1);
+	}
 
 	/// <summary>
 	/// Gets a value indicating whether the text in the current <see cref="CString"/> instance
@@ -66,7 +81,13 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <summary>
 	/// Indicates whether the current <see cref="CString"/> instance is a null pointer.
 	/// </summary>
-	public Boolean IsZero => this.IsReference && Unsafe.IsNullRef(ref MemoryMarshal.GetReference(this._data.AsSpan()));
+	public Boolean IsZero
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => this.IsReference && Unsafe.IsNullRef(ref MemoryMarshal.GetReference(this._data.AsSpan()));
+	}
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
@@ -74,6 +95,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// </summary>
 	/// <param name="c">A UTF-8 char.</param>
 	/// <param name="count">The number of times <paramref name="c"/> is repeated to form the UTF-8 string.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CString(Byte c, Int32 count) : this(CString.CreateRepeatedSequence([c,], count), true) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
@@ -82,6 +106,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <param name="u0">The first UTF-8 unit.</param>
 	/// <param name="u1">The second UTF-8 unit.</param>
 	/// <param name="count">The number of times the sequence is repeated to form the UTF-8 string.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CString(Byte u0, Byte u1, Int32 count) : this(CString.CreateRepeatedSequence([u0, u1,], count), true) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
@@ -91,6 +118,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <param name="u1">The second UTF-8 unit.</param>
 	/// <param name="u2">The third UTF-8 unit.</param>
 	/// <param name="count">The number of times the sequence is repeated to form the UTF-8 string.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CString(Byte u0, Byte u1, Byte u2, Int32 count) : this(CString.CreateRepeatedSequence([u0, u1, u2,], count),
 	                                                              true) { }
 	/// <summary>
@@ -102,6 +132,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <param name="u2">The third UTF-8 unit.</param>
 	/// <param name="u3">The fourth UTF-8 unit.</param>
 	/// <param name="count">The number of times the sequence is repeated to form the UTF-8 string.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CString(Byte u0, Byte u1, Byte u2, Byte u3, Int32 count) : this(
 		CString.CreateRepeatedSequence([u0, u1, u2, u3,], count), true) { }
 	/// <summary>
@@ -110,6 +143,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// </summary>
 	/// <param name="c">A UTF-16 char.</param>
 	/// <param name="count">The number of times <paramref name="c"/> is repeated to form the UTF-8 string.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CString(Char c, Int32 count) : this(CString.CreateRepeatedSequence([c,], count), true) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class to the value indicated by a specified
@@ -118,18 +154,27 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <param name="u0">The first UTF-16 unit.</param>
 	/// <param name="u1">The second UTF-16 unit.</param>
 	/// <param name="count">The number of times the sequence is repeated to form the UTF-8 string.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CString(Char u0, Char u1, Int32 count) : this(CString.CreateRepeatedSequence([u0, u1,], count), true) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class using the UTF-8 characters
 	/// indicated in the specified read-only span.
 	/// </summary>
 	/// <param name="source">A read-only span of UTF-8 characters to initialize the new instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CString(ReadOnlySpan<Byte> source) : this(CString.CreateRepeatedSequence(source, 1)) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class using the UTF-8 characters
 	/// indicated in the specified read-only sequence.
 	/// </summary>
 	/// <param name="source">A read-only span of UTF-8 characters to initialize the new instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -151,6 +196,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// </summary>
 	/// <param name="source">A read-only span of UTF-16 characters to initialize the new instance.</param>
 	// ReSharper disable once MemberCanBePrivate.Global
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public CString(ReadOnlySpan<Char> source) : this(CString.CreateRepeatedSequence(source, 1)) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CString"/> class that contains the UTF-8 string
@@ -161,8 +209,12 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// the new instance.
 	/// </param>
 	public CString(ReadOnlySpanFunc<Byte> func) : this(func, true) { }
+
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Object Clone()
 	{
@@ -176,6 +228,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 #endif
 
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public Boolean Equals([NotNullWhen(true)] CString? other)
 	{
 		if (other is null) return false;
@@ -191,6 +246,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <see langword="true"/> if the value of the <paramref name="other"/> parameter is the same
 	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public Boolean Equals([NotNullWhen(true)] String? other)
 		=> other is not null && !this.IsZero &&
 			StringUtf8Comparator.OrdinalComparator.TextEquals(this, other.AsSpan(), other);
@@ -207,6 +265,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <see langword="true"/> if the value of the <paramref name="value"/> parameter is the same
 	/// as this <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public Boolean Equals([NotNullWhen(true)] CString? value, StringComparison comparisonType)
 	{
 		if (value is null) return false;
@@ -229,6 +290,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <see langword="true"/> if the value of the <paramref name="value"/> parameter is the same as this
 	/// <see cref="CString"/>, otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public Boolean Equals([NotNullWhen(true)] String? value, StringComparison comparisonType)
 	{
 		if (value is null) return false;
@@ -251,12 +315,16 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 			_ => this.CreateInternalString(),
 		};
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 	public override Int32 GetHashCode()
 		=> this._length switch
 		{
+			0 when this.IsZero => 0,
 			0 => String.Empty.GetHashCode(),
 			_ when MarvinCompat.DefaultSeed.HasValue => MarvinCompat.GetHashCode(this.AsSpan()),
 #if NETCOREAPP3_0_OR_GREATER
@@ -277,6 +345,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	[Browsable(false)]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public ref readonly Byte GetPinnableReference() => ref MemoryMarshal.GetReference(this._data.AsSpan());
 	/// <summary>
@@ -285,6 +356,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <returns>
 	/// A new <see cref="Byte"/> array containing the UTF-8 units of the current <see cref="CString"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public Byte[] ToArray()
 	{
 		Byte[] result = CString.CreateByteArray(this._length);
@@ -297,6 +371,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <returns>
 	/// A read-only span of bytes representing the UTF-8 units of the current <see cref="CString"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public ReadOnlySpan<Byte> AsSpan() => this._data.AsSpan()[..this._length];
 	/// <summary>
 	/// Returns a <see cref="String"/> that represents the current UTF-8 text as a hexadecimal value.
@@ -304,6 +381,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <returns>
 	/// A <see cref="String"/> that represents the hexadecimal value of the current UTF-8 text.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public String ToHexString() => Convert.ToHexString(this).ToLowerInvariant();
 	/// <summary>
 	/// Returns an enumerator that iterates through the UTF-8 units of the current <see cref="CString"/>.
@@ -312,6 +392,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// An enumerator that can be used to iterate through the UTF-8 units of the current
 	/// <see cref="CString"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public ReadOnlySpan<Byte>.Enumerator GetEnumerator() => this.AsSpan().GetEnumerator();
 
 	/// <summary>
@@ -323,6 +406,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// The returned handle may reference a valid memory address even when <paramref name="pinned"/> is
 	/// <see langword="false"/>, in which case memory stability is not guaranteed.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public unsafe MemoryHandle TryPin(out Boolean pinned)
 	{
 		if (this._data.GetPinnable(out Int32 index) is { } p)
@@ -450,6 +536,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// If the memory containing the UTF-8 text is moved or deallocated, accessing the span can cause unexpected behavior
 	/// or application crashes.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static unsafe CString CreateNullTerminatedUnsafe(IntPtr ptr)
 	{
 		ReadOnlySpan<Byte> span =
@@ -470,6 +559,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// This value is only reliable on supported platforms. On unsupported platforms or in case of inspection errors,
 	/// this property will always return <see langword="false"/>.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -505,6 +597,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// </summary>
 	/// <param name="escaped">A span containing escaped UTF-8 encoded text.</param>
 	/// <returns>A new <see cref="CString"/> instance containing the unescaped UTF-8 text.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Unescape(ReadOnlySpan<Byte> escaped)
 	{
 		if (escaped.IsEmpty) return CString.Empty;
@@ -525,6 +620,9 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// </summary>
 	/// <param name="escaped">A sequence containing escaped UTF-8 encoded text.</param>
 	/// <returns>A new <see cref="CString"/> instance containing the unescaped UTF-8 text.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Unescape(ReadOnlySequence<Byte> escaped)
 	{
 		if (escaped.IsEmpty) return CString.Empty;

@@ -79,6 +79,9 @@ public static partial class SystemInfo
 	/// <see langword="true"/> if <typeparamref name="T"/> implements <see cref="IEquatable{T}"/> interface; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	internal static Boolean IsSelfEquatable<[DynamicallyAccessedMembers(SystemInfo.InterfaceAccess)] T>()
 	{
 		Type equatable = typeof(IEquatable<T>);

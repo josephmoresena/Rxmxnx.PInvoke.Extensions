@@ -1,6 +1,7 @@
-﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER && !UAP10_0_16299
 using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
 #endif
+
 #if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP && !NETFRAMEWORK && !UAP10_0_16299
 using InsufficientMemoryException = System.OutOfMemoryException;
 #endif
@@ -41,8 +42,23 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 	/// <param name="mem">Instance of <see cref="FixedMemory"/> to be referenced.</param>
 	private FixedReference(FixedMemory mem) : base(mem) { }
 
-	ref T IReferenceable<T>.Reference => ref this.CreateReference<T>();
-	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.CreateReadOnlyReference<T>();
+	ref T IReferenceable<T>.Reference
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => ref this.CreateReference<T>();
+	}
+	ref readonly T IReadOnlyReferenceable<T>.Reference
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => ref this.CreateReadOnlyReference<T>();
+	}
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IFixedMemory residual)
 	{
 		Unsafe.SkipInit(out residual);
@@ -50,6 +66,9 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 			this.GetTransformation<TDestination>(out Unsafe.As<IFixedMemory, FixedOffset>(ref residual));
 		return result;
 	}
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
 	{
 		Unsafe.SkipInit(out residual);
@@ -57,6 +76,9 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 			this.GetTransformation<TDestination>(out Unsafe.As<IReadOnlyFixedMemory, FixedOffset>(ref residual));
 		return result;
 	}
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
 		out IReadOnlyFixedMemory residual)
 	{
@@ -86,8 +108,8 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 	/// new type.
 	/// </returns>
 	/// <exception cref="InsufficientMemoryException">
-	/// Thrown when the size of the current reference is not sufficient to
-	/// accommodate the new type. For example, if an attempt is made to transform a 2-byte reference into a 4-byte type.
+	/// Thrown when the size of the current reference is not enough to accommodate the new type.
+	/// For example, if an attempt is made to transform a 2-byte reference into a 4-byte type.
 	/// </exception>
 	public FixedReference<TDestination> GetTransformation<TDestination>(out FixedOffset fixedOffset,
 		Boolean isReadOnly = false)
@@ -111,8 +133,8 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 	/// new type.
 	/// </returns>
 	/// <exception cref="InsufficientMemoryException">
-	/// Thrown when the size of the current reference is not sufficient to
-	/// accommodate the new type. For example, if an attempt is made to transform a 2-byte reference into a 4-byte type.
+	/// Thrown when the size of the current reference is not enough to accommodate the new type.
+	/// For example, if an attempt is made to transform a 2-byte reference into a 4-byte type.
 	/// </exception>
 	private FixedReference<TDestination> GetTransformation<TDestination>(Boolean isReadOnly = false)
 	{

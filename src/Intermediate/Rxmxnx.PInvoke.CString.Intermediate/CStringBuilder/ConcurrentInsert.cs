@@ -4,6 +4,9 @@ public sealed partial class CStringBuilder
 {
 	/// <inheritdoc cref="CStringBuilder.Insert(Int32, String)"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -11,6 +14,9 @@ public sealed partial class CStringBuilder
 		=> String.IsNullOrEmpty(value) ? this : new Concurrent(this.GetLock(), this).Insert(index, value.AsSpan());
 	/// <inheritdoc cref="CStringBuilder.Insert(Int32, CString)"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -18,6 +24,9 @@ public sealed partial class CStringBuilder
 		=> CString.IsNullOrEmpty(value) ? this : new Concurrent(this.GetLock(), this).Insert(index, value.AsSpan());
 	/// <inheritdoc cref="CStringBuilder.Insert(Int32, Byte[])"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -27,6 +36,9 @@ public sealed partial class CStringBuilder
 			new Concurrent(this.GetLock(), this).Insert(index, value.AsSpan());
 	/// <inheritdoc cref="CStringBuilder.Insert(Int32, ReadOnlySpan{Char})"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -34,6 +46,9 @@ public sealed partial class CStringBuilder
 		=> value.IsEmpty ? this : new Concurrent(this.GetLock(), this).Insert(index, value);
 	/// <inheritdoc cref="CStringBuilder.Insert(Int32, ReadOnlySpan{Byte})"/>
 	/// <remarks>This operation is thread-safe.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

@@ -31,6 +31,9 @@ internal sealed class StringUtf8Comparator : Utf8Comparator<Char>
 	private StringUtf8Comparator(Boolean ignoreCase, CultureInfo? culture) : base(ignoreCase, culture) { }
 
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	protected override Rune? DecodeRune(ref ReadOnlySpan<Char> source)
 	{
@@ -40,6 +43,9 @@ internal sealed class StringUtf8Comparator : Utf8Comparator<Char>
 		return result;
 	}
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && (!NETCOREAPP || NET7_0_OR_GREATER)
 	[ExcludeFromCodeCoverage]
 #endif
@@ -50,11 +56,17 @@ internal sealed class StringUtf8Comparator : Utf8Comparator<Char>
 		=> source.ToString();
 #endif
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 	protected override Int32 CountChars(ReadOnlySpan<Char> source) => source.Length;
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

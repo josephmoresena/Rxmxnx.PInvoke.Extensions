@@ -60,6 +60,9 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 		return binary ?? minimalNonBinary; // Approximate non-Binary buffer.
 	}
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public override void PrepareBinaryMetadata<T>(UInt16 count)
 	{
 		if (count == 0) count++;

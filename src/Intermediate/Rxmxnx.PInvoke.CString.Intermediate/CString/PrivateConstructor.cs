@@ -15,6 +15,9 @@ public partial class CString
 	/// <param name="useFullLength">
 	/// Indicates whether the total length of the referenced array should be used.
 	/// </param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private CString(IntPtr ptr, Int32 length, Boolean useFullLength)
 	{
 		this._isLocal = false;
@@ -48,6 +51,9 @@ public partial class CString
 	/// Indicates whether <paramref name="bytes"/> is a null-terminated UTF-8 text.
 	/// If this is <see langword="null"/> an internal function is used to determine the value.
 	/// </param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private CString(Byte[] bytes, Boolean? isNullTerminated = default)
 	{
 		this._isLocal = true;
@@ -87,6 +93,9 @@ public partial class CString
 	/// </summary>
 	/// <param name="func"><see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns the UTF-8 string.</param>
 	/// <param name="isLiteral">Indicates whether returned span is from UTF-8 literal.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private CString(ReadOnlySpanFunc<Byte> func, Boolean isLiteral)
 	{
 		this._isLocal = false;
@@ -114,6 +123,9 @@ public partial class CString
 	/// The zero-based starting index of the sub-range in <paramref name="value"/>.
 	/// </param>
 	/// <param name="length">The length of the sub-range.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private CString(CString value, Int32 startIndex, Int32 length)
 	{
 		this._isLocal = value._isLocal;
@@ -160,6 +172,9 @@ public partial class CString
 	/// Initializes a new instance of the <see cref="CString"/> class reading a String from <paramref name="reader"/>.
 	/// </summary>
 	/// <param name="reader">A <see cref="Utf8JsonReader"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	private CString(Utf8JsonReader reader)
 	{
 		this._isLocal = true;

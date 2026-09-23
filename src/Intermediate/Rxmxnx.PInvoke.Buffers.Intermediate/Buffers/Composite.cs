@@ -63,7 +63,7 @@ public struct Composite<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAcc
 	}
 #else
 	/// <summary>
-	/// Creates the <see cref="BufferTypeMetadata{T}"/> instance for current type.
+	/// Creates the <see cref="BufferTypeMetadata{T}"/> instance for the current type.
 	/// </summary>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 	private static BufferTypeMetadata<T> CreateBufferMetadata()
@@ -74,9 +74,12 @@ public struct Composite<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAcc
 			capacity, components, isBinary, Composite<TBufferA, TBufferB, T>.AppendComponent);
 	}
 	/// <summary>
-	/// Appends all components from current type.
+	/// Appends all components from the current type.
 	/// </summary>
 	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static void AppendComponent(IMetadataStorage storage)
 	{
 		BufferTypeMetadata<T> currentMetadata = Composite<TBufferA, TBufferB, T>.TypeMetadata;

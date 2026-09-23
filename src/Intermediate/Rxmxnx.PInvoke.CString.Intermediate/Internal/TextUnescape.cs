@@ -11,13 +11,22 @@ internal static class TextUnescape
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	public static ReadOnlySpan<Byte> UnicodePrefix => "\\u"u8;
+	public static ReadOnlySpan<Byte> UnicodePrefix
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => "\\u"u8;
+	}
 
 	/// <summary>
 	/// Unescapes the UTF-8 string in the buffer.
 	/// </summary>
 	/// <param name="buffer">A UTF-8 unescaped buffer.</param>
 	/// <returns>Number of bytes of escape adjustment.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Int32 Unescape(Span<Byte> buffer)
 	{
@@ -66,6 +75,9 @@ internal static class TextUnescape
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static void UnescapeUnit(Span<Byte> buffer)
 	{
 		ReadOnlySpan<Byte> unescaped = buffer[2..];
@@ -90,6 +102,9 @@ internal static class TextUnescape
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Int32 UnescapeUnicode(ref Span<Byte> escapedBuffer, ref Int32 escapeIndex)
 	{
 		Char low = TextUnescape.GetUnicodeChar(escapedBuffer.Slice(escapeIndex + 2, 4));
@@ -112,6 +127,9 @@ internal static class TextUnescape
 	/// <param name="lowChar">Low surrogate char.</param>
 	/// <param name="escapeSize">Escape size in bytes.</param>
 	/// <returns>The escape rune from the buffer.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Rune GetUnescapeRune(Span<Byte> escapedBuffer, ref Int32 escapeIndex, Char lowChar,
 		ref Int32 escapeSize)
 	{
@@ -138,6 +156,9 @@ internal static class TextUnescape
 	/// <see langword="true"/> if the buffer has a high surrogate character at the specified escape index;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Boolean HasHighSurrogate(Span<Byte> escapedBuffer, Int32 escapeIndex, out Char high)
 	{
 		Boolean hasHighSurrogate = escapedBuffer.Length - escapeIndex >= 6 &&
@@ -150,6 +171,9 @@ internal static class TextUnescape
 	/// </summary>
 	/// <param name="charCodeSpan">A UTF-8 span containing the hexadecimal value of a UTF-16 char.</param>
 	/// <returns>A Unicode char.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Char GetUnicodeChar(ReadOnlySpan<Byte> charCodeSpan)
 	{
 		UInt16 result = 0;

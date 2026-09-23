@@ -23,6 +23,9 @@ public readonly ref partial struct FixedPointerValue : IFixedPointer, IEquatable
 			_ => false,
 		};
 	/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

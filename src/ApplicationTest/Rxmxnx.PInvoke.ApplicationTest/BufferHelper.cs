@@ -164,7 +164,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			return static writer =>
 			{
 				BufferManager.Register<TBuffer>();
-				writer.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
+				writer.WriteLine($"{default(TBuffer).Metadata.Size} buffer registered.");
 			};
 #endif
 		}
@@ -177,7 +177,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			return static writer =>
 			{
 				BufferManager.Register<T, TBuffer>();
-				writer.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
+				writer.WriteLine($"{default(TBuffer).Metadata.Size} buffer registered.");
 			};
 #endif
 		}
@@ -190,7 +190,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			return static writer =>
 			{
 				BufferManager.RegisterNullable<T, TBuffer>();
-				writer.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
+				writer.WriteLine($"{default(TBuffer).Metadata.Size} buffer registered.");
 			};
 #endif
 		}
@@ -198,18 +198,18 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		private static void Register<TBuffer>(TextWriter writer) where TBuffer : struct, IManagedBinaryBuffer<Object>
 		{
 			BufferManager.Register<TBuffer>();
-			writer.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
+			writer.WriteLine($"{default(TBuffer).Metadata.Size} buffer registered.");
 		}
 		private static void RegisterValue<TBuffer, T>(TextWriter writer) where TBuffer : struct, IManagedBinaryBuffer<T> where T : struct
 		{
 			BufferManager.Register<T, TBuffer>();
-			writer.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
+			writer.WriteLine($"{default(TBuffer).Metadata.Size} buffer registered.");
 		}
 		private static void RegisterNullableValue<TBuffer, T>(TextWriter writer) where TBuffer : struct, IManagedBinaryBuffer<T?>
 			where T : struct
 		{
 			BufferManager.RegisterNullable<T, TBuffer>();
-			writer.WriteLine($"{new TBuffer().Metadata.Size} buffer registered.");
+			writer.WriteLine($"{default(TBuffer).Metadata.Size} buffer registered.");
 		}
 #endif
 	}

@@ -16,6 +16,9 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// The returned span does not include the null terminator, nor does it validate the well-formedness of the UTF8 data.
 	/// </remarks>
 	/// <exception cref="ArgumentException">The string is longer than <see cref="Int32.MaxValue"/>.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static ReadOnlySpan<Byte> CreateReadOnlySpanFromNullTerminated(Byte* value)
 	{
 #if !PACKAGE || !NET6_0_OR_GREATER
@@ -44,6 +47,9 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// </returns>
 	/// <remarks>The returned span does not include the null terminator.</remarks>
 	/// <exception cref="ArgumentException">The string is longer than <see cref="int.MaxValue"/>.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static ReadOnlySpan<Char> CreateReadOnlySpanFromNullTerminated(Char* value)
 	{
 #if !PACKAGE || !NET6_0_OR_GREATER
@@ -69,6 +75,9 @@ internal static unsafe partial class MemoryMarshalCompat
 	/// <typeparam name="T">Type of buffer element.</typeparam>
 	/// <param name="buffer">Buffer reference.</param>
 	/// <returns>Index of</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Int32 IndexOfNull<T>(ref T buffer) where T : unmanaged, IEquatable<T>
 	{
 		if (Unsafe.IsNullRef(ref buffer))

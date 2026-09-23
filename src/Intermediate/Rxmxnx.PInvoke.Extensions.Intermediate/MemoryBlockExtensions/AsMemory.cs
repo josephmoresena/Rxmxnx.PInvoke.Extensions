@@ -3,6 +3,9 @@ namespace Rxmxnx.PInvoke;
 public static partial class MemoryBlockExtensions
 {
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -13,6 +16,9 @@ public static partial class MemoryBlockExtensions
 		=> ArrayMemoryManager<T>.GetMemory((Array?)arr);
 #endif
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -24,6 +30,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -34,8 +43,11 @@ public static partial class MemoryBlockExtensions
 		=> ArrayMemoryManager<T>.GetMemory((Array?)arr);
 #endif
 
-#if !UAP || UAP10_0_16299
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -47,6 +59,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -58,6 +74,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -69,6 +89,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -80,6 +104,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -91,6 +119,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -102,6 +134,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -113,6 +149,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -124,6 +164,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -135,6 +179,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -146,6 +194,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -157,6 +209,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -168,6 +224,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -179,6 +239,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -190,6 +254,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -201,6 +269,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -212,6 +284,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -223,6 +299,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -234,6 +314,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -245,6 +329,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -256,6 +344,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -267,6 +359,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -278,6 +374,10 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -288,6 +388,10 @@ public static partial class MemoryBlockExtensions
 		=> ArrayMemoryManager<T>.GetMemory((Array?)arr);
 #endif
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -298,6 +402,10 @@ public static partial class MemoryBlockExtensions
 		=> ArrayMemoryManager<T>.GetMemory((Array?)arr);
 #endif
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -308,6 +416,10 @@ public static partial class MemoryBlockExtensions
 		=> ArrayMemoryManager<T>.GetMemory((Array?)arr);
 #endif
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -318,6 +430,10 @@ public static partial class MemoryBlockExtensions
 		=> ArrayMemoryManager<T>.GetMemory((Array?)arr);
 #endif
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -328,6 +444,10 @@ public static partial class MemoryBlockExtensions
 		=> ArrayMemoryManager<T>.GetMemory((Array?)arr);
 #endif
 	/// <inheritdoc cref="MemoryExtensions.AsMemory{T}(T[])"/>
+	/// <remarks>This method is incompatible with the first versions of .NET Native.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -336,6 +456,5 @@ public static partial class MemoryBlockExtensions
 		=> ArrayMemoryManager<T>.GetMemory(arr);
 #else
 		=> ArrayMemoryManager<T>.GetMemory((Array?)arr);
-#endif
 #endif
 }

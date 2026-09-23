@@ -9,6 +9,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="view">A UTF-8 text sequence to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringBuilder Append(CStringSequence.Utf8View view)
 		{
@@ -28,6 +31,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="value">The UTF-8 units read-only span to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringBuilder Append(ReadOnlySpan<Byte> value)
 		{
@@ -44,6 +50,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="value">The UTF-8 units read-only sequence to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringBuilder Append(ReadOnlySequence<Byte> value)
 		{
@@ -60,6 +69,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="value">The read-only span of characters to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringBuilder Append(ReadOnlySpan<Char> value)
 		{
@@ -76,6 +88,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="value">The Boolean value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringBuilder Append(Boolean value)
 		{
@@ -96,6 +111,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="value">The UTF-16-encoded code char to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringBuilder Append(Char value)
 		{
@@ -120,6 +138,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringBuilder Append(Decimal value)
 		{
@@ -142,6 +163,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringBuilder Append(Double value)
 		{
@@ -164,6 +188,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringBuilder Append(Int16 value)
 		{
@@ -186,6 +213,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringBuilder Append(Int32 value)
 		{
@@ -208,6 +238,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringBuilder Append(Int64 value)
 		{
@@ -230,6 +263,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringBuilder Append(SByte value)
 		{
@@ -252,6 +288,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringBuilder Append(Single value)
 		{
@@ -274,6 +313,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringBuilder Append(UInt16 value)
 		{
@@ -296,6 +338,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringBuilder Append(UInt32 value)
 		{
@@ -318,6 +363,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="value">The value to append.</param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringBuilder Append(UInt64 value)
 		{
@@ -343,6 +391,9 @@ public partial class CStringBuilder
 		/// Indicates whether <paramref name="value"/> should be treated as a number instead of UTF-8 unit.
 		/// </param>
 		/// <returns>A reference to this instance after the append operation has completed.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public CStringBuilder Append(Byte value, Boolean asNumber = false)
 		{

@@ -12,6 +12,9 @@ internal partial class BinaryConcatenator<T>
 	/// A <see cref="ReadOnlySpan{Byte}"/> that represents the UTF-8 binary data derived from the
 	/// original text, excluding any leading or trailing null or BOM (Byte Order Mark) characters.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static ReadOnlySpan<Byte> PrepareUtf8Text(ReadOnlySpan<Byte> span)
 	{
 		Int32 iPosition = BinaryConcatenator<T>.GetInitialPosition(span);
@@ -30,6 +33,9 @@ internal partial class BinaryConcatenator<T>
 	/// The initial position in the given <see cref="ReadOnlySpan{Byte}"/> after any
 	/// leading null or BOM characters.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -81,6 +87,9 @@ internal partial class BinaryConcatenator<T>
 	/// <returns>
 	/// The length of the UTF-8 text after skipping any trailing null characters.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Int32 GetFinalLength(ReadOnlySpan<Byte> span, Int32 iPosition)
 	{

@@ -25,7 +25,7 @@ namespace MacAppTest
 					VerticallyResizable = true,
 					HorizontallyResizable = false,
 					AutoresizingMask = ViewController.resizingMask,
-					Font = NSFont.SystemFontOfSize(16),
+					Font = NSFont.SystemFontOfSize(16)!,
 					TextColor = NSApplication.SharedApplication.EffectiveAppearance.Name == NSAppearance.NameDarkAqua ?
 						NSColor.White : NSColor.Black,
 					BackgroundColor = NSColor.WindowBackground,

@@ -16,11 +16,31 @@ public readonly ref struct FixedPointerValueList
 	/// <summary>
 	/// Read-only span with fixed pointer information.
 	/// </summary>
-	internal ReadOnlySpan<FixedPointerInfo> Information { get; init; }
+	internal ReadOnlySpan<FixedPointerInfo> Information
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get;
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		init;
+	}
 	/// <summary>
 	/// Span of <see cref="ReadOnlyFixedMemory"/> instances.
 	/// </summary>
-	internal Span<ReadOnlyFixedMemory?> Instances { get; init; }
+	internal Span<ReadOnlyFixedMemory?> Instances
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get;
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		init;
+	}
 	/// <summary>
 	/// Indicates whether the current list is for read-only memory blocks.
 	/// </summary>
@@ -36,6 +56,9 @@ public readonly ref struct FixedPointerValueList
 	[IndexerName("Item")]
 	public ItemValue this[Int32 index]
 	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		get
 		{
 			ValidationUtilities.ThrowIfInvalidListIndex(index, this.Information.Length);
@@ -50,7 +73,13 @@ public readonly ref struct FixedPointerValueList
 	/// Gets the total number of elements in the list.
 	/// </summary>
 	/// <value>The total number of elements in the list.</value>
-	public Int32 Count => this.Information.Length;
+	public Int32 Count
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => this.Information.Length;
+	}
 	/// <summary>
 	/// Indicates whether the current list is empty.
 	/// </summary>
@@ -116,13 +145,19 @@ public readonly ref struct FixedPointerValueList
 		/// </summary>
 		public FixedPointerValue Value { get; internal init; }
 		/// <inheritdoc cref="IFixedPointer.Pointer"/>
-		public IntPtr Pointer => this.Value.Pointer;
+		public IntPtr Pointer
+		{
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
+			get => this.Value.Pointer;
+		}
 		/// <summary>
 		/// The type of memory block.
 		/// </summary>
 		public Type Type => this.Value.Type ?? typeof(Byte);
 		/// <summary>
-		/// Indicates whether current memory block is unmanaged.
+		/// Indicates whether the current memory block is unmanaged.
 		/// </summary>
 		public Boolean IsUnmanaged => this.Value.Type is null || this.Value.IsUnmanaged;
 		/// <summary>
@@ -148,6 +183,9 @@ public readonly ref struct FixedPointerValueList
 		/// <summary>
 		/// Internal enumerator.
 		/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		private ReadOnlySpan<FixedPointerInfo>.Enumerator _enumerator;
 
 		/// <summary>
@@ -156,6 +194,9 @@ public readonly ref struct FixedPointerValueList
 		/// <value>The element in the list at the current position of the enumerator.</value>
 		public ItemValue Current
 		{
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			get
 			{
@@ -171,6 +212,9 @@ public readonly ref struct FixedPointerValueList
 		/// Initializes a new instance of the <see cref="Enumerator"/> structure.
 		/// </summary>
 		/// <param name="valueList">A <see cref="FixedPointerValueList"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal Enumerator(FixedPointerValueList valueList)
 		{
@@ -186,6 +230,9 @@ public readonly ref struct FixedPointerValueList
 		/// <see langword="true"/> if the enumerator was successfully advanced to the next element;
 		/// <see langword="false"/> if the enumerator has passed the end of the list.
 		/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Boolean MoveNext() => this._enumerator.MoveNext();
 	}

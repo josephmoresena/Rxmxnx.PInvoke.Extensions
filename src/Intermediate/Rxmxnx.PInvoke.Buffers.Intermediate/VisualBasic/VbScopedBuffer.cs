@@ -66,6 +66,9 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 	/// <param name="refT">A <typeparamref name="T"/> managed reference.</param>
 	/// <param name="length">Buffer length.</param>
 	/// <param name="bufferTypeMetadata">Buffer type metadata.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	internal VbScopedBuffer(ref T refT, UInt16 length, BufferTypeMetadata? bufferTypeMetadata = default)
 	{
 		this._pointer = (ValPtr<T>)Unsafe.AsPointer(ref refT);
@@ -93,6 +96,9 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 	/// Creates a <see cref="ScopedBuffer{T}"/> from current instance.
 	/// </summary>
 	/// <returns>A <see cref="ScopedBuffer{T}"/> instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public ScopedBuffer<T> ToValue()
 	{
 		ValidationUtilities.ThrowIfInvalidPointer(this._isValid);

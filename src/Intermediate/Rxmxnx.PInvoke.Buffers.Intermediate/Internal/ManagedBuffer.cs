@@ -11,6 +11,9 @@ internal static class ManagedBuffer<T>
 	/// </summary>
 	/// <param name="component">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
 	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static void AppendComponent(BufferTypeMetadata<T> component, IMetadataStorage storage)
 	{
 		if (!storage.TryAdd(component)) return;

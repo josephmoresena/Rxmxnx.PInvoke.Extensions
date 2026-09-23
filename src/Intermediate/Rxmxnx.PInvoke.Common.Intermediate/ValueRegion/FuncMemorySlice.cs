@@ -34,6 +34,9 @@ public partial class ValueRegion<T>
 			=> this._func = region._func;
 
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		internal override ReadOnlySpan<T> AsSpan() => this._func()[this.Offset..this.End];
 		/// <inheritdoc/>
 		internal override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)
@@ -100,6 +103,9 @@ public partial class ValueRegion<T>
 		}
 
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		internal override ReadOnlySpan<T> AsSpan() => this._func(this._state)[this.Offset..this.End];
 		/// <inheritdoc/>
 		internal override ValueRegion<T> InternalSlice(Int32 startIndex, Int32 length)

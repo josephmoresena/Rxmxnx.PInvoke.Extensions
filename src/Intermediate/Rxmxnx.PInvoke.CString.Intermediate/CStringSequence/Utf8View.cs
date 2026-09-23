@@ -1,7 +1,3 @@
-#if NET9_0_OR_GREATER
-using IEnumerator = System.Collections.IEnumerator;
-#endif
-
 namespace Rxmxnx.PInvoke;
 
 public partial class CStringSequence
@@ -16,17 +12,14 @@ public partial class CStringSequence
 #if NET7_0_OR_GREATER
 	[NativeMarshalling(typeof(InputMarshaller))]
 #endif
-	public readonly ref struct Utf8View
-#if NET9_0_OR_GREATER
-		: IEquatable<Utf8View>
-#endif
+	public readonly ref partial struct Utf8View
 	{
 		/// <summary>
 		/// Internal <see cref="CStringSequence"/> instance.
 		/// </summary>
 		private readonly CStringSequence? _instance;
 		/// <summary>
-		/// Indicates whether current enumeration is only for non-empty items.
+		/// Indicates whether the current enumeration is only for non-empty items.
 		/// </summary>
 		private readonly Boolean _excludeEmptyItems;
 
@@ -36,7 +29,7 @@ public partial class CStringSequence
 		// ReSharper disable once ConvertToAutoPropertyWhenPossible
 		public CStringSequence? Source => this._instance;
 		/// <summary>
-		/// Indicates whether current enumeration includes empty items from the source sequence.
+		/// Indicates whether the current enumeration includes empty items from the source sequence.
 		/// </summary>
 		public Boolean EmptyItemsIncluded => !this._excludeEmptyItems;
 		/// <summary>
@@ -59,23 +52,13 @@ public partial class CStringSequence
 		/// <inheritdoc cref="IEnumerable{T}.GetEnumerator"/>
 		public Enumerator GetEnumerator()
 			=> this._instance is not null ? new(this._instance, this._excludeEmptyItems) : default;
-		/// <inheritdoc/>
-		public override Int32 GetHashCode() => this._instance?.GetHashCode() ?? default;
-		/// <inheritdoc/>
-		public override String? ToString() => this._instance?._value;
-#if NET9_0_OR_GREATER
-		/// <inheritdoc/>
-#if !PACKAGE
-		[ExcludeFromCodeCoverage]
-#endif
-		public Boolean Equals(Utf8View other) => this == other;
-#endif
-		/// <inheritdoc/>
-		public override Boolean Equals([NotNullWhen(true)] Object? obj) => Object.Equals(obj, this._instance);
 
 		/// <summary>
 		/// Creates an array of <see cref="CString"/> from current instance.
 		/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 		[ExcludeFromCodeCoverage]
 #endif
@@ -94,133 +77,6 @@ public partial class CStringSequence
 				item = ref Unsafe.Add(ref item, 1);
 			}
 			return result;
-		}
-
-		/// <summary>
-		/// Determines whether two specified <see cref="Utf8View"/> instances have the same value.
-		/// </summary>
-		/// <param name="left">The first <see cref="Utf8View"/> to compare, or <see langword="null"/>.</param>
-		/// <param name="right">The second <see cref="Utf8View"/> to compare, or <see langword="null"/>.</param>
-		/// <returns>
-		/// <see langword="true"/> if the value of <paramref name="left"/> is the same as the value
-		/// of <paramref name="right"/>; otherwise, <see langword="false"/>.
-		/// </returns>
-		public static Boolean operator ==(Utf8View left, Utf8View right)
-			=> Object.Equals(left._instance, right._instance) && left._excludeEmptyItems == right._excludeEmptyItems;
-		/// <summary>
-		/// Determines whether two specified <see cref="Utf8View"/> instances have different values.
-		/// </summary>
-		/// <param name="left">The first <see cref="Utf8View"/> to compare, or <see langword="null"/>.</param>
-		/// <param name="right">The second <see cref="Utf8View"/> to compare, or <see langword="null"/>.</param>
-		/// <returns>
-		/// <see langword="true"/> if the value of <paramref name="left"/> is different from the value
-		/// of <paramref name="right"/>; otherwise, <see langword="false"/>.
-		/// </returns>
-		public static Boolean operator !=(Utf8View left, Utf8View right) => !(left == right);
-
-		/// <summary>
-		/// Enumerates the UTF-8 segments within a <see cref="CStringSequence"/>.
-		/// </summary>
-		[Preserve(AllMembers = true, Conditional = true)]
-		public ref struct Enumerator
-#if NET9_0_OR_GREATER
-			: IEnumerator<ReadOnlySpan<Byte>>
-#endif
-		{
-			/// <summary>
-			/// Indicates whether current enumeration include empty items.
-			/// </summary>
-			private readonly Boolean _excludeEmptyItems;
-			/// <summary>
-			/// Internal instance.
-			/// </summary>
-			private readonly CStringSequence? _instance;
-
-			/// <summary>
-			/// Remaining lengths.
-			/// </summary>
-			private ReadOnlySpan<Int32> _remaining;
-			/// <summary>
-			/// Remaining UTF-8 buffer.
-			/// </summary>
-			private ReadOnlySpan<Byte> _buffer;
-			/// <summary>
-			/// Current item span.
-			/// </summary>
-			private ReadOnlySpan<Byte> _current;
-			/// <summary>
-			/// Indicates whether the current instance is active.
-			/// </summary>
-			private Boolean _active;
-
-			/// <summary>
-			/// Gets the element in the sequence at the current position of the enumerator.
-			/// </summary>
-			public ReadOnlySpan<Byte> Current
-			{
-				get
-				{
-					ValidationUtilities.ThrowIfInvalidEnumerator(this._instance is null, !this._active,
-					                                             this._remaining.IsEmpty);
-					return this._current;
-				}
-			}
-
-			/// <summary>
-			/// Constructor.
-			/// </summary>
-			/// <param name="instance">A <see cref="CStringSequence"/> instance.</param>
-			/// <param name="excludeEmptyItems">Indicates whether current enumerator is only for non-empty items.</param>
-			internal Enumerator(CStringSequence? instance, Boolean excludeEmptyItems)
-			{
-				this._excludeEmptyItems = excludeEmptyItems;
-				this._instance = instance;
-				this.Reset();
-			}
-			/// <summary>
-			/// Advances the enumerator to the next element of the enumeration.
-			/// </summary>
-			/// <returns>
-			/// <see langword="true"/> if the enumerator was successfully advanced to the next element;
-			/// <see langword="false"/> if the enumerator has passed the end of the enumeration.
-			/// </returns>
-			public Boolean MoveNext()
-			{
-				while (!this._remaining.IsEmpty)
-				{
-					Int32 length = this._remaining[0];
-					this._remaining = this._remaining[1..];
-
-					if (this._excludeEmptyItems && length <= 0) continue;
-
-					this._current = length switch
-					{
-						0 => CString.Empty.AsSpan(),
-						> 0 => this._buffer[..length],
-						_ => ReadOnlySpan<Byte>.Empty,
-					};
-					if (length > 0) this._buffer = this._buffer[(length + 1)..];
-					this._active = true;
-					return true;
-				}
-
-				this._active = false;
-				this._current = default;
-				return false;
-			}
-			/// <summary>
-			/// Resets the enumerator to the beginning of the enumeration, starting over.
-			/// </summary>
-			public void Reset()
-			{
-				this._remaining = this._instance?._lengths;
-				this._buffer = MemoryMarshal.AsBytes<Char>(this._instance?._value);
-				this._active = false;
-			}
-#if NET9_0_OR_GREATER
-			Object? IEnumerator.Current => null;
-			void IDisposable.Dispose() { }
-#endif
 		}
 	}
 }

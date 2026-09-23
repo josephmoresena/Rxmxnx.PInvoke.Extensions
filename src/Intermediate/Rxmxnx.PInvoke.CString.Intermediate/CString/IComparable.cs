@@ -76,6 +76,9 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	///     </item>
 	/// </list>
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public Int32 CompareTo(CString? other)
 		=> CString.NullCompare(this, other) ?? CStringUtf8Comparator.Create().Compare(this, other);
 	/// <summary>
@@ -107,6 +110,9 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	///     </item>
 	/// </list>
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public Int32 CompareTo(String? other)
 		=> CString.NullCompare(this, other) ?? StringUtf8Comparator.Create().Compare(this, other, other);
 
@@ -138,6 +144,9 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	///     </item>
 	/// </list>
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Int32 Compare(CString? cstrA, CString? cstrB)
 		=> CString.NullCompare(cstrA, cstrB) ?? CStringUtf8Comparator.Create().Compare(cstrA, cstrB);
 	/// <summary>
@@ -171,6 +180,9 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	///     </item>
 	/// </list>
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Int32 Compare(CString? cstrA, CString? cstrB, Boolean ignoreCase)
 		=> CString.NullCompare(cstrA, cstrB) ?? CStringUtf8Comparator.Create(ignoreCase).Compare(cstrA, cstrB);
 	/// <summary>
@@ -209,6 +221,9 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	///     </item>
 	/// </list>
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Int32 Compare(CString? cstrA, CString? cstrB, Boolean ignoreCase, CultureInfo? culture)
 		=> CString.NullCompare(cstrA, cstrB) ?? CStringUtf8Comparator.Create(ignoreCase, culture).Compare(cstrA, cstrB);
 	/// <summary>
@@ -241,6 +256,9 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	///     </item>
 	/// </list>
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Int32 Compare(CString? cstrA, CString? cstrB, StringComparison comparisonType)
 		=> CString.NullCompare(cstrA, cstrB) ?? CStringUtf8Comparator.Create(comparisonType).Compare(cstrA, cstrB);
 	/// <summary>
@@ -271,6 +289,9 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	///     </item>
 	/// </list>
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Int32 Compare(CString? textA, String? textB)
 		=> CString.NullCompare(textA, textB) ?? StringUtf8Comparator.Create().Compare(textA, textB, textB);
 	/// <summary>
@@ -302,6 +323,9 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	///     </item>
 	/// </list>
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Int32 Compare(CString? textA, String? textB, Boolean ignoreCase)
 		=> CString.NullCompare(textA, textB) ?? StringUtf8Comparator.Create(ignoreCase).Compare(textA, textB, textB);
 	/// <summary>
@@ -340,6 +364,9 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	///     </item>
 	/// </list>
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Int32 Compare(CString? textA, String? textB, Boolean ignoreCase, CultureInfo? culture)
 		=> CString.NullCompare(textA, textB) ??
 			StringUtf8Comparator.Create(ignoreCase, culture).Compare(textA, textB, textB);
@@ -374,6 +401,9 @@ public partial class CString : IComparable, IComparable<String>, IComparable<CSt
 	///     </item>
 	/// </list>
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Int32 Compare(CString? textA, String? textB, StringComparison comparisonType)
 		=> CString.NullCompare(textA, textB) ??
 			StringUtf8Comparator.Create(comparisonType).Compare(textA, textB, textB);

@@ -20,6 +20,9 @@ public partial class CString
 	/// <param name="sequence">The <see cref="CStringSequence"/> containing current UTF-8 text.</param>
 	/// <param name="index">Index element of current UTF-8 text into <paramref name="sequence"/>.</param>
 	/// <param name="length">Current UTF-8 text length.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	internal CString(CStringSequence sequence, Int32 index, Int32 length)
 	{
 		BufferItemState<CStringSequence> state = new(sequence, index, length);
@@ -45,6 +48,9 @@ public partial class CString
 	/// Specifies whether the UTF-8 text should be written with a null-termination character
 	/// into the <see cref="Stream"/>.
 	/// </param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal void Write(Stream strm, Boolean writeNullTermination)
 	{
@@ -70,6 +76,9 @@ public partial class CString
 	/// </param>
 	/// <param name="startIndex">The position of the first byte in the current instance to write.</param>
 	/// <param name="count">The number of bytes in the current instance to write.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal void Write(Stream strm, Int32 startIndex, Int32 count)
 	{

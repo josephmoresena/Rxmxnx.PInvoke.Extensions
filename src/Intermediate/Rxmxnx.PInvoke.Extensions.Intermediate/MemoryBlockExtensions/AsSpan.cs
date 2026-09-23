@@ -3,6 +3,9 @@ namespace Rxmxnx.PInvoke;
 public static partial class MemoryBlockExtensions
 {
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -13,6 +16,9 @@ public static partial class MemoryBlockExtensions
 		=> ArrayMemoryManager<T>.GetSpan((Array?)arr);
 #endif
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -24,6 +30,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -36,6 +45,9 @@ public static partial class MemoryBlockExtensions
 
 #if !UAP || UAP10_0_16299
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -47,6 +59,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -58,6 +73,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -69,6 +87,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -80,6 +101,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -91,6 +115,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -102,6 +129,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -113,6 +143,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -124,6 +157,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -135,6 +171,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -146,6 +185,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -157,6 +199,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -168,6 +213,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -179,6 +227,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -190,6 +241,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -201,6 +255,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -212,6 +269,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -223,6 +283,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -234,6 +297,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -245,6 +311,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -256,6 +325,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -267,6 +339,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -278,6 +353,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -289,6 +367,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -300,6 +381,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -311,6 +395,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -322,6 +409,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -333,6 +423,9 @@ public static partial class MemoryBlockExtensions
 #endif
 
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

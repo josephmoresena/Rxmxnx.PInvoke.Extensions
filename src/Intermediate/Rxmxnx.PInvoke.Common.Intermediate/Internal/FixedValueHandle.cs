@@ -68,6 +68,9 @@ internal class FixedValueHandle : IDisposable, IWrapper<Boolean>
 	/// <typeparam name="TDisposable">Type of <see cref="IDisposable"/> instance.</typeparam>
 	/// <param name="disposable">A <typeparamref name="TDisposable"/> instance.</param>
 	/// <returns>A <see cref="FixedValueHandle"/> instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static FixedValueHandle CreateFromDisposable<TDisposable>(TDisposable disposable)
 		where TDisposable : IDisposable
@@ -119,20 +122,35 @@ internal class FixedValueHandle : IDisposable, IWrapper<Boolean>
 		/// <summary>
 		/// Internal <see cref="MemoryHandle"/> instance.
 		/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecurityCritical]
+#endif
 		private MemoryHandle _handle;
 
 		/// <summary>
 		/// Internal pointer.
 		/// </summary>
-		protected void* Pointer => this._handle.Pointer;
+		protected void* Pointer
+		{
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecurityCritical]
+#endif
+			get => this._handle.Pointer;
+		}
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="handle">A <see cref="MemoryHandle"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		public Memory(MemoryHandle handle) => this._handle = handle;
 
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		protected override Boolean Dispose(Boolean disposing)
 		{
 			if (!base.Dispose(disposing) || !disposing) return false;

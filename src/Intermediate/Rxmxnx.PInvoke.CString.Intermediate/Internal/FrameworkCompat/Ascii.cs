@@ -37,6 +37,9 @@ using UIntPtr = nuint;
 /// <summary>
 /// Provides static methods for ASCII encoding.
 /// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+[SecurityCritical]
+#endif
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]

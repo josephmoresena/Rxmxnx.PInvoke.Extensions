@@ -69,4 +69,6 @@ internal sealed class DefaultMessageResource : IMessageResource
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Unexpected token type: {currentToken}. Expected token type: {expectedToken}.";
 	String IMessageResource.NotObjectType(Type type) => $"{type} is a ref struct; object boxing is not allowed.";
+	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type)
+		=> $"A {bufferType} buffer of cannot be casted to a {type} buffer.";
 }

@@ -23,16 +23,25 @@ internal static class TrimInfo
 	/// Internal UTF-8 empty text.
 	/// </summary>
 	/// <returns>A read-only byte span of UTF-8 null-characters.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static ReadOnlySpan<Byte> EmptyUt8Text() => "\0\0\0"u8;
 	/// <summary>
 	/// Internal Windows New line UTF-8 sequence.
 	/// </summary>
 	/// <returns>A read-only byte span containing UTF-8 new line.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static ReadOnlySpan<Byte> WindowsNewLine() => "\r\n"u8;
 	/// <summary>
 	/// Internal non-Windows New line UTF-8 sequence.
 	/// </summary>
 	/// <returns>A read-only byte span containing UTF-8 new line.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static ReadOnlySpan<Byte> NonWindowsNewLine() => "\n"u8;
 	/// <summary>
 	/// Indicates whether <see cref="String"/> type name contains the <c>String</c> word.
@@ -41,6 +50,9 @@ internal static class TrimInfo
 	/// <see langword="true"/> if <see cref="String"/> type name contains the <c>String</c> word;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Boolean StringTypeNameContainsString()
 		=> typeof(String).ToString().AsSpan().EndsWith(nameof(String).AsSpan());

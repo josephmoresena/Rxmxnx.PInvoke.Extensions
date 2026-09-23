@@ -93,6 +93,7 @@
         <Project Path="Test\Rxmxnx.PInvoke.CString.Tests.SourceGenerator\Rxmxnx.PInvoke.CString.Tests.SourceGenerator.csproj" />
         <Project Path="Test\Rxmxnx.PInvoke.CString.Tests\Rxmxnx.PInvoke.CString.Tests.csproj" />
         <Project Path="Test\Rxmxnx.PInvoke.Extensions.Tests\Rxmxnx.PInvoke.Extensions.Tests.csproj" />
+        <File Path="Test\x64.runsettings" />
         <File Path="Test\x86.runsettings" />
         <File Path="Test\Tests.props" />
         <File Path="Test\DotnetCoreAppTests.props" />

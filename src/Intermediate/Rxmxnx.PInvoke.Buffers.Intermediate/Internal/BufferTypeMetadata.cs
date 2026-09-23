@@ -37,8 +37,8 @@ internal sealed class BufferTypeMetadata<[DynamicallyAccessedMembers(BuffersHelp
 	/// </summary>
 	/// <param name="capacity">Buffer's capacity.</param>
 	/// <param name="components">Buffers components.</param>
-	/// <param name="isBinary">Indicates if current buffer is binary.</param>
-	/// <param name="appendComponents">Append components delegate.</param>
+	/// <param name="isBinary">Indicates if the current buffer is binary.</param>
+	/// <param name="appendComponents">Append components' delegate.</param>
 #if !PACKAGE && NET7_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif

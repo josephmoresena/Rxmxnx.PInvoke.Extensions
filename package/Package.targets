@@ -5,7 +5,7 @@
         <IsTempPackage Condition="'$(Version)' == '9999.99.99.99-tmp'">true</IsTempPackage>
         <IsTempPackage Condition="'$(Version)' != '9999.99.99.99-tmp'">false</IsTempPackage>
         <DefineConstants Condition="'$(IsTempPackage)' == 'true'">$(DefineConstants);TEMP_PACKAGE</DefineConstants>
-        <NoWarn>$(NoWarn);NU5128</NoWarn>
+        <NoWarn>$(NoWarn);NU5128;NU1902</NoWarn>
     </PropertyGroup>
 
     <!-- Exclude unnecesary binaries -->

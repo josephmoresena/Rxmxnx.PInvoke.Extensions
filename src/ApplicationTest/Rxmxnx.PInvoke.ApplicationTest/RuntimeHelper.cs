@@ -117,12 +117,40 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			writer.WriteLine($"OS Arch: {RuntimeInformation.OSArchitecture.GetName()}");
 #if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 			writer.WriteLine($"OS Version: {Environment.OSVersion}");
-			writer.WriteLine($"Computer: {Environment.MachineName}");
-			writer.WriteLine($"User: {Environment.UserName}");
+			try
+			{
+				writer.WriteLine($"Computer: {Environment.MachineName}");
+			}
+			catch (Exception ex)
+			{
+				writer.WriteLine("**Unable to retrieve computer**");
+				if (!AotInfo.IsReflectionDisabled)
+					writer.WriteLine(ex);
+			}
+			try
+			{
+				writer.WriteLine($"User: {Environment.UserName}");
+			}
+			catch (Exception ex)
+			{
+				writer.WriteLine("**Unable to retrieve user**");
+				if (!AotInfo.IsReflectionDisabled)
+					writer.WriteLine(ex);
+			}
 #endif
 			writer.WriteLine($"UI Culture: {CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}");
+			writer.WriteLine($"New Line: {CString.NewLine.ToString().Replace("\r", "\\r").Replace("\n", "\\n")}");
 #if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
-			writer.WriteLine($"System Path: {Environment.SystemDirectory}");
+			try
+			{
+				writer.WriteLine($"System Path: {Environment.SystemDirectory}");
+			}
+			catch (Exception ex)
+			{
+				writer.WriteLine("**Unable to retrieve system path**");
+				if (!AotInfo.IsReflectionDisabled)
+					writer.WriteLine(ex);
+			}
 			writer.WriteLine($"Current Path: {Environment.CurrentDirectory}");
 #endif
 			writer.WriteLine($"Process Arch: {RuntimeInformation.ProcessArchitecture.GetName()}");
@@ -178,10 +206,28 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			writer.WriteLine($"Buffer AutoComposition Enabled: {BufferManager.BufferAutoCompositionEnabled}");
 			if (!SystemInfo.IsWebRuntime)
 			{
-				writer.WriteLine($"String constant: {RuntimeHelper.runtimeName.AsSpan().IsLiteral()}");
+				try
+				{
+					writer.WriteLine($"String constant: {RuntimeHelper.runtimeName.AsSpan().IsLiteral()}");
+				}
+				catch (Exception ex)
+				{
+					writer.WriteLine("**Unable to retrieve runtime string constant info**");
+					if (!AotInfo.IsReflectionDisabled)
+						writer.WriteLine(ex);
+				}
 				writer.WriteLine($"CString.Empty literal: {CString.IsImagePersistent(CString.Empty)}");
+				writer.WriteLine($"CString.NewLine literal: {CString.IsImagePersistent(CString.NewLine)}");
+				writer.WriteLine($"CString.Null literal: {CString.IsImagePersistent(CString.Zero)}");
 			}
 			writer.WriteLine($"Hardcoded Array literal: {!RuntimeHelper.Null.AsSpan().MayBeNonLiteral()}");
+#if NET5_0_OR_GREATER
+			writer.WriteLine(
+				$"CString.Null pointer: 0x{NativeUtilities.GetUnsafeIntPtr(in CString.Zero.GetPinnableReference()):X}");
+#else
+			writer.WriteLine(
+				$"CString.Null pointer: 0x{NativeUtilities.GetUnsafeIntPtr(in CString.Zero.GetPinnableReference()).ToString("X")}");
+#endif
 #if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
 			if (SystemInfo.IsWebRuntime || AotInfo.IsReflectionDisabled || !SystemInfo.IsMonoRuntime) return;
 			writer.WriteLine("========== StackTrace information ==========");
@@ -289,13 +335,25 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				_ => $"{architecture}",
 			};
 #if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
-		private static String GetAssemblyName(this Assembly assembly) => $"{assembly.FullName} {assembly.Location}";
+		private static String GetAssemblyName(this Assembly assembly)
+		{
+			String? location;
+			try
+			{
+				location = assembly.Location;
+			}
+			catch (Exception)
+			{
+				location = "**Unable to retrieve assembly location**";
+			}
+			return $"{assembly.FullName} {location}";
+		}
 #endif
 #if !CSHARP9_0
 		private static ReadOnlySpan<Byte> NullBytes()
 		{
 			Byte[] utf8 = { (Byte)'N', (Byte)'u', (Byte)'l', (Byte)'l', (Byte)'\0', };
-#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET461 && !WINDOWS_UWP
+#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && (NET462_OR_GREATER || WINDOWS_UWP)
 			return utf8.AsSpan()[..^1];
 #else
 			return utf8.AsSpan().Slice(0, utf8.Length - 1);

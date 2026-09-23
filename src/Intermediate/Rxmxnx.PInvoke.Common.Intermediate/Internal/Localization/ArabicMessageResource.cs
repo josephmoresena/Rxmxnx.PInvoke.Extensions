@@ -68,4 +68,6 @@ internal sealed class ArabicMessageResource : IMessageResource
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"نوع الرمز غير المتوقع: {currentToken}. نوع الرمز المتوقع: {expectedToken}.";
 	String IMessageResource.NotObjectType(Type type) => $"{type} هو ref struct؛ لا يُسمح بتغليف الكائن.";
+	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type)
+		=> $"لا يمكن تحويل مخزن {bufferType} إلى مخزن {type}.";
 }

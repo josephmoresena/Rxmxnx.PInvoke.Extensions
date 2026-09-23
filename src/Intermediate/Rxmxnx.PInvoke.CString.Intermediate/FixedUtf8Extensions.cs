@@ -18,6 +18,9 @@ public static unsafe class FixedUtf8Extensions
 	/// </summary>
 	/// <param name="value">A <see cref="String"/> instance.</param>
 	/// <returns>The number of UTF-8 units produced by encoding the specified <see cref="String"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -29,6 +32,9 @@ public static unsafe class FixedUtf8Extensions
 	/// </summary>
 	/// <param name="chars">The span of characters to encode.</param>
 	/// <returns>The number of UTF-8 units produced by encoding the specified character span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Int32 GetUtf8Count(this ReadOnlySpan<Char> chars)
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
@@ -45,6 +51,9 @@ public static unsafe class FixedUtf8Extensions
 	/// </summary>
 	/// <param name="source">A read-only byte span to decode.</param>
 	/// <returns>The number of characters produced by decoding the UTF-8 encoded text.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Int32 GetUtf16Count(this ReadOnlySpan<Byte> source)
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
@@ -64,6 +73,9 @@ public static unsafe class FixedUtf8Extensions
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Int32 GetCharCountFromUtf8(ReadOnlySpan<Byte> source)
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
@@ -79,6 +91,9 @@ public static unsafe class FixedUtf8Extensions
 	/// </summary>
 	/// <param name="bytes">The read-only byte span containing the UTF-8 text to decode.</param>
 	/// <returns>A new <see cref="String"/> instance containing the decoded text.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static String ToUtf16(this ReadOnlySpan<Byte> bytes)
 	{
@@ -112,6 +127,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <typeparam name="TAction">Type of <see cref="IReadOnlyFixedContextAction{T}"/>.</typeparam>
 	/// <param name="cstr">The <see cref="CString"/> instance to pin during the action.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TAction>(this CString? cstr, TAction? action)
 #if !NET9_0_OR_GREATER
@@ -133,6 +151,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <typeparam name="TAction">Type of <see cref="IReadOnlyFixedContextAction{T}"/>.</typeparam>
 	/// <param name="cstr">The <see cref="CString"/> instance to pin during the action.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -159,6 +180,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <param name="cstr">The <see cref="CString"/> instance to pin during the function.</param>
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TResult, TFunction>(this CString? cstr, TFunction? func, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -184,6 +208,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <param name="cstr">The <see cref="CString"/> instance to pin during the function.</param>
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -209,6 +236,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <typeparam name="TAction">Type of <see cref="IFixedPointerListAction"/>.</typeparam>
 	/// <param name="seq">Current <see cref="CStringSequence"/> instance.</param>
 	/// <param name="action">A <see cref="IFixedPointerListAction"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TAction>(this CStringSequence? seq, TAction? action)
 #if !NET9_0_OR_GREATER
@@ -234,8 +264,7 @@ public static unsafe class FixedUtf8Extensions
 #else
 					FixedUtf8Extensions.InitializeInfo(seq, Unsafe.AsPointer(
 						                                   ref MemoryMarshal.GetReference(
-							                                   stackalloc Byte[seq.Count *
-								                                   sizeof(FixedPointerInfo)]))),
+							                                   stackalloc Byte[seq.Count * sizeof(FixedPointerInfo)]))),
 #endif
 			});
 		}
@@ -247,6 +276,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <typeparam name="TAction">Type of <see cref="IFixedPointerListAction"/>.</typeparam>
 	/// <param name="seq">Current <see cref="CStringSequence"/> instance.</param>
 	/// <param name="action">A <see cref="IFixedPointerListAction"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -274,8 +306,7 @@ public static unsafe class FixedUtf8Extensions
 #else
 					FixedUtf8Extensions.InitializeInfo(seq, Unsafe.AsPointer(
 						                                   ref MemoryMarshal.GetReference(
-							                                   stackalloc Byte[seq.Count *
-								                                   sizeof(FixedPointerInfo)]))),
+							                                   stackalloc Byte[seq.Count * sizeof(FixedPointerInfo)]))),
 #endif
 			});
 		}
@@ -289,6 +320,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <param name="seq">Current <see cref="CStringSequence"/> instance.</param>
 	/// <param name="func">A <see cref="IFixedPointerListFunction{TResult}"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TFunction, TResult>(this CStringSequence? seq, TFunction? func, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -318,8 +352,7 @@ public static unsafe class FixedUtf8Extensions
 #else
 					FixedUtf8Extensions.InitializeInfo(seq, Unsafe.AsPointer(
 						                                   ref MemoryMarshal.GetReference(
-							                                   stackalloc Byte[seq.Count *
-								                                   sizeof(FixedPointerInfo)]))),
+							                                   stackalloc Byte[seq.Count * sizeof(FixedPointerInfo)]))),
 #endif
 			});
 		}
@@ -333,6 +366,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <param name="seq">Current <see cref="CStringSequence"/> instance.</param>
 	/// <param name="func">A <see cref="IFixedPointerListFunction{TResult}"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -361,8 +397,7 @@ public static unsafe class FixedUtf8Extensions
 #else
 					FixedUtf8Extensions.InitializeInfo(seq, Unsafe.AsPointer(
 						                                   ref MemoryMarshal.GetReference(
-							                                   stackalloc Byte[seq.Count *
-								                                   sizeof(FixedPointerInfo)]))),
+							                                   stackalloc Byte[seq.Count * sizeof(FixedPointerInfo)]))),
 #endif
 			});
 		}
@@ -376,6 +411,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <param name="source">A <see cref="CStringSequence"/> instance.</param>
 	/// <param name="bytePtr">Destination pointer.</param>
 	/// <returns>Initialized <see cref="FixedPointerInfo"/> read-only span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -392,6 +430,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <param name="source">A <see cref="CStringSequence"/> instance.</param>
 	/// <param name="span">Destination span.</param>
 	/// <returns>Initialized <see cref="FixedPointerInfo"/> read-only span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -427,6 +468,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <param name="bytes">The read-only byte span containing the UTF-8 text to decode.</param>
 	/// <param name="chars">Temporal UTF-16 buffer.</param>
 	/// <returns>A new <see cref="String"/> instance containing the decoded text.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static String DecodeUtf8(ReadOnlySpan<Byte> bytes, Span<Char> chars)
 	{
 		Int32 strLen;

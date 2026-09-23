@@ -17,6 +17,9 @@ public static unsafe partial class NativeUtilities
 	/// <typeparam name="T">A <see cref="ValueType"/> of value.</typeparam>
 	/// <param name="value">A <typeparamref name="T"/> read-only reference.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedReferenceAction{T}"/> delegate.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T>(in T value, ReadOnlyFixedReferenceAction<T> action)
 #if NET9_0_OR_GREATER
@@ -44,6 +47,9 @@ public static unsafe partial class NativeUtilities
 	/// <typeparam name="T">Type of referenced value.</typeparam>
 	/// <param name="value">A <typeparamref name="T"/> reference.</param>
 	/// <param name="action">A <see cref="FixedReferenceAction{T}"/> delegate.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T>(ref T value, FixedReferenceAction<T> action)
 #if NET9_0_OR_GREATER
@@ -73,6 +79,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="value">A <typeparamref name="T"/> read-only reference.</param>
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedReferenceAction{T, TArg}"/> delegate.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(in T value, TArg arg, ReadOnlyFixedReferenceAction<T, TArg> action)
 #if NET9_0_OR_GREATER
@@ -102,6 +111,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="value">A <typeparamref name="T"/> reference.</param>
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A <see cref="FixedReferenceAction{T, TArg}"/> delegate.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(ref T value, TArg arg, FixedReferenceAction<T, TArg> action)
 #if NET9_0_OR_GREATER
@@ -131,6 +143,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="value">A <typeparamref name="T"/> read-only reference.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedReferenceFunc{T, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TResult>(in T value, ReadOnlyFixedReferenceFunc<T, TResult> func)
 #if NET9_0_OR_GREATER
@@ -160,6 +175,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="value">A <typeparamref name="T"/> reference.</param>
 	/// <param name="func">A <see cref="FixedReferenceFunc{T, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TResult>(ref T value, FixedReferenceFunc<T, TResult> func)
 #if NET9_0_OR_GREATER
@@ -191,6 +209,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="ReadOnlyFixedReferenceFunc{T, TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TArg, TResult>(in T value, TArg arg,
 		ReadOnlyFixedReferenceFunc<T, TArg, TResult> func)
@@ -223,6 +244,9 @@ public static unsafe partial class NativeUtilities
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="func">A <see cref="FixedReferenceFunc{T, TArg, TResult}"/> delegate.</param>
 	/// <returns>The result of <paramref name="func"/> execution.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TArg, TResult>(ref T value, TArg arg,
 		FixedReferenceFunc<T, TArg, TResult> func)

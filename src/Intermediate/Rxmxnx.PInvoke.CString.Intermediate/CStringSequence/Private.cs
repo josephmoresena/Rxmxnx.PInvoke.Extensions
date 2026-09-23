@@ -97,6 +97,9 @@ public partial class CStringSequence
 	/// </summary>
 	/// <param name="arrayLength">Array length.</param>
 	/// <returns>A byte array containing each non-empty UTF-8 text bytes in the current instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private Byte[] CreateTextArray(Int32 arrayLength)
 	{
 		Byte[] result = CString.CreateByteArray(arrayLength);
@@ -119,6 +122,9 @@ public partial class CStringSequence
 	/// The zero-based index of the segment that contains <paramref name="offset"/>, or -1 if the offset falls outside
 	/// all segments.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private Int32 ResolveIndexFromOffset(Int32 offset)
 	{
@@ -140,6 +146,9 @@ public partial class CStringSequence
 	/// The zero-based index of the first segment whose length equals <paramref name="length"/>, or -1 if no match is
 	/// found.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private Int32 GetIndexOfExactLength(Int32 length)
 	{

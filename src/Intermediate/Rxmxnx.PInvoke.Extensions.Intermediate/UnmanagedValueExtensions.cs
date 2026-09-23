@@ -115,6 +115,9 @@ public static class UnmanagedValueExtensions
 	/// If the input array is <see langword="null"/>, the method returns <see langword="null"/>.
 	/// If the input array is empty, the method returns an empty array.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	[return: NotNullIfNotNull(nameof(array))]
 	public static Byte[]? ToBytes<TSource>(this TSource[]? array) where TSource : unmanaged
@@ -140,6 +143,9 @@ public static class UnmanagedValueExtensions
 	/// If the input array is <see langword="null"/>, the method returns <see langword="null"/>.
 	/// If the input array is empty, the method returns an empty array.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	[return: NotNullIfNotNull(nameof(array))]
 	public static TDestination[]? ToValues<TSource, TDestination>(this TSource[]? array)
@@ -168,8 +174,11 @@ public static class UnmanagedValueExtensions
 	/// If the input array is empty, the method returns an empty array and sets
 	/// <paramref name="residual"/> to an empty array.
 	/// </remarks>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[return: NotNullIfNotNull(nameof(array))]
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TDestination[]? ToValues<TSource, TDestination>(this TSource[]? array,
 		[NotNullIfNotNull(nameof(array))] out Byte[]? residual) where TSource : unmanaged where TDestination : unmanaged
 	{
@@ -191,6 +200,9 @@ public static class UnmanagedValueExtensions
 	/// </summary>
 	/// <param name="span">A source binary span.</param>
 	/// <returns>A new binary array.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static Byte[] ToArray(ReadOnlySpan<Byte> span)
 	{
 		if (span.IsEmpty) return [];
@@ -204,6 +216,9 @@ public static class UnmanagedValueExtensions
 	/// <typeparam name="T">Type of the elements in the array.</typeparam>
 	/// <param name="span">A source <typeparamref name="T"/> span.</param>
 	/// <returns>A new <typeparamref name="T"/> array.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static T[] ToArray<T>(ReadOnlySpan<T> span) where T : unmanaged
 	{
 		if (span.IsEmpty) return [];

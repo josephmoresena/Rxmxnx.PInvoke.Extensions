@@ -34,6 +34,9 @@ public static unsafe partial class NativeUtilities
 	/// To ensure that the pointer remains valid, the delegate instance must be kept alive and not allowed to be collected by
 	/// the GC.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static FuncPtr<TDelegate> GetUnsafeFuncPtr<TDelegate>(TDelegate delegateInstance) where TDelegate : Delegate
 		=> (FuncPtr<TDelegate>)Marshal.GetFunctionPointerForDelegate(delegateInstance);
@@ -46,9 +49,12 @@ public static unsafe partial class NativeUtilities
 	/// <returns><see cref="ReadOnlyValPtr{T}"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
-	/// won't be moved or collected by garbage collector.
+	/// won't be moved or collected by the garbage collector.
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ReadOnlyValPtr<T> GetUnsafeValPtr<T>(in T value)
 #if NET9_0_OR_GREATER
@@ -67,9 +73,12 @@ public static unsafe partial class NativeUtilities
 	/// <returns>An unsafe pointer of type <see cref="ValPtr{T}"/> pointing to the referenced value.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
-	/// won't be moved or collected by garbage collector.
+	/// won't be moved or collected by the garbage collector.
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ValPtr<T> GetUnsafeValPtrFromRef<T>(ref T refValue)
 #if NET9_0_OR_GREATER
@@ -89,9 +98,12 @@ public static unsafe partial class NativeUtilities
 	/// <returns><see cref="IntPtr"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
-	/// won't be moved or collected by garbage collector.
+	/// won't be moved or collected by the garbage collector.
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IntPtr GetUnsafeIntPtr<T>(in T value) where T : unmanaged
 	{
@@ -110,6 +122,9 @@ public static unsafe partial class NativeUtilities
 	/// won't be moved or collected by the garbage collector.
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static UIntPtr GetUnsafeUIntPtr<T>(in T value) where T : unmanaged
 	{
@@ -140,6 +155,9 @@ public static unsafe partial class NativeUtilities
 	/// types
 	/// that have the same size in memory.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref readonly TDestination Transform<TSource, TDestination>(in TSource value)
 		where TSource : unmanaged where TDestination : unmanaged
@@ -172,6 +190,9 @@ public static unsafe partial class NativeUtilities
 	/// types
 	/// that have the same size in memory.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref TDestination TransformReference<TSource, TDestination>(ref TSource refValue)
 		where TSource : unmanaged where TDestination : unmanaged
@@ -185,6 +206,9 @@ public static unsafe partial class NativeUtilities
 	/// <typeparam name="TSource"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
 	/// <param name="value">A read-only reference to <typeparamref name="TSource"/> value.</param>
 	/// <returns><see cref="Byte"/> array.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Byte[] ToBytes<TSource>(in TSource value) where TSource : unmanaged
 	{
@@ -217,6 +241,9 @@ public static unsafe partial class NativeUtilities
 	/// Throws an exception when the length of <paramref name="destination"/> span minus the offset is less
 	/// than the size of <typeparamref name="TSource"/>.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void CopyBytes<TSource>(in TSource value, Span<Byte> destination, Int32 offset = 0)
 		where TSource : unmanaged
@@ -237,6 +264,9 @@ public static unsafe partial class NativeUtilities
 	/// </summary>
 	/// <typeparam name="TEnum">The type of the enumeration.</typeparam>
 	/// <returns>A read-only span that contains the values of the constants in <typeparamref name="TEnum"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static ReadOnlySpan<TEnum> GetEnumValuesSpan<TEnum>() where TEnum : struct, Enum
 		=> EnumValueHelper<TEnum>.Values.Span;
 	/// <summary>
@@ -245,6 +275,9 @@ public static unsafe partial class NativeUtilities
 	/// <typeparam name="TEnum">The type of the enumeration.</typeparam>
 	/// <returns>The span representation of the array.</returns>
 	/// <returns>A string read-only span of the names of the constants in <typeparamref name="TEnum"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static ReadOnlySpan<String> GetEnumNamesSpan<TEnum>() where TEnum : struct, Enum
 		=> EnumNameHelper<TEnum>.Values.Span;
 	/// <summary>
@@ -260,6 +293,9 @@ public static unsafe partial class NativeUtilities
 	/// The output context owns the pinned memory and releases it when the returning object is disposed.
 	/// Consumers should use a <see langword="using"/> statement or otherwise dispose the returned object.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

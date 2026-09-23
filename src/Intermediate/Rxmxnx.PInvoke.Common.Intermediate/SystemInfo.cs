@@ -198,6 +198,9 @@ public static partial class SystemInfo
 	/// Indicates whether the current application is running on one of the specified platforms.
 	/// </summary>
 	/// <param name="platforms">Case-insensitive platform names.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Boolean IsOsPlatform(
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<String?> platforms
@@ -217,6 +220,9 @@ public static partial class SystemInfo
 	/// Indicates whether the current application is running on one of the specified platforms.
 	/// </summary>
 	/// <param name="platforms">Case-insensitive platform names.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Boolean IsOsPlatform(
 #if !NET9_0_OR_GREATER

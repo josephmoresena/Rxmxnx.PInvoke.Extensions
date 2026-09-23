@@ -17,6 +17,9 @@ public unsafe partial class BufferTypeMetadata
 	/// <param name="buffer">A managed <typeparamref name="TBuffer"/> reference.</param>
 	/// <param name="spanLength">Required span length.</param>
 	/// <returns>A <typeparamref name="T"/> span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Span<T> CreateSpan<T, TBuffer>(ref TBuffer buffer, Int32 spanLength)
 		=> MemoryMarshalCompat.CreateUnsafeSpan<T>(Unsafe.AsPointer(ref buffer), spanLength);
@@ -32,6 +35,9 @@ public unsafe partial class BufferTypeMetadata
 	/// <see cref="GC.KeepAlive"/>, which is for objects). Always writes the first element; writes
 	/// the last only when <paramref name="spanLength"/> is greater than 1.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.NoInlining)]
 	private static void Clear<T, TBuffer>(ref TBuffer buffer, Int32 spanLength) where TBuffer : struct
 	{

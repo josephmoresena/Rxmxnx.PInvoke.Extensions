@@ -75,12 +75,18 @@ public partial class CStringBuilder
 		/// Retrieves the span of unused space in this chunk.
 		/// </summary>
 		/// <returns>The span of unused space in this chunk.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		private Span<Byte> GetAvailable() => this._buffer.AsSpan()[this._count..];
 		/// <summary>
 		/// Removes the range from <paramref name="start"/> to <paramref name="length"/>
 		/// </summary>
 		/// <param name="start">Start index.</param>
 		/// <param name="length">Range length.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		private void RemoveRange(Int32 start, Int32 length)
 		{
 			if (length >= this._count)

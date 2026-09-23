@@ -22,13 +22,13 @@
     </PropertyGroup>
     <!-- NETFRAMEWORK_SUPPORT -->
     <PropertyGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' And $([MSBuild]::IsOSPlatform('WINDOWS'))">
-        <TestSdkVersion Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net462'))">18.9.0</TestSdkVersion>
+        <TestSdkVersion Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net462'))">18.10.1</TestSdkVersion>
         <VisualStudioRunnerVersion Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net462'))">2.4.5</VisualStudioRunnerVersion>
         <VisualStudioRunnerVersion Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net472'))">4.0.0</VisualStudioRunnerVersion>
     </PropertyGroup>
     <!-- CURRENT_SUPPORTED -->
     <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
-        <TestSdkVersion>18.9.0</TestSdkVersion>
+        <TestSdkVersion>18.10.1</TestSdkVersion>
         <VisualStudioRunnerVersion>4.0.0</VisualStudioRunnerVersion>
         <CoverletColectorVersion>10.0.1</CoverletColectorVersion>
     </PropertyGroup>

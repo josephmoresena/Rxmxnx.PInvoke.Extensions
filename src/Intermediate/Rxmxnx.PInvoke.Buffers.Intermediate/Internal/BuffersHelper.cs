@@ -138,8 +138,11 @@ internal static class BuffersHelper
 	/// Retrieves the components sizes for given <paramref name="count"/>.
 	/// </summary>
 	/// <param name="components">Components buffer.</param>
-	/// <param name="count">Amount of items in required buffer.</param>
-	/// <returns>Enumeration of components sizes.</returns>
+	/// <param name="count">Number of items in the required buffer.</param>
+	/// <returns>Enumeration of components' sizes.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Span<UInt16> GetBinaryComponents(Span<UInt16> components, UInt16 count)
 	{
 		Int32 found = 0;
@@ -156,6 +159,9 @@ internal static class BuffersHelper
 	/// <typeparam name="T">The type of items in the buffer</typeparam>
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE && NET7_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -229,6 +235,9 @@ internal static class BuffersHelper
 	/// <param name="componentB">A <see cref="BufferTypeMetadata"/> instance.</param>
 	/// <param name="isBinary">Output. Indicates whether resulting composition type is binary.</param>
 	/// <returns>Resulting composition type capacity.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static Int32 GetCapacity<T>(BufferTypeMetadata<T> componentA, BufferTypeMetadata<T> componentB,
 		out Boolean isBinary)
 	{
@@ -288,7 +297,9 @@ internal static class BuffersHelper
 			result = ManagedBinaryBuffer<T>.GetMetadata(genericType);
 		}
 #else
-		if (!BuffersHelper.GetMetadataFromType<T>(typeofB).IsBinary || !BuffersHelper.BufferAutoCompositionEnabled)
+		if (typeofB != typeof(Atomic<T>) && !BuffersHelper.GetMetadataFromType<T>(typeofB).IsBinary ||
+		    !BuffersHelper.BufferAutoCompositionEnabled)
+			// Avoid using reflection for Atomic<T> metadata retrieving.
 			return default;
 		BufferTypeMetadata<T>? result = default;
 		try
@@ -313,6 +324,9 @@ internal static class BuffersHelper
 	/// <returns>
 	/// The first available metadata entry within the specified range; otherwise, <see langword="null"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
@@ -367,6 +381,9 @@ internal static class BuffersHelper
 	/// <typeparam name="T">The type of items in the buffer</typeparam>
 	/// <param name="bufferType">Type of buffer.</param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[UnconditionalSuppressMessage("Trimming", "IL2070")]
 	private static BufferTypeMetadata<T> GetMetadataFromType<T>(
 		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] Type bufferType)
@@ -386,6 +403,14 @@ internal static class BuffersHelper
 				result = (BufferTypeMetadata?)typeMetadataInfo?.GetValue(null);
 			}
 		}
+#if NETFRAMEWORK || NETSTANDARD2_0
+		catch (SecurityException)
+		{
+			if (SystemInfo.UsesNativeSpan || SystemInfo.IsMonoRuntime || AotInfo.IsNativeAot)
+				throw;
+			// Allow .NET Framework, .NET Core 2.0 (Not CoreRT)
+		}
+#endif
 		catch (TargetInvocationException tie)
 		{
 			if (tie.InnerException is not null)

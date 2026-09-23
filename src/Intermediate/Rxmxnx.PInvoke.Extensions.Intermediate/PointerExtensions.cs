@@ -51,6 +51,9 @@ public static unsafe class PointerExtensions
 	/// </summary>
 	/// <param name="ptr">The <see cref="IntPtr"/> instance to convert.</param>
 	/// <returns>The <see cref="UIntPtr"/> instance that represents the same pointer as this instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static UIntPtr ToUIntPtr(this MemoryHandle ptr) => (UIntPtr)ptr.Pointer;
 	/// <summary>
@@ -65,6 +68,9 @@ public static unsafe class PointerExtensions
 	/// </summary>
 	/// <param name="uptr">The <see cref="UIntPtr"/> instance to convert.</param>
 	/// <returns>The <see cref="IntPtr"/> instance that represents the same pointer as this instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IntPtr ToIntPtr(this MemoryHandle uptr) => (IntPtr)uptr.Pointer;
 
@@ -98,6 +104,9 @@ public static unsafe class PointerExtensions
 	/// </summary>
 	/// <param name="handle">The <see cref="UIntPtr"/> pointing to the start of UTF-16 text in memory.</param>
 	/// <returns>A <see cref="String"/> representation of the UTF-16 text in memory.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static String? GetUnsafeString(this MemoryHandle handle) => handle.GetUnsafeString(0);
 	/// <summary>
@@ -153,6 +162,9 @@ public static unsafe class PointerExtensions
 	/// </param>
 	/// <returns>A <see cref="String"/> representation of the UTF-16 text in memory.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static String? GetUnsafeString(this MemoryHandle handle, Int32 length)
 	{
@@ -209,6 +221,9 @@ public static unsafe class PointerExtensions
 	/// <param name="length">The number of <typeparamref name="T"/> values to include in the array.</param>
 	/// <returns>A new array of <typeparamref name="T"/>, or <see langword="null"/> if the pointer is zero.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static T[]? GetUnsafeArray<T>(this MemoryHandle handle, Int32 length) where T : unmanaged
 	{
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
@@ -231,6 +246,9 @@ public static unsafe class PointerExtensions
 	/// the span.
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<T> GetUnsafeSpan<T>(this IntPtr ptr, Int32 length) where T : unmanaged
 	{
@@ -255,6 +273,9 @@ public static unsafe class PointerExtensions
 	/// the span.
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<T> GetUnsafeSpan<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
 	{
@@ -279,6 +300,9 @@ public static unsafe class PointerExtensions
 	/// the span.
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<T> GetUnsafeSpan<T>(this MemoryHandle handle, Int32 length)
 	{
@@ -303,6 +327,9 @@ public static unsafe class PointerExtensions
 	/// the span.
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4144)]
@@ -330,6 +357,9 @@ public static unsafe class PointerExtensions
 	/// the span.
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4144)]
@@ -357,6 +387,9 @@ public static unsafe class PointerExtensions
 	/// the span.
 	/// The span does not own the memory it points to, it's merely a projection over the existing memory.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4144)]
@@ -380,6 +413,9 @@ public static unsafe class PointerExtensions
 	/// If the function the delegate represents is moved or deallocated, invoking the delegate can cause unexpected behavior or
 	/// application crashes.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TDelegate? GetUnsafeDelegate<TDelegate>(this IntPtr ptr) where TDelegate : Delegate
 #if NETSTANDARD1_2_OR_GREATER || NETCOREAPP || NET451_OR_GREATER || UAP10_0
@@ -415,6 +451,9 @@ public static unsafe class PointerExtensions
 	/// behavior
 	/// or application crashes.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref T GetUnsafeReference<T>(this IntPtr ptr) where T : unmanaged
 		=> ref Unsafe.AsRef<T>(ptr.ToPointer());
@@ -431,6 +470,9 @@ public static unsafe class PointerExtensions
 	/// behavior
 	/// or application crashes.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref T GetUnsafeReference<T>(this UIntPtr uptr) where T : unmanaged
 		=> ref Unsafe.AsRef<T>(uptr.ToPointer());
@@ -447,6 +489,9 @@ public static unsafe class PointerExtensions
 	/// behavior
 	/// or application crashes.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref readonly T GetUnsafeReadOnlyReference<T>(this IntPtr ptr) where T : unmanaged
 		=> ref Unsafe.AsRef<T>(ptr.ToPointer());
@@ -463,6 +508,9 @@ public static unsafe class PointerExtensions
 	/// behavior
 	/// or application crashes.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref readonly T GetUnsafeReadOnlyReference<T>(this UIntPtr uptr) where T : unmanaged
 		=> ref Unsafe.AsRef<T>(uptr.ToPointer());
@@ -554,6 +602,9 @@ public static unsafe class PointerExtensions
 	/// If the memory containing the UTF-16 text is moved or deallocated, accessing the span can cause unexpected behavior
 	/// or application crashes.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static ReadOnlySpan<Char> GetUnsafeReadOnlySpanFromNullTerminated(this ReadOnlyValPtr<Char> char0)
 		=> MemoryMarshal.CreateReadOnlySpanFromNullTerminated(char0);
 	/// <summary>
@@ -569,6 +620,9 @@ public static unsafe class PointerExtensions
 	/// If the memory containing the UTF-8 text is moved or deallocated, accessing the span can cause unexpected behavior
 	/// or application crashes.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static ReadOnlySpan<Byte> GetUnsafeReadOnlySpanFromNullTerminated(this ReadOnlyValPtr<Byte> char0)
 		=> MemoryMarshal.CreateReadOnlySpanFromNullTerminated(char0);
 
@@ -622,6 +676,9 @@ public static unsafe class PointerExtensions
 	/// The reliability of the obtained information depends on the lifetime and validity of the pointer at the time
 	/// of method invocation.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static String GetStringFromCharPointer(Char* chrPtr, Int32 length)
 		=> length == default ? new(chrPtr) : new ReadOnlySpan<Char>(chrPtr, length).ToString();

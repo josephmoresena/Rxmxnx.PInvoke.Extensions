@@ -36,7 +36,13 @@ internal partial class FixedPointer
 			this._disposable = disposable;
 		}
 
-		IntPtr IFixedPointer.Pointer => this.Value is IFixedPointer ptr ? ptr.Pointer : default;
+		IntPtr IFixedPointer.Pointer
+		{
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SecuritySafeCritical]
+#endif
+			get => this.Value is IFixedPointer ptr ? ptr.Pointer : default;
+		}
 
 #if !NETSTANDARD2_1 && !NETCOREAPP
 		/// <inheritdoc cref="IEquatable{TFixed}.Equals(TFixed)"/>

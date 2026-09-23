@@ -37,12 +37,18 @@ public partial class ValueRegion<T>
 		private protected override T[] AsArray() => this._array;
 
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		internal override Boolean TryGetMemory(out ReadOnlyMemory<T> memory)
 		{
 			memory = new(this._array);
 			return true;
 		}
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		internal override ReadOnlySpan<T> AsSpan()
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			=> MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(this._array),

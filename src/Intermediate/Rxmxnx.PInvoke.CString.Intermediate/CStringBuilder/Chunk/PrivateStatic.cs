@@ -1,3 +1,7 @@
+#if NET462_OR_GREATER || NETSTANDARD2_0
+using Utf8 = Rxmxnx.PInvoke.Internal.FrameworkCompat.Utf8Compat;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 public partial class CStringBuilder
@@ -31,9 +35,12 @@ public partial class CStringBuilder
 		/// <param name="capacity">Current chunk capacity.</param>
 		/// <param name="required">Required new bytes.</param>
 		/// <param name="constantLength">
-		/// Indicates whether the required chunk capacity are equals to <paramref name="capacity"/>.
+		/// Indicates whether the required chunk capacity is equal to <paramref name="capacity"/>.
 		/// </param>
 		/// <returns>Information for data insertion.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		private static InsertInfo GetInsertInfo(Int32 capacity, Int32 required, Boolean constantLength)
 		{
 			Byte count = 0;
@@ -57,6 +64,9 @@ public partial class CStringBuilder
 		/// Indicates whether the next array is the same size of <paramref name="current"/>.
 		/// </param>
 		/// <returns>The array of insertion chunks.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		private static Chunk[] GetInsertChunks(Chunk current, InsertInfo info, Int32 initialCount, Boolean sameSize)
 		{
 			Chunk[] chunks = new Chunk[info.Chunks + 1];
@@ -77,6 +87,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
 		/// <param name="newData">Input. New data to append. Output. Remaining data to append.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void FillFirst(Chunk chunk, ref ReadOnlySpan<Byte> newData)
 		{
@@ -114,6 +127,9 @@ public partial class CStringBuilder
 		/// </summary>
 		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
 		/// <param name="newData">Input. New data to append. Output. Remaining data to append.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void FillFirst(Chunk chunk, ref ReadOnlySpan<Char> newData)
 		{
@@ -130,6 +146,9 @@ public partial class CStringBuilder
 		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
 		/// <param name="firstData">Input. First data to insert. Output. Remaining data to insert.</param>
 		/// <param name="nextData">Next data to insert. Output. Remaining data to insert.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void Fill(Chunk chunk, ref ReadOnlySpan<Byte> firstData, ref ReadOnlySpan<Byte> nextData)
 		{
@@ -162,6 +181,9 @@ public partial class CStringBuilder
 		/// <param name="chunks">A read-only <see cref="Chunk"/> span.</param>
 		/// <param name="firstData">First data bytes.</param>
 		/// <param name="nextData">Next data bytes.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void Fill(ReadOnlySpan<Chunk> chunks, ReadOnlySpan<Byte> firstData, ReadOnlySpan<Byte> nextData)
 		{
@@ -187,6 +209,9 @@ public partial class CStringBuilder
 		/// <param name="source">Source span to copy from; updated to represent the remaining data.</param>
 		/// <param name="destination">Destination <see cref="Byte"/> span</param>
 		/// <returns>The number of bytes copied.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static Int32 CopyLast(ref ReadOnlySpan<Byte> source, Span<Byte> destination)
 		{
@@ -201,6 +226,9 @@ public partial class CStringBuilder
 		/// <param name="start">The starting chunk where units will be copied from.</param>
 		/// <param name="end">The ending chunk where units will be copied from.</param>
 		/// <param name="destination">The writable span where units will be copied.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void CopyTo(CopyInfo start, CopyInfo end, Span<Byte> destination)
 		{

@@ -9,7 +9,13 @@ public unsafe partial class CStringSequence
 	/// Internal pointer to <c>typeof(System.Byte)</c> instance.
 	/// </summary>
 #if !NET5_0_OR_GREATER && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
-	internal static void* TypePointer => Unsafe.AsPointer(ref CStringSequence.bufferType);
+	internal static void* TypePointer
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => Unsafe.AsPointer(ref CStringSequence.bufferType);
+	}
 #else
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
@@ -38,6 +44,9 @@ public unsafe partial class CStringSequence
 	/// Ensure that the <see cref="MemoryHandle"/> value returned is properly disposed to release the pinned memory
 	/// and avoid memory leaks.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public MemoryHandle Pin()
 	{

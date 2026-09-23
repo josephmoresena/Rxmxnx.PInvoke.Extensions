@@ -9,6 +9,7 @@
         <Using Include="System.Reflection"/>
         <Using Include="System.Runtime.CompilerServices"/>
         <Using Include="System.Runtime.InteropServices"/>
+        <Using Include="System.Security"/>
         <Using Include="System.Text"/>
 
         <Using Include="Rxmxnx.PInvoke.Internal"/>

@@ -7,6 +7,9 @@ namespace Rxmxnx.PInvoke.Internal;
 internal readonly unsafe partial struct FixedPointerInfo
 {
 #pragma warning disable CS8500
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public partial FixedPointerValue GetValue(Boolean isReadOnly, FixedValueHandle? handle)
 	{
 		Type* typePointer = (Type*)this.TypeOrFunctionPointer;

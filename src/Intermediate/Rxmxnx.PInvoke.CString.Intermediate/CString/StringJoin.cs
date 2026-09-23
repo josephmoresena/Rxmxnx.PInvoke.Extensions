@@ -22,6 +22,9 @@ public partial class CString
 	/// <paramref name="value"/> has zero elements.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Join(Char separator,
 #if !NET9_0_OR_GREATER
 		params String?[] value
@@ -45,6 +48,9 @@ public partial class CString
 	/// by the <paramref name="separator"/> character. -or- <see cref="Empty"/> if
 	/// <paramref name="value"/> has zero elements.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Join(Char separator,
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<String?> value
@@ -119,6 +125,9 @@ public partial class CString
 	/// <paramref name="value"/> has zero elements.
 	/// </returns>
 	/// <exception cref="ArgumentNullException">Thrown if <paramref name="value"/> is <see langword="null"/>.</exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Join(String? separator,
 #if !NET9_0_OR_GREATER
 		params String?[] value
@@ -146,6 +155,9 @@ public partial class CString
 	/// <paramref name="value"/> has zero elements.
 	/// </returns>
 	// ReSharper disable once MemberCanBePrivate.Global
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Join(String? separator,
 #if NET9_0_OR_GREATER
 		params ReadOnlySpan<String?> value
@@ -215,6 +227,9 @@ public partial class CString
 	/// <exception cref="ArgumentOutOfRangeException">
 	/// Thrown if <paramref name="startIndex"/> or <paramref name="count"/> is out of range.
 	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public static CString Join(String? separator, String?[] value, Int32 startIndex, Int32 count)
 	{
 		ArgumentNullException.ThrowIfNull(value);

@@ -27,7 +27,13 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 		=> this.CreateDefaultEnumerator(CStringSequence.DisposeEnumeration);
 	IEnumerator IEnumerable.GetEnumerator() => this.CreateDefaultEnumerator(CStringSequence.DisposeEnumeration);
 #endif
-	ReadOnlySpan<Byte> IUtf8Buffer.Buffer => MemoryMarshal.AsBytes(this._value.AsSpan());
+	ReadOnlySpan<Byte> IUtf8Buffer.Buffer
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => MemoryMarshal.AsBytes(this._value.AsSpan());
+	}
 	GCHandle IUtf8Buffer.Alloc(GCHandleType type) => GCHandle.Alloc(this._value, type);
 	Int32 IUtf8Buffer.GetBinaryOffset(Int32 index) => this.GetBinaryOffset(index);
 
@@ -101,6 +107,9 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 	/// </summary>
 	/// <param name="offsets">A span where the resulting UTF-8 text offsets will be stored.</param>
 	/// <returns>The number of offsets written to <paramref name="offsets"/>.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	public Int32 GetOffsets(Span<Int32> offsets)
 	{
 		Int32 offset = 0;
@@ -140,6 +149,9 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 	/// </summary>
 	/// <param name="index">The zero-based index of the element to get.</param>
 	/// <returns>The binary offset for the specified index.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	internal Int32 GetBinaryOffset(Int32 index)
 	{
 		Int32 binaryOffset = 0;
@@ -157,6 +169,9 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 	/// The number of UTF-8 strings included in the resulting span.
 	/// </param>
 	/// <returns>The binary span for the specified index.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private ReadOnlySpan<Byte> GetBinarySpan(Int32 index, Int32 count = 1)
 	{

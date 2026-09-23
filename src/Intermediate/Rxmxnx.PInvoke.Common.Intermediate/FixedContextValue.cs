@@ -1,4 +1,4 @@
-#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER
+#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER && !UAP10_0_16299
 using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
 #endif
 
@@ -21,16 +21,31 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 	private readonly FixedPointerValue _value;
 
 	/// <inheritdoc cref="IFixedPointer.Pointer"/>
-	public IntPtr Pointer => this._value.Pointer;
+	public IntPtr Pointer
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => this._value.Pointer;
+	}
 	/// <summary>
 	/// Gets the value pointer to the fixed block of memory.
 	/// </summary>
-	public ValPtr<T> ValuePointer => (ValPtr<T>)this._value.Pointer;
+	public ValPtr<T> ValuePointer
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => (ValPtr<T>)this._value.Pointer;
+	}
 	/// <summary>
 	/// Gets a <typeparamref name="T"/> span over the fixed block of memory.
 	/// </summary>
 	public Span<T> Values
 	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get
 		{
@@ -40,7 +55,7 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 		}
 	}
 	/// <summary>
-	/// Indicates whether current memory block is null-referenced or empty.
+	/// Indicates whether the current memory block is null-referenced or empty.
 	/// </summary>
 	public Boolean IsNullOrEmpty => this._value.IsNullOrEmpty;
 	/// <summary>
@@ -48,6 +63,9 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 	/// </summary>
 	public Span<Byte> Bytes
 	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		get
 		{
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
@@ -66,6 +84,9 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 	/// </summary>
 	public Span<Object> Objects
 	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		get
 		{
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER

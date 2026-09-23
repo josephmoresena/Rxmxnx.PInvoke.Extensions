@@ -12,6 +12,9 @@ internal partial class MemoryInspector
 	private sealed unsafe partial class Windows : MemoryInspector
 	{
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecurityCritical]
+#endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public override Boolean IsReadOnlyAddress(void* ptr)
 		{
