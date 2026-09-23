@@ -139,6 +139,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			}
 #endif
 			writer.WriteLine($"UI Culture: {CultureInfo.CurrentUICulture.TwoLetterISOLanguageName}");
+			writer.WriteLine($"New Line: {CString.NewLine.ToString().Replace("\r", "\\r").Replace("\n", "\\n")}");
 #if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 			try
 			{
@@ -216,8 +217,17 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 						writer.WriteLine(ex);
 				}
 				writer.WriteLine($"CString.Empty literal: {CString.IsImagePersistent(CString.Empty)}");
+				writer.WriteLine($"CString.NewLine literal: {CString.IsImagePersistent(CString.NewLine)}");
+				writer.WriteLine($"CString.Null literal: {CString.IsImagePersistent(CString.Zero)}");
 			}
 			writer.WriteLine($"Hardcoded Array literal: {!RuntimeHelper.Null.AsSpan().MayBeNonLiteral()}");
+#if NET5_0_OR_GREATER
+			writer.WriteLine(
+				$"CString.Null pointer: 0x{NativeUtilities.GetUnsafeIntPtr(in CString.Zero.GetPinnableReference()):X}");
+#else
+			writer.WriteLine(
+				$"CString.Null pointer: 0x{NativeUtilities.GetUnsafeIntPtr(in CString.Zero.GetPinnableReference()).ToString("X")}");
+#endif
 #if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
 			if (SystemInfo.IsWebRuntime || AotInfo.IsReflectionDisabled || !SystemInfo.IsMonoRuntime) return;
 			writer.WriteLine("========== StackTrace information ==========");

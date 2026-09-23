@@ -34,6 +34,8 @@ public sealed class BasicTests
 		PInvokeAssert.True(CString.IsNullOrEmpty(zero));
 		PInvokeAssert.True(CString.IsNullOrEmpty(CString.Empty));
 		PInvokeAssert.True(CString.IsNullOrEmpty(default));
+		PInvokeAssert.Equal(0, CString.Zero.GetHashCode());
+		PInvokeAssert.Equal(String.Empty.GetHashCode(), CString.Empty.GetHashCode());
 
 		PInvokeAssert.Equal(0, zero.CompareTo(CString.Empty));
 		PInvokeAssert.Equal(0, zero.CompareTo(String.Empty));
@@ -201,6 +203,13 @@ public sealed class BasicTests
 			PInvokeAssert.Null(CString.GetAssociatedSequence(cstr1, out Int32 seqIndex));
 			PInvokeAssert.Equal(-1, seqIndex);
 		}
+	}
+
+	[Fact]
+	public void NewLineTest()
+	{
+		PInvokeAssert.Equal(Environment.NewLine, CString.NewLine.ToString());
+		PInvokeAssert.Equal(Environment.NewLine.GetHashCode(), CString.NewLine.GetHashCode());
 	}
 
 #if NETCOREAPP2_1_OR_GREATER

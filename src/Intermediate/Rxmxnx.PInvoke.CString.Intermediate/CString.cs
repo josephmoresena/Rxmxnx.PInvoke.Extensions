@@ -28,22 +28,12 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// Represents an empty UTF-8 string. This field is read-only.
 	/// </summary>
 	/// <remarks>This instance is a UTF-8 literal.</remarks>
-#if NETFRAMEWORK || NETSTANDARD2_0
-	[SecuritySafeCritical]
-#endif
 	public static readonly CString Empty;
 	/// <summary>
 	/// Represents a null-pointer UTF-8 string. This field is read-only.
 	/// </summary>
-#if NETFRAMEWORK || NETSTANDARD2_0
-	[SecuritySafeCritical]
-#endif
 	public static readonly CString Zero;
 	/// <inheritdoc cref="Environment.NewLine"/>
-	// ReSharper disable once MemberCanBePrivate.Global
-#if NETFRAMEWORK || NETSTANDARD2_0
-	[SecuritySafeCritical]
-#endif
 	public static readonly CString NewLine;
 
 	/// <summary>
@@ -334,6 +324,7 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	public override Int32 GetHashCode()
 		=> this._length switch
 		{
+			0 when this.IsZero => 0,
 			0 => String.Empty.GetHashCode(),
 			_ when MarvinCompat.DefaultSeed.HasValue => MarvinCompat.GetHashCode(this.AsSpan()),
 #if NETCOREAPP3_0_OR_GREATER
