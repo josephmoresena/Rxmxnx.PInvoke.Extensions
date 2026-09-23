@@ -413,6 +413,9 @@ public static unsafe class PointerExtensions
 	/// If the function the delegate represents is moved or deallocated, invoking the delegate can cause unexpected behavior or
 	/// application crashes.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TDelegate? GetUnsafeDelegate<TDelegate>(this IntPtr ptr) where TDelegate : Delegate
 #if NETSTANDARD1_2_OR_GREATER || NETCOREAPP || NET451_OR_GREATER || UAP10_0
@@ -448,6 +451,9 @@ public static unsafe class PointerExtensions
 	/// behavior
 	/// or application crashes.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref T GetUnsafeReference<T>(this IntPtr ptr) where T : unmanaged
 		=> ref Unsafe.AsRef<T>(ptr.ToPointer());
@@ -464,6 +470,9 @@ public static unsafe class PointerExtensions
 	/// behavior
 	/// or application crashes.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref T GetUnsafeReference<T>(this UIntPtr uptr) where T : unmanaged
 		=> ref Unsafe.AsRef<T>(uptr.ToPointer());
@@ -480,6 +489,9 @@ public static unsafe class PointerExtensions
 	/// behavior
 	/// or application crashes.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref readonly T GetUnsafeReadOnlyReference<T>(this IntPtr ptr) where T : unmanaged
 		=> ref Unsafe.AsRef<T>(ptr.ToPointer());
@@ -496,6 +508,9 @@ public static unsafe class PointerExtensions
 	/// behavior
 	/// or application crashes.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ref readonly T GetUnsafeReadOnlyReference<T>(this UIntPtr uptr) where T : unmanaged
 		=> ref Unsafe.AsRef<T>(uptr.ToPointer());

@@ -142,6 +142,9 @@ internal abstract unsafe partial class MemoryInspector
 	/// <see langword="true"/> if the given span represents memory that is not part of a hardcoded literal;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

@@ -127,6 +127,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <typeparam name="TAction">Type of <see cref="IReadOnlyFixedContextAction{T}"/>.</typeparam>
 	/// <param name="cstr">The <see cref="CString"/> instance to pin during the action.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TAction>(this CString? cstr, TAction? action)
 #if !NET9_0_OR_GREATER
@@ -148,6 +151,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <typeparam name="TAction">Type of <see cref="IReadOnlyFixedContextAction{T}"/>.</typeparam>
 	/// <param name="cstr">The <see cref="CString"/> instance to pin during the action.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -174,6 +180,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <param name="cstr">The <see cref="CString"/> instance to pin during the function.</param>
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<TResult, TFunction>(this CString? cstr, TFunction? func, out TResult result)
 #if !NET9_0_OR_GREATER

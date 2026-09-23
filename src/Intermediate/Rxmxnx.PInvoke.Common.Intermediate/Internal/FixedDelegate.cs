@@ -69,7 +69,13 @@ internal sealed unsafe partial class FixedDelegate<TDelegate> : FixedDelegate, I
 		FixedDelegate<TDelegate>.GetMethodPointer(method, out GCHandle handle), handle) { }
 
 	FuncPtr<TDelegate> IFixedMethod<TDelegate>.FunctionPointer => this.CreateFuncPointer<TDelegate>();
-	TDelegate IFixedMethod<TDelegate>.Method => this.CreateDelegate<TDelegate>();
+	TDelegate IFixedMethod<TDelegate>.Method
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => this.CreateDelegate<TDelegate>();
+	}
 
 	/// <summary>
 	/// Gets the pointer to the method delegate provided, while creating a <see cref="GCHandle"/> to

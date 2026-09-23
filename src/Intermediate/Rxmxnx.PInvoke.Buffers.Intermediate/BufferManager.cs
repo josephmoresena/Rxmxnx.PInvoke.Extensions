@@ -241,6 +241,9 @@ public static partial class BufferManager<T>
 	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, TResult}"/>.</typeparam>
 	/// <param name="func">Function to execute with allocated buffer.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void Alloc<TResult, TFunction>(TFunction? func, out TResult result)
 #if !NET9_0_OR_GREATER

@@ -265,6 +265,9 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	/// <typeparam name="TAction">Type of <see cref="IReadOnlyFixedContextAction{T}"/>.</typeparam>
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TAction>(this T[]? arr, TAction? action)
 #if !NET9_0_OR_GREATER
@@ -355,6 +358,9 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	/// <typeparam name="TAction">Type of <see cref="IReadOnlyFixedContextAction{T}"/>.</typeparam>
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
 	/// <param name="action">A <typeparamref name="TAction"/> instance.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -462,6 +468,9 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TResult, TFunction>(this T[]? arr, TFunction? func, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -567,6 +576,9 @@ public static unsafe class ReadOnlyFixedContextValueExtensions
 	/// <param name="arr">The current array of type <typeparamref name="T"/>.</param>
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

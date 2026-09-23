@@ -69,6 +69,9 @@ public partial class CString
 		/// <see langword="true"/> if <paramref name="value"/> is backed by a <typeparamref name="TBacking"/> instance;
 		/// otherwise, <see langword="false"/>.
 		/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
 		protected static Boolean TryGetBacking<TBacking>(CString? value, out TBacking backing) where TBacking : Backing
 		{
 			if (value?._data is TBacking result)

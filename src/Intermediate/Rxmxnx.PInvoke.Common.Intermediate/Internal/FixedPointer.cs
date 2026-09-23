@@ -146,6 +146,9 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// <returns>
 	/// A reference to a <typeparamref name="T"/> value over the memory block.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ref T CreateReference<T>()
 #if NET9_0_OR_GREATER
@@ -166,6 +169,9 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// A read-only reference to a <typeparamref name="T"/> value over the memory
 	/// block.
 	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ref readonly T CreateReadOnlyReference<T>()
 #if NET9_0_OR_GREATER
@@ -294,6 +300,9 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// </summary>
 	/// <typeparam name="TDelegate">A <see cref="Delegate"/> type.</typeparam>
 	/// <returns>A <typeparamref name="TDelegate"/> instance over the memory block.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
 	public TDelegate CreateDelegate<TDelegate>() where TDelegate : Delegate
 	{
 		this.ValidateFunctionOperation();
