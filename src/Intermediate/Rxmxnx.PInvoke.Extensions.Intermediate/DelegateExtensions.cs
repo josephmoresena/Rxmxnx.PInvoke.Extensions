@@ -66,6 +66,9 @@ public static unsafe partial class DelegateExtensions
 	/// To ensure that the pointer remains valid, the delegate instance must be kept alive and not allowed to be
 	/// collected by the GC.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static UIntPtr GetUnsafeUIntPtr<TDelegate>(this TDelegate? delegateInstance) where TDelegate : Delegate
 	{

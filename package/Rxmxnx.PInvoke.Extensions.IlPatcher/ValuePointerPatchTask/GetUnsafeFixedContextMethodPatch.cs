@@ -101,7 +101,7 @@ public partial class ValuePointerPatchTask
             <returns>A <see cref=""T:Rxmxnx.PInvoke.IReadOnlyFixedContext`1.IDisposable""/> instance.</returns>
             <remarks>
             The instance obtained is ""unsafe"" as it doesn't guarantee that the referenced values
-            won't be moved or collected by garbage collector.
+            won't be moved or collected by the garbage collector.
             The <paramref name=""disposable""/> parameter allows for custom management of resource cleanup.
             If provided, this object will be disposed of when the fixed reference is disposed.
             Attempting to use this method with a generic ref struct type will result in a 
@@ -118,7 +118,7 @@ public partial class ValuePointerPatchTask
             <returns>An <see cref=""T:Rxmxnx.PInvoke.IFixedContext`1.IDisposable""/> instance representing a fixed reference.</returns>
             <remarks>
             The instance obtained is ""unsafe"" as it doesn't guarantee that the referenced values
-            won't be moved or collected by garbage collector.
+            won't be moved or collected by the garbage collector.
             The <paramref name=""disposable""/> parameter allows for custom management of resource cleanup.
             If provided, this object will be disposed of when the fixed reference is disposed.
             Attempting to use this method with a generic ref struct type will result in a 

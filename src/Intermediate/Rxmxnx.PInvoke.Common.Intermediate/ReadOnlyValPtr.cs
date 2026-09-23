@@ -164,7 +164,7 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 	/// <returns>An <see cref="IReadOnlyFixedReference{T}.IDisposable"/> instance representing a fixed reference.</returns>
 	/// <remarks>
 	/// The instance obtained is "unsafe" as it doesn't guarantee that the referenced value
-	/// won't be moved or collected by garbage collector.
+	/// won't be moved or collected by the garbage collector.
 	/// The <paramref name="disposable"/> parameter allows for custom management of resource cleanup.
 	/// If provided, this object will be disposed of when the fixed reference is disposed.
 	/// </remarks>
@@ -180,7 +180,7 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 	/// <returns>A <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance.</returns>
 	/// <remarks>
 	/// The instance obtained is "unsafe" as it doesn't guarantee that the referenced values
-	/// won't be moved or collected by garbage collector.
+	/// won't be moved or collected by the garbage collector.
 	/// The <paramref name="disposable"/> parameter allows for custom management of resource cleanup.
 	/// If provided, this object will be disposed of when the fixed reference is disposed.
 	/// </remarks>

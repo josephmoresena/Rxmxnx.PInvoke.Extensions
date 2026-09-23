@@ -76,7 +76,7 @@ public readonly unsafe ref partial struct ReadOnlyFixedContextValue<T>
 	/// <returns>The <see cref="IDisposable"/> instance to release <see langword="unmanaged"/> resources.</returns>
 	/// <remarks>
 	/// The instance obtained is "unsafe" as it doesn't guarantee that the referenced values
-	/// won't be moved or collected by garbage collector.
+	/// won't be moved or collected by the garbage collector.
 	/// The <paramref name="disposable"/> parameter allows for custom management of resource cleanup.
 	/// This object will be disposed of when the reference is unfixed.
 	/// </remarks>

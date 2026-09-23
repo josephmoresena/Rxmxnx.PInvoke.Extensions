@@ -49,7 +49,7 @@ public static unsafe partial class NativeUtilities
 	/// <returns><see cref="ReadOnlyValPtr{T}"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
-	/// won't be moved or collected by garbage collector.
+	/// won't be moved or collected by the garbage collector.
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -73,7 +73,7 @@ public static unsafe partial class NativeUtilities
 	/// <returns>An unsafe pointer of type <see cref="ValPtr{T}"/> pointing to the referenced value.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
-	/// won't be moved or collected by garbage collector.
+	/// won't be moved or collected by the garbage collector.
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -98,7 +98,7 @@ public static unsafe partial class NativeUtilities
 	/// <returns><see cref="IntPtr"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
-	/// won't be moved or collected by garbage collector.
+	/// won't be moved or collected by the garbage collector.
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
 #if NETFRAMEWORK || NETSTANDARD2_0

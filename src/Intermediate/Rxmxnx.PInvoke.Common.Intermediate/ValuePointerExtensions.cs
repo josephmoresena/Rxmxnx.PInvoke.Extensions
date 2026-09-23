@@ -22,7 +22,7 @@ public static class ValuePointerExtensions
 	/// <returns>A <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance.</returns>
 	/// <remarks>
 	/// The instance obtained is "unsafe" as it doesn't guarantee that the referenced values
-	/// won't be moved or collected by garbage collector.
+	/// won't be moved or collected by the garbage collector.
 	/// The <paramref name="disposable"/> parameter allows for custom management of resource cleanup.
 	/// If provided, this object will be disposed of when the fixed reference is disposed.
 	/// </remarks>
@@ -45,7 +45,7 @@ public static class ValuePointerExtensions
 	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance representing a fixed reference.</returns>
 	/// <remarks>
 	/// The instance obtained is "unsafe" as it doesn't guarantee that the referenced values
-	/// won't be moved or collected by garbage collector.
+	/// won't be moved or collected by the garbage collector.
 	/// The <paramref name="disposable"/> parameter allows for custom management of resource cleanup.
 	/// If provided, this object will be disposed of when the fixed reference is disposed.
 	/// </remarks>
@@ -60,7 +60,7 @@ public static class ValuePointerExtensions
 #endif
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="ReadOnlyFixedContextValue{T}"/> instance from
-	/// current read-only reference pointer.
+	/// the current read-only reference pointer.
 	/// </summary>
 	/// <typeparam name="T">Type of pointer.</typeparam>
 	/// <param name="ptr">Current <see cref="ReadOnlyValPtr{T}"/> value.</param>
@@ -71,7 +71,7 @@ public static class ValuePointerExtensions
 	/// <returns>The <see cref="IDisposable"/> instance to release <see langword="unmanaged"/> resources.</returns>
 	/// <remarks>
 	/// The instance obtained is "unsafe" as it doesn't guarantee that the referenced values
-	/// won't be moved or collected by garbage collector.
+	/// won't be moved or collected by the garbage collector.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IDisposable GetUnsafeFixedContext<T>(this ReadOnlyValPtr<T> ptr, Int32 count,
@@ -81,7 +81,8 @@ public static class ValuePointerExtensions
 		return disposable;
 	}
 	/// <summary>
-	/// Retrieves an <see langword="unsafe"/> <see cref="FixedContextValue{T}"/> instance from current reference pointer.
+	/// Retrieves an <see langword="unsafe"/> <see cref="FixedContextValue{T}"/> instance from the current reference
+	/// pointer.
 	/// </summary>
 	/// <typeparam name="T">Type of pointer.</typeparam>
 	/// <param name="ptr">Current <see cref="ValPtr{T}"/> value.</param>
@@ -92,7 +93,7 @@ public static class ValuePointerExtensions
 	/// <returns>The <see cref="IDisposable"/> instance to release <see langword="unmanaged"/> resources.</returns>
 	/// <remarks>
 	/// The instance obtained is "unsafe" as it doesn't guarantee that the referenced values
-	/// won't be moved or collected by garbage collector.
+	/// won't be moved or collected by the garbage collector.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IDisposable GetUnsafeFixedContext<T>(this ValPtr<T> ptr, Int32 count,
@@ -103,7 +104,7 @@ public static class ValuePointerExtensions
 	}
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="ReadOnlyFixedContextValue{T}"/> instance from
-	/// current read-only reference pointer.
+	/// the current read-only reference pointer.
 	/// </summary>
 	/// <typeparam name="T">Type of pointer.</typeparam>
 	/// <typeparam name="TDisposable">Type of <see cref="IDisposable"/> instance.</typeparam>
@@ -116,7 +117,7 @@ public static class ValuePointerExtensions
 	/// <returns>The <see cref="IDisposable"/> instance to release <see langword="unmanaged"/> resources.</returns>
 	/// <remarks>
 	/// The instance obtained is "unsafe" as it doesn't guarantee that the referenced values
-	/// won't be moved or collected by garbage collector.
+	/// won't be moved or collected by the garbage collector.
 	/// The <paramref name="disposable"/> parameter allows for custom management of resource cleanup.
 	/// This object will be disposed of when the fixed reference is disposed.
 	/// </remarks>
@@ -125,7 +126,8 @@ public static class ValuePointerExtensions
 		TDisposable disposable, out ReadOnlyFixedContextValue<T> fixedContext) where TDisposable : IDisposable
 		=> ReadOnlyFixedContextValue<T>.CreateDisposable(ptr, count, disposable, out fixedContext);
 	/// <summary>
-	/// Retrieves an <see langword="unsafe"/> <see cref="FixedContextValue{T}"/> instance from current reference pointer.
+	/// Retrieves an <see langword="unsafe"/> <see cref="FixedContextValue{T}"/> instance from the current reference
+	/// pointer.
 	/// </summary>
 	/// <typeparam name="T">Type of pointer.</typeparam>
 	/// <typeparam name="TDisposable">Type of <see cref="IDisposable"/> instance.</typeparam>
@@ -138,7 +140,7 @@ public static class ValuePointerExtensions
 	/// <returns>The <see cref="IDisposable"/> instance to release <see langword="unmanaged"/> resources.</returns>
 	/// <remarks>
 	/// The instance obtained is "unsafe" as it doesn't guarantee that the referenced values
-	/// won't be moved or collected by garbage collector.
+	/// won't be moved or collected by the garbage collector.
 	/// The <paramref name="disposable"/> parameter allows for custom management of resource cleanup.
 	/// This object will be disposed of when the fixed reference is disposed.
 	/// </remarks>

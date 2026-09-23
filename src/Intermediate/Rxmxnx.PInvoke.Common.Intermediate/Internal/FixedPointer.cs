@@ -70,7 +70,13 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	// ReSharper disable once MemberCanBePrivate.Global
 	public Boolean IsValid => this._handle.Value;
 
-	IntPtr IFixedPointer.Pointer => (IntPtr)this.GetMemoryOffset();
+	IntPtr IFixedPointer.Pointer
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => (IntPtr)this.GetMemoryOffset();
+	}
 
 	/// <summary>
 	/// Constructs a new FixedPointer instance pointing to a fixed memory block.
@@ -401,6 +407,9 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// Retrieves the memory offset for the current instance.
 	/// </summary>
 	/// <returns>Pointer to offset memory.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private void* GetMemoryOffset()
 	{

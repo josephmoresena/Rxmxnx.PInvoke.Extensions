@@ -134,7 +134,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <returns>An <see cref="ValPtr{T}"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the span won't be moved or
-	/// collected by garbage collector.
+	/// collected by the garbage collector.
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -157,7 +157,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <returns>An <see cref="ReadOnlyValPtr{T}"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the span won't be moved or
-	/// collected by garbage collector.
+	/// collected by the garbage collector.
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -181,7 +181,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <returns>An <see cref="IntPtr"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the span won't be moved or
-	/// collected by garbage collector.
+	/// collected by the garbage collector.
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -204,7 +204,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <returns>An <see cref="IntPtr"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the span won't be moved or
-	/// collected by garbage collector.
+	/// collected by the garbage collector.
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -228,7 +228,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <returns>An <see cref="UIntPtr"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the span won't be moved or
-	/// collected by garbage collector.
+	/// collected by the garbage collector.
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -251,7 +251,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// <returns>An <see cref="UIntPtr"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the span won't be moved or
-	/// collected by garbage collector.
+	/// collected by the garbage collector.
 	/// The pointer will point to the address in memory the span had at the moment this method was called.
 	/// </remarks>
 #if NETFRAMEWORK || NETSTANDARD2_0

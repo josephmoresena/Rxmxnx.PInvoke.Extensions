@@ -215,6 +215,9 @@ public static partial class BufferManager<T>
 	/// </summary>
 	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/>.</typeparam>
 	/// <param name="action">Action to perform with the allocated buffer.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void Alloc<TAction>(TAction? action)
 #if !NET9_0_OR_GREATER
