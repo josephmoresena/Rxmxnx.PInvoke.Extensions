@@ -47,7 +47,7 @@ public partial class CStringSequence
 				get
 				{
 					ValidationUtilities.ThrowIfInvalidEnumerator(this._instance is null, !this._active,
-					                                             this._lengthOffset < (this._instance?.Count)
+					                                             this._lengthOffset >= (this._instance?._lengths.Length)
 					                                             .GetValueOrDefault());
 					return this._currentStatus switch
 					{
