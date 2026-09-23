@@ -24,7 +24,7 @@ public partial class CString
 	private WeakReference<String>? _strValue;
 
 	/// <summary>
-	/// Retrieves the cached value of current instance.
+	/// Retrieves the cached value of the current instance.
 	/// </summary>
 	private String? CachedValue
 		=> this._strValue is not null && this._strValue.TryGetTarget(out String? result) ? result : default;
