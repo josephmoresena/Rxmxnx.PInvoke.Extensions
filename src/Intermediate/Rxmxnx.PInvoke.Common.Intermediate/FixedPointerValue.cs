@@ -31,7 +31,7 @@ public readonly ref partial struct FixedPointerValue
 	public IntPtr Pointer
 	{
 #if NETFRAMEWORK || NETSTANDARD2_0
-		[SecurityCritical]
+		[SecuritySafeCritical]
 #endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		get

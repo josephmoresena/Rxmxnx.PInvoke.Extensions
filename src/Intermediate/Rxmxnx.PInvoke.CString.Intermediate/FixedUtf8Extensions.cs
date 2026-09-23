@@ -208,6 +208,9 @@ public static unsafe class FixedUtf8Extensions
 	/// <param name="cstr">The <see cref="CString"/> instance to pin during the function.</param>
 	/// <param name="func">A <typeparamref name="TFunction"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

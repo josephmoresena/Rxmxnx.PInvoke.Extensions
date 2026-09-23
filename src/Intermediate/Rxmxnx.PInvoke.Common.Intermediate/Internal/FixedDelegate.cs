@@ -86,6 +86,9 @@ internal sealed unsafe partial class FixedDelegate<TDelegate> : FixedDelegate, I
 	/// Output. A <see cref="GCHandle"/> to prevent the delegate from being collected by the garbage collector.
 	/// </param>
 	/// <returns>Pointer to the provided delegate of the method.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	private static void* GetMethodPointer(TDelegate method, out GCHandle handle)
 	{
 		handle = GCHandle.Alloc(method, GCHandleType.Normal);

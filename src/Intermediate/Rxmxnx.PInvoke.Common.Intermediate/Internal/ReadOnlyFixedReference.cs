@@ -1,6 +1,7 @@
 ﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER && !UAP10_0_16299
 using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
 #endif
+
 #if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP && !NETFRAMEWORK && !UAP10_0_16299
 using InsufficientMemoryException = System.OutOfMemoryException;
 #endif
@@ -41,7 +42,13 @@ internal sealed unsafe partial class ReadOnlyFixedReference<T> : ReadOnlyFixedMe
 	/// <param name="mem">Instance of <see cref="FixedMemory"/> to be referenced.</param>
 	private ReadOnlyFixedReference(ReadOnlyFixedMemory mem) : base(mem) { }
 
-	ref readonly T IReadOnlyReferenceable<T>.Reference => ref this.CreateReadOnlyReference<T>();
+	ref readonly T IReadOnlyReferenceable<T>.Reference
+	{
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		get => ref this.CreateReadOnlyReference<T>();
+	}
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif

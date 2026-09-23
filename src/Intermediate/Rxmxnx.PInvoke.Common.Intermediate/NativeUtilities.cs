@@ -34,6 +34,9 @@ public static unsafe partial class NativeUtilities
 	/// To ensure that the pointer remains valid, the delegate instance must be kept alive and not allowed to be collected by
 	/// the GC.
 	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static FuncPtr<TDelegate> GetUnsafeFuncPtr<TDelegate>(TDelegate delegateInstance) where TDelegate : Delegate
 		=> (FuncPtr<TDelegate>)Marshal.GetFunctionPointerForDelegate(delegateInstance);
