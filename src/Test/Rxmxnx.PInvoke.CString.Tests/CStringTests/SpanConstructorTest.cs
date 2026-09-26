@@ -7,13 +7,13 @@ public sealed class SpanConstructorTest
 	[Fact]
 	public void Test()
 	{
-		Int32 lenght = TestSet.Utf16Text.Count;
-		CString[,] cstr = new CString[3, lenght];
+		Int32 length = TestSet.Utf16Text.Count;
+		CString[,] cstr = new CString[3, length];
 		SpanConstructorTest.CreateCStringFromFunction(cstr);
 		SpanConstructorTest.CreateCStringFromBytes(cstr);
 		SpanConstructorTest.CreateCStringFromNullTerminatedBytes(cstr);
 
-		for (Int32 i = 0; i < lenght; i++)
+		for (Int32 i = 0; i < length; i++)
 		{
 			CString cstr1 = cstr[0, i];
 			for (Int32 j = 1; j < 3; j++)
