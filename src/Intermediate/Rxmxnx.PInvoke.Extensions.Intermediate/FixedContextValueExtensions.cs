@@ -57,7 +57,7 @@ public static unsafe class FixedContextValueExtensions
 	/// <typeparam name="T">
 	/// The unmanaged type from which the contiguous region of memory will be fixed.
 	/// </typeparam>
-	/// <param name="arrayPool">A <see cref="ArrayPool{T}"/> instance.</param>
+	/// <param name="arrayPool">An <see cref="ArrayPool{T}"/> instance.</param>
 	/// <param name="count">Minimum size of rented array.</param>
 	/// <param name="fixedContext">
 	/// Output. The <see cref="FixedContextValue{T}"/> instance representing the pinned memory.
@@ -94,7 +94,7 @@ public static unsafe class FixedContextValueExtensions
 	/// <typeparam name="T">
 	/// The unmanaged type from which the contiguous region of memory will be fixed.
 	/// </typeparam>
-	/// <param name="arrayPool">A <see cref="ArrayPool{T}"/> instance.</param>
+	/// <param name="arrayPool">An <see cref="ArrayPool{T}"/> instance.</param>
 	/// <param name="count">Minimum size of rented array.</param>
 	/// <param name="fixedContext">
 	/// Output. The <see cref="FixedContextValue{T}"/> instance representing the pinned memory.

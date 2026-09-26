@@ -33,7 +33,7 @@ public interface IManagedBuffer<T>
 	/// <summary>
 	/// Appends all components from current type.
 	/// </summary>
-	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
+	/// <param name="storage">An <see cref="IMetadataStorage"/> instance.</param>
 	internal static abstract void AppendComponent(IMetadataStorage storage);
 #elif NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
@@ -54,7 +54,7 @@ public interface IManagedBuffer<T>
 	/// <summary>
 	/// Appends all components from current type.
 	/// </summary>
-	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
+	/// <param name="storage">An <see cref="IMetadataStorage"/> instance.</param>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -70,7 +70,7 @@ public interface IManagedBuffer<T>
 	/// Appends all components from <typeparamref name="TBuffer"/> type.
 	/// </summary>
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
-	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
+	/// <param name="storage">An <see cref="IMetadataStorage"/> instance.</param>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Browsable(false)]
 #if !PACKAGE && !NET7_0_OR_GREATER

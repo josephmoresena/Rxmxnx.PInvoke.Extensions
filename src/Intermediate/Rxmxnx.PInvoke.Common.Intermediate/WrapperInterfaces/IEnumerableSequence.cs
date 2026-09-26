@@ -27,8 +27,8 @@ public interface IEnumerableSequence
 	/// Creates an enumerator that iterates through <paramref name="instance"/> instance.
 	/// </summary>
 	/// <typeparam name="T">The type of elements in the sequence.</typeparam>
-	/// <param name="instance">A <see cref="IEnumerableSequence{T}"/> instance.</param>
-	/// <param name="disposeEnumeration">Delegate to dispose enumeration.</param>
+	/// <param name="instance">An <see cref="IEnumerableSequence{T}"/> instance.</param>
+	/// <param name="disposeEnumeration">The delegate that disposes the enumeration.</param>
 	/// <returns>
 	/// An <see cref="IEnumerator{T}"/> that can be used to iterate through the sequence.
 	/// </returns>
@@ -41,8 +41,8 @@ public interface IEnumerableSequence
 	/// Creates an enumerator that iterates through <paramref name="instance"/> instance.
 	/// </summary>
 	/// <typeparam name="T">The type of elements in the sequence.</typeparam>
-	/// <param name="instance">A <see cref="IEnumerableSequence{T}"/> instance.</param>
-	/// <param name="disposeEnumeration">Delegate to dispose enumeration.</param>
+	/// <param name="instance">An <see cref="IEnumerableSequence{T}"/> instance.</param>
+	/// <param name="disposeEnumeration">The delegate that disposes the enumeration.</param>
 	/// <returns>
 	/// An <see cref="IEnumerator{T}"/> that can be used to iterate through the sequence.
 	/// </returns>

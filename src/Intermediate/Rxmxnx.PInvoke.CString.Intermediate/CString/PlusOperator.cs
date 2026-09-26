@@ -13,7 +13,7 @@ public partial class CString
 	/// <param name="left">The left-hand <see cref="String"/> instance.</param>
 	/// <param name="right">The right-hand <see cref="CString"/> instance.</param>
 	/// <returns>
-	/// A new <see cref="CString"/> instance containing the concatenation of  <paramref name="left"/> and
+	/// A new <see cref="CString"/> instance containing the concatenation of <paramref name="left"/> and
 	/// <paramref name="right"/> encoded as UTF-8.
 	/// </returns>
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -31,7 +31,7 @@ public partial class CString
 		return leftSpan + right;
 	}
 	/// <summary>
-	/// Concatenates two <see cref="CString"/> instance instances and returns a new <see cref="CString"/>.
+	/// Concatenates two <see cref="CString"/> instances and returns a new <see cref="CString"/>.
 	/// </summary>
 	/// <param name="left">The first <see cref="CString"/> instance.</param>
 	/// <param name="right">The second <see cref="CString"/> instance.</param>

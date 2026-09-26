@@ -10,7 +10,7 @@ internal static class ManagedBuffer<T>
 	/// Appends all components from <paramref name="component"/> instance.
 	/// </summary>
 	/// <param name="component">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
-	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
+	/// <param name="storage">An <see cref="IMetadataStorage"/> instance.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif

@@ -543,7 +543,7 @@ public static unsafe class PointerExtensions
 		=> uptr.IsZero() ? default(T?) : uptr.GetUnsafeReadOnlyReference<T>();
 
 	/// <summary>
-	/// Generates a <see cref="UnmanagedMemoryStream"/> instance from an <see cref="IntPtr"/>.
+	/// Generates an <see cref="UnmanagedMemoryStream"/> instance from an <see cref="IntPtr"/>.
 	/// </summary>
 	/// <param name="ptr">The <see cref="IntPtr"/> pointing to the beginning of the stream.</param>
 	/// <param name="size">The size of the stream.</param>
@@ -566,7 +566,7 @@ public static unsafe class PointerExtensions
 		return new UnmanagedMemoryStream((Byte*)ptr.ToPointer(), size, capacity ?? size, access);
 	}
 	/// <summary>
-	/// Generates a <see cref="UnmanagedMemoryStream"/> instance from an <see cref="IntPtr"/>.
+	/// Generates an <see cref="UnmanagedMemoryStream"/> instance from an <see cref="IntPtr"/>.
 	/// </summary>
 	/// <param name="uptr">The <see cref="UIntPtr"/> pointing to the beginning of the stream.</param>
 	/// <param name="size">The size of the stream.</param>

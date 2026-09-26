@@ -5,7 +5,7 @@
 /// <typeparamref name="T"/>.
 /// </summary>
 /// <typeparam name="T">The type of elements in the sequence.</typeparam>
-/// <typeparam name="TEnumerable">The type of current enumerable.</typeparam>
+/// <typeparam name="TEnumerable">The type of the current enumerable.</typeparam>
 [Preserve(AllMembers = true)]
 internal sealed class SequenceEnumerator<T, TEnumerable> : IEnumerator<T> 
 	where TEnumerable : IEnumerableSequence<T>

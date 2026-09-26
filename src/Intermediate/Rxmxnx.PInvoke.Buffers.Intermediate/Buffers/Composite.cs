@@ -76,7 +76,7 @@ public struct Composite<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAcc
 	/// <summary>
 	/// Appends all components from the current type.
 	/// </summary>
-	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
+	/// <param name="storage">An <see cref="IMetadataStorage"/> instance.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif

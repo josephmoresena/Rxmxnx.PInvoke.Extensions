@@ -131,7 +131,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// The type of values contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <param name="span">The span from which the pointer is retrieved.</param>
-	/// <returns>An <see cref="ValPtr{T}"/> pointer.</returns>
+	/// <returns>A <see cref="ValPtr{T}"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the span won't be moved or
 	/// collected by the garbage collector.
@@ -154,7 +154,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// The type of values contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <param name="span">The read-only span from which the pointer is retrieved.</param>
-	/// <returns>An <see cref="ReadOnlyValPtr{T}"/> pointer.</returns>
+	/// <returns>A <see cref="ReadOnlyValPtr{T}"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the span won't be moved or
 	/// collected by the garbage collector.
@@ -225,7 +225,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// The type of <see langword="unmanaged"/> values contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <param name="span">The span from which the pointer is retrieved.</param>
-	/// <returns>An <see cref="UIntPtr"/> pointer.</returns>
+	/// <returns>A <see cref="UIntPtr"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the span won't be moved or
 	/// collected by the garbage collector.
@@ -248,7 +248,7 @@ public static unsafe partial class MemoryBlockExtensions
 	/// The type of <see langword="unmanaged"/> values contained in the contiguous region of memory.
 	/// </typeparam>
 	/// <param name="span">The read-only span from which the pointer is retrieved.</param>
-	/// <returns>An <see cref="UIntPtr"/> pointer.</returns>
+	/// <returns>A <see cref="UIntPtr"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the span won't be moved or
 	/// collected by the garbage collector.

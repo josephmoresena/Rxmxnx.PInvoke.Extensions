@@ -661,7 +661,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 
 	/// <summary>
 	/// Attempts to create a <see cref="System.Text.Rune"/> from the provided UTF-16 surrogate pair.
-	/// Returns <see langword="false"/> if the input values don't represent a well-formed UTF-16surrogate pair.
+	/// Returns <see langword="false"/> if the input values do not represent a well-formed UTF-16 surrogate pair.
 	/// </summary>
 	public static Boolean TryCreate(Char highSurrogate, Char lowSurrogate, out Rune result)
 	{

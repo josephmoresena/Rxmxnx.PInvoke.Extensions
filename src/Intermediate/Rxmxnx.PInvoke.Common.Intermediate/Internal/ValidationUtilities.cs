@@ -139,11 +139,11 @@ internal static unsafe class ValidationUtilities
 	/// <summary>
 	/// Throws an exception if <paramref name="obj"/> is not a value pointer.
 	/// </summary>
-	/// <param name="obj">A <see cref="Object"/> instance.</param>
+	/// <param name="obj">An <see cref="Object"/> instance.</param>
 	/// <param name="ptr">An <see cref="IntPtr"/> value.</param>
 	/// <param name="nameofPtr">Name of a value pointer type.</param>
 	/// <typeparam name="T">Type of referenced value.</typeparam>
-	/// <returns>A <see cref="Int32"/> value that indicates the relative order of the objects being compared.</returns>
+	/// <returns>An <see cref="Int32"/> value that indicates the relative order of the objects being compared.</returns>
 	/// <exception cref="ArgumentException">Throws an exception if <paramref name="obj"/> is not a value pointer.</exception>
 	public static Int32 ThrowIfInvalidValuePointer<T>(Object? obj, IntPtr ptr, String nameofPtr)
 #if NET9_0_OR_GREATER

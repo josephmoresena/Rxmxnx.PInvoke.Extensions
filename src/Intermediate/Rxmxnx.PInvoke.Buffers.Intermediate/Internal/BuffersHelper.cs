@@ -261,7 +261,7 @@ internal static class BuffersHelper
 	/// Creates <see cref="BufferTypeMetadata{T}"/> for <see cref="Composite{TBufferA,TBufferB,T}"/>.
 	/// </summary>
 	/// <typeparam name="T">The type of items in the buffer</typeparam>
-	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
+	/// <param name="storage">An <see cref="IMetadataStorage"/> instance.</param>
 	/// <param name="typeofA">The type of low buffer.</param>
 	/// <param name="typeofB">The type of high buffer.</param>
 	/// <returns>

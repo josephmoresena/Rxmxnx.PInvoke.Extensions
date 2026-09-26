@@ -29,7 +29,7 @@ public delegate TResult VbScopedBufferFunc<T, out TResult>(VbScopedBuffer<T> buf
 
 /// <summary>
 /// Encapsulates a function that receives a buffer of objects of type <typeparamref name="T"/> a
-/// state object of type <typeparamref name="TArg"/> and returns a result of type <typeparamref name="TResult"/>.
+/// state object of type <typeparamref name="TArg"/>, and returns a result of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="T">The type of the elements in the buffer.</typeparam>
 /// <typeparam name="TArg">The type of the state object passed to the method.</typeparam>

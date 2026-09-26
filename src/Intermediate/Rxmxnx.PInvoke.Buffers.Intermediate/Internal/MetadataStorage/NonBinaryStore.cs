@@ -24,8 +24,8 @@ internal abstract partial class MetadataStorage
 		/// <summary>
 		/// Retrieves non-binary metadata required for a buffer with <paramref name="count"/> items.
 		/// </summary>
-		/// <param name="count">Amount of items in required buffer.</param>
-		/// <param name="minimal">Output. Minimal non-binary buffer.</param>
+		/// <param name="count">The number of items in the required buffer.</param>
+		/// <param name="minimal">Output. The smallest non-binary buffer.</param>
 		/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 		public static BufferTypeMetadata<T>? GetNonBinary(UInt16 count, out BufferTypeMetadata<T>? minimal)
 		{

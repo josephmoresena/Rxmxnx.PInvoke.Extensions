@@ -22,11 +22,11 @@ public static partial class AotInfo
 #endif
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	/// <summary>
-	/// Indicates whether the function pointer of <paramref name="methodHandle"/> references to an R/RX memory section.
+	/// Indicates whether the function pointer of <paramref name="methodHandle"/> references an R/RX memory section.
 	/// </summary>
 	/// <param name="methodHandle">A <see langword="RuntimeMethodHandle"/> value.</param>
 	/// <returns>
-	/// <see langword="true"/> if the function pointer references to an R/RX memory section; otherwise,
+	/// <see langword="true"/> if the function pointer references an R/RX memory section; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
 #if !PACKAGE

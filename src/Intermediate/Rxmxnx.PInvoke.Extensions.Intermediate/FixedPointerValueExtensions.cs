@@ -47,7 +47,7 @@ public static unsafe class FixedPointerValueExtensions
 		return result;
 	}
 	/// <summary>
-	/// Creates an <see cref="FixedPointerValue"/> instance by pinning the current <see cref="Memory{T}"/> instance,
+	/// Creates a <see cref="FixedPointerValue"/> instance by pinning the current <see cref="Memory{T}"/> instance,
 	/// ensuring a safe context for accessing the fixed memory.
 	/// </summary>
 	/// <typeparam name="T">The type of items in the <see cref="Memory{T}"/>.</typeparam>

@@ -45,7 +45,7 @@ public partial class BufferTypeMetadata
 	/// <typeparam name="T">The type of items in the buffer.</typeparam>
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/> interface.</typeparam>
-	/// <param name="action">A <see cref="IScopedBufferAction{T}"/> instance.</param>
+	/// <param name="action">An <see cref="IScopedBufferAction{T}"/> instance.</param>
 	/// <param name="metadata">A <see cref="BufferTypeMetadata"/> instance.</param>
 	/// <param name="spanLength">Required span length.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -85,7 +85,7 @@ public partial class BufferTypeMetadata
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, Result}"/> interface.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="func">A <see cref="IScopedBufferFunction{T,TResult}"/> instance.</param>
+	/// <param name="func">An <see cref="IScopedBufferFunction{T,TResult}"/> instance.</param>
 	/// <param name="metadata">A <see cref="BufferTypeMetadata"/> instance.</param>
 	/// <param name="spanLength">Required span length.</param>
 	/// <returns><paramref name="func"/> result.</returns>

@@ -137,7 +137,7 @@ public unsafe partial class CStringSequence
 #endif
 	}
 	/// <summary>
-	/// Create buffer using <paramref name="info"/>.
+	/// Creates a buffer using <paramref name="info"/>.
 	/// </summary>
 	/// <param name="charSpan">A <see cref="Span{Char}"/> instance.</param>
 	/// <param name="info">A <see cref="SpanCreationInfo"/> value.</param>
@@ -355,7 +355,7 @@ public unsafe partial class CStringSequence
 	/// Creates cache for <paramref name="lengths"/>.
 	/// </summary>
 	/// <param name="lengths">The lengths of the UTF-8 text sequence.</param>
-	/// <param name="totalNonEmpty">Output. Count of non-empty UTF-8 texts.</param>
+	/// <param name="totalNonEmpty">Output. The number of non-empty UTF-8 texts.</param>
 	/// <returns>Instance cache.</returns>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
@@ -387,11 +387,11 @@ public unsafe partial class CStringSequence
 	/// <summary>
 	/// Retrieves the gaps list from <paramref name="lengths"/>.
 	/// </summary>
-	/// <param name="lengths">Length of each UTF-8 text in the sequence.</param>
-	/// <param name="totalNonEmpty">Output. Count of non-empty UTF-8 texts.</param>
-	/// <param name="lastNonEmpty">Output. Index of last non-empty UTF-8 text.</param>
-	/// <param name="skipLast">Output. Count of useless elements at the end of resulting list.</param>
-	/// <returns>A list containing the indices of all empty UTF-8 in the sequence.</returns>
+	/// <param name="lengths">The length of each UTF-8 text in the sequence.</param>
+	/// <param name="totalNonEmpty">Output. The number of non-empty UTF-8 texts.</param>
+	/// <param name="lastNonEmpty">Output. The index of the last non-empty UTF-8 text.</param>
+	/// <param name="skipLast">Output. The number of unused elements at the end of the resulting list.</param>
+	/// <returns>A list containing the indices of all empty UTF-8 texts in the sequence.</returns>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif

@@ -9,7 +9,7 @@
 namespace System;
 
 /// <summary>
-/// Represent a type can be used to index a collection either from the start or the end.
+/// Represents a type that can be used to index a collection either from the start or from the end.
 /// </summary>
 /// <remarks>
 /// Index is used by the C# compiler to support the new index syntax
@@ -29,11 +29,11 @@ internal readonly struct Index : IEquatable<Index>
 	private readonly Int32 _value;
 
 	/// <summary>
-	/// Create an Index pointing at first element.
+	/// Creates an Index that points at the first element.
 	/// </summary>
 	public static Index Start => new(0);
 	/// <summary>
-	/// Create an Index pointing at beyond last element.
+	/// Creates an Index that points beyond the last element.
 	/// </summary>
 	public static Index End => new(~0);
 
@@ -47,13 +47,15 @@ internal readonly struct Index : IEquatable<Index>
 	public Boolean IsFromEnd => this._value < 0;
 
 	/// <summary>
-	/// Construct an Index using a value and indicating if the index is from the start or from the end.
+	/// Constructs an Index using a value and indicating whether the index is from the start or from the end.
 	/// </summary>
-	/// <param name="value">The index value. it has to be zero or positive number.</param>
-	/// <param name="fromEnd">Indicating if the index is from the start or from the end.</param>
+	/// <param name="value">The index value. It must be zero or a positive number.</param>
+	/// <param name="fromEnd">
+	/// <see langword="true"/> if the index is from the end; otherwise, the index is from the start.
+	/// </param>
 	/// <remarks>
-	/// If the Index constructed from the end, index value 1 means pointing at the last element and index value 0 means
-	/// pointing at beyond last element.
+	/// If the Index is constructed from the end, index value 1 points at the last element and index value 0 points
+	/// beyond the last element.
 	/// </remarks>
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3427)]
@@ -69,7 +71,7 @@ internal readonly struct Index : IEquatable<Index>
 	private Index(Int32 value) => this._value = value;
 
 	/// <summary>
-	/// Create an Index from the start at the position indicated by the value.
+	/// Creates an Index from the start at the position indicated by the value.
 	/// </summary>
 	/// <param name="value">The index value from the start.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -79,7 +81,7 @@ internal readonly struct Index : IEquatable<Index>
 		return new(value);
 	}
 	/// <summary>
-	/// Create an Index from the end at the position indicated by the value.
+	/// Creates an Index from the end at the position indicated by the value.
 	/// </summary>
 	/// <param name="value">The index value from the end.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -90,17 +92,18 @@ internal readonly struct Index : IEquatable<Index>
 	}
 
 	/// <summary>
-	/// Calculate the offset from the start using the giving collection length.
+	/// Calculates the offset from the start using the given collection length.
 	/// </summary>
 	/// <param name="length">
-	/// The length of the collection that the Index will be used with. length has to be a positive value
+	/// The length of the collection that the <see cref="Index"/> will be used with. <paramref name="length"/> must be a
+	/// positive value.
 	/// </param>
 	/// <remarks>
-	/// For performance reason, we don't validate the input length parameter and the returned offset value against negative values.
-	/// we don't validate either the returned offset is greater than the input length.
-	/// It is expected Index will be used with collections which always have non negative length/count. If the returned
-	/// offset is negative and then used to index a collection will get out of range exception which will be same
-	/// affect as the validation.
+	/// For performance reasons, the input length and the returned offset are not validated against negative values.
+	/// The method also does not validate that the returned offset is greater than the input length.
+	/// <see cref="Index"/> is expected to be used with collections that always have a non-negative length or count.
+	/// If the returned offset is negative and is then used to index a collection, an out-of-range exception is thrown,
+	/// with the same effect as validation.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Int32 GetOffset(Int32 length)
@@ -131,7 +134,7 @@ internal readonly struct Index : IEquatable<Index>
 	public override Int32 GetHashCode() => this._value;
 
 	/// <summary>
-	/// Converts a <see cref="Int32"/> to a <see cref="Index"/>.
+	/// Converts an <see cref="Int32"/> to an <see cref="Index"/>.
 	/// </summary>
 	/// <param name="value">The <see cref="Int32"/> to convert.</param>
 	public static implicit operator Index(Int32 value) => Index.FromStart(value);

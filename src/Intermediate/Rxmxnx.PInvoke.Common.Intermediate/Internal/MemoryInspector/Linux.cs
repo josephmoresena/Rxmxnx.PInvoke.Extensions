@@ -68,8 +68,8 @@ internal partial class MemoryInspector
 		/// Retrieves permission index.
 		/// </summary>
 		/// <param name="buffer">A read-only buffer.</param>
-		/// <param name="isReadOnly"> Output. Indicates whether <paramref name="buffer"/> is read-only permission.</param>
-		/// <returns>Index of permission token in <paramref name="buffer"/>.</returns>
+		/// <param name="isReadOnly">Output. Indicates whether <paramref name="buffer"/> has read-only permission.</param>
+		/// <returns>The index of the permission token in <paramref name="buffer"/>.</returns>
 		private static Int32 GetPermissionIndex(ReadOnlySpan<Byte> buffer, out Boolean isReadOnly)
 		{
 			Int32 index = 0;

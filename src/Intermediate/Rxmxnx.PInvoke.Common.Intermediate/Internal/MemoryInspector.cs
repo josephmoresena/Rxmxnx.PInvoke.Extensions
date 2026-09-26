@@ -1,7 +1,7 @@
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// This class allows to retrieve information about memory directions.
+/// This class retrieves information about memory addresses.
 /// </summary>
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
@@ -95,11 +95,11 @@ internal abstract unsafe partial class MemoryInspector
 			return this.IsReadOnlyAddress(ptr);
 	}
 	/// <summary>
-	/// Indicates whether a given pointer references to a read-only memory section.
+	/// Indicates whether a given pointer references a read-only memory section.
 	/// </summary>
 	/// <param name="ptr">A native pointer.</param>
 	/// <returns>
-	/// <see langword="true"/> if the given pointers references to a read-only memory section;
+	/// <see langword="true"/> if the given pointer references a read-only memory section;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -137,7 +137,7 @@ internal abstract unsafe partial class MemoryInspector
 	/// <summary>
 	/// Indicates whether the given span represents memory that is not part of a hardcoded literal.
 	/// </summary>
-	/// <param name="refByte">A read only <see cref="Byte"/> reference.</param>
+	/// <param name="refByte">A read-only <see cref="Byte"/> reference.</param>
 	/// <returns>
 	/// <see langword="true"/> if the given span represents memory that is not part of a hardcoded literal;
 	/// otherwise, <see langword="false"/>.

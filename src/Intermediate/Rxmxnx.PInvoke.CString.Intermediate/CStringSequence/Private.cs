@@ -40,7 +40,7 @@ public partial class CStringSequence
 	/// Retrieves a sequence of <see cref="CString"/> based on the buffer and lengths of the texts.
 	/// </summary>
 	/// <param name="ptr">Pointer to the start of the buffer.</param>
-	/// <returns>An <see cref="CString"/> array representing the sequence of texts.</returns>
+	/// <returns>A <see cref="CString"/> array representing the sequence of texts.</returns>
 	private CString[] GetValues(IntPtr ptr)
 	{
 		CString[] result = new CString[this._lengths.Length];

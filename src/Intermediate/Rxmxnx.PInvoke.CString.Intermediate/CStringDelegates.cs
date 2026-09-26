@@ -1,12 +1,12 @@
 ﻿namespace Rxmxnx.PInvoke;
 
 /// <summary>
-/// Encapsulates a method that receives a span of bytes, an index and a state
+/// Encapsulates a method that receives a span of bytes, an index, and a state
 /// object of type <typeparamref name="TArg"/>.
 /// </summary>
 /// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
 /// <param name="span">A span of bytes.</param>
-/// <param name="index">Index of current sequence item.</param>
+/// <param name="index">The index of the current sequence item.</param>
 /// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 public delegate void CStringSequenceCreationAction<in TArg>(Span<Byte> span, Int32 index, TArg arg)
 #if NET9_0_OR_GREATER
@@ -57,7 +57,7 @@ public delegate TResult CStringSequenceFunc<out TResult>(FixedCStringSequence se
 
 /// <summary>
 /// Encapsulates a method that operates on a <see cref="FixedCStringSequence"/> instance, a state
-/// object of type <typeparamref name="TArg"/> and returns a value of
+/// object of type <typeparamref name="TArg"/>, and returns a value of
 /// type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="TArg">The type of the state object.</typeparam>

@@ -39,7 +39,7 @@ namespace System.Text.Unicode;
 internal static partial class Utf8Utility
 {
 	/// <summary>
-	/// Given a machine-endian DWORD which four bytes of UTF-8 data, interprets the
+	/// Given a machine-endian DWORD that contains four bytes of UTF-8 data, interprets the
 	/// first three bytes as a three-byte UTF-8 subsequence and returns the UTF-16 representation.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -51,7 +51,7 @@ internal static partial class Utf8Utility
 	}
 
 	/// <summary>
-	/// Given a machine-endian DWORD which four bytes of UTF-8 data, interprets the
+	/// Given a machine-endian DWORD that contains four bytes of UTF-8 data, interprets the
 	/// first two bytes as a two-byte UTF-8 subsequence and returns the UTF-16 representation.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
