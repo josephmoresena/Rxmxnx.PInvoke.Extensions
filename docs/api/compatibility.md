@@ -5,8 +5,8 @@ Standard 2.1, .NET Core 3.0, and later). That ceiling stays true no matter how m
 still include that original surface, and they add more targets *in addition*.
 
 From versions after 2.9.5 the package also ships dedicated and portable assemblies for older frameworks. The goal is
-**modern, retrocompatible code** — the same types and the same mental model on Native AOT, Mono, Unity, UWP, and .NET
-Framework. A production product on those runtimes is a valid use of the library.
+**modern, backward-compatible code** — the same types and the same mental model on Native AOT, Mono, Unity, UWP, and
+.NET Framework. A production product on those runtimes is a valid use of the library.
 
 Officially supported for new work: **.NET 8.0 and later**. The other assemblies exist so you can keep that modern style
 while the host framework or runtime changes.
@@ -77,8 +77,8 @@ When you already have a `ref` / `in`, the same choice is `NativeUtilities.TryCre
 fast-span view, or whatever path you already have for that ref.
 Details: [Utilities: fast vs slow span](utilities.md#fast-vs-slow-span).
 
-That is the same idea as the rest of the package: **modern code that stays retrocompatible**, without pretending every
-host is CoreCLR.
+That is the same idea as the rest of the package: **modern code that stays backward-compatible**, without pretending
+every host is CoreCLR.
 
 ## Two public API surfaces
 

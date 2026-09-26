@@ -198,7 +198,7 @@ versions keep that baseline and add more TFMs so the **same modern APIs** can ru
 engines, and .NET Core 2.1.
 
 That is not a hint that those hosts are invalid. A production product on .NET Framework 4.6.1+, UWP, Mono, Unity, or
-Xamarin is a first-class use of the library. The idea is **modern, retrocompatible code** — and, when you eventually
+Xamarin is a first-class use of the library. The idea is **modern, backward-compatible code** — and, when you eventually
 move, a path toward Mono or current .NET without rewriting the interop layer.
 
 - **Portable** `netstandard2.1` covers Xamarin, Unity, and Mono. Use **`netstandard2.0` only when the engine cannot

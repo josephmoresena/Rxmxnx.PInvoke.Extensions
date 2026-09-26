@@ -171,7 +171,7 @@ public static partial class BufferManager
 	/// Prepares the binary buffer metadata needed to allocate <paramref name="count"/> objects.
 	/// </summary>
 	/// <param name="count">Number of items in the required buffer.</param>
-	/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
+	/// <exception cref="InvalidOperationException">Thrown if metadata for any buffer component is missing.</exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void PrepareBinaryBuffer(UInt16 count) => BufferManager.Storage.PrepareBinaryMetadata<Object>(count);
 	/// <summary>
@@ -179,11 +179,11 @@ public static partial class BufferManager
 	/// </summary>
 	/// <typeparam name="T">Type of items in the buffer.</typeparam>
 	/// <param name="count">Number of items in the required buffer.</param>
-	/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
+	/// <exception cref="InvalidOperationException">Thrown if metadata for any buffer component is missing.</exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void PrepareBinaryBuffer<T>(UInt16 count) where T : struct
 	{
-		// If unmanaged type, stackalloc should be used.
+		// If the type is unmanaged, stackalloc should be used.
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
 		BufferManager.Storage.PrepareBinaryMetadata<T>(count);
 	}
@@ -193,11 +193,11 @@ public static partial class BufferManager
 	/// </summary>
 	/// <typeparam name="T">Type of nullable items in the buffer.</typeparam>
 	/// <param name="count">Number of items in the required buffer.</param>
-	/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
+	/// <exception cref="InvalidOperationException">Thrown if metadata for any buffer component is missing.</exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void PrepareBinaryBufferNullable<T>(UInt16 count) where T : struct
 	{
-		// If unmanaged type, stackalloc should be used.
+		// If the type is unmanaged, stackalloc should be used.
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
 		BufferManager.Storage.PrepareBinaryMetadata<T?>(count);
 	}

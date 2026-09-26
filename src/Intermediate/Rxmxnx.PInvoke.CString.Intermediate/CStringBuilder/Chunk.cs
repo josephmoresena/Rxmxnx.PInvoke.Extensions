@@ -249,7 +249,7 @@ public partial class CStringBuilder
 			Span<Byte> firstChunkBuffer = chunk._buffer.AsSpan()[index..];
 
 			if (nextChunk is not null)
-				// Use unused bytes form the next chunk.
+				// Use unused bytes from the next chunk.
 				Chunk.Fill(nextChunk, ref lastNewData, ref oldData);
 
 			Int32 newRequiredBytes = lastNewData.Length + oldData.Length;

@@ -65,7 +65,7 @@ public static partial class AotInfo
 #if NET5_0_OR_GREATER
 		if (TrimInfo.IsMobileTrimmedXnu())
 		{
-			// iOS, tvOS, watchOS, macCatalyst is always AOT.
+			// iOS, tvOS, watchOS, and macCatalyst are always AOT.
 			return false;
 		}
 #endif
@@ -73,7 +73,7 @@ public static partial class AotInfo
 		{
 			if (!TrimInfo.StringTypeNameContainsString())
 			{
-				// If reflection disabled, is AOT.
+				// If reflection is disabled, the runtime is AOT.
 				AotInfo.reflectionDisabled = true;
 				return false;
 			}
@@ -203,7 +203,7 @@ public static partial class AotInfo
 		if (reflectionBytes.HasValue || methodCount.HasValue)
 			return false;
 
-		return default; // Unabled to retrieve JIT information.
+		return default; // Unable to retrieve JIT information.
 	}
 	/// <summary>
 	/// Indicates whether JIT is enabled in the current runtime using reflection.
@@ -244,7 +244,7 @@ public static partial class AotInfo
 		if (reflectionBytes.HasValue || methodCount.HasValue)
 			return false;
 
-		return default; // Unabled to retrieve JIT information.
+		return default; // Unable to retrieve JIT information.
 	}
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <inheritdoc cref="AppDomain.GetAssemblies()"/>

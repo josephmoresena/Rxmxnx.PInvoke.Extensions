@@ -299,7 +299,7 @@ internal static class BuffersHelper
 #else
 		if ((typeofB != typeof(Atomic<T>) && !BuffersHelper.GetMetadataFromType<T>(typeofB).IsBinary) ||
 		    !BuffersHelper.BufferAutoCompositionEnabled)
-			// Avoid using reflection for Atomic<T> metadata retrieving.
+			// Avoid using reflection to retrieve Atomic<T> metadata.
 			return default;
 		BufferTypeMetadata<T>? result = default;
 		try

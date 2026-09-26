@@ -67,7 +67,7 @@ Samples in these guides assume C# 11 unless a snippet is marked otherwise.
 
 This package **officially supports .NET 8.0 and later**. Until **2.9.5**, compatibility was limited to modern runtimes
 that support **.NET Standard 2.1**. Later versions still include that baseline and add assemblies so existing products
-on older hosts keep compiling — as **modern, retrocompatible code**, not as a second-class mode.
+on older hosts keep compiling — as **modern, backward-compatible code**, not as a second-class mode.
 
 | Target                     | Support                                                                                                                          |
 |----------------------------|----------------------------------------------------------------------------------------------------------------------------------|

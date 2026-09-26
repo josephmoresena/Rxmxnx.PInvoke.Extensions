@@ -67,20 +67,21 @@ This application is designed to showcase the capabilities and potential of using
 .NET or Mono/Xamarin applications.
 
 These capabilities range from introspection of the runtime environment itself, native handling of UTF-8 strings,
-interaction with native code, as well as optimization of memory usage by using `Span` over multimodal arrays or managed
-dynamic buffers to store reference types on the stack.
+interaction with native code, as well as optimization of memory usage by using `Span` over multidimensional arrays or
+managed dynamic buffers to store reference types on the stack.
 
 The project uses C# 9.0 syntax to remain compatible with Mono 6.12, but it is compiled for all compatible versions of
 .NET Core/.NET.
 
 ## Considerations
 
-- When building with .NET Core/.NET enables a demonstration of JSON serialization/deserialization of UTF-8 strings while
+- Building with .NET Core or .NET enables a demonstration of JSON serialization and deserialization of UTF-8 strings
+  while
   avoiding re-encoding.
 - When building with the Mono framework, custom facades for **System.Buffers**, **System.Memory**, and
   **System.Threading.Tasks.Extensions** are used to implement JSON serializers that are not built into
   `Rxmxnx.PInvoke.Extensions`. The code for these serializers is compatible with Xamarin.
-- When builds targeting .NET 9.0 or later reference the VNext project, where some additional features are used.
+- Builds that target .NET 9.0 or later reference the VNext project, where some additional features are used.
 - Part of the code is also compatible with C# 8.0 through preprocessor directives in order to maintain compatibility
   with the original language version of the minimum TFM.
 
@@ -91,8 +92,8 @@ pointers to ref-struct values.
 
 # WebApi Test
 
-The ASP .NET Core project demonstrates how it is possible to integrate JSON serialization of UTF-8 strings (and
-sequences) while avoiding re-encoding.
+The ASP.NET Core project demonstrates how to integrate JSON serialization of UTF-8 strings (and sequences) while
+avoiding re-encoding.
 
 Here is a more continuous, technically detailed, and fluid version suitable for a README section:
 

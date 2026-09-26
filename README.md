@@ -13,7 +13,7 @@ intent in your signatures, pin memory only for as long as a callback or `using` 
 native APIs already do.
 
 The goal is **interop without spreading `unsafe`**, **performance without giving up lifetime safety**, and **modern code
-that stays retrocompatible** when the framework or the runtime changes.
+that stays backward-compatible** when the framework or the runtime changes.
 
 ```csharp
 CString message = new(() => "Hello from .NET"u8);

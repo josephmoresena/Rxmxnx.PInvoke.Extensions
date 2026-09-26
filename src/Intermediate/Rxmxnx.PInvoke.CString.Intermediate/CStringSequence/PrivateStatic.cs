@@ -368,7 +368,7 @@ public unsafe partial class CStringSequence
 		// All elements are empty, the cache is an empty array.
 		if (emptyIndices.Count == lengths.Length) return Array.Empty<CString>();
 
-		// There is no empty elements or there are only at the end of the list
+		// There are no empty elements, or the only empty elements are at the end of the list.
 		if (emptyIndices.Count == 0 || (emptyIndices.Count - skipLast == 1 && lastNonEmpty + 1 == emptyIndices[0]))
 			return lengths.Length switch
 			{
@@ -410,7 +410,7 @@ public unsafe partial class CStringSequence
 		}
 		// Determines total non-empty elements.
 		totalNonEmpty = lengths.Length - result.Count;
-		// Determines how many items can be skipped to the end of the list.
+		// Determines how many items can be skipped at the end of the list.
 		skipLast = 0;
 		for (Int32 i = result.Count - 1; i > 0; i--)
 		{

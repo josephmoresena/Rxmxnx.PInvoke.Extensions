@@ -6,9 +6,9 @@ For the capability overview, recipes, and API map, see the [buffers guide](../..
 [use cases](../../../docs/use-cases.md#use-a-stack-buffer-in-a-hot-parser), and
 [documentation hub](../../../docs/README.md).
 
-Internally, all reference types utilize buffers of type `Object`. Only not unmanaged value types require the use of
-buffers specific to their type. Unmanaged types do not need a managed buffer: `ScopedBuffer<T>` is a view, and the
-allocation uses `stackalloc`.
+Internally, all reference types use buffers of type `Object`. Only managed value types require a buffer specific to
+their type. Unmanaged types do not need a managed buffer: `ScopedBuffer<T>` is a view, and the allocation uses
+`stackalloc`.
 
 ---
 
@@ -104,13 +104,13 @@ reflection during buffer allocation.
 
 There are three buffer registration options:
 
-1. For `Object` type.
-2. For generic `struct` type.
-3. For generic nullable `struct` type.
+1. For the `Object` type.
+2. For a generic `struct` type.
+3. For a generic nullable `struct` type.
 
-## Binary buffer Preparation
+## Binary buffer preparation
 
-Binary buffers can be statically prepared for a given count number elements. This method requires the use of reflection
+Binary buffers can be statically prepared for a given number of elements. This method requires reflection
 and relies on the auto-composition feature.
 
 ## Buffer metadata storage
@@ -130,7 +130,7 @@ requirements, the following feature switches were introduced:
 * `PInvoke.BootstrapBufferStorage.Limited`: Restricts buffer storage and composition to a maximum binary capacity of
   2047 elements, with a binary space limit of 2<sup>10</sup> + 2<sup>9</sup> + 2<sup>8</sup> + 2<sup>7</sup> + 2<sup>
   6</sup> + 2<sup>5</sup> + 2<sup>4</sup> + 2<sup>3</sup> + 2<sup>2</sup> + 2<sup>1</sup> + 2<sup>0</sup>.
-* `PInvoke.BootstrapBufferStorage.Extended`: Uses the new storage system using a managed-buffer-based binary space of
+* `PInvoke.BootstrapBufferStorage.Extended`: Uses the new storage system, with a managed-buffer-based binary space of
   2047 elements, while still allowing extension to support larger binary metadata capacities.
 
 **Notes:**

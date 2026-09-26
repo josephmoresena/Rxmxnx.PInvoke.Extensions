@@ -19,9 +19,9 @@ as a callback or `using` scope lasts.
   until 2.9.5).
 - **Managed buffers** — stack-first temporary storage for values and object references.
 - **Runtime awareness** — `AotInfo` and `SystemInfo` for Native AOT, Mono, and OS checks.
-- **Retrocompatible hosts** — the same modern APIs on Framework, Standard, .NET, Mono, UWP, Unity, and Xamarin. Until
-  2.9.5 the package targeted runtimes that support .NET Standard 2.1; later versions add more TFMs without replacing
-  that baseline.
+- **Backward-compatible hosts** — the same modern APIs on Framework, Standard, .NET, Mono, UWP, Unity, and Xamarin.
+  Until 2.9.5 the package targeted runtimes that support .NET Standard 2.1; later versions add more TFMs without
+  replacing that baseline.
 
 ---
 

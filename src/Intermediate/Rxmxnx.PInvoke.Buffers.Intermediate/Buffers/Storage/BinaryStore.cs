@@ -317,7 +317,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 			{
 				return result;
 			}
-			// Exclude from total elements the current search length.
+			// Exclude the current search length from the total number of elements.
 			if ((remaining -= length) <= 0) continue;
 			// Get the next page.
 			pageIndex++;
