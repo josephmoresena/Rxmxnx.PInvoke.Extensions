@@ -547,7 +547,7 @@ public static unsafe class PointerExtensions
 	/// </summary>
 	/// <param name="ptr">The <see cref="IntPtr"/> pointing to the beginning of the stream.</param>
 	/// <param name="size">The size of the stream.</param>
-	/// <param name="access">Optional. One of the <see cref="FileAccess" /> values.</param>
+	/// <param name="access">Optional. One of the <see cref="FileAccess"/> values.</param>
 	/// <param name="capacity">Optional. The total amount of memory assigned to the stream.</param>
 	/// <returns>A <see cref="Span{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
@@ -570,7 +570,7 @@ public static unsafe class PointerExtensions
 	/// </summary>
 	/// <param name="uptr">The <see cref="UIntPtr"/> pointing to the beginning of the stream.</param>
 	/// <param name="size">The size of the stream.</param>
-	/// <param name="access">Optional. One of the <see cref="FileAccess" /> values.</param>
+	/// <param name="access">Optional. One of the <see cref="FileAccess"/> values.</param>
 	/// <param name="capacity">Optional. The total amount of memory assigned to the stream.</param>
 	/// <returns>A <see cref="Span{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>

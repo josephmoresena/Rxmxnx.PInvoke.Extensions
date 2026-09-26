@@ -18,60 +18,6 @@ public partial class CStringSequence
 	/// Internal buffer representing the combined null-terminated UTF-8 texts.
 	/// </summary>
 	private readonly String _value;
-
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-	/// <summary>
-	/// Retrieves the internal buffer as a <see cref="ReadOnlySpan{Char}"/> instance and creates a
-	/// <see cref="CString"/> array representing the sequence of texts.
-	/// </summary>
-	/// <param name="output">
-	/// Output <see cref="CString"/> array that represents the sequence of texts.
-	/// </param>
-	/// <returns>A <see cref="ReadOnlySpan{Char}"/> representing the internal buffer.</returns>
-	private unsafe ReadOnlySpan<Char> AsUnsafeSpan(out CString[] output)
-	{
-		ReadOnlySpan<Char> result = this._value;
-		ref Char firstCharRef = ref MemoryMarshal.GetReference(result);
-		IntPtr ptr = new(Unsafe.AsPointer(ref firstCharRef));
-		output = this.GetValues(ptr);
-		return this._value;
-	}
-	/// <summary>
-	/// Retrieves a sequence of <see cref="CString"/> based on the buffer and lengths of the texts.
-	/// </summary>
-	/// <param name="ptr">Pointer to the start of the buffer.</param>
-	/// <returns>A <see cref="CString"/> array representing the sequence of texts.</returns>
-	private CString[] GetValues(IntPtr ptr)
-	{
-		CString[] result = new CString[this._lengths.Length];
-		Int32 offset = 0;
-		for (Int32 i = 0; i < this._lengths.Length; i++)
-		{
-			Int32 length = this._lengths[i];
-			result[i] = length switch
-			{
-				< 0 => CString.Zero,
-				0 => CString.Empty,
-				_ => CString.CreateUnsafe(ptr + offset, length + 1),
-			};
-			if (length > 0) offset += length + 1;
-		}
-		return result;
-	}
-	/// <summary>
-	/// Creates a <see cref="FixedCStringSequence"/> instance from the current instance and a pointer to the buffer.
-	/// </summary>
-	/// <param name="ptr">Pointer to the UTF-8 sequence buffer.</param>
-	/// <returns>A <see cref="FixedCStringSequence"/> instance.</returns>
-#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
-	[Obsolete]
-#endif
-	private unsafe FixedCStringSequence GetFixedSequence(Char* ptr)
-	{
-		_ = this.AsUnsafeSpan(out CString[] output);
-		return new(output, CString.CreateUnsafe(new(ptr), this._value.Length * sizeof(Char), true));
-	}
-#endif
 	/// <summary>
 	/// Calculates the offset and length for the indicated sub-range.
 	/// </summary>
@@ -196,4 +142,57 @@ public partial class CStringSequence
 #endif
 		return result;
 	}
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+	/// <summary>
+	/// Retrieves the internal buffer as a <see cref="ReadOnlySpan{Char}"/> instance and creates a
+	/// <see cref="CString"/> array representing the sequence of texts.
+	/// </summary>
+	/// <param name="output">
+	/// Output <see cref="CString"/> array that represents the sequence of texts.
+	/// </param>
+	/// <returns>A <see cref="ReadOnlySpan{Char}"/> representing the internal buffer.</returns>
+	private unsafe ReadOnlySpan<Char> AsUnsafeSpan(out CString[] output)
+	{
+		ReadOnlySpan<Char> result = this._value;
+		ref Char firstCharRef = ref MemoryMarshal.GetReference(result);
+		IntPtr ptr = new(Unsafe.AsPointer(ref firstCharRef));
+		output = this.GetValues(ptr);
+		return this._value;
+	}
+	/// <summary>
+	/// Retrieves a sequence of <see cref="CString"/> based on the buffer and lengths of the texts.
+	/// </summary>
+	/// <param name="ptr">Pointer to the start of the buffer.</param>
+	/// <returns>A <see cref="CString"/> array representing the sequence of texts.</returns>
+	private CString[] GetValues(IntPtr ptr)
+	{
+		CString[] result = new CString[this._lengths.Length];
+		Int32 offset = 0;
+		for (Int32 i = 0; i < this._lengths.Length; i++)
+		{
+			Int32 length = this._lengths[i];
+			result[i] = length switch
+			{
+				< 0 => CString.Zero,
+				0 => CString.Empty,
+				_ => CString.CreateUnsafe(ptr + offset, length + 1),
+			};
+			if (length > 0) offset += length + 1;
+		}
+		return result;
+	}
+	/// <summary>
+	/// Creates a <see cref="FixedCStringSequence"/> instance from the current instance and a pointer to the buffer.
+	/// </summary>
+	/// <param name="ptr">Pointer to the UTF-8 sequence buffer.</param>
+	/// <returns>A <see cref="FixedCStringSequence"/> instance.</returns>
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+	[Obsolete]
+#endif
+	private unsafe FixedCStringSequence GetFixedSequence(Char* ptr)
+	{
+		_ = this.AsUnsafeSpan(out CString[] output);
+		return new(output, CString.CreateUnsafe(new(ptr), this._value.Length * sizeof(Char), true));
+	}
+#endif
 }

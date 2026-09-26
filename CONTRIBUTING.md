@@ -86,21 +86,22 @@ Rules that are easy to break:
 
 - **The modern portable assembly (`netstandard2.1`) must not reference `System.Text.Json`.** JSON packages target
   .NET Standard 2.0. Mixing 2.0 and 2.1 in one library fights **Mono Framework**’s long-term .NET Framework 4.5
-  compatibility model. Dedicated Core / .NET Framework TFMs that can take JSON do so in `Packages.props`. Mono Framework JSON
-  for `CString` lives in the optional facade [`src/MonoFacades`](src/MonoFacades/README.md)
+  compatibility model. Dedicated Core / .NET Framework TFMs that can take JSON do so in `Packages.props`. Mono Framework
+  JSON for `CString` lives in the optional facade [`src/MonoFacades`](src/MonoFacades/README.md)
   (`Rxmxnx.PInvoke.Json`), not in the core package.
 - **`netstandard2.0` is the engine-cannot-target-2.1 portable binary.** It is the one that pulls `System.Memory`,
   `System.Reflection.Emit.Lightweight`, and `Unsafe`. Do not choose 2.0 on a host that already supports 2.1.
 - **.NET 8.0+ has no extra package dependencies** on the official path. Older dedicated TFMs pin `Unsafe`, `Memory`,
-  `ValueTuple`, `Microsoft.Bcl.Memory`, and JSON at versions that match that host. Bump a pin only after restoring
-  **and running** tests on that TFM: a newer `System.Memory` can change span layout or reject pointer-containing `T` in
+  `ValueTuple`, `Microsoft.Bcl.Memory`, and JSON at versions that match that host. Bump a pin only after restoring **and
+  running** tests on that TFM: a newer `System.Memory` can change span layout or reject pointer-containing `T` in
   `Span<T>(void*, int)`.
 - **Test hosts are not library TFMs.** `netcoreapp2.0` appears in test props so the **netstandard2.0** assembly is
   exercised on that runtime (OpenSSL 1.0, empty-array identity, `Span<T>` over pointer types). The package does not
   ship `netcoreapp2.0`.
-- **Mono Framework 4.5-era references** use `ExcludeAssets` / `PrivateAssets` so a .NET Framework compile does not pull a Core
-  implementation of `Unsafe` into a 4.5 process. [`src/PackageReference.props`](src/PackageReference.props) is how
-  sample and test apps consume either the four intermediates (`UsePackage` unset) or the packed DLL (GitHub Actions).
+- **Mono Framework 4.5-era references** use `ExcludeAssets` / `PrivateAssets` so a .NET Framework compile does not pull
+  a Core implementation of `Unsafe` into a 4.5 process. [`src/PackageReference.props`](src/PackageReference.props) is
+  how sample and test apps consume either the four intermediates (`UsePackage` unset) or the packed DLL (GitHub
+  Actions).
 
 If a new dependency cannot be expressed under these rules, it does not belong in the core package. Facades, a companion
 package, or a TFM-only reference are the outlets that already exist.
@@ -111,12 +112,12 @@ package, or a TFM-only reference are the outlets that already exist.
 
 Under [`src/Intermediate`](src/Intermediate/README.md):
 
-| Project | What it is for |
-| --- | --- |
-| **Common** | Shared kernel: typed pointers, fixed memory, functional interfaces, wrappers, `NativeUtilities`, `AotInfo` / `SystemInfo`, framework compatibility shims, localization, process-map inspection. Other modules are not allowed to duplicate this. |
-| **Buffers** | `BufferManager`, binary / non-binary spaces, metadata storage. Needs Common; nothing else should grow a second buffer allocator. |
-| **CString** | UTF-8 / ASCII `CString`, `CStringSequence`, `CStringBuilder`, marshallers. Needs Common (and buffer types where UTF-8 concatenation uses them). |
-| **Extensions** | Extension methods on BCL types (`Span<T>`, `String`, pointers, streams). Needs Common; must not become a second kernel. |
+| Project        | What it is for                                                                                                                                                                                                                                   |
+|----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Common**     | Shared kernel: typed pointers, fixed memory, functional interfaces, wrappers, `NativeUtilities`, `AotInfo` / `SystemInfo`, framework compatibility shims, localization, process-map inspection. Other modules are not allowed to duplicate this. |
+| **Buffers**    | `BufferManager`, binary / non-binary spaces, metadata storage. Needs Common; nothing else should grow a second buffer allocator.                                                                                                                 |
+| **CString**    | UTF-8 / ASCII `CString`, `CStringSequence`, `CStringBuilder`, marshallers. Needs Common (and buffer types where UTF-8 concatenation uses them).                                                                                                  |
+| **Extensions** | Extension methods on BCL types (`Span<T>`, `String`, pointers, streams). Needs Common; must not become a second kernel.                                                                                                                          |
 
 Tests map 1:1 (`Common.Tests`, `Buffers.Tests`, `CString.Tests`, `Extensions.Tests`). That isolation is why a change to
 `ValPtr<T>` does not require re-running the multilingual `CString` corpus to get a first signal.
@@ -127,13 +128,14 @@ or every other module reimplements them. Treat new types as: does this belong to
 consumer of the package”? Only the last group goes in Common.
 
 Intermediate projects compile with `InternalsVisibleTo` toward each other and toward the test assemblies. They define
-`PACKAGE` **unset**, so `#if !PACKAGE` members (test helpers, extra coverage exclusions, .NET 9.0 extension methods that the
-package later patches as instance methods) exist in the development build.
+`PACKAGE` **unset**, so `#if !PACKAGE` members (test helpers, extra coverage exclusions, .NET 9.0 extension methods that
+the package later patches as instance methods) exist in the development build.
 
 ### How they become one DLL
 
 [`package/Rxmxnx.PInvoke.Extensions`](package/Rxmxnx.PInvoke.Extensions/Rxmxnx.PInvoke.Extensions.csproj) does **not**
-reference the intermediate DLLs as `ProjectReference` for the packed output. [`package/Intermediate-to-Package.targets`](package/Intermediate-to-Package.targets):
+reference the intermediate DLLs as `ProjectReference` for the packed output. [
+`package/Intermediate-to-Package.targets`](package/Intermediate-to-Package.targets):
 
 1. Builds intermediates only far enough to generate global usings.
 2. Includes every `.cs` file from the four trees into the package compilation (`IncludeIntermediateSources`).
@@ -156,11 +158,11 @@ share is gated with `#if` (`NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER` for the 
 `NET9_0_OR_GREATER` for `allows ref struct`, `NET7_0_OR_GREATER` for marshalling, and the FrameworkCompat types in
 Common for APIs that simply do not exist yet).
 
-That is not enough. **Declared** TFM surface and **executing** runtime diverge: desktop .NET Framework `Span<T>` is the slow
-three-field layout; Mono executing a .NET Framework TFM can still be fast span; `System.Memory` on netcoreapp2.0 rejects
-pointer-containing `T` in `Span<T>(void*, int)` even though the same source is valid on 2.1. Unit tests therefore run
-on each .NET / .NET Core host they can (`dotnet test /p:MultipleFrameworkTest=true`). Failures on an “obsolete” host
-are how the portable implementation is proven, not a distraction from the modern line.
+That is not enough. **Declared** TFM surface and **executing** runtime diverge: desktop .NET Framework `Span<T>` is the
+slow three-field layout; Mono executing a .NET Framework TFM can still be fast span; `System.Memory` on netcoreapp2.0
+rejects pointer-containing `T` in `Span<T>(void*, int)` even though the same source is valid on 2.1. Unit tests
+therefore run on each .NET / .NET Core host they can (`dotnet test /p:MultipleFrameworkTest=true`). Failures on an
+“obsolete” host are how the portable implementation is proven, not a distraction from the modern line.
 
 Application and Native AOT / Mono / WASM paths are a second net: [`src/ApplicationTest`](src/ApplicationTest/README.md)
 and [`src/LegacyAppTest`](src/LegacyAppTest/README.md). Locally they reference intermediates; CI packs the branch and
@@ -168,13 +170,13 @@ consumes the NuGet so the IL patcher, substitutions, and package assets are what
 
 ## Why .NET 9.0+ IL is patched
 
-Starting with .NET 9.0, `ValPtr<T>` and `ReadOnlyValPtr<T>` declare `where T : allows ref struct`. That is a real product
-feature: a typed pointer to a `ref struct` is valid IL and valid C# 13.
+Starting with .NET 9.0, `ValPtr<T>` and `ReadOnlyValPtr<T>` declare `where T : allows ref struct`. That is a real
+product feature: a typed pointer to a `ref struct` is valid IL and valid C# 13.
 
 `IFixedContext<T>.IDisposable` is a **class-based** nested interface. It cannot represent a context whose `T` is a
 `ref struct`. If the instance method `ValPtr<T>.GetUnsafeFixedContext(int, IDisposable)` stayed in C# on .NET 9.0, the
-compiler would have to emit a method whose return type is illegal for some `T` the type now allows. On .NET 8.0 and earlier
-the method is ordinary C# (`#if !NET9_0_OR_GREATER` in `ValPtr.cs` / `ReadOnlyValPtr.cs`).
+compiler would have to emit a method whose return type is illegal for some `T` the type now allows. On .NET 8.0 and
+earlier the method is ordinary C# (`#if !NET9_0_OR_GREATER` in `ValPtr.cs` / `ReadOnlyValPtr.cs`).
 
 The package still needs that method on .NET 9.0+ **for non-ref-struct `T`**, so existing callers and the historical
 `IFixed*` surface keep working. After the .NET 9.0+ assembly is compiled,
@@ -196,11 +198,11 @@ constraint (`allows ref struct`) makes an old member inexpressible, not a genera
 
 ## Where to read next
 
-| If you are changing… | Start here |
-| --- | --- |
-| Public API / TFM gates | [`docs/api/compatibility.md`](docs/api/compatibility.md), then the matching file under `src/Intermediate` |
-| UTF-8 types | [`src/Intermediate/Rxmxnx.PInvoke.CString.Intermediate/README.md`](src/Intermediate/Rxmxnx.PInvoke.CString.Intermediate/README.md) |
-| Stack buffers / AOT metadata | [`src/Intermediate/Rxmxnx.PInvoke.Buffers.Intermediate/README.md`](src/Intermediate/Rxmxnx.PInvoke.Buffers.Intermediate/README.md) |
-| Unit tests | [`src/Test/README.md`](src/Test/README.md) |
-| Packaged vs intermediate consumption, AOT, Mono | [`src/ApplicationTest/README.md`](src/ApplicationTest/README.md) |
-| Mono Framework JSON / facades | [`src/MonoFacades/README.md`](src/MonoFacades/README.md) |
+| If you are changing…                            | Start here                                                                                                                         |
+|-------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| Public API / TFM gates                          | [`docs/api/compatibility.md`](docs/api/compatibility.md), then the matching file under `src/Intermediate`                          |
+| UTF-8 types                                     | [`src/Intermediate/Rxmxnx.PInvoke.CString.Intermediate/README.md`](src/Intermediate/Rxmxnx.PInvoke.CString.Intermediate/README.md) |
+| Stack buffers / AOT metadata                    | [`src/Intermediate/Rxmxnx.PInvoke.Buffers.Intermediate/README.md`](src/Intermediate/Rxmxnx.PInvoke.Buffers.Intermediate/README.md) |
+| Unit tests                                      | [`src/Test/README.md`](src/Test/README.md)                                                                                         |
+| Packaged vs intermediate consumption, AOT, Mono | [`src/ApplicationTest/README.md`](src/ApplicationTest/README.md)                                                                   |
+| Mono Framework JSON / facades                   | [`src/MonoFacades/README.md`](src/MonoFacades/README.md)                                                                           |

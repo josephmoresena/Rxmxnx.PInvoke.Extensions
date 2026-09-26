@@ -58,7 +58,7 @@ public partial class CStringSequence
 			/// Resets the enumerator to the beginning of the enumeration, starting over.
 			/// </summary>
 			public partial void Reset();
-			
+
 			/// <summary>
 			/// Retrieves the current instance span.
 			/// </summary>

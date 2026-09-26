@@ -9,7 +9,7 @@ namespace Rxmxnx.PInvoke;
 [EditorBrowsable(EditorBrowsableState.Never)]
 public static class EnumerableSequenceExtensions
 {
-#if !PACKAGE && NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if (!PACKAGE && NETSTANDARD2_1) || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Creates an enumerator that iterates through <paramref name="instance"/>.
 	/// </summary>

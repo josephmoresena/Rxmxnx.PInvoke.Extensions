@@ -145,7 +145,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					writer.WriteLine(ex);
 				}
 				else
+				{
 					writer.WriteLine($"**Unable to perform conversion: {ex.Message}**");
+				}
 			}
 			writer.WriteLine("=== Enumerable sequences ===");
 			foreach (CString value in sequence)
@@ -181,7 +183,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				writer.WriteLine($"Address: 0x{utf8Span.GetUnsafeIntPtr().ToString("X")}\t" +
 				                 $"Length: {utf8Span.Length}\t" +
 #endif
-#if !NET452_OR_GREATER && (NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !WINDOWS_UWP)
+#if !NET452_OR_GREATER && (NETCOREAPP3_0_OR_GREATER || (!NETCOREAPP && !WINDOWS_UWP))
 				                 $"Bytes: {Convert.ToBase64String(utf8Span)}\t" +
 #else
 				                 $"Bytes: {Convert.ToBase64String(utf8Span.ToArray())}\t" +
@@ -282,7 +284,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		{
 			BufferHelper.CollectGarbage(writer);
 			ref Guid refU = ref uuid.Reference;
-#if !LEGACY && (NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER || NETFRAMEWORK && !NET46_OR_GREATER)
+#if !LEGACY && (NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER || (NETFRAMEWORK && !NET46_OR_GREATER))
 #if NET5_0_OR_GREATER
 			writer.WriteLine(
 				$"Address: 0x{refU.AsBytes().GetUnsafeIntPtr():X}\tWrapper: {uuid.Value}\tRef: {uuid.Reference}");
@@ -301,7 +303,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		private readonly struct PrintAction<T> : IFixedContextAction<T>
 		{
 			private readonly TextWriter _writer;
-			public PrintAction(TextWriter writer) { this._writer = writer; }
+			public PrintAction(TextWriter writer) => this._writer = writer;
 			public void Accept(FixedContextValue<T> ctx) => FeatureHelper.Print(ctx, this._writer);
 		}
 

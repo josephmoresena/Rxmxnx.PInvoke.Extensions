@@ -1,5 +1,5 @@
-﻿`Rxmxnx.PInvoke.Extensions` supports the use of two types of buffers: binary and non-binary. The theoretical maximum of a
-**managed** buffer is (2<sup>16</sup>) − 1 elements. A single **binary** buffer is at most 2<sup>15</sup> elements;
+﻿`Rxmxnx.PInvoke.Extensions` supports the use of two types of buffers: binary and non-binary. The theoretical maximum of
+a **managed** buffer is (2<sup>16</sup>) − 1 elements. A single **binary** buffer is at most 2<sup>15</sup> elements;
 combining every maximum binary space still cannot exceed (2<sup>16</sup>) − 1. The runtime may offer less.
 
 For the capability overview, recipes, and API map, see the [buffers guide](../../../docs/api/buffers.md),

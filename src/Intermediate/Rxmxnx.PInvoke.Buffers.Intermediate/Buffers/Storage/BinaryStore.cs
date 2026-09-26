@@ -314,7 +314,9 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 			if (BuffersHelper.Search(ref r0, relativeIndex, length) is { } result)
 #endif
 				// Minimal metadata found.
+			{
 				return result;
+			}
 			// Exclude from total elements the current search length.
 			if ((remaining -= length) <= 0) continue;
 			// Get the next page.

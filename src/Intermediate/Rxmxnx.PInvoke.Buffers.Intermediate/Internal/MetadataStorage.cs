@@ -142,7 +142,8 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 			{
 				if (m is null) continue;
 				// ReSharper disable once HeapView.BoxingAllocation
-				Trace.WriteLine($"{typeof(T)} {m.Size}({String.Join(", ", m.Components.ToArray().Select(k => k.Size))})");
+				Trace.WriteLine(
+					$"{typeof(T)} {m.Size}({String.Join(", ", m.Components.ToArray().Select(k => k.Size))})");
 				count++;
 			}
 		}

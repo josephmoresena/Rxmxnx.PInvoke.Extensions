@@ -103,7 +103,7 @@ public interface IEnumerableSequence<out T> : IEnumerable<T>
 	/// <returns>The total number of elements in the sequence.</returns>
 	Int32 GetSize();
 
-#if !PACKAGE && NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if (!PACKAGE && NETSTANDARD2_1) || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Method to call when <see cref="IEnumerator{T}"/> is disposing.
 	/// </summary>

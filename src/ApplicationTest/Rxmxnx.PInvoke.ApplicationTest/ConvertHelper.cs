@@ -2,7 +2,8 @@ using System;
 #if NET5_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
-#elif !NETCOREAPP2_1_OR_GREATER && (!NETFRAMEWORK || !MONO && !NET461_OR_GREATER) && !WINDOWS_UWP
+
+#elif !NETCOREAPP2_1_OR_GREATER && (!NETFRAMEWORK || (!MONO && !NET461_OR_GREATER)) && !WINDOWS_UWP
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 #else
@@ -23,7 +24,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 	internal static class ConvertHelper
 	{
 		public static SerializableMessage<String> Convert(SerializableMessage<CString> value)
-#if !NETCOREAPP2_1_OR_GREATER && (!NETFRAMEWORK || !MONO && !NET461_OR_GREATER) && !WINDOWS_UWP
+#if !NETCOREAPP2_1_OR_GREATER && (!NETFRAMEWORK || (!MONO && !NET461_OR_GREATER)) && !WINDOWS_UWP
 #if !CSHARP9_0
             => new SerializableMessage<String>
 #else
@@ -40,7 +41,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		}
 #endif
 		public static SerializableMessage<CString> Convert(SerializableMessage<String> value)
-#if !NETCOREAPP2_1_OR_GREATER && (!NETFRAMEWORK || !MONO && !NET461_OR_GREATER) && !WINDOWS_UWP
+#if !NETCOREAPP2_1_OR_GREATER && (!NETFRAMEWORK || (!MONO && !NET461_OR_GREATER)) && !WINDOWS_UWP
 #if !CSHARP9_0
             => new SerializableMessage<CString> { Title = (CString?)value.Title, Message = (CString?)value.Message, };
 #else
@@ -55,7 +56,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 		public static String?[] Convert(CStringSequence sequence)
 		{
-#if NETCOREAPP2_1_OR_GREATER || NETFRAMEWORK && (MONO || NET461_OR_GREATER) || WINDOWS_UWP
+#if NETCOREAPP2_1_OR_GREATER || (NETFRAMEWORK && (MONO || NET461_OR_GREATER)) || WINDOWS_UWP
 			String serialized = JsonSerializer.Serialize(sequence, AppJsonSerializerContext.SerializerOptions);
 #if !WINDOWS_UWP
 			return JsonSerializer.Deserialize<String?[]>(serialized, AppJsonSerializerContext.SerializerOptions)!;
@@ -78,7 +79,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #endif
 		}
 		public static CStringSequence Convert(params String?[] sequence)
-#if !NETCOREAPP2_1_OR_GREATER && (!NETFRAMEWORK || !MONO && !NET461_OR_GREATER) && !WINDOWS_UWP
+#if !NETCOREAPP2_1_OR_GREATER && (!NETFRAMEWORK || (!MONO && !NET461_OR_GREATER)) && !WINDOWS_UWP
 #if !CSHARP9_0
             => new CStringSequence(sequence);
 #else

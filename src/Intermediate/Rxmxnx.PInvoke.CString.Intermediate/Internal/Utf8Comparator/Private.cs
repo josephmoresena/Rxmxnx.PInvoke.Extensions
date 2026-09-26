@@ -185,7 +185,7 @@ internal partial class Utf8Comparator<TChar>
 		// Starting with .NET 7.0, System.Runtime.InteropServices.GCHandle implements
 		// System.IEquatable<System.Runtime.InteropServices.GCHandle>.
 		if (!SystemInfo.UsesNativeSpan ||
-		    SystemInfo.CountInterfaces<AppDomain>() == 0 && !SystemInfo.IsSelfEquatable<GCHandle>())
+		    (SystemInfo.CountInterfaces<AppDomain>() == 0 && !SystemInfo.IsSelfEquatable<GCHandle>()))
 			return String.CompareOrdinal(Utf8Comparator.GetStringFromUtf8(textA), stringB ?? this.GetString(textB));
 #endif
 
