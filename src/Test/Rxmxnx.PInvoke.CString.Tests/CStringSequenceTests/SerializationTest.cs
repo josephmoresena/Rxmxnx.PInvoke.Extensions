@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 #if NETSTANDARD2_0_OR_GREATER
 using CStringSequenceJsonConverter = Rxmxnx.PInvoke.Json.CStringSequenceJsonConverter;
+
 #else
 using CStringSequenceJsonConverter = Rxmxnx.PInvoke.CStringSequence.JsonConverter;
 #endif

@@ -130,8 +130,10 @@ public sealed unsafe class WithSafeFixedTest
 					PInvokeAssert.Equal(new(ptr), fixedContext.ValuePointer);
 				}
 				else if (fixedContext.Pointer != IntPtr.Zero)
+				{
 					fixed (void* ptrEmpty = CString.Empty)
 						PInvokeAssert.Equal(fixedContext.Pointer, new(ptrEmpty));
+				}
 			}
 #if NETCOREAPP
 			GCHandle handle = GCHandle.FromIntPtr(fixedContext.Pointer);
