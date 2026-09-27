@@ -1,16 +1,16 @@
 # Functional interfaces
 
-Functional interfaces are **callable structs**. They are the preferred callback style for `WithSafeFixed`,
+Functional interfaces are **callable types**. They are the preferred callback style for `WithSafeFixed`,
 `BufferManager.Alloc`, and related APIs on every TFM:
 
-- State lives on the struct, not in a compiler-generated display class.
+- State may live on the struct, not in a compiler-generated display class.
 - The call can be fully inlined in many cases.
 - On .NET 9.0+, the operation can accept `ref struct` values (`scoped FixedContextValue<T>`). Consumers of those TFMs
-  should use **C# 13**.
+  should use **C# 13.0**.
 
-Delegate overloads remain public on the original modern TFMs (.NET Standard 2.1 / .NET Core 3.0 and later — the set that
-existed until 2.9.5). They were not brought to .NET Framework, .NET Standard 2.0, UWP, or .NET Core 2.1, so on those
-TFMs the functional-interface form is the only callback style the package compiles.
+Delegate overloads remain public on the modern line (.NET Standard 2.1 / .NET Core 3.0 and later). On the other TFMs the
+functional-interface form is the callback style the package compiles. See
+[compatibility](compatibility.md#apis-that-stay-on-the-modern-line).
 
 ## How they look
 
@@ -72,7 +72,7 @@ large.
 ## Other functional contracts
 
 These are not “delegate replacements” in the same sense, but they follow the same idea: a type that supplies behavior
-without a heap delegate.
+without an extra delegate allocation.
 
 ### `IUtf8FunctionState<TSelf>` (.NET 7.0+)
 

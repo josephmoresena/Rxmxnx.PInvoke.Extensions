@@ -87,7 +87,8 @@ Binary buffers are built from powers of two:
 
 Auto-composition combines these at runtime when the feature is enabled and reflection/metadata are available. On Native
 AOT you must preserve composite metadata (see
-the [intermediate README](../../src/Intermediate/Rxmxnx.PInvoke.Buffers.Intermediate/README.md#native-aot)) **or**
+the [intermediate README](../../src/Intermediate/Rxmxnx.PInvoke.Buffers.Intermediate/README.md#net-native-native-aot-il2cpp-and-reflection-free-mode))
+**or**
 register/prepare sizes you will use.
 
 ### Non-binary buffers
@@ -106,14 +107,21 @@ structs. They are not public extension points.
 
 ## AOT and registration
 
-On Native AOT:
+On every package version, buffer composition works under Mono AOT, IL2CPP, Native AOT, .NET Native, and ReadyToRun.
+Two alternatives keep auto-composition off the reflection path:
 
-1. Prefer `BufferManager.Register…` for every size/type you allocate.
-2. If you rely on auto-composition, preserve the composite types in a runtime directives file and keep reflection
-   enabled.
-3. `PrepareBinaryBuffer` is a JIT-friendly cache warmer; it is the wrong tool when reflection is trimmed away.
+1. **Code registration** (`BufferManager.Register…`) for every size and type you allocate. This is easier to initialize
+   and does not use reflection. IL2CPP has no other path. The obsolete reflection-free Native AOT mode does not either.
+2. **Runtime directives.** Preserve the composite types in an RD.xml file and keep reflection enabled. The file can be
+   very long and is manageable when you prefer not to list types in source. It did not work in reflection-free mode.
+   Mono AOT can generate code that honors the directives, so the file remains usable there.
+
+`PrepareBinaryBuffer` is a JIT-friendly cache warmer. It uses reflection and is the wrong tool when reflection is
+trimmed away.
 
 Feature switches on .NET 8.0+:
+
+`PInvoke.DisableBufferAutoComposition` disables runtime composition of binary buffer metadata.
 
 | Switch                                    | Cap              | Space                      |
 |-------------------------------------------|------------------|----------------------------|

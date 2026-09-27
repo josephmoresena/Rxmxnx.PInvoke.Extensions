@@ -18,8 +18,8 @@ What you can do:
   `IsSegmented`, `IsFunction`, `IsZero`).
 - Concatenate, compare, and hash with `String`-compatible hash codes.
 - Marshal as a null-terminated UTF-8 pointer on .NET 7.0+ via source-generated P/Invoke.
-- Serialize with `System.Text.Json` on .NET Core and on .NET Framework 4.6.1+ without re-encoding on every write (not on
-  .NET Standard 2.0/2.1 or net452/net46).
+- Serialize/Deserialzie with `System.Text.Json` on .NET Core and on .NET Framework 4.6.1+ without re-encoding on every
+  operation (not on .NET Standard 2.0/2.1 or net452/net46).
 
 `CStringSequence` stores several null-terminated UTF-8 strings in one contiguous buffer — the shape native code expects
 for `argv`, environment blocks, and similar lists. `CStringBuilder` is the mutable UTF-8 counterpart of `StringBuilder`.
@@ -29,7 +29,7 @@ the [CString intermediate notes](../src/Intermediate/Rxmxnx.PInvoke.CString.Inte
 
 ## Typed pointers that keep their meaning
 
-`IntPtr` is a number. `ValPtr<T>` is a pointer to `T`. That difference shows up in IntelliSense, in marshalling, and in
+`IntPtr` is a number. `ValPtr<T>` is a pointer to `T`. That difference shows up in IntelliSense, in marshaling, and in
 reviews.
 
 What you can do:
@@ -44,7 +44,7 @@ A pointer to a `ref struct`, or a pointer obtained from a `TDelegate`, is typica
 under **Native AOT**. Classic native P/Invoke already has an unmanaged function pointer; those extra shapes exist for
 the managed / Native AOT side of the same APIs.
 
-The library never pretends a typed pointer is “safe” in the GC sense. It makes the contract visible so mistakes are
+The library never pretends a typed pointer is “safe” in the GC sense. It makes the contract visible, so mistakes are
 harder to ship.
 
 Deep dive: [Pointers](api/pointers.md).
@@ -65,11 +65,9 @@ What you can do:
 - Prefer **functional interfaces** (`IFixedContextAction<T>`, `IFixedAction`, …) so the callback is a `readonly struct`
   that already holds its state.
 
-Prefer value-type contexts (`FixedContextValue<T>`, `FixedPointerValue`) and functional interfaces. The `IFixed*`
-interfaces remain public on every TFM. Delegate overloads that take those interfaces, and helpers that return nested
-`IFixedContext<T>.IDisposable`, exist only on the original modern TFMs (.NET Standard 2.1 / .NET Core 3.0+, the set that
-existed until 2.9.5) — they were not brought to .NET Framework, .NET Standard 2.0, or UWP.
-See [compatibility](api/compatibility.md).
+Prefer value-type contexts (`FixedContextValue<T>`, `FixedPointerValue`) and functional interfaces. Delegate overloads
+that take the `IFixed*` interfaces exist only on the modern line. See
+[compatibility](api/compatibility.md#apis-that-stay-on-the-modern-line).
 
 Whether `Memory<T>` whose `T` contains references can be pinned is a **host** decision. If the runtime allows pinning
 `String[]` or `String[,,,]`, the library does too; it does not reject managed types up front. `Memory.Pin()` may still
@@ -146,18 +144,11 @@ What you can do:
 - Register binary buffer metadata ahead of time so Native AOT does not need reflection to compose sizes.
 - Use `Atomic<T>`, `Composite<TBufferA, TBufferB, T>`, and `NonBinarySpace<TArray, T>` when you need an explicit stack
   layout.
-- Prefer `IScopedBufferAction<T>` / `IScopedBufferFunction<T, TResult>` so the work is a struct, not a delegate.
+- Prefer `IScopedBufferAction<T>` / `IScopedBufferFunction<T, TResult>` so the work is a type, not a delegate.
+- **Unmanaged** `T` does not need a managed buffer. `ScopedBuffer<T>` is a **view** over the allocated space; the
+  allocation itself uses `stackalloc`.
 
-**Unmanaged** `T` does not need a managed buffer. `ScopedBuffer<T>` is a **view** over the allocated space; the
-allocation itself uses `stackalloc`.
-
-**Managed** buffers (reference types and managed structs) have a theoretical maximum of **(2¹⁶) − 1** elements. A single
-**binary** buffer is at most **2¹⁵** elements. Combining the maximum binary spaces still cannot exceed **(2¹⁶) − 1**.
-The runtime may offer less, and feature switches (`PInvoke.BootstrapBufferStorage.*`) control how much metadata is
-preloaded on .NET 8.0+.
-
-Deep dive: [Buffers](api/buffers.md) and
-the [buffer intermediate notes](../src/Intermediate/Rxmxnx.PInvoke.Buffers.Intermediate/README.md).
+Limits, feature switches, and AOT registration are in [Buffers](api/buffers.md).
 
 ## Runtime and AOT awareness
 
@@ -172,11 +163,7 @@ What you can do:
   useful on Mono.
 - Ask whether a span is a hardcoded literal (`IsLiteral` / `MayBeNonLiteral`).
 
-The library itself is designed around **minimal reflection and statically reachable code**, which is why it trims
-cleanly and runs under Mono AOT, ReadyToRun, Native AOT, and Unity IL2CPP (with one documented IL2CPP identifier
-workaround).
-
-Deep dive: [Utilities](api/utilities.md) and [Getting started](getting-started.md#aot-support).
+Deep dive: [Utilities](api/utilities.md) and [AOT support](getting-started.md#aot-support).
 
 ## Wrappers and references as contracts
 
@@ -191,40 +178,22 @@ with slicing and optional pinning.
 
 Deep dive: [Wrappers and regions](api/wrappers.md).
 
-## Modern code on older hosts
+## Frameworks beyond .NET Standard 2.1
 
-Until version **2.9.5**, package compatibility was limited to modern runtimes that support .NET Standard 2.1. Later
-versions keep that baseline and add more TFMs so the **same modern APIs** can run on Framework, UWP, Standard 2.0
-engines, and .NET Core 2.1.
+Later package versions extend compatibility past the modern .NET Standard 2.1 runtimes. Which APIs stay on the modern
+line, and what each TFM adds is in [Target frameworks and public API surface](api/compatibility.md).
 
-That is not a hint that those hosts are invalid. A production product on .NET Framework 4.6.1+, UWP, Mono, Unity, or
-Xamarin is a first-class use of the library. The idea is **modern, backward-compatible code** — and, when you eventually
-move, a path toward Mono or current .NET without rewriting the interop layer.
-
-- **Portable** `netstandard2.1` covers Xamarin, Unity, and Mono. Use **`netstandard2.0` only when the engine cannot
-  target 2.1**.
-- **Dedicated** `lib/` assemblies exist for .NET / .NET Core, UWP, and .NET Framework so those runtimes are not forced
-  through Standard.
-- **.NET Framework 4.5.2 / 4.6** are a transition step from before Standard 2.0 (no `System.Text.Json` in the core
-  package). **4.6.1 and later** are dedicated Framework binaries for products that still run there.
-- Span work follows the **runtime**: cheaper on modern .NET (and often on UWP/Mono) than on desktop Framework. Fast span
-  versus your own / older code: `UsesNativeSpan` while you still choose how to work; `TryCreateSpan` /
-  `TryCreateReadOnlySpan` once you already hold a `ref`.
-- Each TFM binary **adapts to internal BCL and runtime changes** of that target. You write to the public API; the
-  library absorbs layout and helper differences.
-
-The map is in [Target frameworks and public API surface](api/compatibility.md). Language floors (C# 7.3, preferred C#
-11, C# 13 on .NET 9.0+) are in [Getting started](getting-started.md#language-versions).
+Span operations follow the executing runtime. `SystemInfo.UsesNativeSpan`, `NativeUtilities.TryCreateSpan`, and
+`TryCreateReadOnlySpan` are described in [span efficiency](api/compatibility.md#span-efficiency).
 
 ## Visual Basic access
 
-The package is C#-first. Visual Basic .NET can still call a **minimal** helper surface: `Rxmxnx.PInvoke.VisualBasic` and
-`BufferManager.VisualBasic`. VB cannot express most `ref`/`span` APIs, so that is the smallest set that still works, not
-a full VB port.
+Visual Basic .NET can call a minimal helper surface. The helpers are in
+[Getting started](getting-started.md#visual-basic-net-support).
 
 ## What this library is not
 
-- It is not a replacement for `System.Runtime.InteropServices` or source-generated marshalling. It sits on top of them
+- It is not a replacement for `System.Runtime.InteropServices` or source-generated marshaling. It sits on top of them
   and makes the resulting code safer to read.
 - It is not a general-purpose UTF-8 string library for UI text. `CString` is built for interop, protocols, and binary
   pipelines.

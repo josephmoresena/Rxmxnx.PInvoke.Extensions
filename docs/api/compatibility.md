@@ -1,15 +1,14 @@
 # Target frameworks and public API surface
 
-Until version **2.9.5**, package compatibility was limited to modern runtimes that support **.NET Standard 2.1** (.NET
-Standard 2.1, .NET Core 3.0, and later). That ceiling stays true no matter how many versions follow: later releases
-still include that original surface, and they add more targets *in addition*.
+Until version **2.9.5**, the package was compatible only with modern runtimes that support **.NET Standard 2.1**: the
+portable `netstandard2.1` assembly and a dedicated assembly for each .NET Core and .NET version, through .NET 10.0.
 
-From versions after 2.9.5 the package also ships dedicated and portable assemblies for older frameworks. The goal is
-**modern, backward-compatible code** — the same types and the same mental model on Native AOT, Mono, Unity, UWP, and
-.NET Framework. A production product on those runtimes is a valid use of the library.
+Later versions extend compatibility to frameworks that are not compatible with .NET Standard 2.1, and ship dedicated and
+portable assemblies for them. The original modern surface remains. The goal is **modern, backward-compatible code** —
+the same types and the same mental model on Native AOT, Mono AOT, IL2CPP, .NET Native, ReadyToRun, Unity, UWP, and .NET
+Framework. A production product on those runtimes is a valid use of the library.
 
-Officially supported for new work: **.NET 8.0 and later**. The other assemblies exist so you can keep that modern style
-while the host framework or runtime changes.
+For a new project, see [Support policy](../getting-started.md#support-policy).
 
 ## Why the extra targets exist
 
@@ -17,12 +16,12 @@ They are what the package can ship once the implementation is mature enough to h
 still use what the **executing runtime** actually provides. Each binary **adapts to BCL and runtime internals** of that
 target; you write to the public API.
 
-| Kind of assembly           | TFMs                                                                               | Role                                                                                                                                                                                        |
-|----------------------------|------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Portable                   | `netstandard2.1`, `netstandard2.0`                                                 | One binary for **Xamarin, Unity, and Mono**. 2.1 is the portable target that existed until 2.9.5. Use **2.0 only when the engine cannot target 2.1**.                                       |
-| Dedicated .NET / .NET Core | `netcoreapp2.1`, `netcoreapp3.0`–`net10.0`                                         | Own `lib/` per TFM.                                                                                                                                                                         |
-| Dedicated UWP              | `uap10.0.16299`                                                                    | Own binary for the UWP runtime. A product that ships on UWP is a first-class host, not a stopgap.                                                                                           |
-| Dedicated .NET Framework   | `net452`, `net46`, `net461`, `net462`, `net472` (`net470` / `net471` restore only) | Own binaries. 4.5.2 / 4.6 sit before Standard 2.0 (see below). **4.6.1 and later are production Framework targets** that also happen to prepare a path toward modern runtimes such as Mono. |
+| Kind of assembly           | TFMs                                                                               | Role                                                                                                                                                |
+|----------------------------|------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| Portable                   | `netstandard2.1`, `netstandard2.0`                                                 | **2.1** is the portable assembly for modern runtimes. **2.0** is for runtimes that are not compatible with 2.1. Both keep the dependency set small. |
+| Dedicated .NET / .NET Core | `netcoreapp2.1`, `netcoreapp3.0`–`net10.0`                                         | Own `lib/` per TFM. Features and optimizations are added as the runtime admits them.                                                                |
+| Dedicated UAP              | `uap10.0.16299`                                                                    | Modern APIs and runtime-level optimizations. See below.                                                                                             |
+| Dedicated .NET Framework   | `net452`, `net46`, `net461`, `net462`, `net472` (`net470` / `net471` restore only) | Transition through 4.6, then dedicated support. See below.                                                                                          |
 
 `net470` and `net471` are listed as package targets so those projects restore. They do **not** ship their own `lib/`
 (`IncludeBuildOutput=false`); NuGet falls back to a nearby framework.
@@ -31,29 +30,31 @@ There is also a **.NET Framework 4.5** Mono path used with facades. It is not a 
 
 ## .NET Standard 2.0 vs 2.1
 
-**.NET Standard 2.1** is the portable assembly to use whenever the engine supports it (Xamarin, Unity, Mono, original
-Blazor WebAssembly).
+**.NET Standard 2.1** keeps external dependencies to `System.Runtime.CompilerServices.Unsafe`.
 
-**.NET Standard 2.0** exists for the same hosts when they still cannot take 2.1. Do not choose 2.0 on an engine that
-already supports 2.1: you pick up extra dependencies (`System.Memory`, `Reflection.Emit.Lightweight`) and you lose the
-original modern callback helpers that 2.1 still has.
+**.NET Standard 2.0** adds `System.Memory` and `System.Reflection.Emit.Lightweight`. Do not choose 2.0 on a runtime that
+already supports 2.1: you pick up those extra packages, and you lose the modern-line helpers that 2.1 still has. Do not
+choose it for **.NET Core 2.1** either. That runtime does not implement .NET Standard 2.1, but it exposes native
+`Span<T>` on its public API, and the package ships a dedicated `netcoreapp2.1` assembly for it.
 
-The core package does **not** reference `System.Text.Json` from either Standard assembly. Mixing Standard 2.0 JSON into
-a Standard 2.1 library breaks classic **Mono Framework**’s 4.5 compatibility model. Use [
-`Rxmxnx.PInvoke.Json`](../../src/MonoFacades/README.md) when you need JSON there.
+Neither Standard assembly references `System.Text.Json`. The dependency graph runs from 2.0 to 2.1, so a built-in JSON
+serializer is left out: a 2.0 assembly must not depend on an API the next standard does not provide, and the two
+assemblies stay binary-compatible on that point. Mixing a .NET Standard 2.0 JSON package into the 2.1 assembly also
+fights **Mono Framework**’s long-term .NET Framework 4.5 compatibility model. **Mono Framework** projects that need JSON
+use [`Rxmxnx.PInvoke.Json`](../../src/MonoFacades/README.md).
 
-## .NET Framework: transition vs dedicated
+## Legacy Framework: transition vs. dedicated
 
-**.NET Framework 4.5.2 and 4.6** sit **before** that product line implemented .NET Standard 2.0. Those two assemblies
-are a **transition** step: they keep the package available on pre-Standard Framework, and they **do not** take
-`System.Text.Json` in the core package (so a 4.5-era Mono story is not mixed with Standard 2.0 JSON).
+**.NET Framework 4.5.2 and 4.6** are a **transition**. Their public surface follows .NET Standard 2.0, and they do not
+take `System.Text.Json`.
 
-**.NET Framework 4.6.1 and later** are not “transition-only.” They are dedicated Framework binaries for products that
-still run there. 4.6.1 already accepts `System.Text.Json`; from 4.6.2 the extras include `Microsoft.Bcl.Memory` and
-current JSON. They also make it easier to move that same code onto Mono or current .NET later — modern APIs, older host.
+**.NET Framework 4.6.1** keeps a limited .NET Standard 2.0 surface, and it adds dedicated `System.Text.Json`
+compatibility.
 
-UWP follows the same idea: a dedicated, production-valid binary that can still use a **fast** `Span<T>` layout at
-runtime.
+**.NET Framework 4.6.2** and later use modern APIs and runtime-level optimizations.
+
+**UAP 10.0.16299** uses modern APIs and runtime-level optimizations. `Microsoft.NETCore.UniversalWindowsPlatform`
+**6.2.12 or later** is recommended and ensures compatibility with .NET Native.
 
 ## Span efficiency
 
@@ -94,12 +95,12 @@ Delegate `WithSafeFixed` / `BufferManager.Alloc` overloads and the `IFixed*` int
 on the original modern TFMs. Prefer functional interfaces and `FixedContextValue<T>` in new code — that form compiles on
 every TFM the package ships.
 
-## APIs on the original modern TFMs only
+## APIs that stay on the modern line
 
-These types and overloads exist on .NET Standard 2.1, .NET Core 3.0, and later. They are absent from .NET Standard 2.0,
-.NET Core 2.1, .NET Framework, and UWP:
+These types and overloads stay on .NET Standard 2.1, .NET Core 3.0, and later. Some are simply not portable; others are
+suboptimal in general.
 
-| Area                        | Until-2.9.5-only API                                                                                                                                                                                                                                                           |
+| Area                        | Modern-line API, not extended                                                                                                                                                                                                                                                  |
 |-----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Pinning delegates           | `FixedAction`, `ReadOnlyFixedAction`, `FixedFunc<TResult>`, `FixedContextAction<T>`, `ReadOnlyFixedContextAction<T>`, `FixedReferenceAction<T>`, `FixedMethodAction<TDelegate>`, `FixedListAction`, and the corresponding `Func` variants, including stateful `TArg` overloads |
 | Buffer delegates            | `ScopedBufferAction<T>`, `ScopedBufferFunc<T, TResult>`, and stateful variants; `BufferManager.Alloc(... delegate ...)`                                                                                                                                                        |
@@ -162,37 +163,25 @@ custom interface implementations do.
 | .NET Core **or** net461+                | `[JsonConverter]` on `CString` / `CStringSequence`. Not on .NET Standard 2.0/2.1 (portable Mono/Xamarin/Unity story) or on the net452/net46 transition assemblies. Classic Mono can use [`Rxmxnx.PInvoke.Json`](../../src/MonoFacades/README.md). |
 | .NET Framework / UWP dedicated binaries | `System.Memory` or `Microsoft.Bcl.Memory`; span helpers adapt to fast vs slow layout at runtime                                                                                                                                                   |
 
-## Language versions (consumers)
+## Language versions
 
-Public signatures use `unmanaged`, `Enum`, and related generic constraints. That sets the floor:
-
-| When                   | Language                                                                  |
-|------------------------|---------------------------------------------------------------------------|
-| Any TFM                | **C# 7.3** minimum (`unmanaged`, `Enum`, `Delegate`, …)                   |
-| Preferred on every TFM | **C# 11** (UTF-8 `u8` literals, `scoped` parameters)                      |
-| .NET 9.0 and later     | **C# 13** (`allows ref struct` on pointers, wrappers, and many callbacks) |
-
-The package is written in C# and remains usable from **Visual Basic .NET** on a small helper surface
-(`Rxmxnx.PInvoke.VisualBasic`, `BufferManager.VisualBasic`). VB cannot express most `ref`/`span` APIs; that surface is
-the minimum that still works.
-
-See [Getting started: language versions](../getting-started.md#language-versions).
+C# floors and Visual Basic .NET are in [Getting started](../getting-started.md#language-versions).
 
 ## Dependencies by TFM family
 
 From the package’s own `Packages.props`:
 
-| Family                    | TFMs                                   | Extra dependencies                                                                                                     |
-|---------------------------|----------------------------------------|------------------------------------------------------------------------------------------------------------------------|
-| Transition .NET Framework | `net452`, `net46`                      | `System.Memory` 4.5.5, `Unsafe` 5.0, `RuntimeInformation` 4.3.0, `ValueTuple` 4.5.0 — no `System.Text.Json`            |
-| Portable 2.0              | `netstandard2.0`                       | `System.Memory` 4.5.5, `Unsafe` 5.0, `System.Reflection.Emit.Lightweight` 4.7.0                                        |
-| Portable 2.1              | `netstandard2.1`                       | `Unsafe` 5.0                                                                                                           |
-| Limited Core              | `netcoreapp2.1`, `netcoreapp3.0`       | `System.Text.Json` 5.0.2, `Unsafe` 5.0; netcoreapp2.1 also pins `Microsoft.NETCore.App` 2.1.30                         |
-| Legacy                    | `netcoreapp3.1`, `net5.0`, `net461`    | `Unsafe` 6.0, `System.Text.Json` 6.0.11; net461 adds `Microsoft.Bcl.AsyncInterfaces`, `System.Memory`, `ValueTuple`    |
-| Extended                  | `net6.0`, `net7.0`                     | `Unsafe` 6.1.2 on net6.0; `System.Text.Json` 8.0.6 on both                                                             |
-| Current                   | `net8.0`, `net9.0`, `net10.0`          | None                                                                                                                   |
-| Framework 4.6.2+          | `net462`, `net470`, `net471`, `net472` | `Microsoft.Bcl.Memory` 10.0.11, `Microsoft.Bcl.HashCode` 6.0.0, `System.Text.Json` 10.0.11                             |
-| UWP                       | `uap10.0.16299`                        | `Microsoft.Bcl.Memory` 9.0.19, `Microsoft.Bcl.HashCode` 6.0.0, `System.Text.Json` 6.0.11, UWP compiler packs (private) |
+| Family                    | TFMs                                   | Extra dependencies                                                                                                                                         |
+|---------------------------|----------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Transition .NET Framework | `net452`, `net46`                      | `System.Memory` 4.5.5, `Unsafe` 5.0, `RuntimeInformation` 4.3.0, `ValueTuple` 4.5.0 — no `System.Text.Json`                                                |
+| Portable 2.0              | `netstandard2.0`                       | `System.Memory` 4.5.5, `Unsafe` 5.0, `System.Reflection.Emit.Lightweight` 4.7.0                                                                            |
+| Portable 2.1              | `netstandard2.1`                       | `Unsafe` 5.0                                                                                                                                               |
+| Limited Core              | `netcoreapp2.1`, `netcoreapp3.0`       | `System.Text.Json` 5.0.2, `Unsafe` 5.0; netcoreapp2.1 also pins `Microsoft.NETCore.App` 2.1.30                                                             |
+| Legacy                    | `netcoreapp3.1`, `net5.0`, `net461`    | `Unsafe` 6.0, `System.Text.Json` 6.0.11; net461 adds `Microsoft.Bcl.AsyncInterfaces`, `System.Memory`, `ValueTuple`                                        |
+| Extended                  | `net6.0`, `net7.0`                     | `Unsafe` 6.1.2 on net6.0; `System.Text.Json` 8.0.6 on both                                                                                                 |
+| Current                   | `net8.0`, `net9.0`, `net10.0`          | None                                                                                                                                                       |
+| Framework 4.6.2+          | `net462`, `net470`, `net471`, `net472` | `Microsoft.Bcl.Memory` 10.0.12, `Microsoft.Bcl.HashCode` 6.0.0, `System.Text.Json` 10.0.12                                                                 |
+| UWP / UAP                 | `uap10.0.16299`                        | `Microsoft.Bcl.Memory` 9.0.19, `Microsoft.Bcl.HashCode` 6.0.0, `System.Text.Json` 6.0.11. UWP compiler packs are private and are not package dependencies. |
 
 On Mono with a .NET Framework TFM, `System.Runtime.CompilerServices.Unsafe` 5.0 is referenced and runtime assets are
 excluded for libraries.
@@ -200,12 +189,12 @@ excluded for libraries.
 ## Choosing an API when you target several TFMs
 
 1. If every TFM is an original modern target (.NET Standard 2.1 / .NET Core 3.0 or later), either callback style
-   compiles. Functional interfaces still avoid an extra heap delegate.
+   compiles. Functional interfaces still avoid an extra delegate allocation.
 2. If any TFM was added after 2.9.5, write to that narrower surface: functional interfaces, `out FixedContextValue<T>`,
    `WrapperFactory`.
-3. Delegate overloads remain valid on the original modern TFMs. Use them when you already have that call site; do not
-   `#if` them into a multi-target project that includes .NET Framework, UWP, or netstandard2.0.
-4. Prefer **netstandard2.1** over **netstandard2.0** whenever the engine allows it.
+3. Delegate overloads remain valid on the modern line. Use them when you already have that call site; do not `#if`
+   them into a multi-target project that includes .NET Framework, UAP 10.0.16299, .NET Standard 2.0, or .NET Core 2.1.
+4. Use **netstandard2.1** on a modern runtime. Use **netstandard2.0** when the runtime is not compatible with 2.1.
 
-See [Getting started](../getting-started.md) for install, language, and AOT notes,
+See [Getting started](../getting-started.md) for installation, language, and AOT notes,
 and [Functional interfaces](functional-interfaces.md) for the callback contracts.

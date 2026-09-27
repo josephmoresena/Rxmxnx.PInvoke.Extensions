@@ -33,21 +33,11 @@ readonly struct UseUtf8 : IReadOnlyFixedContextAction<Byte>
 Snippets in these guides use **C# 11** (`u8` literals, `scoped`). The library itself requires at least **C# 7.3**. On
 **.NET 9.0 and later**, use **C# 13**. See [language versions](docs/getting-started.md#language-versions).
 
-## Until 2.9.5 — and what later versions add
+## Hosts
 
-Until version **2.9.5**, package compatibility was limited to modern runtimes that support **.NET Standard 2.1**. That
-remains the baseline in every later version.
-
-From versions after 2.9.5 the package also ships:
-
-- **Functional interfaces.** The preferred callback style on every TFM: state lives on a `readonly struct`, so hot paths
-  avoid extra allocations and work naturally with `ref struct` values. Delegate overloads stay public on the original
-  modern TFMs (.NET Standard 2.1 / .NET Core 3.0+).
-- **Value-type fixed contexts.** `FixedContextValue<T>` and `FixedPointerValue` keep pinning, spans, and typed pointers
-  in a single scoped value.
-- **Dedicated and portable extra TFMs.** Binaries for .NET Framework, UWP, .NET Core 2.1, and .NET Standard 2.0 —
-  **modern APIs on older hosts**, including production apps. Use **netstandard2.1** whenever the engine supports it; use
-  **netstandard2.0 only when it does not**.
+Functional interfaces and value-type fixed contexts are the callback form on every TFM. The target map is in
+[API surface by TFM](docs/api/compatibility.md). For a new project, see
+[support policy](docs/getting-started.md#support-policy).
 
 If your code talks to native libraries, serializes UTF-8, reinterprets binary layouts, or has to stay trim/AOT-friendly,
 this package is built for that job.
@@ -65,11 +55,6 @@ this package is built for that job.
 ```bash
 dotnet add package Rxmxnx.PInvoke.Extensions
 ```
-
-Officially supported on **.NET 8.0 and later**. Until 2.9.5 the package targeted .NET Standard 2.1 and .NET Core 3.0+.
-Later versions also ship **.NET Standard 2.0**, **.NET Core 2.1**, **.NET Framework 4.5.2–4.7.2**, and **UWP
-10.0.16299** so the same modern style can run on those hosts.
-See [framework support](docs/getting-started.md#framework-support) and [API surface by TFM](docs/api/compatibility.md).
 
 ## Capabilities at a glance
 

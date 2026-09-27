@@ -10,7 +10,8 @@ dotnet add package Rxmxnx.PInvoke.Extensions
 ```
 
 ```xml
-<PackageReference Include="Rxmxnx.PInvoke.Extensions" Version="*" />
+
+<PackageReference Include="Rxmxnx.PInvoke.Extensions" Version="*"/>
 ```
 
 Then:
@@ -65,46 +66,34 @@ Samples in these guides assume C# 11 unless a snippet is marked otherwise.
 
 ## Support policy
 
-This package **officially supports .NET 8.0 and later**. Until **2.9.5**, compatibility was limited to modern runtimes
-that support **.NET Standard 2.1**. Later versions still include that baseline and add assemblies so existing products
-on older hosts keep compiling — as **modern, backward-compatible code**, not as a second-class mode.
+For new work, use **.NET 8.0 and later**. If a new project stays on .NET Framework, use **4.7.2**. Which runtimes the
+package covers, and which APIs stay on the modern line, is in
+[Target frameworks and public API surface](api/compatibility.md).
 
-| Target                     | Support                                                                                                                          |
-|----------------------------|----------------------------------------------------------------------------------------------------------------------------------|
-| .NET 10.0                  | Current LTS                                                                                                                      |
-| .NET 9.0                   | Current — generic `ref struct` on pointers and many APIs; consumers should use **C# 13**                                         |
-| .NET 8.0                   | LTS — no extra package dependencies                                                                                              |
-| .NET 7.0                   | Extended — static virtual members, source-generated marshalling                                                                  |
-| .NET 6.0                   | Extended LTS                                                                                                                     |
-| .NET 5.0 / .NET Core 3.x   | Legacy — dedicated Core binaries; original modern API (until 2.9.5)                                                              |
-| .NET Standard 2.1          | Portable — Xamarin, Unity, Mono; original modern API; shims, `Unsafe` 5.0                                                        |
-| .NET Standard 2.0          | Portable — **only when the engine cannot target 2.1**                                                                            |
-| .NET Framework 4.5.2 / 4.6 | Transition (pre-Standard 2.0); no `System.Text.Json`                                                                             |
-| .NET Framework 4.6.1–4.7.2 | Dedicated .NET Framework binaries for production Framework apps; 4.6.1 already has JSON; `net470`/`net471` have no unique `lib/` |
-| UWP (`uap10.0.16299`)      | Dedicated UWP binary for production UWP apps; runtime may use fast span                                                          |
-| .NET Core 2.1              | Dedicated Core binary from versions after 2.9.5 (no delegate pinning helpers)                                                    |
-
-Until 2.9.5 the TFMs were .NET Standard 2.1 and .NET Core 3.0+. Those assemblies keep the historical delegate overloads
-and nested `IFixedMemory` / `IFixedContext<T>` `IDisposable` helpers. TFMs added after that ceiling do not; they use
-functional interfaces and `FixedContextValue<T>`. The `IFixed*` interfaces themselves are still public on every TFM.
-Details: [compatibility](api/compatibility.md).
-
-Among the original modern TFMs, newer frameworks inherit the older surface and add members; they do not break existing
-call sites. The extended TFMs are a **narrower** public API on purpose: those helpers were not retrofitted onto .NET
-Framework, .NET Standard 2.0, or UWP.
-
-Each TFM binary also **adapts to BCL and runtime internals** of that target — layout, helpers, and APIs that appear or
-change between versions — so callers do not have to special-case those internals themselves.
+| Target                     | Support            | Remarks                                                                          |
+|----------------------------|--------------------|----------------------------------------------------------------------------------|
+| .NET 10.0                  | Current LTS        |                                                                                  |
+| .NET 9.0                   | Current            | Supports generic `ref struct` types with pointers and many APIs; requires C# 13. |
+| .NET 8.0                   | LTS                | No additional package dependencies.                                              |
+| .NET 7.0                   | Extended           | Supports static virtual members and source-generated marshalling.                |
+| .NET 6.0                   | Extended LTS       | AOT detection on desktop platforms does not use reflection.                      |
+| .NET 5.0 / .NET Core 3.x   | Modern legacy line | Provides support for `NativeLibrary`.                                            |
+| .NET Standard 2.1          | Modern Portable    | Provides support for `RuntimeHelpers` and fast-span.                             |
+| .NET Standard 2.0          | Portable fallback  |                                                                                  |
+| .NET Framework 4.5.2–4.6   | Transition Legacy  |                                                                                  |
+| .NET Framework 4.6.1       | Legacy             | Provides support for `System.Text.Json`.                                         |
+| .NET Framework 4.6.2–4.7.2 | Supported          |                                                                                  |
+| UAP 10.0.16299             | Supported          | Provides support for `System.Text.Json` and `RuntimeHelpers`.                    |
+| .NET Core 2.1              | Extended           | Provides support for `System.Text.Json`, `RuntimeHelpers`, and fast-span.        |
 
 ## Framework support
 
-The list below is ordered so the gaps are visible: .NET Standard 2.1 versus 2.0, then the larger step down to .NET
-Framework 4.5.2, then 4.6.1–4.7.2, UWP, .NET Core 2.1, and finally the .NET Core 3.0 inherit chain.
+What each assembly exposes, including shims and package dependencies, is in
+[compatibility](api/compatibility.md). The notes below are only for a specific host.
 
 <details>
-<summary><strong>.NET Standard 2.1</strong> — Portable (Xamarin, Unity, Mono)</summary>
+<summary><strong>.NET Standard 2.0 / 2.1</strong> — Shims on the portable assembly</summary>
 
-- Prefer this portable TFM whenever the engine supports it.
 - Static virtual members: No. AOT detection should be performed via reflection.
 - Generic `ref struct`: No.
 - MemoryMarshal shims: `CreateReadOnlySpanFromNullTerminated`, `GetArrayDataReference`. Retrieving references to
@@ -113,147 +102,8 @@ Framework 4.5.2, then 4.6.1–4.7.2, UWP, .NET Core 2.1, and finally the .NET Co
   alternatives may be substituted).
 - Enum shim: `Enum.GetName<T>` internally uses `Enum.GetName(Type, Object)`.
 - Convert shim: `ToHexString`.
-- Dependencies: `System.Runtime.CompilerServices.Unsafe` 5.0.
 
 </details>
-
-<details>
-<summary><strong>.NET Standard 2.0</strong> — Portable (only if 2.1 is unavailable)</summary>
-
-- Same job as .NET Standard 2.1 for **Xamarin, Unity, Mono** when the player or SDK cannot target Standard 2.1. **Do not
-  use this TFM on an engine that already supports 2.1.**
-- Functional interfaces and `FixedContextValue<T>`, not delegate `WithSafeFixed` / nested `IFixed*.IDisposable`.
-- Dependencies: `System.Memory` 4.5.5, `System.Runtime.CompilerServices.Unsafe` 5.0,
-  `System.Reflection.Emit.Lightweight` 4.7.0.
-
-</details>
-
-<details>
-<summary><strong>.NET Framework 4.5.2 / 4.6</strong> — Transition (pre-Standard 2.0)</summary>
-
-- Dedicated .NET Framework binaries for Framework before it implemented .NET Standard 2.0.
-- Public API stays on that TFM; span operations follow the **runtime** layout. On desktop CLR they are typically the
-  slower three-field span; on Mono hosting the same TFM they can be the fast path.
-  See [span efficiency](api/compatibility.md#span-efficiency).
-- No built-in `System.Text.Json` — so a 4.5-era Mono story is not mixed with Standard 2.0 JSON.
-- Dependencies: `System.Memory` 4.5.5, `Unsafe` 5.0, `System.Runtime.InteropServices.RuntimeInformation` 4.3.0,
-  `System.ValueTuple` 4.5.0.
-- No built-in `CString` JSON converter (`[JsonConverter]` starts at .NET Framework 4.6.1 / .NET Core).
-
-</details>
-
-<details>
-<summary><strong>.NET Framework 4.6.1</strong> — Dedicated .NET Framework</summary>
-
-- A production Framework target, not a stopgap. Also a natural step toward Mono or current .NET with the same APIs.
-- `System.Text.Json` 6.0.11 and the `CString` JSON converter. Closer to the **.NET Standard 2.0** extras than 4.5.2/4.6.
-- Dependencies: `Microsoft.Bcl.AsyncInterfaces` 6.0.0, `System.Memory` 4.5.5, `Unsafe` 6.0, `RuntimeInformation` 4.3.0,
-  `ValueTuple` 4.5.0.
-
-</details>
-
-<details>
-<summary><strong>.NET Framework 4.6.2 / 4.7 / 4.7.1 / 4.7.2</strong> — Dedicated .NET Framework</summary>
-
-- Production Framework binaries. Functional-interface surface (the until-2.9.5 delegates were not brought over).
-- Span work is still slower on desktop CLR than on modern .NET; cheaper when the process is Mono.
-- Dependencies: `Microsoft.Bcl.Memory` 10.0.12, `Microsoft.Bcl.HashCode` 6.0.0, `System.Text.Json` 10.0.12. `net462`
-  also has `ValueTuple` 4.6.2; `net462`/`net470` also have `RuntimeInformation` 4.3.0.
-- `net470` and `net471` are package target frameworks only — they do not ship a unique assembly.
-
-</details>
-
-<details>
-<summary><strong>UWP 10.0.16299</strong> — Dedicated UWP binary</summary>
-
-- Aimed at production UWP apps. The public API may look like `System.Memory` / `Microsoft.Bcl.Memory`; the runtime can
-  still use **fast span**.
-- Functional-interface surface (the until-2.9.5 delegates were not brought over).
-- Dependencies: `Microsoft.Bcl.Memory` 9.0.19, `Microsoft.Bcl.HashCode` 6.0.0, `System.Text.Json` 6.0.11, plus private
-  UWP compiler packs.
-
-</details>
-
-<details>
-<summary><strong>.NET Core 2.1</strong> — Dedicated Core binary</summary>
-
-- Own `lib/` from versions after 2.9.5; same callback gap as .NET Standard 2.0.
-- Adds `System.Text.Json` 5.0.2. No `NativeLibrary` (that arrives in .NET Core 3.0).
-- Dependencies: `Microsoft.NETCore.App` 2.1.30 (private), `Unsafe` 5.0, `System.Text.Json` 5.0.2.
-
-</details>
-
-<details>
-<summary><strong>.NET Core 3.0</strong> — Legacy (Limited)</summary>
-
-- Inherits from .NET Standard 2.1.
-- Adds `System.Text.Json` and `NativeLibrary`.
-- Rune: native implementation.
-- Dependencies: same as .NET Standard 2.1, plus `System.Text.Json` 5.0.2.
-
-</details>
-
-<details>
-<summary><strong>.NET Core 3.1</strong> — Legacy</summary>
-
-- Inherits from .NET Core 3.0.
-- Updated dependencies: `System.Runtime.CompilerServices.Unsafe` 6.0, `System.Text.Json` 6.0.11.
-
-</details>
-
-<details>
-<summary><strong>.NET 5.0</strong> — Legacy</summary>
-
-- Inherits from .NET Core 3.1.
-- Enum and Convert: native implementations.
-
-</details>
-
-<details>
-<summary><strong>.NET 6.0</strong> — LTS (Extended)</summary>
-
-- Inherits from .NET 5.0.
-- Updated dependencies: `System.Runtime.CompilerServices.Unsafe` 6.1.2, `System.Text.Json` 8.0.6.
-
-</details>
-
-<details>
-<summary><strong>.NET 7.0</strong> — Extended</summary>
-
-- Inherits from .NET 6.0.
-- Static virtual members: yes.
-- Source-generated marshalling for `CString`, `CStringSequence`, `ValPtr<T>`, `ReadOnlyValPtr<T>`, and
-  `FuncPtr<TDelegate>`.
-
-</details>
-
-<details>
-<summary><strong>.NET 8.0</strong> — LTS</summary>
-
-- Inherits from .NET 7.0.
-- No extra package dependencies.
-
-</details>
-
-<details>
-<summary><strong>.NET 9.0</strong> — Current</summary>
-
-- Inherits from .NET 8.0.
-- Generic `ref struct` (`allows ref struct`) on value-type pointers and many generic APIs.
-- Value-type pointers support `ref struct` generics; some methods are implemented in IL because of C# compiler
-  restrictions.
-- Consumers should use **C# 13**.
-
-</details>
-
-<details>
-<summary><strong>.NET 10.0</strong> — LTS (Current)</summary>
-
-- Inherits from .NET 9.0.
-
-</details>
-
-The full member-level split is in [Target frameworks and public API surface](api/compatibility.md).
 
 ### Runtimes and platforms
 
@@ -294,11 +144,11 @@ Building Xamarin apps requires Visual Studio 2019 or Visual Studio 2019 for Mac.
 </details>
 
 <details>
-<summary><strong>.NET Core 3.x</strong></summary>
+<summary><strong>.NET Core 2.1/ 3.x</strong></summary>
 
-Dedicated assemblies for .NET Core 3.0 and 3.1. The .NET Standard 2.1 assembly remains a fallback. Native
-`System.Text.Json` and native library APIs differ slightly between 3.0 and 3.1 because they ship different
-`System.Text.Json` versions.
+Dedicated assemblies for .NET Core 2.1, 3.0, and 3.1.Native `System.Text.Json` and native library APIs differ slightly
+between 2.1/3.0 and 3.1 because they ship different `System.Text.Json` and `System.Runtime.CompilerServices.Unsafe`
+versions.
 
 </details>
 
@@ -323,14 +173,17 @@ using .NET Framework 4.5 facades and `System.Runtime.CompilerServices.Unsafe` 5.
 
 ## AOT support
 
-The package is AOT-friendly. Features support Mono AOT and Native AOT, including full AOT and the obsolete
-reflection-free mode.
+On every package version, the library is compatible with **Mono AOT**, **IL2CPP**, **Native AOT**, **.NET Native**, and
+**ReadyToRun**. ReadyToRun is a first-class CoreCLR mode. Some AOT modes are more optimized than others. .NET Native on
+UWP is described with [UAP 10.0.16299](api/compatibility.md#legacy-framework-transition-vs-dedicated).
 
-Reflection is required only for:
+Native AOT is the production CoreCLR AOT mode from .NET 7.0. The obsolete reflection-free Native AOT mode is supported.
 
-- Buffer preparation and auto-composition when no binary buffer is registered.
-- AOT detection when targeting **.NET 5.0 or earlier**.
-- AOT detection on **.NET 7.0 and later** when running on **Web or Mobile platforms** only.
+The package avoids reflection. It is used to auto-compose buffers and to optimize the Marvin UTF-8 hash calculation.
+Neither blocks AOT. Without reflection, the built-in Marvin algorithm is not used. How to register buffers on AOT is in
+[Buffers](api/buffers.md#aot-and-registration).
+
+AOT detection is described with [`AotInfo`](api/utilities.md#aotinfo).
 
 The library favors **statically reachable code** over reflection, so it works with the classic Mono Linker and modern
 ILLink.
@@ -346,8 +199,7 @@ Supported on CoreCLR from .NET Core 3.0 through current .NET.
 
 ### Native AOT
 
-Supported on CoreCLR Native AOT from .NET 7.0 onward. Minimal reflection avoids N+1 patterns; most functionality is
-statically compiled. Early reflection-free mode is supported with limited functionality.
+Minimal reflection avoids N+1 patterns; most functionality is statically compiled.
 
 ### Unity IL2CPP
 
@@ -420,17 +272,7 @@ Prefer C# for new interop code. Use the VB helpers only where the language canno
 
 ## Feature switches (.NET 8.0+)
 
-| Switch                                    | Effect                                                                         |
-|-------------------------------------------|--------------------------------------------------------------------------------|
-| `PInvoke.DisableBufferAutoComposition`    | Disables runtime composition of binary buffer metadata.                        |
-| `PInvoke.BootstrapBufferStorage.Minimal`  | Caps binary capacity at 31 elements.                                           |
-| `PInvoke.BootstrapBufferStorage.Medium`   | Caps binary capacity at 127 elements.                                          |
-| `PInvoke.BootstrapBufferStorage.Limited`  | Caps binary capacity at 2047 elements.                                         |
-| `PInvoke.BootstrapBufferStorage.Extended` | Uses managed-buffer-based storage of 2047 elements and allows larger metadata. |
-
-On .NET 8.0 and later the default storage is still the mechanism that is **not** based on the managed buffer
-infrastructure. These switches cap how much binary metadata is preloaded; they do not change the theoretical maxima: a
-managed buffer is at most (2¹⁶) − 1 elements, a binary buffer at most 2¹⁵. See [Buffers](api/buffers.md).
+Buffer composition and preload caps are in [Buffers](api/buffers.md#aot-and-registration).
 
 ## Next steps
 

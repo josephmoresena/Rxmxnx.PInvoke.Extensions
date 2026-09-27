@@ -5,10 +5,7 @@ for a **bounded lifetime**. When the callback returns or `Dispose` runs, the pin
 be used.
 
 Value-type contexts (`FixedPointerValue`, `FixedContextValue<T>`) and [functional interfaces](functional-interfaces.md)
-are the portable form on every TFM. The `IFixed*` interfaces remain public everywhere. Delegate overloads that take
-those interfaces, and helpers that return nested `IDisposable` memory/context types, exist only on the original modern
-TFMs (.NET Standard 2.1 / .NET Core 3.0+, the set that existed until 2.9.5) — they were not brought to .NET Framework,
-.NET Standard 2.0, or UWP. See [compatibility](compatibility.md).
+are the portable form on every TFM.
 
 ## Contexts you will hold
 
@@ -121,9 +118,8 @@ Marshals a managed delegate to a function pointer and keeps it alive until `Disp
 
 ## Delegate families (.NET Standard 2.1 / .NET Core 3.0+)
 
-These delegates are public on the **original modern TFMs** (.NET Standard 2.1 / .NET Core 3.0+, until 2.9.5). They are
-not compiled into .NET Framework, .NET Standard 2.0, .NET Core 2.1, or UWP. Functional interfaces are the equivalent on
-every TFM.
+These delegates are public on the **modern line** (.NET Standard 2.1 / .NET Core 3.0+). Functional interfaces are the
+equivalent on every TFM. See [compatibility](compatibility.md#apis-that-stay-on-the-modern-line).
 
 | Family                                                        | Operates on                             |
 |---------------------------------------------------------------|-----------------------------------------|

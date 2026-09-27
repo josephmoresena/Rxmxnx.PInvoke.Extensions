@@ -59,23 +59,17 @@ single module. There is no ILMerge / ILRepack step.
 
 ## Two product lines, one package
 
-Until **2.9.5**, compatibility was the modern line: runtimes that support **.NET Standard 2.1** (that portable TFM plus
-dedicated .NET Core 3.0+ binaries). That ceiling stays. Later versions still ship it.
+The package ships one modern line for runtimes that support **.NET Standard 2.1**, and extra assemblies for frameworks
+that are not compatible with it. Those assemblies are not a second library. Functional interfaces and
+`FixedContextValue<T>` are the callback shape on every TFM. Which members stayed on the modern line is in
+[`docs/api/compatibility.md`](docs/api/compatibility.md).
 
-After 2.9.5 the package also ships a **transition / usability** line: .NET Standard 2.0, .NET Core 2.1, .NET Framework
-4.5.2–4.7.2, and UWP 10.0.16299. Those assemblies exist so existing products can keep a modern coding style while the
-host is old or while they move toward a current runtime. They are not a second library and not a promise that every
-historical helper was backported. Functional interfaces and `FixedContextValue<T>` are the portable callback shape.
-Delegate `WithSafeFixed` / nested `IFixed*.IDisposable` helpers remain on the original modern TFMs only.
-
-Official support for **new** work is **.NET 8.0 and later**. Extra TFMs are justified when they change what the
-**declared contract** or the **executing runtime** can do — not merely because a framework number exists. `net470` and
-`net471` already restore without their own `lib/`. A later runtime is worth a dedicated `lib/` when the implementation
-or the public surface must differ: BCL or runtime internals that the library already special-cases per TFM, APIs that
-simply do not exist yet, or generic constraints the older binary cannot express. The library adapts to those internal
-changes; do not treat a new framework number as an automatic extra assembly.
-
-Which members exist on which TFM: [`docs/api/compatibility.md`](docs/api/compatibility.md).
+Extra TFMs are justified when they change what the **declared contract** or the **executing runtime** can do — not
+merely because a framework number exists. `net470` and `net471` already restore without their own `lib/`. A later
+runtime is worth a dedicated `lib/` when the implementation or the public surface must differ: BCL or runtime internals
+that the library already special-cases per TFM, APIs that simply do not exist yet, or generic constraints the older
+binary cannot express. The library adapts to those internal changes; do not treat a new framework number as an automatic
+extra assembly.
 
 ## Dependencies
 
@@ -84,13 +78,17 @@ intermediate `.csproj` “because this TFM needs it”. Put the pin next to the 
 
 Rules that are easy to break:
 
-- **The modern portable assembly (`netstandard2.1`) must not reference `System.Text.Json`.** JSON packages target
-  .NET Standard 2.0. Mixing 2.0 and 2.1 in one library fights **Mono Framework**’s long-term .NET Framework 4.5
-  compatibility model. Dedicated Core / .NET Framework TFMs that can take JSON do so in `Packages.props`. Mono Framework
-  JSON for `CString` lives in the optional facade [`src/MonoFacades`](src/MonoFacades/README.md)
+- **The portable assemblies must not reference `System.Text.Json`.** .NET Standard 2.1 depends only on
+  `System.Runtime.CompilerServices.Unsafe`. .NET Standard 2.0 adds `System.Memory` and
+  `System.Reflection.Emit.Lightweight`. The graph runs from 2.0 to 2.1, so neither assembly may depend on a JSON API the
+  next standard does not provide; that also keeps the two assemblies binary-compatible on this point. Mixing a .NET
+  Standard 2.0 JSON package into the 2.1 assembly also fights **Mono Framework**’s long-term .NET Framework 4.5
+  compatibility model. Dedicated Core / .NET Framework TFMs that can take JSON do so in `Packages.props`. JSON for
+  `CString` on **Mono Framework** lives in the optional facade [`src/MonoFacades`](src/MonoFacades/README.md)
   (`Rxmxnx.PInvoke.Json`), not in the core package.
-- **`netstandard2.0` is the engine-cannot-target-2.1 portable binary.** It is the one that pulls `System.Memory`,
-  `System.Reflection.Emit.Lightweight`, and `Unsafe`. Do not choose 2.0 on a host that already supports 2.1.
+- **`netstandard2.0` is the portable binary for runtimes that are not compatible with 2.1.** Do not choose 2.0 on a host
+  that already supports 2.1. Do not choose it for **.NET Core 2.1** either: that runtime does not implement .NET
+  Standard 2.1, but it does expose native `Span<T>` on its public API.
 - **.NET 8.0+ has no extra package dependencies** on the official path. Older dedicated TFMs pin `Unsafe`, `Memory`,
   `ValueTuple`, `Microsoft.Bcl.Memory`, and JSON at versions that match that host. Bump a pin only after restoring **and
   running** tests on that TFM: a newer `System.Memory` can change span layout or reject pointer-containing `T` in
@@ -98,7 +96,7 @@ Rules that are easy to break:
 - **Test hosts are not library TFMs.** `netcoreapp2.0` appears in test props so the **netstandard2.0** assembly is
   exercised on that runtime (OpenSSL 1.0, empty-array identity, `Span<T>` over pointer types). The package does not
   ship `netcoreapp2.0`.
-- **Mono Framework 4.5-era references** use `ExcludeAssets` / `PrivateAssets` so a .NET Framework compile does not pull
+- **Mono Framework 4.5-era references** use `ExcludeAssets` / `PrivateAssets` so a .NET Framework compiler does not pull
   a Core implementation of `Unsafe` into a 4.5 process. [`src/PackageReference.props`](src/PackageReference.props) is
   how sample and test apps consume either the four intermediates (`UsePackage` unset) or the packed DLL (GitHub
   Actions).

@@ -15,13 +15,11 @@ as a callback or `using` scope lasts.
 - **UTF-8 / ASCII strings** — `CString`, `CStringSequence`, and `CStringBuilder` for interop and binary pipelines.
 - **Typed pointers** — `ValPtr<T>`, `ReadOnlyValPtr<T>`, and `FuncPtr<TDelegate>` without spreading `unsafe`.
 - **Scoped fixed memory** — pin spans and references for a callback, including struct-based functional interfaces (the
-  form used on every TFM). Delegate overloads remain on the original modern TFMs (.NET Standard 2.1 / .NET Core 3.0+,
-  until 2.9.5).
+  form used on every TFM). Delegate overloads remain on the modern line.
 - **Managed buffers** — stack-first temporary storage for values and object references.
 - **Runtime awareness** — `AotInfo` and `SystemInfo` for Native AOT, Mono, and OS checks.
-- **Backward-compatible hosts** — the same modern APIs on Framework, Standard, .NET, Mono, UWP, Unity, and Xamarin.
-  Until 2.9.5 the package targeted runtimes that support .NET Standard 2.1; later versions add more TFMs without
-  replacing that baseline.
+- **Compatible hosts** — modern runtimes that support .NET Standard 2.1. Later versions also cover .NET Framework
+  4.5.2+, UAP 10.0.16299, .NET Core 2.1, and .NET Standard 2.0.
 
 ---
 

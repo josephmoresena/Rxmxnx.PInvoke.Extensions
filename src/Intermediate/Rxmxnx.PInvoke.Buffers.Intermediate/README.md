@@ -1,10 +1,5 @@
-﻿`Rxmxnx.PInvoke.Extensions` supports the use of two types of buffers: binary and non-binary. The theoretical maximum of
-a **managed** buffer is (2<sup>16</sup>) − 1 elements. A single **binary** buffer is at most 2<sup>15</sup> elements;
-combining every maximum binary space still cannot exceed (2<sup>16</sup>) − 1. The runtime may offer less.
-
-For the capability overview, recipes, and API map, see the [buffers guide](../../../docs/api/buffers.md),
-[use cases](../../../docs/use-cases.md#use-a-stack-buffer-in-a-hot-parser), and
-[documentation hub](../../../docs/README.md).
+﻿`Rxmxnx.PInvoke.Extensions` supports binary and non-binary buffers. Limits are in the
+[buffers guide](../../../docs/api/buffers.md).
 
 Internally, all reference types use buffers of type `Object`. Only managed value types require a buffer specific to
 their type. Unmanaged types do not need a managed buffer: `ScopedBuffer<T>` is a view, and the allocation uses
@@ -28,10 +23,19 @@ following conditions:
 - The runtime environment is JIT, or if it is AOT, metadata for the composed binary buffer is preserved and reflection
   is accessible at runtime.
 
-#### Native AOT
+#### NET Native, Native AOT, IL2CPP, and reflection-free mode
 
-In a Native AOT runtime, binary buffer composition requires metadata preservation through a Runtime Directives file.
-Below is an example of the metadata preservation needed to compose a binary buffer with a capacity of 10 elements of any
+Auto-composition on AOT has two alternatives.
+
+**Runtime directives.** Preserve the composite types in an RD.xml file. The file can be very long and is the manageable
+option when you would rather not list types in the source. It did not work in the obsolete reflection-free Native AOT
+mode.
+
+**Code registration.** Register the buffer type (`BufferManager.Register…`). This is easier to initialize and does not
+use reflection at all. IL2CPP has no path other than registration, and neither does reflection-free mode.
+
+In Native AOT and NET Native the runtime that still has reflection, binary buffer composition can use a directives' file
+below. The example preserves the metadata needed to compose a binary buffer with a capacity of 10 elements of any
 reference type Composite (2<sup>1</sup>, 2<sup>3</sup>, `Object`).
 
 **Notes**:
@@ -40,6 +44,7 @@ reference type Composite (2<sup>1</sup>, 2<sup>3</sup>, `Object`).
   1</sup>, `Object`), 2<sup>1</sup> is Composite (2<sup>0</sup>, 2<sup>0</sup>, `Object`) and 2<sup>0</sup> is Atomic
   (`Object`).
 * Once a buffer is composed, it becomes available for use. This process is executed only once for each capacity.
+* In Mono AOT, buffer auto-composition has limited support due to `gsharedvt` constraints.
 
 ```xml
 
