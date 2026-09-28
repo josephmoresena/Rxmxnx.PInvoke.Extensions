@@ -166,6 +166,60 @@ Application and Native AOT / Mono / WASM paths are a second net: [`src/Applicati
 and [`src/LegacyAppTest`](src/LegacyAppTest/README.md). Locally they reference intermediates; CI packs the branch and
 consumes the NuGet so the IL patcher, substitutions, and package assets are what those apps actually load.
 
+## Usings
+
+Namespace imports live in the intermediate project (`<Using Include="..."/>`). A source file does not repeat them.
+
+A file adds a namespace `using` only for `Rxmxnx.PInvoke.Internal.FrameworkCompat`, and only when that file needs those
+types and the project does not already import the namespace. Anything else at the top of a file is an alias: a
+compatibility type standing in for the framework type (`Utf8Compat` as `Utf8`, `RuntimeHelpersCompat` as
+`RuntimeHelpers`), or a short name for a type the file would otherwise spell in full.
+
+## Code quality attributes
+
+`SuppressMessage` and `ExcludeFromCodeCoverage` belong to the intermediate build, where Sonar and the coverage tools
+run. Every one of them is wrapped in `#if !PACKAGE`. The package compilation defines `PACKAGE`, so those attributes are
+absent from the shipped assembly.
+
+`SuppressMessage` uses `SuppressMessageConstants` (`csharpsquid` and the check id). That type is compiled only when
+`PACKAGE` is unset. Use the constants; do not hard-code the check id.
+
+Sonar rule **S6640** reviews every `unsafe` type and every `unsafe` member. Mark the type, or the member when the type
+is not already marked, with the same `#if`:
+
+```csharp
+#if !PACKAGE
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+```
+
+## Code Access Security on .NET Framework
+
+Desktop .NET Framework still compiles under transparency level 2. Code is transparent unless a member says otherwise.
+Transparent code cannot contain unsafe pointers, cannot P/Invoke, and cannot call critical code. This library’s job is
+pointer work, so the .NET Framework binaries and the `netstandard2.0` assembly (that binary also loads on Framework)
+annotate the members that would otherwise be illegal. The attributes are omitted on every other TFM, including UAP:
+those runtimes do not enforce this model. Gate every annotation with `#if NETFRAMEWORK || NETSTANDARD2_0`.
+
+Two attributes, and they are not interchangeable:
+
+- **`SecuritySafeCritical`** is the public bridge. A caller can use the member, and the member can do unverifiable work
+  or call critical code. Put it on public methods, properties, and operators that read or write a pointer, span, or
+  other unsafe state: `FuncPtr<TDelegate>.Pointer`, `CString` operations, the pointer extension methods.
+- **`SecurityCritical`** is implementation that transparent code must not call. Put it on an internal type whose whole
+  job is unverifiable (`ManagedMemoryManager<T>`, `ArrayMemoryManager<T>`, `Utf8Compat`), on a member that hands out a
+  raw `ref` or owns a pin or native allocation, and on `ISerializable` constructors and `GetObjectData`. The formatter
+  calls those last two; they stay critical even though the type itself is public.
+
+A safe-critical member may call a critical one. A public member that consumers call is safe-critical, not critical. Do
+not mark a public type `SecurityCritical`.
+
+P/Invoke declarations that sit inside an already critical type use **`SuppressUnmanagedCodeSecurity`** under the same
+`#if` (`MemoryInspector` / `Kernel32`). That attribute belongs on the `DllImport`, not on a public method.
+
+When you add `unsafe`, `Unsafe.*`, or a `DllImport` to a member that compiles for those two symbols, annotate that
+member in the `#if`.
+
 ## Why .NET 9.0+ IL is patched
 
 Starting with .NET 9.0, `ValPtr<T>` and `ReadOnlyValPtr<T>` declare `where T : allows ref struct`. That is a real
