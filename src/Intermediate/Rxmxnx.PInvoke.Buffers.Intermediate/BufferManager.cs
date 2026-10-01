@@ -227,14 +227,19 @@ public static partial class BufferManager<T>
 #endif
 	{
 		if (action is null) return;
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+		if (typeof(TAction).IsValueType)
+		{
+			if (typeof(T).IsValueType)
+				BufferManager<T>.AllocValue(ref action);
+			else
+				BufferManager<T>.AllocObject(ref action);
+			return;
+		}
+		NonGenericAction nonGeneric = NonGenericAction.Create(action);
 		if (typeof(T).IsValueType)
-#else
-		if (typeof(T).GetTypeInfo().IsValueType)
-#endif
-			BufferManager<T>.AllocValue(ref action);
+			BufferManager<T>.AllocValue(ref nonGeneric);
 		else
-			BufferManager<T>.AllocObject(ref action);
+			BufferManager<T>.AllocObject(ref nonGeneric);
 	}
 	/// <summary>
 	/// Allocates a buffer with <see cref="IScopedBufferFunction{T, TResult}.Count"/> elements and executes
@@ -260,16 +265,23 @@ public static partial class BufferManager<T>
 			Unsafe.SkipInit(out result);
 			return;
 		}
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
-		if (typeof(T).IsValueType)
-#else
-		if (typeof(T).GetTypeInfo().IsValueType)
-#endif
+		if (typeof(TFunction).IsValueType)
 		{
-			BufferManager<T>.AllocValue(ref func, out result);
+			if (typeof(T).IsValueType)
+			{
+				BufferManager<T>.AllocValue(ref func, out result);
+				return;
+			}
+			BufferManager<T>.AllocObject(ref func, out result);
 			return;
 		}
-		BufferManager<T>.AllocObject(ref func, out result);
+		NonGenericFunction<TResult> nonGeneric = NonGenericFunction<TResult>.Create(func);
+		if (typeof(T).IsValueType)
+		{
+			BufferManager<T>.AllocValue(ref nonGeneric, out result);
+			return;
+		}
+		BufferManager<T>.AllocObject(ref nonGeneric, out result);
 	}
 
 	/// <summary>
@@ -289,11 +301,7 @@ public static partial class BufferManager<T>
 		where TAction : struct, IScopedBufferAction<T>, allows ref struct
 #endif
 	{
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (typeof(T).IsValueType)
-#else
-		if (typeof(T).GetTypeInfo().IsValueType)
-#endif
 			BufferManager<T>.AllocValue(ref action);
 		else
 			BufferManager<T>.AllocObject(ref action);
@@ -317,11 +325,7 @@ public static partial class BufferManager<T>
 		where TFunction : struct, IScopedBufferFunction<T, TResult>, allows ref struct
 #endif
 	{
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (typeof(T).IsValueType)
-#else
-		if (typeof(T).GetTypeInfo().IsValueType)
-#endif
 		{
 			BufferManager<T>.AllocValue(ref func, out result);
 			return;

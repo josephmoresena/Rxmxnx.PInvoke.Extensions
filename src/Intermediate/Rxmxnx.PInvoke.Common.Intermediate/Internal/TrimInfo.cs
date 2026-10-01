@@ -88,11 +88,7 @@ internal static class TrimInfo
 	{
 		try
 		{
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 			return assemblyType.Assembly.GetType(typeFullName);
-#else
-			return assemblyType.GetTypeInfo().Assembly.GetType(typeFullName);
-#endif
 		}
 		catch (Exception)
 		{

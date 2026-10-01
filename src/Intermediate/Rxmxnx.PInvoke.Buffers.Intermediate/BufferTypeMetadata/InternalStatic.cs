@@ -52,7 +52,7 @@ public partial class BufferTypeMetadata
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private protected static void Execute<T, TBuffer, TAction>(in TAction action, BufferTypeMetadata metadata,
+	private protected static void Execute<T, TBuffer, TAction>(ref TAction action, BufferTypeMetadata metadata,
 		Int32 spanLength) where TBuffer : struct
 #if !NET9_0_OR_GREATER
 		where TAction : IScopedBufferAction<T>
@@ -61,6 +61,8 @@ public partial class BufferTypeMetadata
 #endif
 	{
 		Debug.Assert(RuntimeHelpers.IsReferenceOrContainsReferences<TBuffer>());
+		Debug.Assert(RuntimeHelpers.IsReferenceOrContainsReferences<T>());
+		Debug.Assert(typeof(TAction).IsValueType);
 #if NETFRAMEWORK || NETSTANDARD2_0
 		TBuffer buffer = default;
 #else
@@ -96,7 +98,7 @@ public partial class BufferTypeMetadata
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 #endif
-	private protected static TResult Execute<T, TBuffer, TFunction, TResult>(in TFunction func,
+	private protected static TResult Execute<T, TBuffer, TFunction, TResult>(ref TFunction func,
 		BufferTypeMetadata metadata, Int32 spanLength) where TBuffer : struct
 #if !NET9_0_OR_GREATER
 		where TFunction : IScopedBufferFunction<T, TResult>
@@ -105,6 +107,8 @@ public partial class BufferTypeMetadata
 #endif
 	{
 		Debug.Assert(RuntimeHelpers.IsReferenceOrContainsReferences<TBuffer>());
+		Debug.Assert(RuntimeHelpers.IsReferenceOrContainsReferences<T>());
+		Debug.Assert(typeof(TFunction).IsValueType);
 #if NETFRAMEWORK || NETSTANDARD2_0
 		TBuffer buffer = default;
 #else
