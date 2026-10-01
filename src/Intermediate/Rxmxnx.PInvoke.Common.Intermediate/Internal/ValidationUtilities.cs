@@ -1,8 +1,5 @@
-﻿#if NETCOREAPP && !NET5_0_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
+﻿#if (NETCOREAPP && !NET5_0_OR_GREATER) || NET461_OR_GREATER || UAP10_0_16299
 using Enum = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
-#endif
-#if !NET6_0_OR_GREATER
-using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
 #endif
 
 #if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP && !NETFRAMEWORK && !UAP10_0_16299

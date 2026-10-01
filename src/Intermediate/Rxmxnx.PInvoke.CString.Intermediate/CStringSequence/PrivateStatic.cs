@@ -1,5 +1,4 @@
 ﻿#if !NET6_0_OR_GREATER
-using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
 #if NETFRAMEWORK && !NET46_OR_GREATER
 using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
 #endif
@@ -22,43 +21,6 @@ public unsafe partial class CStringSequence
 	/// Length of the CString.Zero item.
 	/// </summary>
 	private const Int32 zeroItemLength = Int32.MinValue;
-
-#if !NET5_0_OR_GREATER && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
-	/// <summary>
-	/// Static buffer for type instance.
-	/// </summary>
-	[FixedAddressValueType]
-	private static B1 bufferType;
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-	/// <summary>
-	/// Static buffer for delegate instance.
-	/// </summary>
-	[FixedAddressValueType]
-	private static B1 bufferConstructor;
-#endif
-
-	/// <summary>
-	/// Static constructor.
-	/// </summary>
-#if NETFRAMEWORK || NETSTANDARD2_0
-	[SecuritySafeCritical]
-#endif
-#if !PACKAGE
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3963)]
-#endif
-	static CStringSequence()
-	{
-		CStringSequence.bufferType = new();
-		Span<Type> types = NativeUtilities.CreateTypeSpan(ref CStringSequence.bufferType);
-		types[0] = typeof(Byte);
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-		CStringSequence.bufferConstructor = new();
-		Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
-			NativeUtilities.CreateConstructorSpan(ref CStringSequence.bufferConstructor);
-		constructors[0] = ReadOnlyFixedContext<Byte>.CreateInstance;
-#endif
-	}
-#endif
 
 	/// <summary>
 	/// Determines the length of the given <see cref="CString"/> instance for the sequence.
@@ -709,4 +671,41 @@ public unsafe partial class CStringSequence
 		}
 		return result + nonEmpty;
 	}
+
+#if !NET5_0_OR_GREATER && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
+	/// <summary>
+	/// Static buffer for type instance.
+	/// </summary>
+	[FixedAddressValueType]
+	private static B1 bufferType;
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+	/// <summary>
+	/// Static buffer for delegate instance.
+	/// </summary>
+	[FixedAddressValueType]
+	private static B1 bufferConstructor;
+#endif
+
+	/// <summary>
+	/// Static constructor.
+	/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3963)]
+#endif
+	static CStringSequence()
+	{
+		CStringSequence.bufferType = new();
+		Span<Type> types = NativeUtilities.CreateTypeSpan(ref CStringSequence.bufferType);
+		types[0] = typeof(Byte);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+		CStringSequence.bufferConstructor = new();
+		Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+			NativeUtilities.CreateConstructorSpan(ref CStringSequence.bufferConstructor);
+		constructors[0] = ReadOnlyFixedContext<Byte>.CreateInstance;
+#endif
+	}
+#endif
 }

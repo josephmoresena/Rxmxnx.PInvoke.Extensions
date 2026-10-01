@@ -1,10 +1,4 @@
-﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
-using Rxmxnx.PInvoke.Internal.FrameworkCompat;
-
-using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
-#endif
-
-// ReSharper disable ConvertToExtensionBlock
+﻿// ReSharper disable ConvertToExtensionBlock
 
 namespace Rxmxnx.PInvoke;
 

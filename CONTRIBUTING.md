@@ -169,11 +169,16 @@ consumes the NuGet so the IL patcher, substitutions, and package assets are what
 ## Usings
 
 Namespace imports live in the intermediate project (`<Using Include="..."/>`). A source file does not repeat them.
+As a rule, every namespace is global.
 
-A file adds a namespace `using` only for `Rxmxnx.PInvoke.Internal.FrameworkCompat`, and only when that file needs those
-types and the project does not already import the namespace. Anything else at the top of a file is an alias: a
-compatibility type standing in for the framework type (`Utf8Compat` as `Utf8`, `RuntimeHelpersCompat` as
-`RuntimeHelpers`), or a short name for a type the file would otherwise spell in full.
+A file-level `using` is an alias. Aliases of types in `Rxmxnx.PInvoke.Internal.FrameworkCompat` remain valid even though
+that namespace is global: a compatibility type standing in for the framework type (`RuntimeHelpersCompat` as
+`RuntimeHelpers`), or a short name for a type the file would otherwise spell in full. An alias that only repeats the
+type's own name is unnecessary. An alias may also resolve an ambiguity between two types that share a name
+(`System.Collections.IEnumerator` as `IEnumerator`).
+
+The exception is a namespace of this repository that is new on a more recent TFM. It is absent from the older
+compilations, so the file that needs it imports it under the same `#if` that declares the namespace.
 
 ## Code quality attributes
 

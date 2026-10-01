@@ -1,9 +1,5 @@
 ﻿// ReSharper disable ConvertToExtensionBlock
 
-#if !NET6_0_OR_GREATER
-using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
-#endif
-
 #if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP && !NETFRAMEWORK && !UAP10_0_16299
 using InsufficientMemoryException = System.OutOfMemoryException;
 #endif

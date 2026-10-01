@@ -1,7 +1,5 @@
 // ReSharper disable ReplaceWithFieldKeyword
 
-using PreserveAttribute = Rxmxnx.PInvoke.Internal.FrameworkCompat.PreserveAttribute;
-
 namespace Rxmxnx.PInvoke;
 
 /// <summary>

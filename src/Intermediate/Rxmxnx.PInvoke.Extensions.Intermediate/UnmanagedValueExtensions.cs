@@ -1,10 +1,5 @@
 ﻿// ReSharper disable ConvertToExtensionBlock
 
-#if !NET6_0_OR_GREATER && (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER)
-using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
-#endif
-using EnumCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
-
 namespace Rxmxnx.PInvoke;
 
 /// <summary>

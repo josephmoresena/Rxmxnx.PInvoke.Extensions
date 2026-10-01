@@ -1,5 +1,3 @@
-using Rxmxnx.PInvoke.Internal.FrameworkCompat;
-
 namespace Rxmxnx.PInvoke;
 
 public static partial class BufferManager<T>

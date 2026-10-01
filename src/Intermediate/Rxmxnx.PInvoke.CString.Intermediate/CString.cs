@@ -1,8 +1,4 @@
-﻿#if !NET6_0_OR_GREATER
-using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
-#endif
-
-#if !NET5_0_OR_GREATER
+﻿#if !NET5_0_OR_GREATER
 using Convert = Rxmxnx.PInvoke.Internal.FrameworkCompat.ConvertCompat;
 #endif
 
