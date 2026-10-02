@@ -5,24 +5,24 @@
         <RazorLangVersion>3.0</RazorLangVersion>
     </PropertyGroup>
 
-    <Import Project="..\LegacyProject.props"/>
+    <Import Project="..\LegacyProject.props" />
     <ItemGroup>
         <ProjectReference Include="..\LegacyAppTest.Core\LegacyAppTest.Core.csproj">
         </ProjectReference>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.1"/>
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.1" PrivateAssets="all"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.1" PrivateAssets="all" />
         <!-- 6.0 prefers the JSON runtime manifest. 5.0.17 always points the host at the XML file. -->
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.36" PrivateAssets="all"/>
-        <PackageReference Include="System.Net.Http.Json" Version="3.2.1"/>
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.36" PrivateAssets="all" />
+        <PackageReference Include="System.Net.Http.Json" Version="3.2.1" />
     </ItemGroup>
 
     <Target Name="RemoveUnsafeFromWasmRuntime" AfterTargets="_ResolveBlazorInputs">
         <ItemGroup>
             <!-- WebAssembly BCL ships an older System.Runtime.CompilerServices.Unsafe, causing ILLink missing-method errors, so it is removed. -->
-            <_WebAssemblyBCLAssembly Remove="$(ComponentsWebAssemblyBaseClassLibraryPath)System.Runtime.CompilerServices.Unsafe.dll"/>
+            <_WebAssemblyBCLAssembly Remove="$(ComponentsWebAssemblyBaseClassLibraryPath)System.Runtime.CompilerServices.Unsafe.dll" />
         </ItemGroup>
     </Target>
 
@@ -36,7 +36,7 @@
             <_StaticWebAssetsContentRoot>$([System.IO.Path]::GetFullPath('$(TargetDir)wwwroot'))$([System.IO.Path]::DirectorySeparatorChar)</_StaticWebAssetsContentRoot>
             <_StaticWebAssetsContentRootJson>$([System.String]::Copy('$(_StaticWebAssetsContentRoot)').Replace('\', '\\'))</_StaticWebAssetsContentRootJson>
         </PropertyGroup>
-        <WriteLinesToFile File="$(TargetDir)$(TargetName).staticwebassets.runtime.json" Overwrite="true" Lines="{&quot;ContentRoots&quot;:[&quot;$(_StaticWebAssetsContentRootJson)&quot;],&quot;Root&quot;:{&quot;Children&quot;:{},&quot;Patterns&quot;:[{&quot;ContentRootIndex&quot;:0,&quot;Pattern&quot;:&quot;**&quot;,&quot;Depth&quot;:0}]}}"/>
+        <WriteLinesToFile File="$(TargetDir)$(TargetName).staticwebassets.runtime.json" Overwrite="true" Lines="{&quot;ContentRoots&quot;:[&quot;$(_StaticWebAssetsContentRootJson)&quot;],&quot;Root&quot;:{&quot;Children&quot;:{},&quot;Patterns&quot;:[{&quot;ContentRootIndex&quot;:0,&quot;Pattern&quot;:&quot;**&quot;,&quot;Depth&quot;:0}]}}" />
     </Target>
 
 </Project>  
