@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Diagnostics;
 #endif
 
-#if NETCOREAPP3_0_OR_GREATER || (!NETCOREAPP && !NET452_OR_GREATER && !WINDOWS_UWP)
+#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET452_OR_GREATER && !WINDOWS_UWP
 using System.Runtime.CompilerServices;
 #endif
 #if NET5_0_OR_GREATER
@@ -96,7 +96,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		public static readonly CString Null = new(static () =>
 		{
 			Byte[] utf8 = { (Byte)'N', (Byte)'u', (Byte)'l', (Byte)'l', (Byte)'\0', };
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER || (NETFRAMEWORK && (MONO || NET462_OR_GREATER)) || WINDOWS_UWP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER || NETFRAMEWORK && (MONO || NET462_OR_GREATER) || WINDOWS_UWP
 			return utf8.AsSpan()[..^1];
 #else
 			return utf8.AsSpan().Slice(0, utf8.Length - 1);
@@ -168,7 +168,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					writer.WriteLine(ex);
 			}
 #endif
-#if NETCOREAPP3_0_OR_GREATER || (!NETCOREAPP && !NET452_OR_GREATER && !WINDOWS_UWP)
+#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET452_OR_GREATER && !WINDOWS_UWP
 			writer.WriteLine($"Dynamic Code Compiled: {RuntimeFeature.IsDynamicCodeCompiled}");
 			writer.WriteLine($"Dynamic Code Supported: {RuntimeFeature.IsDynamicCodeSupported}");
 #endif
@@ -180,9 +180,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			writer.WriteLine("======= Rxmxnx.PInvoke Runtime information =======");
 #if !RELEASE_PACKAGE
 			writer.WriteLine($"Package: {SystemInfo.CompilationFramework}");
-#elif (NETSTANDARD2_1 || (NETFRAMEWORK && !NET452_OR_GREATER)) && !LEGACY
+#elif (NETSTANDARD2_1 || NETFRAMEWORK && !NET452_OR_GREATER) && !LEGACY
 			writer.WriteLine($"Package: .NET Standard 2.1");
-#elif (NETSTANDARD2_1 || (NETFRAMEWORK && !NET452_OR_GREATER)) && LEGACY
+#elif (NETSTANDARD2_1 || NETFRAMEWORK && !NET452_OR_GREATER) && LEGACY
 			writer.WriteLine($"Package: .NET Standard 2.0");
 #endif
 			writer.WriteLine($"Fast Span: {SystemInfo.UsesNativeSpan}");
@@ -287,7 +287,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #else
 					if (!(frame?.GetMethod() is MethodBase methodBase)) continue;
 #endif
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || (NETFRAMEWORK && !LEGACY)
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
 					writer.WriteLine($"{methodBase.DeclaringType}.{methodBase.Name} -> {methodBase.IsImageMethod()}");
 #else
 					writer.WriteLine($"{methodBase.DeclaringType}.{methodBase.Name} -> {methodBase.MethodHandle.IsImageCode()}");

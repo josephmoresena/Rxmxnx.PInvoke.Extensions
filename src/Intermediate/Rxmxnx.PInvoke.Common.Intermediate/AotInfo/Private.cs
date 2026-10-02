@@ -8,15 +8,32 @@ namespace Rxmxnx.PInvoke;
 public static partial class AotInfo
 {
 	/// <summary>
+	/// Retrieves the assembly name from its full name.
+	/// </summary>
+	/// <param name="assemblyFullName">The full name of an assembly.</param>
+	/// <returns>The name of the assembly.</returns>
+	private static String GetAssemblyName(String assemblyFullName)
+	{
+		Int32 assemblyNameLength = assemblyFullName.IndexOf(',');
+		return assemblyNameLength < 0 ? assemblyFullName : assemblyFullName[..assemblyNameLength];
+	}
+	/// <summary>
 	/// Indicates whether the executing frame is AOT.
 	/// </summary>
+	/// <param name="isXamarinMac">Indicates whether the executing frame is Xamarin.Mac.</param>
 	/// <returns><see langword="true"/> if executing frame is AOT; otherwise, <see langword="false"/>.</returns>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
 	[UnconditionalSuppressMessage("Trimming", "IL2026")]
-	private static Boolean IsAotFrame()
+	private static Boolean IsAotFrame(Boolean isXamarinMac)
 	{
+		Debug.Assert(MonoInfo.MonoAssemblyNameType is not null);
+#if NETSTANDARD2_0
+		if (typeof(MethodBase).GetProperty(nameof(MethodBase.MethodHandle)) is not { } handle)
+			// Unable to find MethodBase.MethodHandle with reflection.
+			return true;
+#endif
 		StackTrace stackTrace = new();
 #if !NETCOREAPP
 		ReadOnlySpan<StackFrame?> frames = stackTrace.GetFrames() ?? [];
@@ -28,22 +45,35 @@ public static partial class AotInfo
 			if (frame?.GetMethod() is not { } methodBase) continue;
 			if (EmitInfo.IsDynamicMethod(methodBase)) return false;
 #if NETSTANDARD2_0
-			if (typeof(RuntimeHelpers).GetMethod(nameof(RuntimeHelpers.PrepareMethod), [typeof(RuntimeMethodHandle),])
-				    is not { } prepare || typeof(MethodBase).GetProperty(nameof(MethodBase.MethodHandle)) is not
-				    { } handle)
-				// Unable to find RuntimeHelpers.PrepareMethod(RuntimeMethodHandle) and MethodBase.MethodHandle with reflection.
+			// MethodBase.MethodHandle is not available on UWP, to avoid static symbol resolution use reflection.
+			if (handle.GetValue(methodBase) is not RuntimeMethodHandle methodHandle)
+				// Unable to get RuntimeMethodHandle from current instance.
 				return true;
-			Object?[] args = [handle.GetValue(methodBase),];
-			// Unable to get RuntimeMethodHandle from current instance.
-			if (args[0] is null) return true;
-			prepare.Invoke(null, args);
-			if (!AotInfo.IsImageMethodUnsafe((RuntimeMethodHandle)args[0]!)) return false;
 #else
-			if (!AotInfo.IsImageMethodUnsafe(methodBase.MethodHandle)) return false;
+			RuntimeMethodHandle methodHandle = methodBase.MethodHandle;
 #endif
+			switch (MemoryInspector.Instance)
+			{
+				case ILinkInspector link when isXamarinMac:
+					if (!link.IsImageMethod(methodHandle)) return false;
+					break;
+				default:
+					if (!AotInfo.IsImageMethodUnsafe(methodHandle)) return false;
+					break;
+			}
 		}
 		return true;
 	}
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+	/// <inheritdoc cref="AppDomain.GetAssemblies()"/>
+	/// <returns>A read-only span of assemblies in this application domain.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static ReadOnlySpan<Assembly> GetAssembliesSpan()
+	{
+		Assembly[] array = AppDomain.CurrentDomain.GetAssemblies();
+		return MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(array), array.Length);
+	}
+#endif
 #if !NET6_0_OR_GREATER
 	/// <summary>
 	/// Indicates whether JIT is enabled in the current runtime.
@@ -77,13 +107,14 @@ public static partial class AotInfo
 				AotInfo.reflectionDisabled = true;
 				return false;
 			}
-#if NET5_0_OR_GREATER
+			Boolean isXamarinMac = false;
+#if !NET5_0_OR_GREATER
+			Boolean isAndroid = false;
+#else
 			if (TrimInfo.IsDesktopTrimmedPlatform())
 				goto JitInfoCheck; // Skip Mono Runtime checks.
 			if (OperatingSystem.IsAndroid())
 				goto AotFrameCheck; // Skip XNU checks.
-#else
-			Boolean isAndroid = false;
 #endif
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			foreach (Assembly assembly in AotInfo.GetAssembliesSpan())
@@ -111,7 +142,11 @@ public static partial class AotInfo
 					case "Mono.Android":
 						isAndroid = true;
 						break;
+					case "Xamarin.Mac":
 #endif
+					case "Microsoft.macOS":
+						isXamarinMac = true;
+						break;
 				}
 			}
 #if NET5_0_OR_GREATER
@@ -124,10 +159,10 @@ public static partial class AotInfo
 				{
 					// IL2CPP -> Empty literal.
 					if (MemoryInspector.Instance.IsLiteral(TrimInfo.EmptyUt8Text())) return false;
-					// On emulated platforms, AOT Frame is a false positive.
-					if (!AotInfo.IsAvoidableEmitCheck())
+					// On emulated platforms, AOT Frame is a false positive. Now, Xamarin.Mac is supported.
+					if (!AotInfo.IsAvoidableEmitCheck() && !isXamarinMac)
 						goto EmitCheck;
-					Boolean isAotFrame = AotInfo.IsAotFrame();
+					Boolean isAotFrame = AotInfo.IsAotFrame(isXamarinMac);
 					// Mono/Xamarin AOT.
 					return !isAotFrame;
 				}
@@ -246,26 +281,6 @@ public static partial class AotInfo
 
 		return default; // Unable to retrieve JIT information.
 	}
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-	/// <inheritdoc cref="AppDomain.GetAssemblies()"/>
-	/// <returns>A read-only span of assemblies in this application domain.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static ReadOnlySpan<Assembly> GetAssembliesSpan()
-	{
-		Assembly[] array = AppDomain.CurrentDomain.GetAssemblies();
-		return MemoryMarshal.CreateReadOnlySpan(ref NativeUtilities.GetArrayDataReference(array), array.Length);
-	}
-#endif
-	/// <summary>
-	/// Retrieves the assembly name from its full name.
-	/// </summary>
-	/// <param name="assemblyFullName">The full name of an assembly.</param>
-	/// <returns>The name of the assembly.</returns>
-	private static String GetAssemblyName(String assemblyFullName)
-	{
-		Int32 assemblyNameLength = assemblyFullName.IndexOf(',');
-		return assemblyNameLength < 0 ? assemblyFullName : assemblyFullName[..assemblyNameLength];
-	}
 	/// <summary>
 	/// Indicates whether the System.Reflection.Emit check is avoidable at the AOT detection.
 	/// </summary>
@@ -297,13 +312,34 @@ public static partial class AotInfo
 		try
 		{
 			// Mono/Xamarin AOT -> AotFrame. IL2CPP -> Empty literal.
-			return AotInfo.IsAotFrame() || MemoryInspector.Instance.IsLiteral(TrimInfo.EmptyUt8Text());
+			return AotInfo.IsAotFrame(AotInfo.IsXamarinMac()) ||
+				MemoryInspector.Instance.IsLiteral(TrimInfo.EmptyUt8Text());
 		}
 		// If exception, might be AOT.
 		catch (Exception)
 		{
 			return true;
 		}
+	}
+	/// <summary>
+	/// Determines whether the current environment is a Xamarin.Mac environment.
+	/// </summary>
+	/// <returns>
+	/// <see langword="true"/> if the current environment is Xamarin.Mac; otherwise, <see langword="false"/>.
+	/// </returns>
+	private static Boolean IsXamarinMac()
+	{
+		if (!SystemInfo.IsMac) return false;
+		foreach (Assembly assembly in AotInfo.GetAssembliesSpan())
+		{
+			if (String.IsNullOrWhiteSpace(assembly.FullName) || assembly.IsDynamic) continue;
+			switch (AotInfo.GetAssemblyName(assembly.FullName))
+			{
+				case "Microsoft.macOS":
+					return true;
+			}
+		}
+		return false;
 	}
 #endif
 }

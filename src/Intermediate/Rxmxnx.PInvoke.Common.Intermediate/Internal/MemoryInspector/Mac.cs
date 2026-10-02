@@ -10,7 +10,7 @@ internal partial class MemoryInspector
 	[ExcludeFromCodeCoverage]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-	private sealed unsafe partial class Mac : MemoryInspector
+	private sealed unsafe partial class Mac : MemoryInspector, ILinkInspector
 	{
 		/// <summary>
 		/// Indicates whether memory marked as executable is treated as read-only.
@@ -43,6 +43,13 @@ internal partial class MemoryInspector
 			if (this._readonlyExecutable && (info.Protection & Protection.Execute) == Protection.Execute)
 				return true;
 			return (info.Protection & Protection.Write) == Protection.None;
+		}
+		/// <inheritdoc/>
+		public Boolean IsImageMethod(RuntimeMethodHandle methodHandle)
+		{
+			IntPtr* image = stackalloc IntPtr[4];
+			RuntimeHelpers.PrepareMethod(methodHandle);
+			return SystemB.LocateImage(methodHandle.GetFunctionPointer().ToPointer(), image) != 0;
 		}
 	}
 }
