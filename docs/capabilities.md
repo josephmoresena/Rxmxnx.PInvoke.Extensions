@@ -159,8 +159,9 @@ What you can do:
 
 - Ask whether the process is Native AOT, whether reflection is disabled, and whether dynamic IL is allowed (`AotInfo`).
 - Ask whether the runtime is Mono or Web, and which OS you are on (`SystemInfo`), in a way the trimmer can follow.
-- Ask whether a delegate or `MethodBase` is backed by image code rather than generated IL (`IsImageMethod`) — especially
-  useful on Mono.
+- Ask whether a delegate or `MethodBase` is backed by image code rather than generated IL (`IsImageMethod`). Reliable
+  on Mono. On CoreCLR, pure JIT is reported as generated code; ReadyToRun may still report the entry point as image
+  code.
 - Ask whether a span is a hardcoded literal (`IsLiteral` / `MayBeNonLiteral`).
 
 Deep dive: [Utilities](api/utilities.md) and [AOT support](getting-started.md#aot-support).

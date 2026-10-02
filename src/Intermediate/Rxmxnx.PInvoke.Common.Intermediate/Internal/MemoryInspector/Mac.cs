@@ -10,7 +10,7 @@ internal partial class MemoryInspector
 	[ExcludeFromCodeCoverage]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-	private sealed unsafe partial class Mac : MemoryInspector, ILinkInspector
+	private sealed unsafe partial class Mac : MemoryInspector
 	{
 		/// <summary>
 		/// Indicates whether memory marked as executable is treated as read-only.
@@ -45,11 +45,15 @@ internal partial class MemoryInspector
 			return (info.Protection & Protection.Write) == Protection.None;
 		}
 		/// <inheritdoc/>
-		public Boolean IsImageMethod(RuntimeMethodHandle methodHandle)
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecurityCritical]
+#endif
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public override Boolean IsImageMethod(RuntimeMethodHandle methodHandle)
 		{
-			IntPtr* image = stackalloc IntPtr[4];
-			RuntimeHelpers.PrepareMethod(methodHandle);
-			return SystemB.LocateImage(methodHandle.GetFunctionPointer().ToPointer(), image) != 0;
+			Span<Byte> image = stackalloc Byte[4 * IntPtr.Size];
+			fixed (void* imagePtr = &MemoryMarshal.GetReference(image))
+				return SystemB.LocateImage(methodHandle.GetFunctionPointer().ToPointer(), imagePtr) != 0;
 		}
 	}
 }

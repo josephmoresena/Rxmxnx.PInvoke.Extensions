@@ -22,7 +22,6 @@ internal abstract unsafe partial class MemoryInspector
 	/// Indicates whether the memory inspection is supported.
 	/// </summary>
 	public static Boolean IsSupported => MemoryInspector.instance is not null;
-
 	/// <summary>
 	/// Indicates whether the current process is running over an emulated platform.
 	/// </summary>
@@ -106,6 +105,18 @@ internal abstract unsafe partial class MemoryInspector
 	[SecurityCritical]
 #endif
 	public abstract Boolean IsReadOnlyAddress(void* ptr);
+	/// <summary>
+	/// Indicates whether the function pointer of <paramref name="methodHandle"/> references a native linked image.
+	/// </summary>
+	/// <param name="methodHandle">A <see cref="RuntimeMethodHandle"/> value.</param>
+	/// <returns>
+	/// <see langword="true"/> if the function pointer references a native linked image; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
+	public abstract Boolean IsImageMethod(RuntimeMethodHandle methodHandle);
 
 	/// <summary>
 	/// Indicates whether the given span represents memory that is not part of a hardcoded literal.

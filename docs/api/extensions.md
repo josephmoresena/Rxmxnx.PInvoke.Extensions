@@ -80,7 +80,9 @@ These are unsafe by contract: the pointer must stay valid for as long as the vie
 | `GetFixedMethod`                                            | Marshalled `IFixedMethod<TDelegate>.IDisposable`.                                                            |
 | `IsImageMethod`                                             | Whether every method in the invocation list is image-backed (not generated IL). Also exists on `MethodBase`. |
 
-`IsImageMethod` is aimed at Mono. It returns `false` for `null`, open generics, and platforms without memory inspection.
+`IsImageMethod` is reliable on Mono. On CoreCLR a pure JIT method is reported as not image-backed; ReadyToRun may still
+report image-backed when the entry point stays inside the loaded module. It returns `false` for `null`, open generics,
+and platforms without memory inspection.
 In reflection-free runtimes, a valid delegate is assumed to be image-backed.
 
 ## Strings (`StringExtensions`)

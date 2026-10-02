@@ -59,7 +59,7 @@ internal partial class MemoryInspector
 			public static extern Int32 MemoryRegion(UInt32 taskHandle, void** address, out UInt64 size, UInt32 flavor,
 				out MemoryInfo info, ref UInt32 count, out UInt32 objName);
 			[DllImport("libSystem.B.dylib", EntryPoint = "dladdr", SetLastError = false)]
-			public static extern Int32 LocateImage(void* address, IntPtr* image);
+			public static extern Int32 LocateImage(void* address, void* image);
 
 			[DllImport("libSystem.B.dylib", EntryPoint = "__error", SetLastError = false)]
 			private static extern Int32* GetErrorPointer();

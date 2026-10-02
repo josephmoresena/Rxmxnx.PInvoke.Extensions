@@ -89,6 +89,13 @@ internal partial class MemoryInspector
 				return this.TryGetProtection(ptr, out isReadOnly) && isReadOnly;
 			}
 		}
+		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecurityCritical]
+#endif
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public override Boolean IsImageMethod(RuntimeMethodHandle methodHandle)
+			=> StandardC.LocateImage(methodHandle.GetFunctionPointer()) != 0;
 
 		/// <summary>
 		/// Processes memory maps from current process.
@@ -196,7 +203,7 @@ internal partial class MemoryInspector
 			MemoryBoundary boundary = view.Max;
 			return boundary != default && !boundary.IsEnd;
 		}
-#if (NETFRAMEWORK && !NET472_OR_GREATER) || NETSTANDARD2_0
+#if NETFRAMEWORK && !NET472_OR_GREATER || NETSTANDARD2_0
 		/// <summary>
 		/// Searches the set for a given value and returns the equal value it finds, if any.
 		/// </summary>

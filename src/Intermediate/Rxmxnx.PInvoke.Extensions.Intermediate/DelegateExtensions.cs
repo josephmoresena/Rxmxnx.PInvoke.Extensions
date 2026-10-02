@@ -102,7 +102,9 @@ public static unsafe partial class DelegateExtensions
 	/// <see langword="true"/> if all referenced methods are backed by image-compiled code; otherwise, <see langword="false"/>.
 	/// </returns>
 	/// <remarks>
-	/// This API is primarily intended for Mono-based runtimes.
+	/// On Mono the result matches ahead-of-time native code. On CoreCLR a pure JIT method is reported as
+	/// <see langword="false"/>. ReadyToRun can still report <see langword="true"/> when the published entry point
+	/// remains inside the loaded image.
 	/// Returns <see langword="false"/> if the delegate is <see langword="null"/>, if any referenced method is an open
 	/// generic method, or if the current platform does not support memory inspection.
 	/// In reflection-free runtimes, valid delegates are treated as image-backed.
@@ -121,7 +123,9 @@ public static unsafe partial class DelegateExtensions
 	/// <see langword="true"/> if the method is backed by image-compiled code; otherwise, <see langword="false"/>.
 	/// </returns>
 	/// <remarks>
-	/// This API is primarily intended for Mono-based runtimes.
+	/// On Mono the result matches ahead-of-time native code. On CoreCLR a pure JIT method is reported as
+	/// <see langword="false"/>. ReadyToRun can still report <see langword="true"/> when the published entry point
+	/// remains inside the loaded image.
 	/// Returns <see langword="false"/> if <paramref name="method"/> is <see langword="null"/>, represents an open
 	/// generic method, or if the current platform does not support memory inspection.
 	/// In reflection-free runtimes, valid methods are treated as image-backed.

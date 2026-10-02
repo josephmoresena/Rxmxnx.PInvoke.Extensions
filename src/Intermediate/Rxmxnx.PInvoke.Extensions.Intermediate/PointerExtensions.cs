@@ -635,7 +635,9 @@ public static unsafe class PointerExtensions
 	/// <see langword="true"/> if the method is backed by image-compiled code; otherwise, <see langword="false"/>.
 	/// </returns>
 	/// <remarks>
-	/// This API is primarily intended for Mono-based runtimes.
+	/// On Mono the result matches ahead-of-time native code. On CoreCLR a pure JIT method is reported as
+	/// <see langword="false"/>. ReadyToRun can still report <see langword="true"/> when the published entry point
+	/// remains inside the loaded image.
 	/// Returns <see langword="false"/> for open generic methods and on platforms where memory inspection is not supported.
 	/// In reflection-free runtimes, valid method handles are treated as image-backed code.
 	/// </remarks>
