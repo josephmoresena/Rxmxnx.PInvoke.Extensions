@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 #if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 using System.Reflection;
 #endif
-#if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || (NETFRAMEWORK && !LEGACY)
+#if !WINDOWS_UWP
 using System.Diagnostics;
 #endif
 
@@ -228,7 +228,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			writer.WriteLine(
 				$"CString.Null pointer: 0x{NativeUtilities.GetUnsafeIntPtr(in CString.Zero.GetPinnableReference()).ToString("X")}");
 #endif
-#if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || (NETFRAMEWORK && !LEGACY)
+#if !WINDOWS_UWP
 			if (SystemInfo.IsWebRuntime || AotInfo.IsReflectionDisabled || !SystemInfo.IsMonoRuntime) return;
 			writer.WriteLine("========== StackTrace information ==========");
 			RuntimeHelper.PrintStackInfo(writer);
@@ -263,7 +263,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			}
 		}
 #endif
-#if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || (NETFRAMEWORK && !LEGACY)
+#if !WINDOWS_UWP
 #if NET5_0_OR_GREATER
 		[UnconditionalSuppressMessage("Trimming", "IL2026")]
 #endif
@@ -287,7 +287,11 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #else
 					if (!(frame?.GetMethod() is MethodBase methodBase)) continue;
 #endif
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || (NETFRAMEWORK && !LEGACY)
 					writer.WriteLine($"{methodBase.DeclaringType}.{methodBase.Name} -> {methodBase.IsImageMethod()}");
+#else
+					writer.WriteLine($"{methodBase.DeclaringType}.{methodBase.Name} -> {methodBase.MethodHandle.IsImageCode()}");
+#endif
 					hasFrame = true;
 				}
 				if (!hasFrame)
