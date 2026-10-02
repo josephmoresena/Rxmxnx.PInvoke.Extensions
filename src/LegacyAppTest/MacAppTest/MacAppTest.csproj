@@ -95,11 +95,39 @@
     <Import Project="AppleSilicon.targets" Condition="$([System.IO.File]::Exists('/System/Volumes/Preboot/Cryptexes/OS/System/Library/dyld/dyld_shared_cache_arm64e'))"/>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets"/>
 
+    <!-- Debug links Xamarin.Mac's registrar, which defines a class named NSURLSessionDelegate.
+         NetworkServiceProxy defines the same class, so dyld warns at launch. The protocol name stays. -->
+    <UsingTask TaskName="RenameUrlSessionClass"
+               AssemblyFile="..\LegacyAppTest.Tasks\bin\$(Configuration)\netstandard2.0\LegacyAppTest.Tasks.dll"/>
+    <Target Name="RenameCollidingUrlSessionClass" AfterTargets="_CompileToNative">
+        <RenameUrlSessionClass Executable="$(MSBuildProjectDirectory)/bin/$(Configuration)/$(AssemblyName).app/Contents/MacOS/$(AssemblyName)"/>
+    </Target>
+
     <Import Project="..\LegacyProject.props"/>
     <ItemGroup>
+        <ProjectReference Include="..\LegacyAppTest.Tasks\LegacyAppTest.Tasks.csproj">
+            <Project>{0CD375F4-157B-4360-9668-CA0F3D5A9B3C}</Project>
+            <Name>LegacyAppTest.Tasks</Name>
+            <PrivateAssets>all</PrivateAssets>
+            <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+            <GlobalPropertiesToRemove>
+                ProduceOnlyReferenceAssembly;
+                ProduceReferenceAssembly
+            </GlobalPropertiesToRemove>
+            <SetTargetFramework>TargetFramework=netstandard2.0</SetTargetFramework>
+            <Private>False</Private>
+            <Properties>
+                ProduceOnlyReferenceAssembly=false;
+                ProduceReferenceAssembly=false;
+                TargetFramework=netstandard2.0
+            </Properties>
+        </ProjectReference>
         <ProjectReference Include="..\LegacyAppTest.Core\LegacyAppTest.Core.csproj">
             <Project>{BA05F12E-F281-4E3F-8D99-600B76D2186B}</Project>
             <Name>LegacyAppTest.Core</Name>
         </ProjectReference>
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="AppleSilicon.targets"/>
     </ItemGroup>
 </Project>
