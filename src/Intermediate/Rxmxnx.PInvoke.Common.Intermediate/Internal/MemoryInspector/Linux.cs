@@ -21,6 +21,19 @@ internal partial class MemoryInspector
 		private const Int32 permissionTokenLength = 6;
 
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecurityCritical]
+#endif
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public override Boolean IsImageMethod(RuntimeMethodHandle methodHandle)
+		{
+			IntPtr address = methodHandle.GetFunctionPointer();
+			if (DynamicLinkerLinux.TryLocateImage(address, out Int32 located))
+				return located != 0;
+			return StandardC.LocateImage(address) != 0;
+		}
+
+		/// <inheritdoc/>
 		protected override void ProcessMaps() => this.ParseMaps(File.ReadAllBytes(Linux.mapsFileName));
 
 		/// <summary>

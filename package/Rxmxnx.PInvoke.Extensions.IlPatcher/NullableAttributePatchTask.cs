@@ -118,8 +118,16 @@ public sealed partial class NullableAttributePatchTask : AssemblyPatchTask
 	/// <param name="property">Property to test.</param>
 	/// <returns><see langword="true"/> when an accessor of <paramref name="property"/> is exported.</returns>
 	private static Boolean IsContract(PropertyDefinition property)
-		=> property.GetMethod is { } getter && NullableAttributePatchTask.IsContract(getter) ||
-			property.SetMethod is { } setter && NullableAttributePatchTask.IsContract(setter);
+		=> (property.GetMethod is { } getter && NullableAttributePatchTask.IsContract(getter)) ||
+			(property.SetMethod is { } setter && NullableAttributePatchTask.IsContract(setter));
+	/// <summary>
+	/// Determines whether <paramref name="eventDef"/> belongs to the exported contract.
+	/// </summary>
+	/// <param name="eventDef">Event to test.</param>
+	/// <returns><see langword="true"/> when an accessor of <paramref name="eventDef"/> is exported.</returns>
+	private static Boolean IsContract(EventDefinition eventDef)
+		=> (eventDef.AddMethod is { } add && NullableAttributePatchTask.IsContract(add)) ||
+			(eventDef.RemoveMethod is { } remove && NullableAttributePatchTask.IsContract(remove));
 	/// <summary>
 	/// Determines whether <paramref name="property"/> is an explicit interface implementation.
 	/// </summary>
@@ -127,14 +135,6 @@ public sealed partial class NullableAttributePatchTask : AssemblyPatchTask
 	/// <returns><see langword="true"/> when an accessor overrides an interface member.</returns>
 	private static Boolean IsExplicitContract(PropertyDefinition property)
 		=> property.GetMethod is { HasOverrides: true, } || property.SetMethod is { HasOverrides: true, };
-	/// <summary>
-	/// Determines whether <paramref name="eventDef"/> belongs to the exported contract.
-	/// </summary>
-	/// <param name="eventDef">Event to test.</param>
-	/// <returns><see langword="true"/> when an accessor of <paramref name="eventDef"/> is exported.</returns>
-	private static Boolean IsContract(EventDefinition eventDef)
-		=> eventDef.AddMethod is { } add && NullableAttributePatchTask.IsContract(add) ||
-			eventDef.RemoveMethod is { } remove && NullableAttributePatchTask.IsContract(remove);
 	/// <summary>
 	/// Determines whether <paramref name="eventDef"/> is an explicit interface implementation.
 	/// </summary>

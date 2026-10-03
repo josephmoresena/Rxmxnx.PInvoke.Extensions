@@ -35,6 +35,9 @@ public static partial class FixedPointerListValueExtensions
 		[SecuritySafeCritical]
 #endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
 		internal static void WithSafeFixed<TAction, T0, T1>(ref TAction action, Span<T0> span0, Span<T1> span1)
 #if !NET9_0_OR_GREATER
 			where TAction : IFixedPointerListAction
@@ -87,6 +90,9 @@ public static partial class FixedPointerListValueExtensions
 		[SecuritySafeCritical]
 #endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
 		internal static void WithSafeFixed<TAction, T0, T1>(ref TAction action, ReadOnlySpan<T0> span0,
 			ReadOnlySpan<T1> span1)
 #if !NET9_0_OR_GREATER
@@ -142,6 +148,9 @@ public static partial class FixedPointerListValueExtensions
 		[SecuritySafeCritical]
 #endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
 		internal static void WithSafeFixed<TFunction, TResult, T0, T1>(ref TFunction func, Span<T0> span0,
 			Span<T1> span1, out TResult result)
 #if !NET9_0_OR_GREATER
@@ -197,6 +206,9 @@ public static partial class FixedPointerListValueExtensions
 		[SecuritySafeCritical]
 #endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
 		internal static void WithSafeFixed<TFunction, TResult, T0, T1>(ref TFunction func, ReadOnlySpan<T0> span0,
 			ReadOnlySpan<T1> span1, out TResult result)
 #if !NET9_0_OR_GREATER

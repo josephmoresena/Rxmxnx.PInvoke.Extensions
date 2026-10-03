@@ -52,6 +52,9 @@ public static partial class FixedPointerListValueExtensions
 		[SecuritySafeCritical]
 #endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
 		internal static void WithSafeFixed<TAction, T0, T1, T2, T3, T4, T5, T6>(ref TAction action, Span<T0> span0,
 			Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5, Span<T6> span6)
 #if !NET9_0_OR_GREATER
@@ -130,6 +133,9 @@ public static partial class FixedPointerListValueExtensions
 		[SecuritySafeCritical]
 #endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
 		internal static void WithSafeFixed<TAction, T0, T1, T2, T3, T4, T5, T6>(ref TAction action,
 			ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
 			ReadOnlySpan<T4> span4, ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6)
@@ -211,6 +217,9 @@ public static partial class FixedPointerListValueExtensions
 		[SecuritySafeCritical]
 #endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
 		internal static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5, T6>(ref TFunction func,
 			Span<T0> span0, Span<T1> span1, Span<T2> span2, Span<T3> span3, Span<T4> span4, Span<T5> span5,
 			Span<T6> span6, out TResult result)
@@ -292,6 +301,9 @@ public static partial class FixedPointerListValueExtensions
 		[SecuritySafeCritical]
 #endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
 		internal static void WithSafeFixed<TFunction, TResult, T0, T1, T2, T3, T4, T5, T6>(ref TFunction func,
 			ReadOnlySpan<T0> span0, ReadOnlySpan<T1> span1, ReadOnlySpan<T2> span2, ReadOnlySpan<T3> span3,
 			ReadOnlySpan<T4> span4, ReadOnlySpan<T5> span5, ReadOnlySpan<T6> span6, out TResult result)

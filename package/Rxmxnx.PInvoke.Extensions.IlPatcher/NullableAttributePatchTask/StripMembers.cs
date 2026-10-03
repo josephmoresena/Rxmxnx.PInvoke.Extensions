@@ -10,6 +10,7 @@ public partial class NullableAttributePatchTask
 	/// </summary>
 	/// <param name="type">Type to patch.</param>
 	/// <returns><see langword="true"/> if an annotation was removed.</returns>
+	[SuppressMessage("csharpsquid", "S3776")]
 	private static Boolean StripType(TypeDefinition type)
 	{
 		if (!NullableAttributePatchTask.IsExported(type))
@@ -42,36 +43,11 @@ public partial class NullableAttributePatchTask
 		return modified;
 	}
 	/// <summary>
-	/// Removes nullable annotations from generic constraints that do not record an annotated reference.
-	/// </summary>
-	/// <param name="type">Type whose constraints are reviewed.</param>
-	/// <returns><see langword="true"/> if an annotation was removed.</returns>
-	/// <remarks>
-	/// Flag 2 is the <c>?</c> annotation. Constraint attributes in this assembly use 0 for a struct argument and 1 for
-	/// the reference constraint itself. Both <c>TAction?</c> and <c>TFunction?</c> are parameter annotations and are
-	/// left in place. When the nearest <c>NullableContextAttribute</c> is 2, a missing constraint attribute is read as
-	/// nullable, so that attribute stays.
-	/// </remarks>
-	private static Boolean StripConstraintAnnotations(TypeDefinition type)
-	{
-		Byte typeContext = NullableAttributePatchTask.GetNullableContext(type);
-		Boolean modified = typeContext != NullableAttributePatchTask.AnnotatedFlag &&
-			NullableAttributePatchTask.StripConstraints(type);
-		foreach (MethodDefinition method in type.Methods)
-		{
-			Byte context = NullableAttributePatchTask.TryGetNullableContext(method, out Byte methodContext) ?
-				methodContext :
-				typeContext;
-			if (context == NullableAttributePatchTask.AnnotatedFlag) continue;
-			modified |= NullableAttributePatchTask.StripConstraints(method);
-		}
-		return modified;
-	}
-	/// <summary>
 	/// Removes every nullable annotation from a non-exported <paramref name="type"/> and its members.
 	/// </summary>
 	/// <param name="type">Non-exported type.</param>
 	/// <returns><see langword="true"/> if an annotation was removed.</returns>
+	[SuppressMessage("csharpsquid", "S3776")]
 	private static Boolean StripAll(TypeDefinition type)
 	{
 		Boolean modified = NullableAttributePatchTask.StripProvider(type);
@@ -97,6 +73,32 @@ public partial class NullableAttributePatchTask
 		{
 			if (method.HasOverrides) continue;
 			modified |= NullableAttributePatchTask.StripMethod(method);
+		}
+		return modified;
+	}
+	/// <summary>
+	/// Removes nullable annotations from generic constraints that do not record an annotated reference.
+	/// </summary>
+	/// <param name="type">Type whose constraints are reviewed.</param>
+	/// <returns><see langword="true"/> if an annotation was removed.</returns>
+	/// <remarks>
+	/// Flag 2 is the <c>?</c> annotation. Constraint attributes in this assembly use 0 for a struct argument and 1 for
+	/// the reference constraint itself. Both <c>TAction?</c> and <c>TFunction?</c> are parameter annotations and are
+	/// left in place. When the nearest <c>NullableContextAttribute</c> is 2, a missing constraint attribute is read as
+	/// nullable, so that attribute stays.
+	/// </remarks>
+	private static Boolean StripConstraintAnnotations(TypeDefinition type)
+	{
+		Byte typeContext = NullableAttributePatchTask.GetNullableContext(type);
+		Boolean modified = typeContext != NullableAttributePatchTask.AnnotatedFlag &&
+			NullableAttributePatchTask.StripConstraints(type);
+		foreach (MethodDefinition method in type.Methods)
+		{
+			Byte context = NullableAttributePatchTask.TryGetNullableContext(method, out Byte methodContext) ?
+				methodContext :
+				typeContext;
+			if (context == NullableAttributePatchTask.AnnotatedFlag) continue;
+			modified |= NullableAttributePatchTask.StripConstraints(method);
 		}
 		return modified;
 	}
