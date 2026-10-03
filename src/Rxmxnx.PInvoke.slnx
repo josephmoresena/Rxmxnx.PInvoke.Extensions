@@ -42,23 +42,26 @@
         <File Path="..\docs\api\utilities.md"/>
         <File Path="..\docs\api\enums.md"/>
     </Folder>
-    <Folder Name="/Global/">
+    <Folder Name="/GitHub/">
         <File Path="..\.github\workflows\build.yml"/>
         <File Path="..\.github\workflows\cross-actions.yml"/>
         <File Path="..\.github\workflows\freebsd-actions.yml"/>
         <File Path="..\.github\workflows\release.yml"/>
-        <File Path="..\AssemblyPatchers.props"/>
-        <File Path="..\CONTRIBUTING.md"/>
-        <File Path="..\Directory.Build.props"/>
-        <File Path="..\LICENSE.md"/>
-        <File Path="..\MonoCecil.props"/>
-        <File Path="..\Packages.props"/>
-        <File Path="..\Print-MonoTest-Results.ps1"/>
-        <File Path="..\README.md"/>
         <File Path="..\.github\workflows\webasm-actions.yml"/>
         <File Path="..\.gitignore"/>
+        <File Path="..\CONTRIBUTING.md"/>
+        <File Path="..\LICENSE.md"/>
+        <File Path="..\Print-MonoTest-Results.ps1"/>
+        <File Path="..\README.md"/>
         <File Path="..\Run-MonoTest.ps1"/>
         <File Path="..\ZipAndClean.ps1"/>
+    </Folder>
+    <Folder Name="/Global/">
+        <File Path="..\AssemblyPatchers.props"/>
+        <File Path="..\Directory.Build.props"/>
+        <File Path="..\MonoCecil.props"/>
+        <File Path="..\Packages.props"/>
+        <File Path="..\README.md"/>
         <File Path="Library.props"/>
         <File Path="MonoProject.props"/>
         <File Path="PackageReference.props"/>
