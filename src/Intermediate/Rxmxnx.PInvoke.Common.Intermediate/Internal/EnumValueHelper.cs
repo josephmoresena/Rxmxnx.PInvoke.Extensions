@@ -12,6 +12,7 @@ namespace Rxmxnx.PInvoke.Internal;
 /// </summary>
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2743)]
 #endif
 internal static unsafe class EnumValueHelper<TEnum> where TEnum : struct, Enum
 {
