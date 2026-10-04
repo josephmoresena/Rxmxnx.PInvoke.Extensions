@@ -28,9 +28,7 @@ internal partial class MemoryInspector
 		public override Boolean IsImageMethod(RuntimeMethodHandle methodHandle)
 		{
 			IntPtr address = methodHandle.GetFunctionPointer();
-			if (DynamicLinkerLinux.TryLocateImage(address, out Int32 located))
-				return located != 0;
-			return StandardC.LocateImage(address) != 0;
+			return DynamicLinker.LocateImage(address) != 0;
 		}
 
 		/// <inheritdoc/>

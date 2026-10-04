@@ -51,9 +51,8 @@ internal partial class MemoryInspector
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public override Boolean IsImageMethod(RuntimeMethodHandle methodHandle)
 		{
-			Span<Byte> image = stackalloc Byte[4 * IntPtr.Size];
-			fixed (void* imagePtr = &MemoryMarshal.GetReference(image))
-				return SystemB.LocateImage(methodHandle.GetFunctionPointer().ToPointer(), imagePtr) != 0;
+			Byte* image = stackalloc Byte[4 * IntPtr.Size];
+			return SystemB.LocateImage(methodHandle.GetFunctionPointer().ToPointer(), image) != 0;
 		}
 	}
 }

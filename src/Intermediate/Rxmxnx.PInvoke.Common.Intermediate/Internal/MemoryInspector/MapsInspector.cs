@@ -95,7 +95,10 @@ internal partial class MemoryInspector
 #endif
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public override Boolean IsImageMethod(RuntimeMethodHandle methodHandle)
-			=> StandardC.LocateImage(methodHandle.GetFunctionPointer()) != 0;
+		{
+			Byte* image = stackalloc Byte[4 * IntPtr.Size];
+			return StandardC.LocateImage(methodHandle.GetFunctionPointer(), image) != 0;
+		}
 
 		/// <summary>
 		/// Processes memory maps from current process.
