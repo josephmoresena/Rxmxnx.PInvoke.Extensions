@@ -1,3 +1,7 @@
+#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
+
 using Rxmxnx.PInvoke.Buffers.Storage;
 
 namespace Rxmxnx.PInvoke.Tests.Internal;
