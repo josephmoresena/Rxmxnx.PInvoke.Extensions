@@ -93,15 +93,6 @@ public sealed partial class NullableAttributePatchTask : AssemblyPatchTask
 		return access is FieldAttributes.Public or FieldAttributes.Family or FieldAttributes.FamORAssem;
 	}
 	/// <summary>
-	/// Determines whether <paramref name="method"/> belongs to the exported contract.
-	/// </summary>
-	/// <param name="method">Method to test.</param>
-	/// <returns>
-	/// <see langword="true"/> when <paramref name="method"/> is exported or implements an interface member.
-	/// </returns>
-	private static Boolean IsContract(MethodDefinition method)
-		=> method.HasOverrides || NullableAttributePatchTask.IsVisible(method);
-	/// <summary>
 	/// Determines whether <paramref name="method"/> is public, protected, or protected internal.
 	/// </summary>
 	/// <param name="method">Method to test.</param>
@@ -112,6 +103,15 @@ public sealed partial class NullableAttributePatchTask : AssemblyPatchTask
 		MethodAttributes access = method.Attributes & MethodAttributes.MemberAccessMask;
 		return access is MethodAttributes.Public or MethodAttributes.Family or MethodAttributes.FamORAssem;
 	}
+	/// <summary>
+	/// Determines whether <paramref name="method"/> belongs to the exported contract.
+	/// </summary>
+	/// <param name="method">Method to test.</param>
+	/// <returns>
+	/// <see langword="true"/> when <paramref name="method"/> is exported or implements an interface member.
+	/// </returns>
+	private static Boolean IsContract(MethodDefinition method)
+		=> method.HasOverrides || NullableAttributePatchTask.IsVisible(method);
 	/// <summary>
 	/// Determines whether <paramref name="property"/> belongs to the exported contract.
 	/// </summary>

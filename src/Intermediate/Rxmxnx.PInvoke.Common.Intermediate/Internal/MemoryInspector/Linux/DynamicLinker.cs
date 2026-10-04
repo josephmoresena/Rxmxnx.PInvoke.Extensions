@@ -69,7 +69,7 @@ internal partial class MemoryInspector
 #else
 				if (DynamicLinker.IsGlibc())
 					DynamicLinker.sharedObject = DynamicLinker.libdl_so_2;
-				else if (DynamicLinker.IsAndroid())
+				else if (File.Exists("/system/build.prop")) // Is Android
 					DynamicLinker.sharedObject = DynamicLinker.libdl_so;
 #endif
 			}
@@ -115,22 +115,9 @@ internal partial class MemoryInspector
 				UIntPtr written = DynamicLinker.GetConfigurationString(gnuLibcVersion, value, (UIntPtr)valueLength);
 				return written.ToUInt64() > 5 && new ReadOnlySpan<Byte>(value, 5).SequenceEqual("glibc"u8);
 			}
-			/// <summary>
-			/// Indicates whether the process can see the Android system properties file.
-			/// </summary>
-			/// <returns><see langword="true"/> when <c>/system/build.prop</c> exists.</returns>
-			private static Boolean IsAndroid()
-			{
-				ReadOnlySpan<Byte> path = "/system/build.prop"u8;
-				fixed (Byte* pathPtr = &MemoryMarshal.GetReference(path))
-					return DynamicLinker.Access(pathPtr, 0) == 0;
-			}
-
 #pragma warning disable SYSLIB1054
 			[DllImport("libc", EntryPoint = "confstr", SetLastError = false)]
 			private static extern UIntPtr GetConfigurationString(Int32 name, Byte* value, UIntPtr length);
-			[DllImport("libc", EntryPoint = "access", SetLastError = false)]
-			private static extern Int32 Access(Byte* path, Int32 mode);
 #pragma warning restore SYSLIB1054
 #endif
 #if !NET5_0_OR_GREATER
