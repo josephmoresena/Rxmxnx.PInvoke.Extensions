@@ -4,6 +4,7 @@ using System.Text.Json;
 using System;
 using System.Text.Json.Serialization;
 #endif
+
 #if !NETCOREAPP2_1_OR_GREATER && !NET461_OR_GREATER && !WINDOWS_UWP
 using CStringJsonConverter = Rxmxnx.PInvoke.Json.CStringJsonConverter;
 using CStringSequenceJsonConverter = Rxmxnx.PInvoke.Json.CStringSequenceJsonConverter;

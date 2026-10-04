@@ -7,10 +7,11 @@ namespace Rxmxnx.PInvoke.Buffers;
 /// <summary>
 /// Non-binary buffer space.
 /// </summary>
-/// <typeparam name="TArray">The type inline array.</typeparam>
+/// <typeparam name="TArray">The inline array type.</typeparam>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
 /// <remarks>
-/// <typeparamref name="TArray"/> must ensure that the <typeparamref name="T"/> elements are safely preserved. <br/>
+/// <typeparamref name="TArray"/> must be an exact layout of a fixed number of <typeparamref name="T"/> elements,
+/// with no padding or gaps, because the struct is read sequentially as a span. <br/>
 /// It is not guaranteed that there is no other type of binary or non-binary buffer capable of storing this amount;
 /// therefore, its declaration might generate metadata that will never be used.
 /// </remarks>

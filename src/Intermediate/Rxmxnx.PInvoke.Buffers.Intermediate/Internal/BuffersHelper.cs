@@ -261,7 +261,7 @@ internal static class BuffersHelper
 	/// Creates <see cref="BufferTypeMetadata{T}"/> for <see cref="Composite{TBufferA,TBufferB,T}"/>.
 	/// </summary>
 	/// <typeparam name="T">The type of items in the buffer</typeparam>
-	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
+	/// <param name="storage">An <see cref="IMetadataStorage"/> instance.</param>
 	/// <param name="typeofA">The type of low buffer.</param>
 	/// <param name="typeofB">The type of high buffer.</param>
 	/// <returns>
@@ -297,9 +297,9 @@ internal static class BuffersHelper
 			result = ManagedBinaryBuffer<T>.GetMetadata(genericType);
 		}
 #else
-		if (typeofB != typeof(Atomic<T>) && !BuffersHelper.GetMetadataFromType<T>(typeofB).IsBinary ||
+		if ((typeofB != typeof(Atomic<T>) && !BuffersHelper.GetMetadataFromType<T>(typeofB).IsBinary) ||
 		    !BuffersHelper.BufferAutoCompositionEnabled)
-			// Avoid using reflection for Atomic<T> metadata retrieving.
+			// Avoid using reflection to retrieve Atomic<T> metadata.
 			return default;
 		BufferTypeMetadata<T>? result = default;
 		try

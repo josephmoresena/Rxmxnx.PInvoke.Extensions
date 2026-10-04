@@ -1,4 +1,4 @@
-#if  !UAP
+#if !UAP
 using DynamicMethod = System.Reflection.Emit.DynamicMethod;
 using OpCodes = System.Reflection.Emit.OpCodes;
 using ILGenerator = System.Reflection.Emit.ILGenerator;

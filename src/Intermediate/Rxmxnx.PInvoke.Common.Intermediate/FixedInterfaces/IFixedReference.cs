@@ -15,7 +15,7 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 	/// </summary>
 	/// <typeparam name="TDestination">Type of the reinterpreted memory reference.</typeparam>
 	/// <returns>
-	/// A <see cref="IFixedReference{TDestination}"/> instance.
+	/// An <see cref="IFixedReference{TDestination}"/> instance.
 	/// </returns>
 #if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 	new IFixedReference<TDestination> Transformation<TDestination>();
@@ -33,7 +33,7 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 	/// <typeparam name="TDestination">Type of the reinterpreted memory reference.</typeparam>
 	/// <param name="residual">Output. Residual memory left after the transformation.</param>
 	/// <returns>
-	/// A <see cref="IFixedReference{TDestination}"/> instance.
+	/// An <see cref="IFixedReference{TDestination}"/> instance.
 	/// </returns>
 	IFixedReference<TDestination> Transformation<TDestination>(out IFixedMemory residual);
 
@@ -44,7 +44,7 @@ public interface IFixedReference<T> : IReferenceable<T>, IReadOnlyFixedReference
 	/// <typeparam name="TDestination">Type of the reinterpreted memory reference.</typeparam>
 	/// <param name="residual">Output. Residual read-only memory left after the transformation.</param>
 	/// <returns>
-	/// A <see cref="IReadOnlyFixedReference{TDestination}"/> instance.
+	/// An <see cref="IReadOnlyFixedReference{TDestination}"/> instance.
 	/// </returns>
 	new IFixedReference<TDestination> Transformation<TDestination>(out IReadOnlyFixedMemory residual);
 

@@ -8,7 +8,7 @@ internal partial class ArrayMemoryManager<T>
 	/// Returns a reference to the 0th element of <paramref name="array"/>.
 	/// If the array is empty, returns a <see langword="null "/>reference.
 	/// </summary>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 	/// <returns>Managed reference to <paramref name="array"/> data.</returns>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]

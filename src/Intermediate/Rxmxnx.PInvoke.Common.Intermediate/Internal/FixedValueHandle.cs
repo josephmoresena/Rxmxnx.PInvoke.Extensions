@@ -21,9 +21,6 @@ internal class FixedValueHandle : IDisposable, IWrapper<Boolean>
 	/// </summary>
 	private Boolean? _isDisposed;
 
-	/// <inheritdoc cref="IWrapper{T}.Value"/>
-	public Boolean Value => !this._isDisposed.GetValueOrDefault();
-
 	/// <summary>
 	/// Constructor.
 	/// </summary>
@@ -41,6 +38,9 @@ internal class FixedValueHandle : IDisposable, IWrapper<Boolean>
 		this.Dispose(true);
 		GC.SuppressFinalize(this);
 	}
+
+	/// <inheritdoc cref="IWrapper{T}.Value"/>
+	public Boolean Value => !this._isDisposed.GetValueOrDefault();
 
 	/// <summary>
 	/// Destructor.

@@ -26,11 +26,11 @@ public abstract class FixedMemoryTestsBase
 	/// Message when <see cref="FixedReference{T}"/> instance is not enough for hold a reference.
 	/// </summary>
 	protected static readonly String InvalidSizeFormat = MessageResource.GetInstance()
-	                                                                     .InvalidRefTypePointer(
-		                                                                     typeof(FixedMemoryTestsBase))
-	                                                                     .Replace(
-		                                                                     typeof(FixedMemoryTestsBase).ToString(),
-		                                                                     "{0}");
+	                                                                    .InvalidRefTypePointer(
+		                                                                    typeof(FixedMemoryTestsBase))
+	                                                                    .Replace(
+		                                                                    typeof(FixedMemoryTestsBase).ToString(),
+		                                                                    "{0}");
 
 	/// <summary>
 	/// Fixture instance.

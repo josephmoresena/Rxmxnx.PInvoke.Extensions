@@ -4,11 +4,12 @@
 // Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Bcl.Memory
 
 // ReSharper disable MemberCanBePrivate.Global
+
 #if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER && !NET462_OR_GREATER && !UAP10_0_16299
 namespace System;
 
 /// <summary>
-/// Represent a range has start and end indexes.
+/// Represents a range that has start and end indexes.
 /// </summary>
 /// <remarks>
 /// Range is used by the C# compiler to support the range syntax.
@@ -24,22 +25,22 @@ namespace System;
 internal readonly struct Range : IEquatable<Range>
 {
 	/// <summary>
-	/// Create a Range object starting from first element to the end.
+	/// Creates a Range that starts at the first element and ends at the end.
 	/// </summary>
 	public static Range All => new(Index.Start, Index.End);
 
 	/// <summary>
-	/// Represent the inclusive start index of the Range.
+	/// Represents the inclusive start index of the Range.
 	/// </summary>
 	public Index Start { get; }
 	/// <summary>
-	/// Represent the exclusive end index of the Range.
+	/// Represents the exclusive end index of the Range.
 	/// </summary>
 	public Index End { get; }
 
-	/// <summary>Construct a Range object using the start and end indexes.</summary>
-	/// <param name="start">Represent the inclusive start index of the range.</param>
-	/// <param name="end">Represent the exclusive end index of the range.</param>
+	/// <summary>Constructs a Range using the start and end indexes.</summary>
+	/// <param name="start">The inclusive start index of the range.</param>
+	/// <param name="end">The exclusive end index of the range.</param>
 	public Range(Index start, Index end)
 	{
 		this.Start = start;
@@ -61,25 +62,26 @@ internal readonly struct Range : IEquatable<Range>
 	public override String ToString() => $"{this.Start}..{this.End}";
 
 	/// <summary>
-	/// Create a Range object starting from start index to the end of the collection.
+	/// Creates a Range that starts at the specified index and ends at the end of the collection.
 	/// </summary>
 	public static Range StartAt(Index start) => new(start, Index.End);
 
 	/// <summary>
-	/// Create a Range object starting from first element in the collection to the end Index.
+	/// Creates a Range that starts at the first element and ends at the specified index.
 	/// </summary>
 	public static Range EndAt(Index end) => new(Index.Start, end);
 
 	/// <summary>
-	/// Calculate the start offset and length of range object using a collection length.
+	/// Calculates the start offset and length of the range for a collection of the specified length.
 	/// </summary>
 	/// <param name="length">
-	/// The length of the collection that the range will be used with. length has to be a positive value.
+	/// The length of the collection that the range will be used with. <paramref name="length"/> must be a positive
+	/// value.
 	/// </param>
 	/// <remarks>
-	/// For performance reason, we don't validate the input length parameter against negative values.
-	/// It is expected Range will be used with collections which always have non negative length/count.
-	/// We validate the range is inside the length scope though.
+	/// For performance reasons, the input length is not validated against negative values.
+	/// <see cref="Range"/> is expected to be used with collections that always have a non-negative length or count.
+	/// The method does validate that the range lies within that length.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public (Int32 Offset, Int32 Length) GetOffsetAndLength(Int32 length)

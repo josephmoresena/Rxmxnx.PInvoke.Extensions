@@ -40,6 +40,8 @@
 
     <UsingTask TaskName="ValuePointerPatchTask"
                AssemblyFile="Rxmxnx.PInvoke.Extensions.IlPatcher\bin\$(Configuration)\netstandard2.0\Rxmxnx.PInvoke.Extensions.IlPatcher.dll"/>
+    <UsingTask TaskName="NullableAttributePatchTask"
+               AssemblyFile="Rxmxnx.PInvoke.Extensions.IlPatcher\bin\$(Configuration)\netstandard2.0\Rxmxnx.PInvoke.Extensions.IlPatcher.dll"/>
 
     <Target Name="AssemblyPatch" AfterTargets="Build" BeforeTargets="Publish;Pack">
         <PropertyGroup>
@@ -48,6 +50,11 @@
         </PropertyGroup>
         <ValuePointerPatchTask
                 Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))"
+                OutputPath="$(AssemblyOutputPath)"
+                TargetFramework="$(AssemblyTargetFramework)"
+                StrongNameKeyPath="$(SigningKeyFile)"/>
+        <NullableAttributePatchTask
+                Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp3.0'))"
                 OutputPath="$(AssemblyOutputPath)"
                 TargetFramework="$(AssemblyTargetFramework)"
                 StrongNameKeyPath="$(SigningKeyFile)"/>

@@ -70,10 +70,10 @@ public static unsafe partial class NativeUtilities
 	/// Prevents the garbage collector from reallocating given spans and fixes their memory
 	/// addresses until <paramref name="action"/> completes.
 	/// </summary>
-	/// <typeparam name="T0">Type of the items in 1st span.</typeparam>
-	/// <typeparam name="T1">Type of the items in 2nd span.</typeparam>
-	/// <param name="span0">1st span.</param>
-	/// <param name="span1">2nd span.</param>
+	/// <typeparam name="T0">Type of the items in the first span.</typeparam>
+	/// <typeparam name="T1">Type of the items in the second span.</typeparam>
+	/// <param name="span0">The first span.</param>
+	/// <param name="span1">The second span.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedListAction"/> delegate.</param>
 #if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
@@ -125,11 +125,11 @@ public static unsafe partial class NativeUtilities
 	/// Prevents the garbage collector from reallocating given spans and fixes their memory
 	/// addresses until <paramref name="action"/> completes.
 	/// </summary>
-	/// <typeparam name="T0">Type of the items in 1st span.</typeparam>
-	/// <typeparam name="T1">Type of the items in 2nd span.</typeparam>
+	/// <typeparam name="T0">Type of the items in the first span.</typeparam>
+	/// <typeparam name="T1">Type of the items in the second span.</typeparam>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
-	/// <param name="span0">1st span.</param>
-	/// <param name="span1">2nd span.</param>
+	/// <param name="span0">The first span.</param>
+	/// <param name="span1">The second span.</param>
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedListAction{TArg}"/> delegate.</param>
 #if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
@@ -186,12 +186,12 @@ public static unsafe partial class NativeUtilities
 	/// Prevents the garbage collector from reallocating given spans and fixes their memory
 	/// addresses until <paramref name="action"/> completes.
 	/// </summary>
-	/// <typeparam name="T0">Type of the items in 1st span.</typeparam>
-	/// <typeparam name="T1">Type of the items in 2nd span.</typeparam>
-	/// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
-	/// <param name="span0">1st span.</param>
-	/// <param name="span1">2nd span.</param>
-	/// <param name="span2">3rd span.</param>
+	/// <typeparam name="T0">Type of the items in the first span.</typeparam>
+	/// <typeparam name="T1">Type of the items in the second span.</typeparam>
+	/// <typeparam name="T2">Type of the items in the third span.</typeparam>
+	/// <param name="span0">The first span.</param>
+	/// <param name="span1">The second span.</param>
+	/// <param name="span2">The third span.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedListAction"/> delegate.</param>
 #if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
@@ -247,13 +247,13 @@ public static unsafe partial class NativeUtilities
 	/// Prevents the garbage collector from reallocating given spans and fixes their memory
 	/// addresses until <paramref name="action"/> completes.
 	/// </summary>
-	/// <typeparam name="T0">Type of the items in 1st span.</typeparam>
-	/// <typeparam name="T1">Type of the items in 2nd span.</typeparam>
-	/// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
+	/// <typeparam name="T0">Type of the items in the first span.</typeparam>
+	/// <typeparam name="T1">Type of the items in the second span.</typeparam>
+	/// <typeparam name="T2">Type of the items in the third span.</typeparam>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
-	/// <param name="span0">1st span.</param>
-	/// <param name="span1">2nd span.</param>
-	/// <param name="span2">3rd span.</param>
+	/// <param name="span0">The first span.</param>
+	/// <param name="span1">The second span.</param>
+	/// <param name="span2">The third span.</param>
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedListAction{TArg}"/> delegate.</param>
 #if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
@@ -313,14 +313,14 @@ public static unsafe partial class NativeUtilities
 	/// Prevents the garbage collector from reallocating given spans and fixes their memory
 	/// addresses until <paramref name="action"/> completes.
 	/// </summary>
-	/// <typeparam name="T0">Type of the items in 1st span.</typeparam>
-	/// <typeparam name="T1">Type of the items in 2nd span.</typeparam>
-	/// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
-	/// <typeparam name="T3">Type of the items in 4th span.</typeparam>
-	/// <param name="span0">1st span.</param>
-	/// <param name="span1">2nd span.</param>
-	/// <param name="span2">3rd span.</param>
-	/// <param name="span3">4th span.</param>
+	/// <typeparam name="T0">Type of the items in the first span.</typeparam>
+	/// <typeparam name="T1">Type of the items in the second span.</typeparam>
+	/// <typeparam name="T2">Type of the items in the third span.</typeparam>
+	/// <typeparam name="T3">Type of the items in the fourth span.</typeparam>
+	/// <param name="span0">The first span.</param>
+	/// <param name="span1">The second span.</param>
+	/// <param name="span2">The third span.</param>
+	/// <param name="span3">The fourth span.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedListAction"/> delegate.</param>
 #if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
@@ -379,15 +379,15 @@ public static unsafe partial class NativeUtilities
 	/// Prevents the garbage collector from reallocating given spans and fixes their memory
 	/// addresses until <paramref name="action"/> completes.
 	/// </summary>
-	/// <typeparam name="T0">Type of the items in 1st span.</typeparam>
-	/// <typeparam name="T1">Type of the items in 2nd span.</typeparam>
-	/// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
-	/// <typeparam name="T3">Type of the items in 4th span.</typeparam>
+	/// <typeparam name="T0">Type of the items in the first span.</typeparam>
+	/// <typeparam name="T1">Type of the items in the second span.</typeparam>
+	/// <typeparam name="T2">Type of the items in the third span.</typeparam>
+	/// <typeparam name="T3">Type of the items in the fourth span.</typeparam>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
-	/// <param name="span0">1st span.</param>
-	/// <param name="span1">2nd span.</param>
-	/// <param name="span2">3rd span.</param>
-	/// <param name="span3">4th span.</param>
+	/// <param name="span0">The first span.</param>
+	/// <param name="span1">The second span.</param>
+	/// <param name="span2">The third span.</param>
+	/// <param name="span3">The fourth span.</param>
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedListAction{TArg}"/> delegate.</param>
 #if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
@@ -450,16 +450,16 @@ public static unsafe partial class NativeUtilities
 	/// Prevents the garbage collector from reallocating given spans and fixes their memory
 	/// addresses until <paramref name="action"/> completes.
 	/// </summary>
-	/// <typeparam name="T0">Type of the items in 1st span.</typeparam>
-	/// <typeparam name="T1">Type of the items in 2nd span.</typeparam>
-	/// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
-	/// <typeparam name="T3">Type of the items in 4th span.</typeparam>
-	/// <typeparam name="T4">Type of the items in 5th span.</typeparam>
-	/// <param name="span0">1st span.</param>
-	/// <param name="span1">2nd span.</param>
-	/// <param name="span2">3rd span.</param>
-	/// <param name="span3">4th span.</param>
-	/// <param name="span4">5th span.</param>
+	/// <typeparam name="T0">Type of the items in the first span.</typeparam>
+	/// <typeparam name="T1">Type of the items in the second span.</typeparam>
+	/// <typeparam name="T2">Type of the items in the third span.</typeparam>
+	/// <typeparam name="T3">Type of the items in the fourth span.</typeparam>
+	/// <typeparam name="T4">Type of the items in the fifth span.</typeparam>
+	/// <param name="span0">The first span.</param>
+	/// <param name="span1">The second span.</param>
+	/// <param name="span2">The third span.</param>
+	/// <param name="span3">The fourth span.</param>
+	/// <param name="span4">The fifth span.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedListAction"/> delegate.</param>
 #if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
@@ -521,17 +521,17 @@ public static unsafe partial class NativeUtilities
 	/// Prevents the garbage collector from reallocating given spans and fixes their memory
 	/// addresses until <paramref name="action"/> completes.
 	/// </summary>
-	/// <typeparam name="T0">Type of the items in 1st span.</typeparam>
-	/// <typeparam name="T1">Type of the items in 2nd span.</typeparam>
-	/// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
-	/// <typeparam name="T3">Type of the items in 4th span.</typeparam>
-	/// <typeparam name="T4">Type of the items in 5th span.</typeparam>
+	/// <typeparam name="T0">Type of the items in the first span.</typeparam>
+	/// <typeparam name="T1">Type of the items in the second span.</typeparam>
+	/// <typeparam name="T2">Type of the items in the third span.</typeparam>
+	/// <typeparam name="T3">Type of the items in the fourth span.</typeparam>
+	/// <typeparam name="T4">Type of the items in the fifth span.</typeparam>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
-	/// <param name="span0">1st span.</param>
-	/// <param name="span1">2nd span.</param>
-	/// <param name="span2">3rd span.</param>
-	/// <param name="span3">4th span.</param>
-	/// <param name="span4">5th span.</param>
+	/// <param name="span0">The first span.</param>
+	/// <param name="span1">The second span.</param>
+	/// <param name="span2">The third span.</param>
+	/// <param name="span3">The fourth span.</param>
+	/// <param name="span4">The fifth span.</param>
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedListAction{TArg}"/> delegate.</param>
 #if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
@@ -597,18 +597,18 @@ public static unsafe partial class NativeUtilities
 	/// Prevents the garbage collector from reallocating given spans and fixes their memory
 	/// addresses until <paramref name="action"/> completes.
 	/// </summary>
-	/// <typeparam name="T0">Type of the items in 1st span.</typeparam>
-	/// <typeparam name="T1">Type of the items in 2nd span.</typeparam>
-	/// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
-	/// <typeparam name="T3">Type of the items in 4th span.</typeparam>
-	/// <typeparam name="T4">Type of the items in 5th span.</typeparam>
-	/// <typeparam name="T5">Type of the items in 6th span.</typeparam>
-	/// <param name="span0">1st span.</param>
-	/// <param name="span1">2nd span.</param>
-	/// <param name="span2">3rd span.</param>
-	/// <param name="span3">4th span.</param>
-	/// <param name="span4">5th span.</param>
-	/// <param name="span5">6th span.</param>
+	/// <typeparam name="T0">Type of the items in the first span.</typeparam>
+	/// <typeparam name="T1">Type of the items in the second span.</typeparam>
+	/// <typeparam name="T2">Type of the items in the third span.</typeparam>
+	/// <typeparam name="T3">Type of the items in the fourth span.</typeparam>
+	/// <typeparam name="T4">Type of the items in the fifth span.</typeparam>
+	/// <typeparam name="T5">Type of the items in the sixth span.</typeparam>
+	/// <param name="span0">The first span.</param>
+	/// <param name="span1">The second span.</param>
+	/// <param name="span2">The third span.</param>
+	/// <param name="span3">The fourth span.</param>
+	/// <param name="span4">The fifth span.</param>
+	/// <param name="span5">The sixth span.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedListAction"/> delegate.</param>
 #if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
@@ -673,19 +673,19 @@ public static unsafe partial class NativeUtilities
 	/// Prevents the garbage collector from reallocating given spans and fixes their memory
 	/// addresses until <paramref name="action"/> completes.
 	/// </summary>
-	/// <typeparam name="T0">Type of the items in 1st span.</typeparam>
-	/// <typeparam name="T1">Type of the items in 2nd span.</typeparam>
-	/// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
-	/// <typeparam name="T3">Type of the items in 4th span.</typeparam>
-	/// <typeparam name="T4">Type of the items in 5th span.</typeparam>
-	/// <typeparam name="T5">Type of the items in 6th span.</typeparam>
+	/// <typeparam name="T0">Type of the items in the first span.</typeparam>
+	/// <typeparam name="T1">Type of the items in the second span.</typeparam>
+	/// <typeparam name="T2">Type of the items in the third span.</typeparam>
+	/// <typeparam name="T3">Type of the items in the fourth span.</typeparam>
+	/// <typeparam name="T4">Type of the items in the fifth span.</typeparam>
+	/// <typeparam name="T5">Type of the items in the sixth span.</typeparam>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
-	/// <param name="span0">1st span.</param>
-	/// <param name="span1">2nd span.</param>
-	/// <param name="span2">3rd span.</param>
-	/// <param name="span3">4th span.</param>
-	/// <param name="span4">5th span.</param>
-	/// <param name="span5">6th span.</param>
+	/// <param name="span0">The first span.</param>
+	/// <param name="span1">The second span.</param>
+	/// <param name="span2">The third span.</param>
+	/// <param name="span3">The fourth span.</param>
+	/// <param name="span4">The fifth span.</param>
+	/// <param name="span5">The sixth span.</param>
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedListAction{TArg}"/> delegate.</param>
 #if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
@@ -754,20 +754,20 @@ public static unsafe partial class NativeUtilities
 	/// Prevents the garbage collector from reallocating given spans and fixes their memory
 	/// addresses until <paramref name="action"/> completes.
 	/// </summary>
-	/// <typeparam name="T0">Type of the items in 1st span.</typeparam>
-	/// <typeparam name="T1">Type of the items in 2nd span.</typeparam>
-	/// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
-	/// <typeparam name="T3">Type of the items in 4th span.</typeparam>
-	/// <typeparam name="T4">Type of the items in 5th span.</typeparam>
-	/// <typeparam name="T5">Type of the items in 6th span.</typeparam>
-	/// <typeparam name="T6">Type of the items in 7th span.</typeparam>
-	/// <param name="span0">1st span.</param>
-	/// <param name="span1">2nd span.</param>
-	/// <param name="span2">3rd span.</param>
-	/// <param name="span3">4th span.</param>
-	/// <param name="span4">5th span.</param>
-	/// <param name="span5">6th span.</param>
-	/// <param name="span6">7th span.</param>
+	/// <typeparam name="T0">Type of the items in the first span.</typeparam>
+	/// <typeparam name="T1">Type of the items in the second span.</typeparam>
+	/// <typeparam name="T2">Type of the items in the third span.</typeparam>
+	/// <typeparam name="T3">Type of the items in the fourth span.</typeparam>
+	/// <typeparam name="T4">Type of the items in the fifth span.</typeparam>
+	/// <typeparam name="T5">Type of the items in the sixth span.</typeparam>
+	/// <typeparam name="T6">Type of the items in the seventh span.</typeparam>
+	/// <param name="span0">The first span.</param>
+	/// <param name="span1">The second span.</param>
+	/// <param name="span2">The third span.</param>
+	/// <param name="span3">The fourth span.</param>
+	/// <param name="span4">The fifth span.</param>
+	/// <param name="span5">The sixth span.</param>
+	/// <param name="span6">The seventh span.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedListAction"/> delegate.</param>
 #if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
@@ -835,21 +835,21 @@ public static unsafe partial class NativeUtilities
 	/// Prevents the garbage collector from reallocating given spans and fixes their memory
 	/// addresses until <paramref name="action"/> completes.
 	/// </summary>
-	/// <typeparam name="T0">Type of the items in 1st span.</typeparam>
-	/// <typeparam name="T1">Type of the items in 2nd span.</typeparam>
-	/// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
-	/// <typeparam name="T3">Type of the items in 4th span.</typeparam>
-	/// <typeparam name="T4">Type of the items in 5th span.</typeparam>
-	/// <typeparam name="T5">Type of the items in 6th span.</typeparam>
-	/// <typeparam name="T6">Type of the items in 7th span.</typeparam>
+	/// <typeparam name="T0">Type of the items in the first span.</typeparam>
+	/// <typeparam name="T1">Type of the items in the second span.</typeparam>
+	/// <typeparam name="T2">Type of the items in the third span.</typeparam>
+	/// <typeparam name="T3">Type of the items in the fourth span.</typeparam>
+	/// <typeparam name="T4">Type of the items in the fifth span.</typeparam>
+	/// <typeparam name="T5">Type of the items in the sixth span.</typeparam>
+	/// <typeparam name="T6">Type of the items in the seventh span.</typeparam>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
-	/// <param name="span0">1st span.</param>
-	/// <param name="span1">2nd span.</param>
-	/// <param name="span2">3rd span.</param>
-	/// <param name="span3">4th span.</param>
-	/// <param name="span4">5th span.</param>
-	/// <param name="span5">6th span.</param>
-	/// <param name="span6">7th span.</param>
+	/// <param name="span0">The first span.</param>
+	/// <param name="span1">The second span.</param>
+	/// <param name="span2">The third span.</param>
+	/// <param name="span3">The fourth span.</param>
+	/// <param name="span4">The fifth span.</param>
+	/// <param name="span5">The sixth span.</param>
+	/// <param name="span6">The seventh span.</param>
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedListAction{TArg}"/> delegate.</param>
 #if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
@@ -922,22 +922,22 @@ public static unsafe partial class NativeUtilities
 	/// Prevents the garbage collector from reallocating given spans and fixes their memory
 	/// addresses until <paramref name="action"/> completes.
 	/// </summary>
-	/// <typeparam name="T0">Type of the items in 1st span.</typeparam>
-	/// <typeparam name="T1">Type of the items in 2nd span.</typeparam>
-	/// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
-	/// <typeparam name="T3">Type of the items in 4th span.</typeparam>
-	/// <typeparam name="T4">Type of the items in 5th span.</typeparam>
-	/// <typeparam name="T5">Type of the items in 6th span.</typeparam>
-	/// <typeparam name="T6">Type of the items in 7th span.</typeparam>
-	/// <typeparam name="T7">Type of the items in 8th span.</typeparam>
-	/// <param name="span0">1st span.</param>
-	/// <param name="span1">2nd span.</param>
-	/// <param name="span2">3rd span.</param>
-	/// <param name="span3">4th span.</param>
-	/// <param name="span4">5th span.</param>
-	/// <param name="span5">6th span.</param>
-	/// <param name="span6">7th span.</param>
-	/// <param name="span7">8th span.</param>
+	/// <typeparam name="T0">Type of the items in the first span.</typeparam>
+	/// <typeparam name="T1">Type of the items in the second span.</typeparam>
+	/// <typeparam name="T2">Type of the items in the third span.</typeparam>
+	/// <typeparam name="T3">Type of the items in the fourth span.</typeparam>
+	/// <typeparam name="T4">Type of the items in the fifth span.</typeparam>
+	/// <typeparam name="T5">Type of the items in the sixth span.</typeparam>
+	/// <typeparam name="T6">Type of the items in the seventh span.</typeparam>
+	/// <typeparam name="T7">Type of the items in the eighth span.</typeparam>
+	/// <param name="span0">The first span.</param>
+	/// <param name="span1">The second span.</param>
+	/// <param name="span2">The third span.</param>
+	/// <param name="span3">The fourth span.</param>
+	/// <param name="span4">The fifth span.</param>
+	/// <param name="span5">The sixth span.</param>
+	/// <param name="span6">The seventh span.</param>
+	/// <param name="span7">The eighth span.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedListAction"/> delegate.</param>
 #if OBSOLTE_DELEGATES && !GITHUB_ACTIONS
 	[EditorBrowsable(EditorBrowsableState.Never)]
@@ -1009,23 +1009,23 @@ public static unsafe partial class NativeUtilities
 	/// Prevents the garbage collector from reallocating given spans and fixes their memory
 	/// addresses until <paramref name="action"/> completes.
 	/// </summary>
-	/// <typeparam name="T0">Type of the items in 1st span.</typeparam>
-	/// <typeparam name="T1">Type of the items in 2nd span.</typeparam>
-	/// <typeparam name="T2">Type of the items in 3rd span.</typeparam>
-	/// <typeparam name="T3">Type of the items in 4th span.</typeparam>
-	/// <typeparam name="T4">Type of the items in 5th span.</typeparam>
-	/// <typeparam name="T5">Type of the items in 6th span.</typeparam>
-	/// <typeparam name="T6">Type of the items in 7th span.</typeparam>
-	/// <typeparam name="T7">Type of the items in 8th span.</typeparam>
+	/// <typeparam name="T0">Type of the items in the first span.</typeparam>
+	/// <typeparam name="T1">Type of the items in the second span.</typeparam>
+	/// <typeparam name="T2">Type of the items in the third span.</typeparam>
+	/// <typeparam name="T3">Type of the items in the fourth span.</typeparam>
+	/// <typeparam name="T4">Type of the items in the fifth span.</typeparam>
+	/// <typeparam name="T5">Type of the items in the sixth span.</typeparam>
+	/// <typeparam name="T6">Type of the items in the seventh span.</typeparam>
+	/// <typeparam name="T7">Type of the items in the eighth span.</typeparam>
 	/// <typeparam name="TArg">The type of the object that represents the state.</typeparam>
-	/// <param name="span0">1st span.</param>
-	/// <param name="span1">2nd span.</param>
-	/// <param name="span2">3rd span.</param>
-	/// <param name="span3">4th span.</param>
-	/// <param name="span4">5th span.</param>
-	/// <param name="span5">6th span.</param>
-	/// <param name="span6">7th span.</param>
-	/// <param name="span7">8th span.</param>
+	/// <param name="span0">The first span.</param>
+	/// <param name="span1">The second span.</param>
+	/// <param name="span2">The third span.</param>
+	/// <param name="span3">The fourth span.</param>
+	/// <param name="span4">The fifth span.</param>
+	/// <param name="span5">The sixth span.</param>
+	/// <param name="span6">The seventh span.</param>
+	/// <param name="span7">The eighth span.</param>
 	/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 	/// <param name="action">A <see cref="ReadOnlyFixedListAction{TArg}"/> delegate.</param>
 #if OBSOLTE_DELEGATES && !GITHUB_ACTIONS

@@ -111,7 +111,7 @@ public sealed class BinaryBufferCompositeTest
 		]);
 		foreach (BufferTypeMetadata<T> metadata in binaryMetadata.Components.Span)
 			PInvokeAssert.Equal(metadata, BuffersHelper.GetMetadata<T>(metadata.BufferType));
-		
+
 		PInvokeAssert.Equal(sizeOf, atomicMetadata.SizeOfElement);
 		PInvokeAssert.Equal(sizeOf, composite2Metadata.SizeOfElement);
 		PInvokeAssert.Equal(sizeOf, binaryMetadata.SizeOfElement);

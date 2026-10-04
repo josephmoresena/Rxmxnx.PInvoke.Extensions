@@ -17,6 +17,12 @@ public static partial class AotInfo
 	[UnconditionalSuppressMessage("Trimming", "IL2026")]
 	private static Boolean IsAotFrame()
 	{
+		Debug.Assert(MonoInfo.MonoAssemblyNameType is not null);
+#if NETSTANDARD2_0
+		if (typeof(MethodBase).GetProperty(nameof(MethodBase.MethodHandle)) is not { } handle)
+			// Unable to find MethodBase.MethodHandle with reflection.
+			return true;
+#endif
 		StackTrace stackTrace = new();
 #if !NETCOREAPP
 		ReadOnlySpan<StackFrame?> frames = stackTrace.GetFrames() ?? [];
@@ -28,19 +34,14 @@ public static partial class AotInfo
 			if (frame?.GetMethod() is not { } methodBase) continue;
 			if (EmitInfo.IsDynamicMethod(methodBase)) return false;
 #if NETSTANDARD2_0
-			if (typeof(RuntimeHelpers).GetMethod(nameof(RuntimeHelpers.PrepareMethod), [typeof(RuntimeMethodHandle),])
-				    is not { } prepare || typeof(MethodBase).GetProperty(nameof(MethodBase.MethodHandle)) is not
-				    { } handle)
-				// Unable to find RuntimeHelpers.PrepareMethod(RuntimeMethodHandle) and MethodBase.MethodHandle with reflection.
+			// MethodBase.MethodHandle is not available on UWP, to avoid static symbol resolution use reflection.
+			if (handle.GetValue(methodBase) is not RuntimeMethodHandle methodHandle)
+				// Unable to get RuntimeMethodHandle from current instance.
 				return true;
-			Object?[] args = [handle.GetValue(methodBase),];
-			// Unable to get RuntimeMethodHandle from current instance.
-			if (args[0] is null) return true;
-			prepare.Invoke(null, args);
-			if (!AotInfo.IsImageMethodUnsafe((RuntimeMethodHandle)args[0]!)) return false;
 #else
-			if (!AotInfo.IsImageMethodUnsafe(methodBase.MethodHandle)) return false;
+			RuntimeMethodHandle methodHandle = methodBase.MethodHandle;
 #endif
+			if (!AotInfo.IsImageMethodUnsafe(methodHandle)) return false;
 		}
 		return true;
 	}
@@ -65,7 +66,7 @@ public static partial class AotInfo
 #if NET5_0_OR_GREATER
 		if (TrimInfo.IsMobileTrimmedXnu())
 		{
-			// iOS, tvOS, watchOS, macCatalyst is always AOT.
+			// iOS, tvOS, watchOS, and macCatalyst are always AOT.
 			return false;
 		}
 #endif
@@ -73,17 +74,18 @@ public static partial class AotInfo
 		{
 			if (!TrimInfo.StringTypeNameContainsString())
 			{
-				// If reflection disabled, is AOT.
+				// If reflection is disabled, the runtime is AOT.
 				AotInfo.reflectionDisabled = true;
 				return false;
 			}
-#if NET5_0_OR_GREATER
+			Boolean isXamarinMac = false;
+#if !NET5_0_OR_GREATER
+			Boolean isAndroid = false;
+#else
 			if (TrimInfo.IsDesktopTrimmedPlatform())
 				goto JitInfoCheck; // Skip Mono Runtime checks.
 			if (OperatingSystem.IsAndroid())
 				goto AotFrameCheck; // Skip XNU checks.
-#else
-			Boolean isAndroid = false;
 #endif
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			foreach (Assembly assembly in AotInfo.GetAssembliesSpan())
@@ -111,7 +113,11 @@ public static partial class AotInfo
 					case "Mono.Android":
 						isAndroid = true;
 						break;
+					case "Xamarin.Mac":
 #endif
+					case "Microsoft.macOS":
+						isXamarinMac = true;
+						break;
 				}
 			}
 #if NET5_0_OR_GREATER
@@ -124,12 +130,11 @@ public static partial class AotInfo
 				{
 					// IL2CPP -> Empty literal.
 					if (MemoryInspector.Instance.IsLiteral(TrimInfo.EmptyUt8Text())) return false;
-					// On emulated platforms, AOT Frame is a false positive.
-					if (!AotInfo.IsAvoidableEmitCheck())
+					// Xamarin.Mac keeps a usable JIT under AOT, so emit cannot decide. Mac ARM64 and Rosetta
+					// otherwise stay on emit.
+					if (!AotInfo.IsAvoidableEmitCheck() && !isXamarinMac)
 						goto EmitCheck;
-					Boolean isAotFrame = AotInfo.IsAotFrame();
-					// Mono/Xamarin AOT.
-					return !isAotFrame;
+					return !AotInfo.IsAotFrame();
 				}
 #if !NET5_0_OR_GREATER
 				if (isAndroid)
@@ -203,7 +208,7 @@ public static partial class AotInfo
 		if (reflectionBytes.HasValue || methodCount.HasValue)
 			return false;
 
-		return default; // Unabled to retrieve JIT information.
+		return default; // Unable to retrieve JIT information.
 	}
 	/// <summary>
 	/// Indicates whether JIT is enabled in the current runtime using reflection.
@@ -244,7 +249,7 @@ public static partial class AotInfo
 		if (reflectionBytes.HasValue || methodCount.HasValue)
 			return false;
 
-		return default; // Unabled to retrieve JIT information.
+		return default; // Unable to retrieve JIT information.
 	}
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 	/// <inheritdoc cref="AppDomain.GetAssemblies()"/>

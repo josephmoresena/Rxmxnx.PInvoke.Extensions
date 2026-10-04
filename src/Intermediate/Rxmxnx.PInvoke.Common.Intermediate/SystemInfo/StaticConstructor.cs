@@ -118,7 +118,6 @@ public static partial class SystemInfo
 				ReadOnlySpan<Byte> ascii = buffer[..nameLength];
 				return Encoding.ASCII.GetString(ascii).ToLowerInvariant();
 #elif NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
-
 				return Encoding.ASCII.GetString(bufferPtr, nameLength).ToLowerInvariant();
 #elif NETFRAMEWORK
 				return Encoding.ASCII.GetString([.. buffer[..nameLength],]).ToLowerInvariant();

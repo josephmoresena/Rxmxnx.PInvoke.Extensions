@@ -142,7 +142,7 @@ internal struct ArrayOffsets
 #endif
 
 	/// <summary>
-	/// Creates a <see cref="ArrayOffsets"/> instance.
+	/// Creates an <see cref="ArrayOffsets"/> instance.
 	/// </summary>
 	/// <returns>A new <see cref="ArrayOffsets"/> instance.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

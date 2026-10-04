@@ -17,7 +17,7 @@ internal sealed partial class ArrayMemoryManager<T> : ManagedMemoryManager<T>
 	/// <summary>
 	/// Constructor.
 	/// </summary>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 	private ArrayMemoryManager(Array? array) : base(array?.Length)
 #if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
 		=> this._array = array ?? Array.Empty<T>();
@@ -50,11 +50,11 @@ internal sealed partial class ArrayMemoryManager<T> : ManagedMemoryManager<T>
 
 #if NET6_0_OR_GREATER
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 	public static Memory<T> GetMemory(Array? array)
 		=> array is not null ? new ArrayMemoryManager<T>(array).Memory : Memory<T>.Empty;
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 	public static Span<T> GetSpan(Array? array)
 	{
 		if (array is null) return default;

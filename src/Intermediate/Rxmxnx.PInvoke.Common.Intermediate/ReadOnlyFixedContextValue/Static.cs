@@ -19,7 +19,7 @@ public readonly unsafe ref partial struct ReadOnlyFixedContextValue<T>
 	/// Defines an explicit conversion of a given <see cref="ReadOnlyFixedContextValue{T}"/> to a
 	/// <see cref="FixedContextValue{Object}"/> instance.
 	/// </summary>
-	/// <param name="value">An <see cref="ReadOnlyFixedContextValue{T}"/> to explicitly convert.</param>
+	/// <param name="value">A <see cref="ReadOnlyFixedContextValue{T}"/> to explicitly convert.</param>
 	public static explicit operator FixedContextValue<T>(ReadOnlyFixedContextValue<T> value)
 	{
 		value._value.ValidateOperation();
@@ -30,7 +30,7 @@ public readonly unsafe ref partial struct ReadOnlyFixedContextValue<T>
 	/// <see cref="ReadOnlyFixedContextValue{T}"/>
 	/// instance.
 	/// </summary>
-	/// <param name="value">An <see cref="FixedPointerValue"/> to explicitly convert.</param>
+	/// <param name="value">A <see cref="FixedPointerValue"/> to explicitly convert.</param>
 	public static explicit operator ReadOnlyFixedContextValue<T>(FixedPointerValue value)
 	{
 		value.ValidateOperation(true);
@@ -41,7 +41,7 @@ public readonly unsafe ref partial struct ReadOnlyFixedContextValue<T>
 	/// <summary>
 	/// Creates a new <see cref="FixedPointerValue"/> value from <paramref name="instance"/>.
 	/// </summary>
-	/// <param name="instance">A <see cref="IReadOnlyFixedMemory"/> instance.</param>
+	/// <param name="instance">An <see cref="IReadOnlyFixedMemory"/> instance.</param>
 	/// <returns>
 	/// A new <see cref="FixedContextValue{T}"/> instance.
 	/// </returns>

@@ -1,10 +1,5 @@
 ﻿// ReSharper disable ConvertToExtensionBlock
 
-#if !NET6_0_OR_GREATER && (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER)
-using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
-#endif
-using EnumCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
-
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
@@ -39,7 +34,7 @@ public static class UnmanagedValueExtensions
 	/// <typeparam name="T">
 	/// The unmanaged type from which the contiguous region of memory will be fixed.
 	/// </typeparam>
-	/// <param name="arrayPool">A <see cref="ArrayPool{T}"/> instance.</param>
+	/// <param name="arrayPool">An <see cref="ArrayPool{T}"/> instance.</param>
 	/// <param name="count">Minimum size of rented array.</param>
 	/// <param name="clearArray">Indicates whether the contents of the buffer should be cleared before reuse.</param>
 	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance representing the pinned memory.</returns>
@@ -66,7 +61,7 @@ public static class UnmanagedValueExtensions
 	/// <typeparam name="T">
 	/// The unmanaged type from which the contiguous region of memory will be fixed.
 	/// </typeparam>
-	/// <param name="arrayPool">A <see cref="ArrayPool{T}"/> instance.</param>
+	/// <param name="arrayPool">An <see cref="ArrayPool{T}"/> instance.</param>
 	/// <param name="count">Minimum size of rented array.</param>
 	/// <param name="clearArray">Indicates whether the contents of the buffer should be cleared before reuse.</param>
 	/// <param name="arrayLength">Output. Rented array length.</param>

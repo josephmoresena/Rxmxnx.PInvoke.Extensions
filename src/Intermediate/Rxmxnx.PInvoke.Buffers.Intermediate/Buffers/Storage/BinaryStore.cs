@@ -163,9 +163,11 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// <summary>
 	/// Computes the binary metadata required for a buffer with <paramref name="count"/> items.
 	/// </summary>
-	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
-	/// <param name="count">Amount of items in required buffer.</param>
-	/// <param name="nonBinaryMinimal">Indicates the value fo the non-binary buffer minimal.</param>
+	/// <param name="storage">An <see cref="IMetadataStorage"/> instance.</param>
+	/// <param name="count">The number of items in the required buffer.</param>
+	/// <param name="nonBinaryMinimal">
+	/// The capacity of the smallest non-binary buffer already found, or a negative value when none is available.
+	/// </param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if !PACKAGE
@@ -186,8 +188,8 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// <summary>
 	/// Computes the binary metadata required for a buffer with <paramref name="count"/> items.
 	/// </summary>
-	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
-	/// <param name="count">Amount of items in required buffer.</param>
+	/// <param name="storage">An <see cref="IMetadataStorage"/> instance.</param>
+	/// <param name="count">The number of items in the required buffer.</param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if !PACKAGE
@@ -312,8 +314,10 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 			if (BuffersHelper.Search(ref r0, relativeIndex, length) is { } result)
 #endif
 				// Minimal metadata found.
+			{
 				return result;
-			// Exclude from total elements the current search length.
+			}
+			// Exclude the current search length from the total number of elements.
 			if ((remaining -= length) <= 0) continue;
 			// Get the next page.
 			pageIndex++;

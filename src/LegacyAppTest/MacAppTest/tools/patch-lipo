@@ -1,0 +1,64 @@
+#!/bin/bash
+# Xamarin.Mac's mmp calls `lipo -extract_family`. Xcode 27 on arm64 dropped that flag.
+# This copies the toolchain lipo to lipo.real and installs a wrapper that maps
+# -extract_family to -thin. Requires administrator rights. No-op otherwise.
+set -euo pipefail
+
+if [[ "$(uname -m)" != "arm64" ]]; then
+	echo "lipo patch: host is not arm64; nothing to do."
+	exit 0
+fi
+
+developer="$(xcode-select -p)"
+version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$developer/../Info.plist" 2>/dev/null || true)"
+major="${version%%.*}"
+if [[ "$major" != "27" ]]; then
+	echo "lipo patch: Xcode ${version:-unknown} does not need it."
+	exit 0
+fi
+
+lipo="$(xcrun --find lipo)"
+real="${lipo}.real"
+
+is_script() { file -b "$1" | grep -q "shell script"; }
+is_macho() { file -b "$1" | grep -q "Mach-O"; }
+
+if [[ -f "$real" ]] && is_script "$lipo" && is_macho "$real"; then
+	echo "lipo patch: already applied at $lipo"
+	exit 0
+fi
+
+if is_macho "$lipo" && "$lipo" -help 2>&1 | grep -q -- "-extract_family"; then
+	echo "lipo patch: $lipo already supports -extract_family."
+	exit 0
+fi
+
+if [[ "$(id -u)" != "0" ]]; then
+	echo "lipo patch: requesting administrator privileges."
+	exec sudo "$0" "$@"
+fi
+
+if [[ ! -f "$real" ]]; then
+	if ! is_macho "$lipo"; then
+		echo "lipo patch: $lipo is not a Mach-O binary and $real is missing." >&2
+		exit 1
+	fi
+	cp -p "$lipo" "$real"
+fi
+chmod 755 "$real"
+
+cat > "$lipo" << 'EOF'
+#!/bin/bash
+real="$(dirname "$0")/lipo.real"
+args=()
+for arg in "$@"; do
+	if [[ "$arg" == "-extract_family" ]]; then
+		args+=("-thin")
+	else
+		args+=("$arg")
+	fi
+done
+exec "$real" "${args[@]}"
+EOF
+chmod 755 "$lipo"
+echo "lipo patch: installed wrapper at $lipo (binary kept as $real)"

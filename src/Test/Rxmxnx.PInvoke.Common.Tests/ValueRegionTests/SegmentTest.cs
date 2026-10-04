@@ -94,8 +94,7 @@ public sealed class SegmentTest : ValueRegionTestBase
 
 		if ((T[]?)emptyRegion is not { } arr) return;
 
-		if (!SystemInfo.CompilationFramework.Contains("Framework") &&
-		    !SystemInfo.CompilationFramework.Contains("2.0"))
+		if (!SystemInfo.CompilationFramework.Contains("Framework") && !SystemInfo.CompilationFramework.Contains("2.0"))
 			PInvokeAssert.Same(emptyRegion.ToArray(), arr);
 		else
 			PInvokeAssert.Equal(emptyRegion.ToArray(), arr);

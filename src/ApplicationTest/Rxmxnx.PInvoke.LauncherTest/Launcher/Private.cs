@@ -29,7 +29,7 @@ public partial class Launcher
 	private static FileInfo[] GetMonoExecutables(DirectoryInfo monoOutputDirectory)
 		=> monoOutputDirectory.GetDirectories()
 		                      .Where(static d => d.Name.EndsWith("ApplicationTest") ||
-			                      d.Name.EndsWith("ApplicationTest.Legacy"))
+			                             d.Name.EndsWith("ApplicationTest.Legacy"))
 		                      .SelectMany(static d => d.GetFiles("*ApplicationTest.*mono.exe",
 		                                                         SearchOption.TopDirectoryOnly)).ToArray();
 	private static async Task CompileMonoAot(MonoLauncher monoLauncher, String outputDirectory, FileInfo assemblyFile)

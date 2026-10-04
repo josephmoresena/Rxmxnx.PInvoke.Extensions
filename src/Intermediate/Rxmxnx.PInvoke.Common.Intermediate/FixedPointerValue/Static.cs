@@ -49,7 +49,7 @@ public readonly ref partial struct FixedPointerValue
 	/// <summary>
 	/// Tries to create a <see cref="FixedPointerValue"/> from <paramref name="instance"/>
 	/// </summary>
-	/// <param name="instance">A <see cref="IFixedPointer"/> instance.</param>
+	/// <param name="instance">An <see cref="IFixedPointer"/> instance.</param>
 	/// <param name="value">Output. A <see cref="FixedPointerValue"/> instance.</param>
 	/// <returns>
 	/// <see langword="true"/> if <paramref name="instance"/> was successfully converted to

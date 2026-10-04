@@ -45,19 +45,19 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 	/// <inheritdoc/>
 	public override BufferTypeMetadata<T>? GetMetadata<T>(UInt16 count)
 	{
-		if (count == 0) count++; // Avoid Zero elements buffer.
+		if (count == 0) count++; // Avoid a zero-element buffer.
 		if (this._backend.GetCurrentCapacity<T>() >= count && this._backend.GetBinaryValue<T>(count) is { } binary)
 			return binary;
 		if (NonBinaryStore<T>.GetNonBinary(count, out BufferTypeMetadata<T>? minimalNonBinary) is { } nonBinary)
-			// Exact non-binary buffer. Allow minimal at first only if unable to retrieve a binary buffer.
+			// Exact non-binary buffer. Consider the minimal buffer only when a binary buffer cannot be retrieved.
 			return nonBinary;
 #if NET8_0_OR_GREATER
 		if (count > this._backend.MaxStorageCapacity)
-			// Binary capacity doesn't allow current count.
+			// The binary capacity does not allow the current count.
 			return default;
 #endif
 		binary = this._backend.ComputeBinaryMetadata<T>(this, count, minimalNonBinary?.Size ?? 0); // Allow minimal
-		return binary ?? minimalNonBinary; // Approximate non-Binary buffer.
+		return binary ?? minimalNonBinary; // Approximate non-binary buffer.
 	}
 	/// <inheritdoc/>
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -142,7 +142,8 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 			{
 				if (m is null) continue;
 				// ReSharper disable once HeapView.BoxingAllocation
-				Trace.WriteLine($"{typeof(T)} {m.Size}({String.Join(", ", m.Components.ToArray().Select(k => k.Size))})");
+				Trace.WriteLine(
+					$"{typeof(T)} {m.Size}({String.Join(", ", m.Components.ToArray().Select(k => k.Size))})");
 				count++;
 			}
 		}
