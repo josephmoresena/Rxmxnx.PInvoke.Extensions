@@ -30,7 +30,6 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #if !NET8_0_OR_GREATER || !CSHARP9_0
 		private static JsonSerializerOptions? options;
 #endif
-
 		public static JsonSerializerOptions SerializerOptions
 		{
 			get
