@@ -18,6 +18,14 @@ public sealed class SerializationTest
 	private static readonly JsonSerializerOptions jsonOptions = new() { Converters = { new CStringJsonConverter(), }, };
 #endif
 
+#if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || WINDOWS_UWP
+	[Fact]
+	public void InvalidTokenTest()
+	{
+		PInvokeAssert.Throws<JsonException>(() => JsonSerializer.Deserialize<CString>("1", SerializationTest.jsonOptions));
+		PInvokeAssert.Throws<JsonException>(() => JsonSerializer.Deserialize<CString>("{}", SerializationTest.jsonOptions));
+	}
+#endif
 	[Fact]
 	public void UnicodePrefixTest() => PInvokeAssert.True(TextUnescape.UnicodePrefix.SequenceEqual("\\u"u8));
 	[Fact]
