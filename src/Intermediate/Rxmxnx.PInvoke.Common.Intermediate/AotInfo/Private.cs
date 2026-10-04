@@ -39,7 +39,7 @@ public static partial class AotInfo
 			if (frame?.GetMethod() is not { } methodBase) continue;
 			if (EmitInfo.IsDynamicMethod(methodBase)) return false;
 #if !NETCOREAPP && !NETFRAMEWORK && !NETSTANDARD2_0_OR_GREATER
-			// MethodBase.MethodHandle is not available on UWP, to avoid static symbol resolution use reflection.
+			// MethodBase.MethodHandle is not available on older UWP, to avoid static symbol resolution use reflection.
 			if (handle.GetValue(methodBase) is not RuntimeMethodHandle methodHandle)
 				// Unable to get RuntimeMethodHandle from current instance.
 				return true;

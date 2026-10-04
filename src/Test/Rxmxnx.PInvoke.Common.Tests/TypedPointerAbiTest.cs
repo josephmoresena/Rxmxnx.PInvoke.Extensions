@@ -8,9 +8,17 @@ public sealed unsafe class TypedPointerAbiTest
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	private delegate Int32 Compare(ReadOnlyValPtr<Int32> left, ReadOnlyValPtr<Int32> right);
 
+	private static readonly Boolean CanMarshalTypedPointers =
+#if NET5_0_OR_GREATER
+		true;
+#else
+		SystemInfo.IsMonoRuntime;
+#endif
+
 	[Fact]
 	public void MemcmpTest()
 	{
+		if (!TypedPointerAbiTest.CanMarshalTypedPointers) return;
 		Byte[] left = [1, 2, 3, 4,];
 		Byte[] same = [1, 2, 3, 4,];
 		Byte[] greater = [1, 2, 3, 5,];
@@ -37,6 +45,7 @@ public sealed unsafe class TypedPointerAbiTest
 	[Fact]
 	public void MemchrTest()
 	{
+		if (!TypedPointerAbiTest.CanMarshalTypedPointers) return;
 		Byte[] bytes = [1, 2, 3, 4,];
 		fixed (Byte* ptr = bytes)
 		{
@@ -56,6 +65,7 @@ public sealed unsafe class TypedPointerAbiTest
 	[Fact]
 	public void QsortTest()
 	{
+		if (!TypedPointerAbiTest.CanMarshalTypedPointers) return;
 		Int32[] expected = [3, 1, 4, 1, 5,];
 		Int32[] typed = (Int32[])expected.Clone();
 		Int32[] raw = (Int32[])expected.Clone();

@@ -268,7 +268,7 @@ public static unsafe partial class NativeUtilities
 	[SecuritySafeCritical]
 #endif
 	public static ReadOnlySpan<TEnum> GetEnumValuesSpan<TEnum>() where TEnum : struct, Enum
-		=> EnumValueHelper<TEnum>.Values.Span;
+		=> EnumValueHelper<TEnum>.Span;
 	/// <summary>
 	/// Creates a new span over an array of the names of the constants in a specified enumeration type.
 	/// </summary>
@@ -302,9 +302,7 @@ public static unsafe partial class NativeUtilities
 	public static IDisposable GetValuesFixedContext<TEnum>(out ReadOnlyFixedContextValue<TEnum> fixedContext)
 		where TEnum : unmanaged, Enum
 	{
-		ReadOnlyMemory<TEnum> mem = EnumValueHelper<TEnum>.Values;
-		MemoryHandle handle = mem.Pin();
-		fixedContext = new(handle, mem.Length, true, out IDisposable result);
+		fixedContext = new(EnumValueHelper<TEnum>.Pin(), EnumValueHelper<TEnum>.Count, true, out IDisposable result);
 		return result;
 	}
 
