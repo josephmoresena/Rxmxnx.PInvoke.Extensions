@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke.Tests.BinaryExtensionsTests;
+﻿#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
+
+namespace Rxmxnx.PInvoke.Tests.BinaryExtensionsTests;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -21,6 +25,5 @@ public sealed class AsHexStringTest
 	[Fact]
 	public void EmptyTest() => PInvokeAssert.Equal(String.Empty, Array.Empty<Byte>().AsHexString());
 	[Fact]
-	public void NullTest()
-		=> PInvokeAssert.Throws<ArgumentNullException>(() => default(Byte[])!.AsHexString());
+	public void NullTest() => PInvokeAssert.Throws<ArgumentNullException>(() => default(Byte[])!.AsHexString());
 }
