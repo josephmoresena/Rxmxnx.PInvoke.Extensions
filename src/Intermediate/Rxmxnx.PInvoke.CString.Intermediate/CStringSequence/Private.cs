@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
+
+namespace Rxmxnx.PInvoke;
 
 public partial class CStringSequence
 {
@@ -117,7 +121,8 @@ public partial class CStringSequence
 	/// <returns>Normalized lengths array.</returns>
 	private static Int32[] NormalizeLengths(Int32?[] lengths)
 	{
-		if (lengths.Length == 0) return [];
+		// ReSharper disable once UseCollectionExpression
+		if (lengths.Length == 0) return Array.Empty<Int32>();
 		Int32[] result = CStringSequence.CreateIntArray(lengths.Length);
 		for (Int32 i = 0; i < lengths.Length; i++)
 			result[i] = lengths[i] ?? CStringSequence.zeroItemLength;
@@ -134,7 +139,7 @@ public partial class CStringSequence
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Int32[] CreateIntArray(Int32 length)
 	{
-		if (length == 0) return [];
+		if (length == 0) return Array.Empty<Int32>();
 #if NET5_0_OR_GREATER
 		Int32[] result = GC.AllocateUninitializedArray<Int32>(length);
 #else

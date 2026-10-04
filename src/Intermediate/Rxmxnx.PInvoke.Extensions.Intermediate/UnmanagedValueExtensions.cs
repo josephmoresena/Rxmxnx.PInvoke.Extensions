@@ -1,4 +1,8 @@
-﻿// ReSharper disable ConvertToExtensionBlock
+﻿#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
+
+// ReSharper disable ConvertToExtensionBlock
 
 namespace Rxmxnx.PInvoke;
 
@@ -200,7 +204,8 @@ public static class UnmanagedValueExtensions
 #endif
 	private static Byte[] ToArray(ReadOnlySpan<Byte> span)
 	{
-		if (span.IsEmpty) return [];
+		// ReSharper disable once UseCollectionExpression
+		if (span.IsEmpty) return Array.Empty<Byte>();
 		Byte[] result = UnmanagedValueExtensions.CreateValueArray<Byte>(span.Length);
 		span.CopyTo(result);
 		return result;
@@ -216,7 +221,8 @@ public static class UnmanagedValueExtensions
 #endif
 	private static T[] ToArray<T>(ReadOnlySpan<T> span) where T : unmanaged
 	{
-		if (span.IsEmpty) return [];
+		// ReSharper disable once UseCollectionExpression
+		if (span.IsEmpty) return Array.Empty<T>();
 		T[] result = UnmanagedValueExtensions.CreateValueArray<T>(span.Length);
 		span.CopyTo(result);
 		return result;

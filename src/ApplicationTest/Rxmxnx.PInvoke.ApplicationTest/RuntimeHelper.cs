@@ -268,7 +268,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #if WINDOWS_UWP
 			if (typeof(MethodBase).GetProperty(nameof(MethodBase.MethodHandle)) is not { } handle)
 			{
-				Console.WriteLine("**Unable to retrieve method handle**");
+				writer.WriteLine("**Unable to retrieve method handle**");
 				return;
 			}
 #endif

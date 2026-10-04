@@ -1,3 +1,7 @@
+#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
+
 namespace Rxmxnx.PInvoke.Buffers;
 
 /// <summary>
@@ -15,7 +19,8 @@ public struct Atomic<T> : IManagedBinaryBuffer<Atomic<T>, T>
 #if NET7_0_OR_GREATER
 		new BufferTypeMetadata<Atomic<T>, T>(1);
 #else
-		new BufferTypeMetadata<Atomic<T>, T>(1, []);
+		// ReSharper disable once UseCollectionExpression
+		new BufferTypeMetadata<Atomic<T>, T>(1, Array.Empty<BufferTypeMetadata<T>>());
 #endif
 
 	/// <summary>

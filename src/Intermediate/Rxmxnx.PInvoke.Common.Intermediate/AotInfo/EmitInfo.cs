@@ -2,6 +2,9 @@
 using DynamicMethod = System.Reflection.Emit.DynamicMethod;
 using OpCodes = System.Reflection.Emit.OpCodes;
 using ILGenerator = System.Reflection.Emit.ILGenerator;
+#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
 
 namespace Rxmxnx.PInvoke;
 
@@ -60,7 +63,8 @@ public static partial class AotInfo
 				ILGenerator il = method.GetILGenerator();
 				il.Emit(OpCodes.Call, typeof(MethodBase).GetMethod(nameof(MethodBase.GetCurrentMethod))!);
 				il.Emit(OpCodes.Ret);
-				return method.Invoke(null, []) is not null;
+				// ReSharper disable once UseCollectionExpression
+				return method.Invoke(null, Array.Empty<Object>()) is not null;
 			}
 			catch (Exception)
 			{

@@ -1,4 +1,8 @@
 ﻿#if !UAP
+#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 #if !PACKAGE
@@ -18,14 +22,15 @@ public static partial class AotInfo
 	private static Boolean IsAotFrame()
 	{
 		Debug.Assert(MonoInfo.MonoAssemblyNameType is not null);
-#if NETSTANDARD2_0
+#if !NETCOREAPP && !NETFRAMEWORK && !NETSTANDARD2_0_OR_GREATER
 		if (typeof(MethodBase).GetProperty(nameof(MethodBase.MethodHandle)) is not { } handle)
 			// Unable to find MethodBase.MethodHandle with reflection.
 			return true;
 #endif
 		StackTrace stackTrace = new();
 #if !NETCOREAPP
-		ReadOnlySpan<StackFrame?> frames = stackTrace.GetFrames() ?? [];
+		// ReSharper disable once UseCollectionExpression
+		ReadOnlySpan<StackFrame?> frames = stackTrace.GetFrames() ?? Array.Empty<StackFrame?>();
 #else
 		ReadOnlySpan<StackFrame?> frames = stackTrace.GetFrames();
 #endif
@@ -33,7 +38,7 @@ public static partial class AotInfo
 		{
 			if (frame?.GetMethod() is not { } methodBase) continue;
 			if (EmitInfo.IsDynamicMethod(methodBase)) return false;
-#if NETSTANDARD2_0
+#if !NETCOREAPP && !NETFRAMEWORK && !NETSTANDARD2_0_OR_GREATER
 			// MethodBase.MethodHandle is not available on UWP, to avoid static symbol resolution use reflection.
 			if (handle.GetValue(methodBase) is not RuntimeMethodHandle methodHandle)
 				// Unable to get RuntimeMethodHandle from current instance.

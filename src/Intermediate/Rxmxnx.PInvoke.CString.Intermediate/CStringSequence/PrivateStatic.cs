@@ -504,7 +504,8 @@ public unsafe partial class CStringSequence
 #endif
 	private static Int32[] GetLengths(ReadOnlySpan<Int32> nulls)
 	{
-		if (nulls.IsEmpty) return [];
+		// ReSharper disable once UseCollectionExpression
+		if (nulls.IsEmpty) return Array.Empty<Int32>();
 
 		Int32[] lengths = CStringSequence.CreateIntArray(nulls.Length);
 		Int32 offset = 0;
@@ -552,7 +553,8 @@ public unsafe partial class CStringSequence
 #endif
 	private static Int32[] GetLengths(ReadOnlySpan<Int32> nulls, List<Int32> extraNulls)
 	{
-		if (nulls.IsEmpty) return [];
+		// ReSharper disable once UseCollectionExpression
+		if (nulls.IsEmpty) return Array.Empty<Int32>();
 		Int32 offset = 0;
 		Int32 totalLengths = nulls.Length + extraNulls.Count;
 		Int32[] lengths = CStringSequence.CreateIntArray(totalLengths);

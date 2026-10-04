@@ -1,3 +1,6 @@
+#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
 #if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER && !UAP10_0_16299
 using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
 #endif
@@ -63,7 +66,8 @@ public unsafe struct NonBinarySpace<TArray, T> : IManagedBuffer<T> where TArray 
 #if NET7_0_OR_GREATER
 		return new(spaceCapacity, false);
 #else
-		return new(spaceCapacity, [], false);
+		// ReSharper disable once UseCollectionExpression
+		return new(spaceCapacity, Array.Empty<BufferTypeMetadata<T>>(), false);
 #endif
 	}
 }
