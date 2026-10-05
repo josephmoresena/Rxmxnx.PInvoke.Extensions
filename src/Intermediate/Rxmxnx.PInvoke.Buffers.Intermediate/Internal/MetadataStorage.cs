@@ -114,7 +114,9 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 		{
 			if (MetadataStorage.GetExactNonBinaryBinary<T>(count) is not null) return;
 		}
-		else
+		else if (this._backend.GetBinaryValue<T>(count) is not null) return;
+#else
+		if (this._backend.GetBinaryValue<T>(count) is not null) return;
 #endif
 		if (this._backend.GetBinaryValue<T>(count) is not null) return;
 		Span<UInt16> components = BuffersHelper.GetBinaryComponents(stackalloc UInt16[16], count);
