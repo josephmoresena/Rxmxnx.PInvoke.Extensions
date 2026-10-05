@@ -60,13 +60,13 @@ internal partial class FixedPointer
 		/// <summary>
 		/// Retrieves the current value as a <typeparamref name="TValue"/> instance.
 		/// </summary>
-		/// <typeparam name="TValue">A <see cref="IFixedPointer"/> type.</typeparam>
+		/// <typeparam name="TValue">An <see cref="IFixedPointer"/> type.</typeparam>
 		/// <returns>A <typeparamref name="TValue"/> instance.</returns>
 		protected TValue? GetValue<TValue>() where TValue : class, IFixedPointer => this.Value as TValue;
 		/// <summary>
 		/// Retrieves the <see cref="IDisposable"/> parent object.
 		/// </summary>
-		/// <returns>A <see cref="IDisposable"/> instance.</returns>
+		/// <returns>An <see cref="IDisposable"/> instance.</returns>
 		protected IDisposable GetDisposableParent()
 			=> this._disposable is IFixedPointer.IDisposable ? this._disposable : this;
 

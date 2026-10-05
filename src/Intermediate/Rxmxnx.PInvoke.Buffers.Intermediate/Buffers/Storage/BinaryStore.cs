@@ -71,6 +71,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Boolean TryAdd(BufferTypeMetadata<T> component)
 	{
+		Debug.Assert(component.Size > 0);
 #if !NET5_0_OR_GREATER
 		if (component.Size <= BinaryStore<TMain, T>.initial.Length)
 			return BinaryStore<TMain, T>.initial.CompareExchange(component.Size - 1, component) is null;
@@ -113,6 +114,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static BufferTypeMetadata<T> SetBinaryValue(BufferTypeMetadata<T> component)
 	{
+		Debug.Assert(component.Size > 0);
 		if (component.Size <= BinaryStore<TMain, T>.initial.Length)
 			return BinaryStore<TMain, T>.initial.Set(component.Size - 1, component);
 		BufferTypeMetadata<T>?[] page = BinaryStore<TMain, T>.GetOrCreatePage(component.Size, out Int32 pageLength);
@@ -135,6 +137,21 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	}
 #endif
 	/// <summary>
+	/// Retrieves stored binary metadata for <paramref name="size"/>.
+	/// </summary>
+	/// <param name="size">Requested component size.</param>
+	/// <returns>The stored binary metadata, or <see langword="null"/> when it is not stored.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static BufferTypeMetadata<T>? GetStoredBinary(UInt16 size)
+	{
+#if NET8_0_OR_GREATER
+		// ReSharper disable once ConvertIfStatementToReturnStatement
+		if (size > BinaryStore<TMain, T>.initial.MaxStorageCapacity)
+			return MetadataStorage.GetExactNonBinaryBinary<T>(size);
+#endif
+		return BinaryStore<TMain, T>.GetBinaryValue(size);
+	}
+	/// <summary>
 	/// Retrieves the fundamental component of size <paramref name="space"/>.
 	/// </summary>
 	/// <param name="storage">A <see cref="MetadataStorage"/> instance.</param>
@@ -143,7 +160,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static BufferTypeMetadata<T>? GetFundamental(IMetadataStorage storage, UInt16 space)
 	{
-		if (BinaryStore<TMain, T>.GetBinaryValue(space) is { } metadata)
+		if (BinaryStore<TMain, T>.GetStoredBinary(space) is { } metadata)
 			return metadata;
 		if (space == 1)
 #if !NET5_0_OR_GREATER
@@ -163,9 +180,11 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// <summary>
 	/// Computes the binary metadata required for a buffer with <paramref name="count"/> items.
 	/// </summary>
-	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
-	/// <param name="count">Amount of items in required buffer.</param>
-	/// <param name="nonBinaryMinimal">Indicates the value fo the non-binary buffer minimal.</param>
+	/// <param name="storage">An <see cref="IMetadataStorage"/> instance.</param>
+	/// <param name="count">The number of items in the required buffer.</param>
+	/// <param name="nonBinaryMinimal">
+	/// The capacity of the smallest non-binary buffer already found, or a negative value when none is available.
+	/// </param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if !PACKAGE
@@ -186,8 +205,8 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// <summary>
 	/// Computes the binary metadata required for a buffer with <paramref name="count"/> items.
 	/// </summary>
-	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
-	/// <param name="count">Amount of items in required buffer.</param>
+	/// <param name="storage">An <see cref="IMetadataStorage"/> instance.</param>
+	/// <param name="count">The number of items in the required buffer.</param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 #if !PACKAGE
@@ -202,7 +221,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		while (count - result.Size > 0)
 		{
 			UInt16 diff = (UInt16)(count - result.Size);
-			BufferTypeMetadata<T>? aux = BinaryStore<TMain, T>.GetBinaryValue(diff) ??
+			BufferTypeMetadata<T>? aux = BinaryStore<TMain, T>.GetStoredBinary(diff) ??
 				BinaryStore<TMain, T>.ComputeBinaryMetadata(storage, diff);
 			{
 				// Auxiliary metadata not found. Use minimal.
@@ -225,6 +244,14 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// <returns>A <see cref="BufferTypeMetadata"/> instance.</returns>
 	private static BufferTypeMetadata<T> GetMaxBinarySpace(UInt16 space)
 	{
+#if NET8_0_OR_GREATER
+		while (space > BinaryStore<TMain, T>.initial.MaxStorageCapacity)
+		{
+			if (MetadataStorage.GetExactNonBinaryBinary<T>(space) is { } stored)
+				return stored;
+			space /= 2;
+		}
+#endif
 #if !NET5_0_OR_GREATER
 		BufferTypeMetadata<T>? result = BinaryStore<TMain, T>.GetBinaryValue(space);
 #else
@@ -312,8 +339,10 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 			if (BuffersHelper.Search(ref r0, relativeIndex, length) is { } result)
 #endif
 				// Minimal metadata found.
+			{
 				return result;
-			// Exclude from total elements the current search length.
+			}
+			// Exclude the current search length from the total number of elements.
 			if ((remaining -= length) <= 0) continue;
 			// Get the next page.
 			pageIndex++;
@@ -375,7 +404,8 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	private static Int32 GetSlotIndex(UInt16 componentSize)
 	{
 		Debug.Assert(componentSize > BinaryStore<TMain, T>.initial.Length);
-		Int32 result = BinaryStore<TMain, T>.slots.Length - BuffersHelper.GetLeadingZeros(componentSize) - 1;
+		Int32 result = BuffersHelper.GetLeadingZeros(BinaryStore<TMain, T>.initial.Length) -
+			BuffersHelper.GetLeadingZeros(componentSize) - 1;
 		Debug.Assert((UInt32)result < (UInt32)BinaryStore<TMain, T>.slots.Length);
 		return result;
 	}

@@ -543,11 +543,11 @@ public static unsafe class PointerExtensions
 		=> uptr.IsZero() ? default(T?) : uptr.GetUnsafeReadOnlyReference<T>();
 
 	/// <summary>
-	/// Generates a <see cref="UnmanagedMemoryStream"/> instance from an <see cref="IntPtr"/>.
+	/// Generates an <see cref="UnmanagedMemoryStream"/> instance from an <see cref="IntPtr"/>.
 	/// </summary>
 	/// <param name="ptr">The <see cref="IntPtr"/> pointing to the beginning of the stream.</param>
 	/// <param name="size">The size of the stream.</param>
-	/// <param name="access">Optional. One of the <see cref="FileAccess" /> values.</param>
+	/// <param name="access">Optional. One of the <see cref="FileAccess"/> values.</param>
 	/// <param name="capacity">Optional. The total amount of memory assigned to the stream.</param>
 	/// <returns>A <see cref="Span{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
@@ -566,11 +566,11 @@ public static unsafe class PointerExtensions
 		return new UnmanagedMemoryStream((Byte*)ptr.ToPointer(), size, capacity ?? size, access);
 	}
 	/// <summary>
-	/// Generates a <see cref="UnmanagedMemoryStream"/> instance from an <see cref="IntPtr"/>.
+	/// Generates an <see cref="UnmanagedMemoryStream"/> instance from an <see cref="IntPtr"/>.
 	/// </summary>
 	/// <param name="uptr">The <see cref="UIntPtr"/> pointing to the beginning of the stream.</param>
 	/// <param name="size">The size of the stream.</param>
-	/// <param name="access">Optional. One of the <see cref="FileAccess" /> values.</param>
+	/// <param name="access">Optional. One of the <see cref="FileAccess"/> values.</param>
 	/// <param name="capacity">Optional. The total amount of memory assigned to the stream.</param>
 	/// <returns>A <see cref="Span{T}"/> representing the series of <see langword="unmanaged"/> values in memory.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
@@ -635,7 +635,9 @@ public static unsafe class PointerExtensions
 	/// <see langword="true"/> if the method is backed by image-compiled code; otherwise, <see langword="false"/>.
 	/// </returns>
 	/// <remarks>
-	/// This API is primarily intended for Mono-based runtimes.
+	/// On Mono the result matches ahead-of-time native code. On CoreCLR a pure JIT method is reported as
+	/// <see langword="false"/>. ReadyToRun can still report <see langword="true"/> when the published entry point
+	/// remains inside the loaded image.
 	/// Returns <see langword="false"/> for open generic methods and on platforms where memory inspection is not supported.
 	/// In reflection-free runtimes, valid method handles are treated as image-backed code.
 	/// </remarks>

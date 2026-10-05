@@ -244,11 +244,11 @@ public partial class CStringBuilder
 		}
 #if NET8_0_OR_GREATER
 		/// <summary>
-		/// Appends a <see cref="IUtf8SpanFormattable"/> value to the sequence, allocating new chunks as needed.
+		/// Appends an <see cref="IUtf8SpanFormattable"/> value to the sequence, allocating new chunks as needed.
 		/// </summary>
-		/// <typeparam name="T">A <see cref="IUtf8SpanFormattable"/> instance.</typeparam>
+		/// <typeparam name="T">An <see cref="IUtf8SpanFormattable"/> instance.</typeparam>
 		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
-		/// <param name="value">A <see cref="IUtf8SpanFormattable"/> instance.</param>
+		/// <param name="value">An <see cref="IUtf8SpanFormattable"/> instance.</param>
 		/// <returns>A <see cref="Chunk"/> instance.</returns>
 		[SkipLocalsInit]
 		private static Chunk? AppendUtf8<T>(Chunk chunk, T value) where T : IUtf8SpanFormattable
@@ -259,11 +259,11 @@ public partial class CStringBuilder
 #endif
 #if NET6_0_OR_GREATER
 		/// <summary>
-		/// Appends a <see cref="ISpanFormattable"/> value to the sequence, allocating new chunks as needed.
+		/// Appends an <see cref="ISpanFormattable"/> value to the sequence, allocating new chunks as needed.
 		/// </summary>
-		/// <typeparam name="T">A <see cref="ISpanFormattable"/> instance.</typeparam>
+		/// <typeparam name="T">An <see cref="ISpanFormattable"/> instance.</typeparam>
 		/// <param name="chunk">A <see cref="Chunk"/> instance.</param>
-		/// <param name="value">A <see cref="ISpanFormattable"/> instance.</param>
+		/// <param name="value">An <see cref="ISpanFormattable"/> instance.</param>
 		/// <returns>A <see cref="Chunk"/> instance.</returns>
 		[SkipLocalsInit]
 #if !PACKAGE && NET8_0_OR_GREATER

@@ -177,7 +177,7 @@ public readonly unsafe partial struct ReadOnlyValPtr<T> : IWrapper<IntPtr>, IEqu
 	/// </summary>
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
 	/// <param name="disposable">Object to dispose in order to free <see langword="unmanaged"/> resources.</param>
-	/// <returns>A <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance.</returns>
+	/// <returns>An <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance.</returns>
 	/// <remarks>
 	/// The instance obtained is "unsafe" as it doesn't guarantee that the referenced values
 	/// won't be moved or collected by the garbage collector.

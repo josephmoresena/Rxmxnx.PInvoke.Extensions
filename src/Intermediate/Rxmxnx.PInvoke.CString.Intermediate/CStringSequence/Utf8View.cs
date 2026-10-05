@@ -1,3 +1,7 @@
+#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 public partial class CStringSequence
@@ -64,7 +68,8 @@ public partial class CStringSequence
 #endif
 		internal CString[] ToArray()
 		{
-			if (this._instance is null or { Count: 0, }) return [];
+			// ReSharper disable once UseCollectionExpression
+			if (this._instance is null or { Count: 0, }) return Array.Empty<CString>();
 			if (!this._excludeEmptyItems) return [.. this._instance,];
 
 			CString[] result = new CString[this._instance.NonEmptyCount];

@@ -35,7 +35,7 @@ public unsafe partial class CStringSequence
 #endif
 
 	/// <summary>
-	/// Creates an <see cref="MemoryHandle"/> instance by pinning the current instance.
+	/// Creates a <see cref="MemoryHandle"/> instance by pinning the current instance.
 	/// </summary>
 	/// <returns>A <see cref="MemoryHandle"/> for the pinned memory.</returns>
 	/// <remarks>

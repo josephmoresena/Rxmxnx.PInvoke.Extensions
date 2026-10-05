@@ -1,5 +1,4 @@
 ﻿#if !NET6_0_OR_GREATER
-using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
 #if NETFRAMEWORK && !NET46_OR_GREATER
 using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
 #endif
@@ -22,43 +21,6 @@ public unsafe partial class CStringSequence
 	/// Length of the CString.Zero item.
 	/// </summary>
 	private const Int32 zeroItemLength = Int32.MinValue;
-
-#if !NET5_0_OR_GREATER && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
-	/// <summary>
-	/// Static buffer for type instance.
-	/// </summary>
-	[FixedAddressValueType]
-	private static B1 bufferType;
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-	/// <summary>
-	/// Static buffer for delegate instance.
-	/// </summary>
-	[FixedAddressValueType]
-	private static B1 bufferConstructor;
-#endif
-
-	/// <summary>
-	/// Static constructor.
-	/// </summary>
-#if NETFRAMEWORK || NETSTANDARD2_0
-	[SecuritySafeCritical]
-#endif
-#if !PACKAGE
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3963)]
-#endif
-	static CStringSequence()
-	{
-		CStringSequence.bufferType = new();
-		Span<Type> types = NativeUtilities.CreateTypeSpan(ref CStringSequence.bufferType);
-		types[0] = typeof(Byte);
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-		CStringSequence.bufferConstructor = new();
-		Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
-			NativeUtilities.CreateConstructorSpan(ref CStringSequence.bufferConstructor);
-		constructors[0] = ReadOnlyFixedContext<Byte>.CreateInstance;
-#endif
-	}
-#endif
 
 	/// <summary>
 	/// Determines the length of the given <see cref="CString"/> instance for the sequence.
@@ -137,7 +99,7 @@ public unsafe partial class CStringSequence
 #endif
 	}
 	/// <summary>
-	/// Create buffer using <paramref name="info"/>.
+	/// Creates a buffer using <paramref name="info"/>.
 	/// </summary>
 	/// <param name="charSpan">A <see cref="Span{Char}"/> instance.</param>
 	/// <param name="info">A <see cref="SpanCreationInfo"/> value.</param>
@@ -355,7 +317,7 @@ public unsafe partial class CStringSequence
 	/// Creates cache for <paramref name="lengths"/>.
 	/// </summary>
 	/// <param name="lengths">The lengths of the UTF-8 text sequence.</param>
-	/// <param name="totalNonEmpty">Output. Count of non-empty UTF-8 texts.</param>
+	/// <param name="totalNonEmpty">Output. The number of non-empty UTF-8 texts.</param>
 	/// <returns>Instance cache.</returns>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
@@ -368,7 +330,7 @@ public unsafe partial class CStringSequence
 		// All elements are empty, the cache is an empty array.
 		if (emptyIndices.Count == lengths.Length) return Array.Empty<CString>();
 
-		// There is no empty elements or there are only at the end of the list
+		// There are no empty elements, or the only empty elements are at the end of the list.
 		if (emptyIndices.Count == 0 || (emptyIndices.Count - skipLast == 1 && lastNonEmpty + 1 == emptyIndices[0]))
 			return lengths.Length switch
 			{
@@ -387,11 +349,11 @@ public unsafe partial class CStringSequence
 	/// <summary>
 	/// Retrieves the gaps list from <paramref name="lengths"/>.
 	/// </summary>
-	/// <param name="lengths">Length of each UTF-8 text in the sequence.</param>
-	/// <param name="totalNonEmpty">Output. Count of non-empty UTF-8 texts.</param>
-	/// <param name="lastNonEmpty">Output. Index of last non-empty UTF-8 text.</param>
-	/// <param name="skipLast">Output. Count of useless elements at the end of resulting list.</param>
-	/// <returns>A list containing the indices of all empty UTF-8 in the sequence.</returns>
+	/// <param name="lengths">The length of each UTF-8 text in the sequence.</param>
+	/// <param name="totalNonEmpty">Output. The number of non-empty UTF-8 texts.</param>
+	/// <param name="lastNonEmpty">Output. The index of the last non-empty UTF-8 text.</param>
+	/// <param name="skipLast">Output. The number of unused elements at the end of the resulting list.</param>
+	/// <returns>A list containing the indices of all empty UTF-8 texts in the sequence.</returns>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
@@ -410,7 +372,7 @@ public unsafe partial class CStringSequence
 		}
 		// Determines total non-empty elements.
 		totalNonEmpty = lengths.Length - result.Count;
-		// Determines how many items can be skipped to the end of the list.
+		// Determines how many items can be skipped at the end of the list.
 		skipLast = 0;
 		for (Int32 i = result.Count - 1; i > 0; i--)
 		{
@@ -542,7 +504,8 @@ public unsafe partial class CStringSequence
 #endif
 	private static Int32[] GetLengths(ReadOnlySpan<Int32> nulls)
 	{
-		if (nulls.IsEmpty) return [];
+		// ReSharper disable once UseCollectionExpression
+		if (nulls.IsEmpty) return Array.Empty<Int32>();
 
 		Int32[] lengths = CStringSequence.CreateIntArray(nulls.Length);
 		Int32 offset = 0;
@@ -590,7 +553,8 @@ public unsafe partial class CStringSequence
 #endif
 	private static Int32[] GetLengths(ReadOnlySpan<Int32> nulls, List<Int32> extraNulls)
 	{
-		if (nulls.IsEmpty) return [];
+		// ReSharper disable once UseCollectionExpression
+		if (nulls.IsEmpty) return Array.Empty<Int32>();
 		Int32 offset = 0;
 		Int32 totalLengths = nulls.Length + extraNulls.Count;
 		Int32[] lengths = CStringSequence.CreateIntArray(totalLengths);
@@ -709,4 +673,41 @@ public unsafe partial class CStringSequence
 		}
 		return result + nonEmpty;
 	}
+
+#if !NET5_0_OR_GREATER && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
+	/// <summary>
+	/// Static buffer for type instance.
+	/// </summary>
+	[FixedAddressValueType]
+	private static B1 bufferType;
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+	/// <summary>
+	/// Static buffer for delegate instance.
+	/// </summary>
+	[FixedAddressValueType]
+	private static B1 bufferConstructor;
+#endif
+
+	/// <summary>
+	/// Static constructor.
+	/// </summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3963)]
+#endif
+	static CStringSequence()
+	{
+		CStringSequence.bufferType = new();
+		Span<Type> types = NativeUtilities.CreateTypeSpan(ref CStringSequence.bufferType);
+		types[0] = typeof(Byte);
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+		CStringSequence.bufferConstructor = new();
+		Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> constructors =
+			NativeUtilities.CreateConstructorSpan(ref CStringSequence.bufferConstructor);
+		constructors[0] = ReadOnlyFixedContext<Byte>.CreateInstance;
+#endif
+	}
+#endif
 }

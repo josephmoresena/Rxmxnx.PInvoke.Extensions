@@ -1,7 +1,7 @@
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// This class allows to retrieve information about memory directions.
+/// This class retrieves information about memory addresses.
 /// </summary>
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
@@ -22,7 +22,6 @@ internal abstract unsafe partial class MemoryInspector
 	/// Indicates whether the memory inspection is supported.
 	/// </summary>
 	public static Boolean IsSupported => MemoryInspector.instance is not null;
-
 	/// <summary>
 	/// Indicates whether the current process is running over an emulated platform.
 	/// </summary>
@@ -95,17 +94,29 @@ internal abstract unsafe partial class MemoryInspector
 			return this.IsReadOnlyAddress(ptr);
 	}
 	/// <summary>
-	/// Indicates whether a given pointer references to a read-only memory section.
+	/// Indicates whether a given pointer references a read-only memory section.
 	/// </summary>
 	/// <param name="ptr">A native pointer.</param>
 	/// <returns>
-	/// <see langword="true"/> if the given pointers references to a read-only memory section;
+	/// <see langword="true"/> if the given pointer references a read-only memory section;
 	/// otherwise, <see langword="false"/>.
 	/// </returns>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecurityCritical]
 #endif
 	public abstract Boolean IsReadOnlyAddress(void* ptr);
+	/// <summary>
+	/// Indicates whether the function pointer of <paramref name="methodHandle"/> references a native linked image.
+	/// </summary>
+	/// <param name="methodHandle">A <see cref="RuntimeMethodHandle"/> value.</param>
+	/// <returns>
+	/// <see langword="true"/> if the function pointer references a native linked image; otherwise,
+	/// <see langword="false"/>.
+	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecurityCritical]
+#endif
+	public abstract Boolean IsImageMethod(RuntimeMethodHandle methodHandle);
 
 	/// <summary>
 	/// Indicates whether the given span represents memory that is not part of a hardcoded literal.
@@ -137,7 +148,7 @@ internal abstract unsafe partial class MemoryInspector
 	/// <summary>
 	/// Indicates whether the given span represents memory that is not part of a hardcoded literal.
 	/// </summary>
-	/// <param name="refByte">A read only <see cref="Byte"/> reference.</param>
+	/// <param name="refByte">A read-only <see cref="Byte"/> reference.</param>
 	/// <returns>
 	/// <see langword="true"/> if the given span represents memory that is not part of a hardcoded literal;
 	/// otherwise, <see langword="false"/>.

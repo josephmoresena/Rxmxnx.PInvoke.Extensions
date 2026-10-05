@@ -81,7 +81,7 @@ internal sealed unsafe class NativeMemoryOwner : FixedValueHandle
 #endif
 	/// <summary>
 	/// Allocates a native memory block for <paramref name="count"/> values of type <typeparamref name="T"/> and exposes
-	/// it through an <see cref="FixedContextValue{T}"/> instance.
+	/// it through a <see cref="FixedContextValue{T}"/> instance.
 	/// </summary>
 	/// <typeparam name="T">The unmanaged value type stored in the allocated memory block.</typeparam>
 	/// <param name="count">The number of values of type <typeparamref name="T"/> to allocate.</param>

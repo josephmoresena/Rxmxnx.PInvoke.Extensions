@@ -101,8 +101,7 @@ public static partial class TestCompiler
 			bundleCount += bundles.Length;
 			tempDirectory.Delete(true);
 			if (result != 0)
-				ConsoleNotifier.Notifier.PrintError(
-					$"UWP compilation failed with exit code 0x{result:x8}.", default);
+				ConsoleNotifier.Notifier.PrintError($"UWP compilation failed with exit code 0x{result:x8}.", default);
 			if (Utilities.ShowDiagnostics)
 				ConsoleNotifier.ShowDiskUsage();
 		}
@@ -124,11 +123,7 @@ public static partial class TestCompiler
 				{
 					ExecutablePath = "dotnet",
 					WorkingDirectory = appDirectory,
-					ArgState = new()
-					{
-						ProjectFile = appProjectFile.FullName,
-						PlatformTarget = platformTarget,
-					},
+					ArgState = new() { ProjectFile = appProjectFile.FullName, PlatformTarget = platformTarget, },
 					AppendArgs = CompileFrameworkArgs.Append,
 					Notifier = ConsoleNotifier.Notifier,
 				};

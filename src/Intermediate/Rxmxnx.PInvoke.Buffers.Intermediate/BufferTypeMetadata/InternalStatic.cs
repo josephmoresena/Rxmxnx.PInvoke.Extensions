@@ -45,14 +45,14 @@ public partial class BufferTypeMetadata
 	/// <typeparam name="T">The type of items in the buffer.</typeparam>
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 	/// <typeparam name="TAction">Type of <see cref="IScopedBufferAction{T}"/> interface.</typeparam>
-	/// <param name="action">A <see cref="IScopedBufferAction{T}"/> instance.</param>
+	/// <param name="action">An <see cref="IScopedBufferAction{T}"/> instance.</param>
 	/// <param name="metadata">A <see cref="BufferTypeMetadata"/> instance.</param>
 	/// <param name="spanLength">Required span length.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private protected static void Execute<T, TBuffer, TAction>(in TAction action, BufferTypeMetadata metadata,
+	private protected static void Execute<T, TBuffer, TAction>(ref TAction action, BufferTypeMetadata metadata,
 		Int32 spanLength) where TBuffer : struct
 #if !NET9_0_OR_GREATER
 		where TAction : IScopedBufferAction<T>
@@ -61,6 +61,8 @@ public partial class BufferTypeMetadata
 #endif
 	{
 		Debug.Assert(RuntimeHelpers.IsReferenceOrContainsReferences<TBuffer>());
+		Debug.Assert(RuntimeHelpers.IsReferenceOrContainsReferences<T>());
+		Debug.Assert(typeof(TAction).IsValueType);
 #if NETFRAMEWORK || NETSTANDARD2_0
 		TBuffer buffer = default;
 #else
@@ -85,7 +87,7 @@ public partial class BufferTypeMetadata
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
 	/// <typeparam name="TFunction">Type of <see cref="IScopedBufferFunction{T, Result}"/> interface.</typeparam>
 	/// <typeparam name="TResult">Type of <paramref name="func"/> result.</typeparam>
-	/// <param name="func">A <see cref="IScopedBufferFunction{T,TResult}"/> instance.</param>
+	/// <param name="func">An <see cref="IScopedBufferFunction{T,TResult}"/> instance.</param>
 	/// <param name="metadata">A <see cref="BufferTypeMetadata"/> instance.</param>
 	/// <param name="spanLength">Required span length.</param>
 	/// <returns><paramref name="func"/> result.</returns>
@@ -96,7 +98,7 @@ public partial class BufferTypeMetadata
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 #endif
-	private protected static TResult Execute<T, TBuffer, TFunction, TResult>(in TFunction func,
+	private protected static TResult Execute<T, TBuffer, TFunction, TResult>(ref TFunction func,
 		BufferTypeMetadata metadata, Int32 spanLength) where TBuffer : struct
 #if !NET9_0_OR_GREATER
 		where TFunction : IScopedBufferFunction<T, TResult>
@@ -105,6 +107,8 @@ public partial class BufferTypeMetadata
 #endif
 	{
 		Debug.Assert(RuntimeHelpers.IsReferenceOrContainsReferences<TBuffer>());
+		Debug.Assert(RuntimeHelpers.IsReferenceOrContainsReferences<T>());
+		Debug.Assert(typeof(TFunction).IsValueType);
 #if NETFRAMEWORK || NETSTANDARD2_0
 		TBuffer buffer = default;
 #else

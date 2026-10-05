@@ -1,4 +1,5 @@
 // ReSharper disable UseRawString
+
 namespace Rxmxnx.PInvoke.ApplicationTest;
 
 // ReSharper disable once ClassCannotBeInstantiated

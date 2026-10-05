@@ -7,7 +7,6 @@ namespace Rxmxnx.PInvoke;
 
 public abstract partial class BufferTypeMetadata : IEnumerableSequence<BufferTypeMetadata>
 {
-
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

@@ -27,7 +27,7 @@ public partial class NativeUtilities
 	/// </summary>
 	/// <typeparam name="T">The type of the data items.</typeparam>
 	/// <param name="reference">A reference to data.</param>
-	/// <param name="length">The number of <typeparamref name="T" /> elements that <paramref name="reference" /> contains.</param>
+	/// <param name="length">The number of <typeparamref name="T"/> elements that <paramref name="reference"/> contains.</param>
 	/// <param name="span">Created span.</param>
 	/// <returns>
 	/// <see langword="true"/> if the span was successfully created; otherwise, <see langword="false"/>.
@@ -61,7 +61,7 @@ public partial class NativeUtilities
 	/// </summary>
 	/// <typeparam name="T">The type of the data items.</typeparam>
 	/// <param name="reference">A read-only reference to data.</param>
-	/// <param name="length">The number of <typeparamref name="T" /> elements that <paramref name="reference" /> contains.</param>
+	/// <param name="length">The number of <typeparamref name="T"/> elements that <paramref name="reference"/> contains.</param>
 	/// <param name="span">Created read-only span.</param>
 	/// <returns>
 	/// <see langword="true"/> if the read-only span was successfully created; otherwise, <see langword="false"/>.

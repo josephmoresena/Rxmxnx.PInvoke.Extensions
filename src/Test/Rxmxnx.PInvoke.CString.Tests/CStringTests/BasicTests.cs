@@ -139,15 +139,15 @@ public sealed class BasicTests
 	[Fact]
 	public void NormalTest()
 	{
-		Int32 lenght = TestSet.Utf16Text.Count;
-		CString[,] cstr = new CString[5, lenght];
+		Int32 length = TestSet.Utf16Text.Count;
+		CString[,] cstr = new CString[5, length];
 		BasicTests.CreateCStringFromString(cstr);
 		BasicTests.CreateCStringFromFunction(cstr);
 		BasicTests.CreateCStringFromBytes(cstr);
 		BasicTests.CreateCStringFromNullTerminatedBytes(cstr);
 		BasicTests.CreateCStringFromFunctionNonLiteral(cstr);
 
-		for (Int32 i = 0; i < lenght; i++)
+		for (Int32 i = 0; i < length; i++)
 		{
 			CString cstr1 = cstr[0, i];
 			for (Int32 j = 1; j <= 4; j++)
@@ -194,8 +194,8 @@ public sealed class BasicTests
 	[Fact]
 	public void PointerTest()
 	{
-		Int32 lenght = TestSet.Utf8Bytes.Count;
-		for (Int32 i = 0; i < lenght; i++)
+		Int32 length = TestSet.Utf8Bytes.Count;
+		for (Int32 i = 0; i < length; i++)
 		{
 			CString cstr1 = new(TestSet.Utf8Text[i]);
 			BasicTests.TestBytesPointer(TestSet.Utf8Bytes[i], TestSet.Utf16Text[i], cstr1);

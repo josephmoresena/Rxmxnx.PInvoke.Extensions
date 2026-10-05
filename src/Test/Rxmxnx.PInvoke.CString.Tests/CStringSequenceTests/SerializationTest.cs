@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 #if NETSTANDARD2_0_OR_GREATER
 using CStringSequenceJsonConverter = Rxmxnx.PInvoke.Json.CStringSequenceJsonConverter;
+
 #else
 using CStringSequenceJsonConverter = Rxmxnx.PInvoke.CStringSequence.JsonConverter;
 #endif
@@ -15,6 +16,18 @@ public sealed class SerializationTest
 	private static readonly JsonSerializerOptions jsonOptions =
 		new() { Converters = { new CStringSequenceJsonConverter(), }, };
 
+#if !NETSTANDARD2_0_OR_GREATER
+	[Fact]
+	public void InvalidTokenTest()
+	{
+		PInvokeAssert.Throws<JsonException>(()
+			                                        => JsonSerializer.Deserialize<CStringSequence>(
+				                                        "\"text\"", SerializationTest.jsonOptions));
+		PInvokeAssert.Throws<JsonException>(()
+			                                        => JsonSerializer.Deserialize<CStringSequence>(
+				                                        "[1]", SerializationTest.jsonOptions));
+	}
+#endif
 	[Theory]
 	[InlineData(JsonIgnoreCondition.WhenWritingNull)]
 	[InlineData(JsonIgnoreCondition.WhenWritingDefault)]

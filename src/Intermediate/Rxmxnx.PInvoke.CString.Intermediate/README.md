@@ -10,9 +10,9 @@ There are three types of `CString`:
 1. **Managed Buffer-Based**: This type is based on a managed buffer containing UTF-8/ASCII units.
 2. **Delegate-Based**: This type relies on a delegate that returns a `Span<Byte>`. The delegate can represent a UTF-8 or
    ASCII literal, or an arbitrary function, with or without a state object.
-3. **Unmanaged Pointer-Based**: This type is based on an unmanaged pointer and a specified length. When use this type,
-   the developer have to ensure that the memory address holding the UTF-8/ASCII units remains valid for the lifetime of
-   the `CString` instance.
+3. **Unmanaged Pointer-Based**: This type is based on an unmanaged pointer and a specified length. When you use this
+   type, you must ensure that the memory address holding the UTF-8/ASCII units remains valid for the lifetime of the
+   `CString` instance.
 
 ---
 

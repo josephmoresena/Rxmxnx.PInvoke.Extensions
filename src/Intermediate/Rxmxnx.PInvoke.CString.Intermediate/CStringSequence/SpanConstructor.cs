@@ -25,8 +25,8 @@ public unsafe partial class CStringSequence
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
 	/// using UTF-8 texts contained in given read-only spans.
 	/// </summary>
-	/// <param name="span0">1st UTF-8 span.</param>
-	/// <param name="span1">2nd UTF-8 span.</param>
+	/// <param name="span0">The first UTF-8 span.</param>
+	/// <param name="span1">The second UTF-8 span.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
@@ -42,9 +42,9 @@ public unsafe partial class CStringSequence
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
 	/// using UTF-8 texts contained in given read-only spans.
 	/// </summary>
-	/// <param name="span0">1st UTF-8 span.</param>
-	/// <param name="span1">2nd UTF-8 span.</param>
-	/// <param name="span2">3rd UTF-8 span.</param>
+	/// <param name="span0">The first UTF-8 span.</param>
+	/// <param name="span1">The second UTF-8 span.</param>
+	/// <param name="span2">The third UTF-8 span.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
@@ -61,10 +61,10 @@ public unsafe partial class CStringSequence
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
 	/// using UTF-8 texts contained in given read-only spans.
 	/// </summary>
-	/// <param name="span0">1st UTF-8 span.</param>
-	/// <param name="span1">2nd UTF-8 span.</param>
-	/// <param name="span2">3rd UTF-8 span.</param>
-	/// <param name="span3">4th UTF-8 span.</param>
+	/// <param name="span0">The first UTF-8 span.</param>
+	/// <param name="span1">The second UTF-8 span.</param>
+	/// <param name="span2">The third UTF-8 span.</param>
+	/// <param name="span3">The fourth UTF-8 span.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
@@ -83,11 +83,11 @@ public unsafe partial class CStringSequence
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
 	/// using UTF-8 texts contained in given read-only spans.
 	/// </summary>
-	/// <param name="span0">1st UTF-8 span.</param>
-	/// <param name="span1">2nd UTF-8 span.</param>
-	/// <param name="span2">3rd UTF-8 span.</param>
-	/// <param name="span3">4th UTF-8 span.</param>
-	/// <param name="span4">5th UTF-8 span.</param>
+	/// <param name="span0">The first UTF-8 span.</param>
+	/// <param name="span1">The second UTF-8 span.</param>
+	/// <param name="span2">The third UTF-8 span.</param>
+	/// <param name="span3">The fourth UTF-8 span.</param>
+	/// <param name="span4">The fifth UTF-8 span.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
@@ -107,12 +107,12 @@ public unsafe partial class CStringSequence
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
 	/// using UTF-8 texts contained in given read-only spans.
 	/// </summary>
-	/// <param name="span0">1st UTF-8 span.</param>
-	/// <param name="span1">2nd UTF-8 span.</param>
-	/// <param name="span2">3rd UTF-8 span.</param>
-	/// <param name="span3">4th UTF-8 span.</param>
-	/// <param name="span4">5th UTF-8 span.</param>
-	/// <param name="span5">6th UTF-8 span.</param>
+	/// <param name="span0">The first UTF-8 span.</param>
+	/// <param name="span1">The second UTF-8 span.</param>
+	/// <param name="span2">The third UTF-8 span.</param>
+	/// <param name="span3">The fourth UTF-8 span.</param>
+	/// <param name="span4">The fifth UTF-8 span.</param>
+	/// <param name="span5">The sixth UTF-8 span.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
@@ -133,13 +133,13 @@ public unsafe partial class CStringSequence
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
 	/// using UTF-8 texts contained in given read-only spans.
 	/// </summary>
-	/// <param name="span0">1st UTF-8 span.</param>
-	/// <param name="span1">2nd UTF-8 span.</param>
-	/// <param name="span2">3rd UTF-8 span.</param>
-	/// <param name="span3">4th UTF-8 span.</param>
-	/// <param name="span4">5th UTF-8 span.</param>
-	/// <param name="span5">6th UTF-8 span.</param>
-	/// <param name="span6">7th UTF-8 span.</param>
+	/// <param name="span0">The first UTF-8 span.</param>
+	/// <param name="span1">The second UTF-8 span.</param>
+	/// <param name="span2">The third UTF-8 span.</param>
+	/// <param name="span3">The fourth UTF-8 span.</param>
+	/// <param name="span4">The fifth UTF-8 span.</param>
+	/// <param name="span5">The sixth UTF-8 span.</param>
+	/// <param name="span6">The seventh UTF-8 span.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
@@ -162,14 +162,14 @@ public unsafe partial class CStringSequence
 	/// Initializes a new instance of the <see cref="CStringSequence"/> class
 	/// using UTF-8 texts contained in given read-only spans.
 	/// </summary>
-	/// <param name="span0">1st UTF-8 span.</param>
-	/// <param name="span1">2nd UTF-8 span.</param>
-	/// <param name="span2">3rd UTF-8 span.</param>
-	/// <param name="span3">4th UTF-8 span.</param>
-	/// <param name="span4">5th UTF-8 span.</param>
-	/// <param name="span5">6th UTF-8 span.</param>
-	/// <param name="span6">7th UTF-8 span.</param>
-	/// <param name="span7">8th UTF-8 span.</param>
+	/// <param name="span0">The first UTF-8 span.</param>
+	/// <param name="span1">The second UTF-8 span.</param>
+	/// <param name="span2">The third UTF-8 span.</param>
+	/// <param name="span3">The fourth UTF-8 span.</param>
+	/// <param name="span4">The fifth UTF-8 span.</param>
+	/// <param name="span5">The sixth UTF-8 span.</param>
+	/// <param name="span6">The seventh UTF-8 span.</param>
+	/// <param name="span7">The eighth UTF-8 span.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif

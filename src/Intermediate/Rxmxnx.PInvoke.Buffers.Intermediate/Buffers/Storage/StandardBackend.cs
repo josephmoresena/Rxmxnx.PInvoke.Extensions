@@ -53,12 +53,19 @@ internal readonly struct StandardBackend : IMetadataStorageBackend
 		/// Internal static array.
 		/// </summary>
 		private static readonly BufferTypeMetadata<T>?[] initial =
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 			new BufferTypeMetadata<T>?[typeof(T).IsValueType ? 255 : 2047];
-#else
-			new BufferTypeMetadata<T>?[typeof(T).GetTypeInfo().IsValueType ? 255 : 2047];
-#endif
 
+#if NET8_0_OR_GREATER
+		/// <inheritdoc/>
+		public Int32 MaxStorageCapacity
+		{
+#if !PACKAGE
+			[ExcludeFromCodeCoverage]
+#endif
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => UInt16.MaxValue;
+		}
+#endif
 		/// <inheritdoc/>
 		public UInt16 Length
 		{

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <!-- Imported only on an Apple Silicon host. These properties apply when that host compiles x86_64. -->
+    <PropertyGroup Condition="'$(XamMacArch)' == 'x86_64'">
+        <MonoBundlingExtraArgs>--link_flags=-Wl,-rpath,/usr/lib/swift</MonoBundlingExtraArgs>
+    </PropertyGroup>
+
+    <UsingTask TaskName="PrependPath"
+               AssemblyFile="..\LegacyAppTest.Tasks\bin\$(Configuration)\netstandard2.0\LegacyAppTest.Tasks.dll"/>
+
+    <Target Name="UseX64Clang" BeforeTargets="_CompileToNative" Condition="'$(XamMacArch)' == 'x86_64'">
+        <PrependPath Dir="$(MSBuildProjectDirectory)/tools"/>
+    </Target>
+</Project>

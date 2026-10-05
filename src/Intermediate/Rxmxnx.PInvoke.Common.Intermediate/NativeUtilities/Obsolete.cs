@@ -27,12 +27,11 @@ public unsafe partial class NativeUtilities
 #endif
 	public static IReadOnlyFixedContext<TEnum>.IDisposable GetValuesFixedContext<TEnum>() where TEnum : unmanaged, Enum
 	{
-		ReadOnlyMemory<TEnum> mem = EnumValueHelper<TEnum>.Values;
-		MemoryHandle handle = mem.Pin();
+		MemoryHandle handle = EnumValueHelper<TEnum>.Pin();
 		return handle.Pointer == default ?
 			ReadOnlyFixedContext<TEnum>.EmptyDisposable :
 			// ReSharper disable once HeapView.BoxingAllocation
-			new ReadOnlyFixedContext<TEnum>(handle.Pointer, mem.Length).ToDisposable(handle);
+			new ReadOnlyFixedContext<TEnum>(handle.Pointer, EnumValueHelper<TEnum>.Count).ToDisposable(handle);
 	}
 	/// <summary>
 	/// Allocates a native memory block for <paramref name="count"/> values of type <typeparamref name="T"/> and exposes
