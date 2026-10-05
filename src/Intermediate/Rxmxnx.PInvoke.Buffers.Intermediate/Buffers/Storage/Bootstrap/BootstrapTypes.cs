@@ -1,4 +1,5 @@
 #if NET8_0_OR_GREATER
+
 #region Buffers
 using O = System.Object;
 using O1 = Rxmxnx.PInvoke.Buffers.Atomic<System.Object>;
@@ -218,7 +219,7 @@ internal static class BootstrapBinaryStore<TBuffer, T> where TBuffer : struct, I
 	private static TBuffer initial;
 
 	/// <summary>
-	/// Store managed reference.
+	/// Store-managed reference.
 	/// </summary>
 	public static ref BufferTypeMetadata<T>? Reference
 	{
@@ -254,6 +255,15 @@ internal static class BootstrapBinaryStore<TBuffer, T> where TBuffer : struct, I
 #endif
 internal readonly struct G31<T> : IMainBinaryStore<T>
 {
+	/// <summary>
+	/// Maximum storage capacity.
+	/// </summary>
+	public static Int32 MaxStorageCapacity
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => 31;
+	}
+
 	/// <inheritdoc/>
 	public UInt16 Length
 	{
@@ -285,6 +295,12 @@ internal readonly struct G31<T> : IMainBinaryStore<T>
 	}
 #endif
 
+	Int32 IStorageCapacity.MaxStorageCapacity
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => G31<T>.MaxStorageCapacity;
+	}
+
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public BufferTypeMetadata<T>? CompareExchange(Int32 index, BufferTypeMetadata<T> component)
@@ -313,6 +329,15 @@ internal readonly struct G31<T> : IMainBinaryStore<T>
 #endif
 internal readonly struct G127<T> : IMainBinaryStore<T>
 {
+	/// <summary>
+	/// Maximum storage capacity.
+	/// </summary>
+	public static Int32 MaxStorageCapacity
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => 127;
+	}
+
 	/// <inheritdoc/>
 	public UInt16 Length
 	{
@@ -343,6 +368,12 @@ internal readonly struct G127<T> : IMainBinaryStore<T>
 		get => MemoryMarshal.CreateSpan(ref this[0], this.Length);
 	}
 #endif
+
+	Int32 IStorageCapacity.MaxStorageCapacity
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => G127<T>.MaxStorageCapacity;
+	}
 
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -405,6 +436,12 @@ internal readonly struct G255<TSpace, T> : IMainBinaryStore<T> where TSpace : st
 	}
 #endif
 
+	Int32 IStorageCapacity.MaxStorageCapacity
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => (1 << TSpace.Dimension) - 1;
+	}
+
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public BufferTypeMetadata<T>? CompareExchange(Int32 index, BufferTypeMetadata<T> component)
@@ -435,6 +472,15 @@ internal readonly struct G255<TSpace, T> : IMainBinaryStore<T> where TSpace : st
 #endif
 internal readonly struct G2047<TSpace, T> : IMainBinaryStore<T> where TSpace : struct, IBinarySpace
 {
+	/// <summary>
+	/// Maximum storage capacity.
+	/// </summary>
+	public static Int32 MaxStorageCapacity
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => (1 << TSpace.Dimension) - 1;
+	}
+
 	/// <inheritdoc/>
 	public UInt16 Length
 	{
@@ -465,6 +511,12 @@ internal readonly struct G2047<TSpace, T> : IMainBinaryStore<T> where TSpace : s
 		get => MemoryMarshal.CreateSpan(ref this[0], this.Length);
 	}
 #endif
+
+	Int32 IStorageCapacity.MaxStorageCapacity
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		get => G2047<TSpace, T>.MaxStorageCapacity;
+	}
 
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -71,6 +71,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Boolean TryAdd(BufferTypeMetadata<T> component)
 	{
+		Debug.Assert(component.Size > 0);
 #if !NET5_0_OR_GREATER
 		if (component.Size <= BinaryStore<TMain, T>.initial.Length)
 			return BinaryStore<TMain, T>.initial.CompareExchange(component.Size - 1, component) is null;
@@ -113,6 +114,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static BufferTypeMetadata<T> SetBinaryValue(BufferTypeMetadata<T> component)
 	{
+		Debug.Assert(component.Size > 0);
 		if (component.Size <= BinaryStore<TMain, T>.initial.Length)
 			return BinaryStore<TMain, T>.initial.Set(component.Size - 1, component);
 		BufferTypeMetadata<T>?[] page = BinaryStore<TMain, T>.GetOrCreatePage(component.Size, out Int32 pageLength);
@@ -143,7 +145,16 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static BufferTypeMetadata<T>? GetFundamental(IMetadataStorage storage, UInt16 space)
 	{
+#if NET8_0_OR_GREATER
+		if (space > BinaryStore<TMain, T>.initial.MaxStorageCapacity)
+		{
+			if (MetadataStorage.GetExactBinary<T>(space) is { } stored)
+				return stored;
+		}
+		else if (BinaryStore<TMain, T>.GetBinaryValue(space) is { } metadata)
+#else
 		if (BinaryStore<TMain, T>.GetBinaryValue(space) is { } metadata)
+#endif
 			return metadata;
 		if (space == 1)
 #if !NET5_0_OR_GREATER
@@ -227,6 +238,14 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	/// <returns>A <see cref="BufferTypeMetadata"/> instance.</returns>
 	private static BufferTypeMetadata<T> GetMaxBinarySpace(UInt16 space)
 	{
+#if NET8_0_OR_GREATER
+		while (space > BinaryStore<TMain, T>.initial.MaxStorageCapacity)
+		{
+			if (MetadataStorage.GetExactBinary<T>(space) is { } stored)
+				return stored;
+			space /= 2;
+		}
+#endif
 #if !NET5_0_OR_GREATER
 		BufferTypeMetadata<T>? result = BinaryStore<TMain, T>.GetBinaryValue(space);
 #else
@@ -379,7 +398,8 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	private static Int32 GetSlotIndex(UInt16 componentSize)
 	{
 		Debug.Assert(componentSize > BinaryStore<TMain, T>.initial.Length);
-		Int32 result = BinaryStore<TMain, T>.slots.Length - BuffersHelper.GetLeadingZeros(componentSize) - 1;
+		Int32 result = BuffersHelper.GetLeadingZeros(BinaryStore<TMain, T>.initial.Length) -
+			BuffersHelper.GetLeadingZeros(componentSize) - 1;
 		Debug.Assert((UInt32)result < (UInt32)BinaryStore<TMain, T>.slots.Length);
 		return result;
 	}

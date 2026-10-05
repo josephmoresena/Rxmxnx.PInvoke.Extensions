@@ -7,13 +7,8 @@ namespace Rxmxnx.PInvoke.Internal;
 /// Implementations must be read-only structs to enable devirtualization of calls and avoid relying on generic math
 /// abstractions.
 /// </remarks>
-internal interface IMetadataStorageBackend
+internal interface IMetadataStorageBackend : IStorageCapacity
 {
-	/// <summary>
-	/// Maximum storage capacity.
-	/// </summary>
-	Int32 MaxStorageCapacity { get; }
-
 	/// <summary>
 	/// Tries to add the current component
 	/// </summary>

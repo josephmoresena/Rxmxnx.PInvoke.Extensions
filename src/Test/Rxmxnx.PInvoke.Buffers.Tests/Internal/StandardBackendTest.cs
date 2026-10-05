@@ -14,23 +14,37 @@ public sealed class StandardBackendTest
 	[Fact]
 	public void SlotSegmentTest()
 	{
-		StandardBackend standard = default;
+		StandardBackendTest.AssertPages<StandardValue>(255, 8);
+		StandardBackendTest.AssertPages<StandardObject>(2047, 5);
+	}
 
-		ref BufferTypeMetadata<StandardValue>? value = ref standard.GetBinaryReference<StandardValue>(1);
-		ref BufferTypeMetadata<StandardValue>? neighbour = ref standard.GetBinaryReference<StandardValue>(2);
-		ref BufferTypeMetadata<StandardValue>? slot = ref standard.GetBinaryReference<StandardValue>(256);
-		Assert.Equal(StandardBackendTest.ContiguousOffset(1, 2),
-		             StandardBackendTest.Distance(ref value, ref neighbour));
-		Assert.NotEqual(StandardBackendTest.ContiguousOffset(1, 256),
-		                StandardBackendTest.Distance(ref value, ref slot));
+	private static void AssertPages<T>(UInt16 inlineLength, Int32 slotCount)
+	{
+		StandardBackend backend = default;
+		StandardBackendTest.AssertSamePage<T>(ref backend, 1, inlineLength);
+		UInt32 start = (UInt32)inlineLength + 1;
+		for (Int32 slot = 0; slot < slotCount; slot++)
+		{
+			UInt32 end = start * 2 - 1;
+			StandardBackendTest.AssertDifferentPage<T>(ref backend, (UInt16)(start - 1), (UInt16)start);
+			StandardBackendTest.AssertSamePage<T>(ref backend, (UInt16)start, (UInt16)end);
+			start = end + 1;
+		}
+	}
 
-		ref BufferTypeMetadata<StandardObject>? item = ref standard.GetBinaryReference<StandardObject>(1);
-		ref BufferTypeMetadata<StandardObject>? itemNeighbour = ref standard.GetBinaryReference<StandardObject>(2);
-		ref BufferTypeMetadata<StandardObject>? itemSlot = ref standard.GetBinaryReference<StandardObject>(2048);
-		Assert.Equal(StandardBackendTest.ContiguousOffset(1, 2),
-		             StandardBackendTest.Distance(ref item, ref itemNeighbour));
-		Assert.NotEqual(StandardBackendTest.ContiguousOffset(1, 2048),
-		                StandardBackendTest.Distance(ref item, ref itemSlot));
+	private static void AssertSamePage<T>(ref StandardBackend backend, UInt16 first, UInt16 last)
+	{
+		ref BufferTypeMetadata<T>? origin = ref backend.GetBinaryReference<T>(first);
+		ref BufferTypeMetadata<T>? target = ref backend.GetBinaryReference<T>(last);
+		Assert.Equal(StandardBackendTest.ContiguousOffset(first, last),
+		             StandardBackendTest.Distance(ref origin, ref target));
+	}
+	private static void AssertDifferentPage<T>(ref StandardBackend backend, UInt16 first, UInt16 last)
+	{
+		ref BufferTypeMetadata<T>? origin = ref backend.GetBinaryReference<T>(first);
+		ref BufferTypeMetadata<T>? target = ref backend.GetBinaryReference<T>(last);
+		Assert.NotEqual(StandardBackendTest.ContiguousOffset(first, last),
+		                StandardBackendTest.Distance(ref origin, ref target));
 	}
 
 	private static Int64 ContiguousOffset(Int32 fromSize, Int32 toSize) => (toSize - fromSize) * (Int64)IntPtr.Size;

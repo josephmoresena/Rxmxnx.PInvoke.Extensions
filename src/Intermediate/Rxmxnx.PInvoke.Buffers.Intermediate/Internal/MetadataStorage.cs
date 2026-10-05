@@ -22,6 +22,29 @@ internal abstract partial class MetadataStorage : IMetadataStorage
 	/// <inheritdoc/>
 	public abstract void PrintMetadata<T>(Boolean trace);
 #endif
+
+	/// <summary>
+	/// Tries to add <paramref name="typeMetadata"/> to the non-binary cache.
+	/// </summary>
+	/// <param name="typeMetadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
+	/// <returns>
+	/// <see langword="true"/> if <paramref name="typeMetadata"/> was stored; otherwise, <see langword="false"/>.
+	/// </returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static Boolean TryAddNonBinary<T>(BufferTypeMetadata<T> typeMetadata)
+	{
+		Debug.Assert(typeMetadata.IsBinary);
+		return NonBinaryStore<T>.TryAdd(typeMetadata);
+	}
+	/// <summary>
+	/// Retrieves the exact binary metadata stored for <paramref name="count"/> items.
+	/// </summary>
+	/// <typeparam name="T">The type of items in the buffer.</typeparam>
+	/// <param name="count">The number of items in the required buffer.</param>
+	/// <returns>
+	/// The exact binary metadata. A non-binary entry breaks composition and is reported as missing.
+	/// </returns>
+	internal static BufferTypeMetadata<T>? GetExactBinary<T>(UInt16 count) => NonBinaryStore<T>.GetExactBinary(count);
 }
 
 /// <summary>
@@ -41,20 +64,34 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 #pragma warning restore CS0649, S3459
 
 	/// <inheritdoc/>
-	public override Boolean TryAdd<T>(BufferTypeMetadata<T> component) => this._backend.TryAdd(component);
+	public override Boolean TryAdd<T>(BufferTypeMetadata<T> component)
+	{
+		Debug.Assert(component.Size > 0);
+#if NET8_0_OR_GREATER
+		// ReSharper disable once ConvertIfStatementToReturnStatement
+		if (component.Size > this._backend.MaxStorageCapacity)
+			return MetadataStorage.TryAddNonBinary(component);
+#endif
+		return this._backend.TryAdd(component);
+	}
 	/// <inheritdoc/>
 	public override BufferTypeMetadata<T>? GetMetadata<T>(UInt16 count)
 	{
 		if (count == 0) count++; // Avoid a zero-element buffer.
-		if (this._backend.GetCurrentCapacity<T>() >= count && this._backend.GetBinaryValue<T>(count) is { } binary)
+#if NET8_0_OR_GREATER
+		Boolean allowBinary = count <= this._backend.MaxStorageCapacity;
+		if (allowBinary && this._backend.GetBinaryValue<T>(count) is { } binary)
+#else
+		if (this._backend.GetBinaryValue<T>(count) is { } binary)
+#endif
 			return binary;
 		if (NonBinaryStore<T>.GetNonBinary(count, out BufferTypeMetadata<T>? minimalNonBinary) is { } nonBinary)
 			// Exact non-binary buffer. Consider the minimal buffer only when a binary buffer cannot be retrieved.
 			return nonBinary;
 #if NET8_0_OR_GREATER
-		if (count > this._backend.MaxStorageCapacity)
+		if (!allowBinary)
 			// The binary capacity does not allow the current count.
-			return default;
+			return minimalNonBinary;
 #endif
 		binary = this._backend.ComputeBinaryMetadata<T>(this, count, minimalNonBinary?.Size ?? 0); // Allow minimal
 		return binary ?? minimalNonBinary; // Approximate non-binary buffer.
@@ -69,9 +106,15 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 		Type typeofT = typeof(T);
 		BufferTypeMetadata<T>? metadata = default;
 #if NET8_0_OR_GREATER
-		ValidationUtilities.ThrowIfNullMetadata(typeofT, count, count > this._backend.MaxStorageCapacity);
-#endif
+		if (count > this._backend.MaxStorageCapacity)
+		{
+			if (MetadataStorage.GetExactBinary<T>(count) is not null) return;
+		}
+		else if (this._backend.GetBinaryValue<T>(count) is not null)
+			return;
+#else
 		if (this._backend.GetBinaryValue<T>(count) is not null) return;
+#endif
 		Span<UInt16> components = BuffersHelper.GetBinaryComponents(stackalloc UInt16[16], count);
 		foreach (UInt16 comp in components)
 		{
@@ -112,15 +155,19 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 	/// <inheritdoc/>
 	[return: NotNullIfNotNull("typeMetadata")]
 	public override BufferTypeMetadata<T>? AddBinaryMetadata<T>(BufferTypeMetadata<T>? typeMetadata)
-#if !NET5_0_OR_GREATER
-		=> typeMetadata is not null ? this._backend.SetBinaryValue(typeMetadata) : default;
-#else
 	{
 		if (typeMetadata is null) return default;
-		this._backend.GetBinaryReference<T>(typeMetadata.Size) = typeMetadata;
-		return typeMetadata;
-	}
+		Debug.Assert(typeMetadata.Size > 0);
+#if NET8_0_OR_GREATER
+		// ReSharper disable once InvertIf
+		if (typeMetadata.Size > this._backend.MaxStorageCapacity)
+		{
+			MetadataStorage.TryAddNonBinary(typeMetadata);
+			return typeMetadata;
+		}
 #endif
+		return this._backend.SetBinaryValue(typeMetadata);
+	}
 #if !PACKAGE
 	/// <inheritdoc/>
 	[ExcludeFromCodeCoverage]

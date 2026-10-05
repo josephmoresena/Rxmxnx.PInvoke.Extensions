@@ -22,7 +22,14 @@ public interface IScopedBufferFunction<T, out TResult>
 	/// <summary>
 	/// Indicates whether <see cref="Count"/> is the minimum limit and not the exact limit for memory allocation.
 	/// </summary>
-	/// <remarks>The additional elements allocated are not accessible from <see cref="Apply"/>.</remarks>
+	/// <remarks>
+	/// <para>The additional elements allocated are not accessible from <see cref="Apply"/>.</para>
+	/// <para>
+	/// A value type should implement this property. On .NET Standard 2.1 and .NET Core 3.0 or greater the interface
+	/// supplies a default of <see langword="false"/>. Calling that default on a value type boxes the value on Native
+	/// AOT before .NET 10 and on Mono.
+	/// </para>
+	/// </remarks>
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	Boolean IsMinimalCount
 	{

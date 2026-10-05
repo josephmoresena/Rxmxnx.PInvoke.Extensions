@@ -146,10 +146,11 @@ These are available from .NET Standard 2.0 / .NET Framework / UWP through curren
 - `IWrapper<T>`, `ValueRegion<T>`, `AotInfo`, `SystemInfo`
 
 `IScopedBufferAction<T>.IsMinimalCount` is a required property on the TFMs added after 2.9.5. On the original modern
-TFMs it has a default of `false`. The same pattern applies to a few other members that are default interface methods
-until 2.9.5 and required later: `IFixedMemory<T>.ValuePointer`, `IReadOnlyFixedMemory<T>.ValuePointer`, and
-`IFixedReference<T>.Transformation<TDestination>()` without a residual. Callers do not need to distinguish those; only
-custom interface implementations do.
+TFMs it has a default of `false`. A value type should always implement the property. Calling that default on a value
+type boxes the value on Native AOT before .NET 10 and on Mono. The same required-or-default split applies to a few
+other members that are default interface methods until 2.9.5 and required later: `IFixedMemory<T>.ValuePointer`,
+`IReadOnlyFixedMemory<T>.ValuePointer`, and `IFixedReference<T>.Transformation<TDestination>()` without a residual.
+Callers do not need to distinguish those; only custom interface implementations do.
 
 ## Other TFM differences
 

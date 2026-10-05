@@ -55,6 +55,17 @@ internal readonly struct StandardBackend : IMetadataStorageBackend
 		private static readonly BufferTypeMetadata<T>?[] initial =
 			new BufferTypeMetadata<T>?[typeof(T).IsValueType ? 255 : 2047];
 
+#if NET8_0_OR_GREATER
+		/// <inheritdoc/>
+		public Int32 MaxStorageCapacity
+		{
+#if !PACKAGE
+			[ExcludeFromCodeCoverage]
+#endif
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => UInt16.MaxValue;
+		}
+#endif
 		/// <inheritdoc/>
 		public UInt16 Length
 		{

@@ -67,7 +67,8 @@ BufferManager<Int32>.Alloc(new Fill());
 large.
 
 `IsMinimalCount` is a required property on TFMs added after 2.9.5 (.NET Framework, .NET Standard 2.0, UWP, .NET Core
-2.1). On the original modern TFMs it has a default of `false`.
+2.1). On the original modern TFMs it has a default of `false`. A value type should always implement the property.
+Calling that default on a value type boxes the value on Native AOT before .NET 10 and on Mono.
 
 ## Other functional contracts
 
