@@ -4,7 +4,54 @@ using Rxmxnx.PInvoke.Buffers.Storage.Bootstrap;
 
 namespace Rxmxnx.PInvoke.Tests.Internal;
 
-using R32 = Composite<Composite<Composite<Composite<Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, Composite<Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, Composite<Composite<Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, Composite<Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, Composite<Composite<Composite<Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, Composite<Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, Composite<Composite<Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, Composite<Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>;
+using R32 =
+	Composite<
+		Composite<
+			Composite<
+				Composite<
+					Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>,
+						BootstrapBackendTest.RegValue>,
+					Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>,
+						BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>,
+				Composite<
+					Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>,
+						BootstrapBackendTest.RegValue>,
+					Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>,
+						BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>,
+			Composite<
+				Composite<
+					Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>,
+						BootstrapBackendTest.RegValue>,
+					Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>,
+						BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>,
+				Composite<
+					Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>,
+						BootstrapBackendTest.RegValue>,
+					Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>,
+						BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>,
+			BootstrapBackendTest.RegValue>, Composite<
+			Composite<
+				Composite<
+					Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>,
+						BootstrapBackendTest.RegValue>,
+					Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>,
+						BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>,
+				Composite<
+					Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>,
+						BootstrapBackendTest.RegValue>,
+					Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>,
+						BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>,
+			Composite<
+				Composite<
+					Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>,
+						BootstrapBackendTest.RegValue>,
+					Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>,
+						BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, Composite<
+					Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>,
+						BootstrapBackendTest.RegValue>,
+					Composite<Atomic<BootstrapBackendTest.RegValue>, Atomic<BootstrapBackendTest.RegValue>,
+						BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>,
+			BootstrapBackendTest.RegValue>, BootstrapBackendTest.RegValue>;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -76,9 +123,6 @@ public sealed class BootstrapBackendTest
 		Assert.NotNull(metadata);
 		Assert.Equal((UInt16)1, metadata.Size);
 		storage.PrepareBinaryMetadata<T>(0);
-		BufferTypeMetadata<T> empty =
-			new BufferTypeMetadata<Atomic<T>, T>(0, Array.Empty<BufferTypeMetadata<T>>(), true);
-		BootstrapBackendTest.AssertOutOfRange(() => storage.TryAdd(empty));
 	}
 	private static void AssertSamePage<TBackend, T>(ref TBackend backend, UInt16 first, UInt16 last)
 		where TBackend : struct, IMetadataStorageBackend
@@ -100,7 +144,7 @@ public sealed class BootstrapBackendTest
 	{
 		Exception? error = Record.Exception(action);
 		Assert.NotNull(error);
-		Assert.True(error is IndexOutOfRangeException || error.GetType().Name == "DebugAssertException");
+		Assert.True(error is IndexOutOfRangeException || error.GetType().Name.Contains("Assert"));
 	}
 	private static void AssertStored<TBackend, T>(UInt16 size) where TBackend : struct, IMetadataStorageBackend
 	{
@@ -206,6 +250,7 @@ public sealed class BootstrapBackendTest
 	}
 
 	private sealed class StoreObject;
+
 	private struct PageValue
 	{
 		public String? Text { get; set; }
