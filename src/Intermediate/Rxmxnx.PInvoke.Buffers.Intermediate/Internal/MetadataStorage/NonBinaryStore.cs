@@ -61,16 +61,6 @@ internal abstract partial class MetadataStorage
 		}
 
 		/// <summary>
-		/// Retrieves the exact binary metadata for a buffer with <paramref name="count"/> items.
-		/// </summary>
-		/// <param name="count">The number of items in the required buffer.</param>
-		/// <returns>
-		/// The exact binary metadata. A non-binary entry breaks composition and is reported as missing.
-		/// </returns>
-		public static BufferTypeMetadata<T>? GetExactBinary(UInt16 count)
-			=> NonBinaryStore<T>.GetNonBinary(count, out _) is { IsBinary: true } stored ? stored : default;
-
-		/// <summary>
 		/// Adds non-binary metadata to the current cache.
 		/// </summary>
 		/// <param name="typeMetadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
@@ -93,7 +83,7 @@ internal abstract partial class MetadataStorage
 			}
 #endif
 		}
-
+#if NET8_0_OR_GREATER
 		/// <summary>
 		/// Tries to add <paramref name="typeMetadata"/> to the non-binary cache.
 		/// </summary>
@@ -105,7 +95,7 @@ internal abstract partial class MetadataStorage
 		/// A stored non-binary entry is replaced when <paramref name="typeMetadata"/> is binary.
 		/// A stored binary entry is left unchanged.
 		/// </remarks>
-		public static Boolean TryAdd(BufferTypeMetadata<T> typeMetadata)
+		public static Boolean TryAddBinary(BufferTypeMetadata<T> typeMetadata)
 		{
 			Debug.Assert(typeMetadata.IsBinary);
 			using WriteScope scope = NonBinaryStore<T>.GetLock();
@@ -133,6 +123,22 @@ internal abstract partial class MetadataStorage
 			}
 #endif
 		}
+		/// <summary>
+		/// Retrieves the exact binary metadata for a buffer with <paramref name="count"/> items.
+		/// </summary>
+		/// <param name="count">The number of items in the required buffer.</param>
+		/// <returns>
+		/// The exact binary metadata. A non-binary entry breaks composition and is reported as missing.
+		/// </returns>
+		public static BufferTypeMetadata<T>? GetExactBinary(UInt16 count)
+		{
+			if (!NonBinaryStore<T>.HasNonBinaryMap()) return default;
+
+			using ReadScope scope = NonBinaryStore<T>.GetLock();
+			SortedList<UInt16, BufferTypeMetadata<T>> map = NonBinaryStore<T>.GetNonBinaryMap();
+			return map.TryGetValue(count, out BufferTypeMetadata<T>? result) && result.IsBinary ? result : default;
+		}
+#endif
 
 		/// <summary>
 		/// Retrieves the reader-writer lock object for concurrent operations.

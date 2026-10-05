@@ -54,8 +54,8 @@ internal static class BuffersHelper
 	/// <summary>
 	/// Retrieves the binary space for <paramref name="count"/>.
 	/// </summary>
-	/// <param name="count">Number item in the binary space.</param>
-	/// <returns>The number of the binary space.</returns>
+	/// <param name="count">Number of items in the binary space.</param>
+	/// <returns>The amount of the binary space.</returns>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -119,8 +119,8 @@ internal static class BuffersHelper
 	/// <summary>
 	/// Retrieves the binary capacity for <paramref name="count"/>.
 	/// </summary>
-	/// <param name="count">Number item in the binary space.</param>
-	/// <returns>The number of the binary capacity.</returns>
+	/// <param name="count">Number of items in the binary space.</param>
+	/// <returns>The amount of the binary capacity.</returns>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -135,7 +135,7 @@ internal static class BuffersHelper
 		return (UInt16)value;
 	}
 	/// <summary>
-	/// Retrieves the components sizes for given <paramref name="count"/>.
+	/// Retrieves the component sizes for given <paramref name="count"/>.
 	/// </summary>
 	/// <param name="components">Components buffer.</param>
 	/// <param name="count">Number of items in the required buffer.</param>
@@ -233,7 +233,7 @@ internal static class BuffersHelper
 	/// <typeparam name="T">The type of items in the buffer</typeparam>
 	/// <param name="componentA">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
 	/// <param name="componentB">A <see cref="BufferTypeMetadata"/> instance.</param>
-	/// <param name="isBinary">Output. Indicates whether resulting composition type is binary.</param>
+	/// <param name="isBinary">Output. Indicates whether the resulting composition type is binary.</param>
 	/// <returns>Resulting composition type capacity.</returns>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
@@ -318,7 +318,7 @@ internal static class BuffersHelper
 	/// Searches for the first available metadata entry in a page segment.
 	/// </summary>
 	/// <typeparam name="T">The type of items in the buffer</typeparam>
-	/// <param name="r0">Managed reference to metadata page.</param>
+	/// <param name="r0">Managed reference to the metadata page.</param>
 	/// <param name="start">Zero-based index of the first entry to inspect.</param>
 	/// <param name="count">Number of entries to inspect.</param>
 	/// <returns>

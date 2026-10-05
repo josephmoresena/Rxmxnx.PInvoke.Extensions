@@ -1,6 +1,8 @@
 #if NET8_0_OR_GREATER
 using Rxmxnx.PInvoke.Buffers.Storage;
 using Rxmxnx.PInvoke.Buffers.Storage.Bootstrap;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable ClassNeverInstantiated.Local
 
 namespace Rxmxnx.PInvoke.Tests.Internal;
 
@@ -150,9 +152,9 @@ public sealed class BootstrapBackendTest
 	{
 		MetadataStorage storage = new MetadataStorage<TBackend>();
 		BufferTypeMetadata<T> metadata =
-			new BufferTypeMetadata<Atomic<T>, T>(size, Array.Empty<BufferTypeMetadata<T>>(), true);
+			new BufferTypeMetadata<Atomic<T>, T>(size, []);
 		Assert.Null(storage.GetMetadata<T>(size));
-		Assert.Null(NonBinary<T>(size));
+		Assert.Null(BootstrapBackendTest.NonBinary<T>(size));
 		Assert.True(storage.TryAdd(metadata));
 		BootstrapBackendTest.AssertNonBinary(storage, size, metadata);
 		Assert.False(storage.TryAdd(metadata));
@@ -162,9 +164,9 @@ public sealed class BootstrapBackendTest
 	{
 		MetadataStorage storage = new MetadataStorage<TBackend>();
 		BufferTypeMetadata<T> metadata =
-			new BufferTypeMetadata<Atomic<T>, T>(size, Array.Empty<BufferTypeMetadata<T>>(), true);
+			new BufferTypeMetadata<Atomic<T>, T>(size, []);
 		BufferTypeMetadata<T> repeated =
-			new BufferTypeMetadata<Atomic<T>, T>(size, Array.Empty<BufferTypeMetadata<T>>(), true);
+			new BufferTypeMetadata<Atomic<T>, T>(size, []);
 		Assert.Null(NonBinary<T>(size));
 		Assert.Same(metadata, storage.AddBinaryMetadata(metadata));
 		BootstrapBackendTest.AssertNonBinary(storage, size, metadata);
@@ -204,9 +206,9 @@ public sealed class BootstrapBackendTest
 		BufferTypeMetadata<T> nonBinary =
 			new BufferTypeMetadata<Atomic<T>, T>(size, Array.Empty<BufferTypeMetadata<T>>(), false);
 		BufferTypeMetadata<T> binary =
-			new BufferTypeMetadata<Atomic<T>, T>(size, Array.Empty<BufferTypeMetadata<T>>(), true);
+			new BufferTypeMetadata<Atomic<T>, T>(size, []);
 		BufferTypeMetadata<T> repeated =
-			new BufferTypeMetadata<Atomic<T>, T>(size, Array.Empty<BufferTypeMetadata<T>>(), true);
+			new BufferTypeMetadata<Atomic<T>, T>(size, []);
 		MetadataStorage.NonBinaryStore<T>.AddNonBinary(nonBinary);
 		BootstrapBackendTest.AssertNonBinary(storage, size, nonBinary);
 		Assert.Same(binary, storage.AddBinaryMetadata(binary));

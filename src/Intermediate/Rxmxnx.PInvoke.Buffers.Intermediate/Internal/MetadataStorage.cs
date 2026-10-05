@@ -23,6 +23,7 @@ internal abstract partial class MetadataStorage : IMetadataStorage
 	public abstract void PrintMetadata<T>(Boolean trace);
 #endif
 
+#if NET8_0_OR_GREATER
 	/// <summary>
 	/// Tries to add <paramref name="typeMetadata"/> to the non-binary cache.
 	/// </summary>
@@ -31,10 +32,10 @@ internal abstract partial class MetadataStorage : IMetadataStorage
 	/// <see langword="true"/> if <paramref name="typeMetadata"/> was stored; otherwise, <see langword="false"/>.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static Boolean TryAddNonBinary<T>(BufferTypeMetadata<T> typeMetadata)
+	internal static Boolean TryAddNonBinaryBinary<T>(BufferTypeMetadata<T> typeMetadata)
 	{
 		Debug.Assert(typeMetadata.IsBinary);
-		return NonBinaryStore<T>.TryAdd(typeMetadata);
+		return NonBinaryStore<T>.TryAddBinary(typeMetadata);
 	}
 	/// <summary>
 	/// Retrieves the exact binary metadata stored for <paramref name="count"/> items.
@@ -44,7 +45,9 @@ internal abstract partial class MetadataStorage : IMetadataStorage
 	/// <returns>
 	/// The exact binary metadata. A non-binary entry breaks composition and is reported as missing.
 	/// </returns>
-	internal static BufferTypeMetadata<T>? GetExactBinary<T>(UInt16 count) => NonBinaryStore<T>.GetExactBinary(count);
+	internal static BufferTypeMetadata<T>? GetExactNonBinaryBinary<T>(UInt16 count)
+		=> NonBinaryStore<T>.GetExactBinary(count);
+#endif
 }
 
 /// <summary>
@@ -67,10 +70,11 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 	public override Boolean TryAdd<T>(BufferTypeMetadata<T> component)
 	{
 		Debug.Assert(component.Size > 0);
+		Debug.Assert(component.IsBinary);
 #if NET8_0_OR_GREATER
 		// ReSharper disable once ConvertIfStatementToReturnStatement
 		if (component.Size > this._backend.MaxStorageCapacity)
-			return MetadataStorage.TryAddNonBinary(component);
+			return MetadataStorage.TryAddNonBinaryBinary(component);
 #endif
 		return this._backend.TryAdd(component);
 	}
@@ -108,13 +112,11 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 #if NET8_0_OR_GREATER
 		if (count > this._backend.MaxStorageCapacity)
 		{
-			if (MetadataStorage.GetExactBinary<T>(count) is not null) return;
+			if (MetadataStorage.GetExactNonBinaryBinary<T>(count) is not null) return;
 		}
-		else if (this._backend.GetBinaryValue<T>(count) is not null)
-			return;
-#else
-		if (this._backend.GetBinaryValue<T>(count) is not null) return;
+		else
 #endif
+		if (this._backend.GetBinaryValue<T>(count) is not null) return;
 		Span<UInt16> components = BuffersHelper.GetBinaryComponents(stackalloc UInt16[16], count);
 		foreach (UInt16 comp in components)
 		{
@@ -162,7 +164,7 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 		// ReSharper disable once InvertIf
 		if (typeMetadata.Size > this._backend.MaxStorageCapacity)
 		{
-			MetadataStorage.TryAddNonBinary(typeMetadata);
+			MetadataStorage.TryAddNonBinaryBinary(typeMetadata);
 			return typeMetadata;
 		}
 #endif

@@ -148,7 +148,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 #if NET8_0_OR_GREATER
 		if (space > BinaryStore<TMain, T>.initial.MaxStorageCapacity)
 		{
-			if (MetadataStorage.GetExactBinary<T>(space) is { } stored)
+			if (MetadataStorage.GetExactNonBinaryBinary<T>(space) is { } stored)
 				return stored;
 		}
 		else if (BinaryStore<TMain, T>.GetBinaryValue(space) is { } metadata)
@@ -241,7 +241,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 #if NET8_0_OR_GREATER
 		while (space > BinaryStore<TMain, T>.initial.MaxStorageCapacity)
 		{
-			if (MetadataStorage.GetExactBinary<T>(space) is { } stored)
+			if (MetadataStorage.GetExactNonBinaryBinary<T>(space) is { } stored)
 				return stored;
 			space /= 2;
 		}
