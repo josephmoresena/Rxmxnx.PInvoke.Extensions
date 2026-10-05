@@ -90,6 +90,18 @@ public sealed class BootstrapBackendTest
 		BootstrapBackendTest.AssertPrepared<BootstrapBackend31, PrepValue>(32);
 		BootstrapBackendTest.AssertPrepared<BootstrapBackend127, PrepValue>(128);
 		BootstrapBackendTest.AssertPrepared<BootstrapBackend<Space11>, PrepValue>(2048);
+		BootstrapBackendTest.AssertPrepared<BootstrapBackend31, PrepOverflowValue>(33);
+		BootstrapBackendTest.AssertPrepared<BootstrapBackend127, PrepOverflowValue>(129);
+		BootstrapBackendTest.AssertPrepared<BootstrapBackend<Space11>, PrepOverflowValue>(2049);
+		BootstrapBackendTest.AssertPrepared<BootstrapBackend31, PrepRemainderValue>(96);
+		BootstrapBackendTest.AssertPrepared<BootstrapBackend127, PrepRemainderValue>(384);
+		BootstrapBackendTest.AssertPrepared<BootstrapBackend<Space11>, PrepRemainderValue>(6144);
+		BootstrapBackendTest.AssertPrepared<BootstrapBackend31, PrepOddRemainderValue>(97);
+		BootstrapBackendTest.AssertPrepared<BootstrapBackend127, PrepOddRemainderValue>(385);
+		BootstrapBackendTest.AssertPrepared<BootstrapBackend<Space11>, PrepOddRemainderValue>(6145);
+		BootstrapBackendTest.AssertPrepared<BootstrapBackend31, PrepWideRemainderValue>(99);
+		BootstrapBackendTest.AssertPrepared<BootstrapBackend127, PrepWideRemainderValue>(387);
+		BootstrapBackendTest.AssertPrepared<BootstrapBackend<Space11>, PrepWideRemainderValue>(6147);
 		BootstrapBackendTest.AssertReplaced<BootstrapBackend31, ReplaceValue>(32);
 		BootstrapBackendTest.AssertReplaced<BootstrapBackend<Space11>, ReplaceValue>(2048);
 		BootstrapBackendTest.AssertPreparedOverNonBinary<BootstrapBackend31, PrepReplaceValue>(32);
@@ -271,6 +283,26 @@ public sealed class BootstrapBackendTest
 	}
 
 	private struct PrepValue
+	{
+		public String? Text { get; set; }
+	}
+
+	private struct PrepOverflowValue
+	{
+		public String? Text { get; set; }
+	}
+
+	private struct PrepRemainderValue
+	{
+		public String? Text { get; set; }
+	}
+
+	private struct PrepOddRemainderValue
+	{
+		public String? Text { get; set; }
+	}
+
+	private struct PrepWideRemainderValue
 	{
 		public String? Text { get; set; }
 	}

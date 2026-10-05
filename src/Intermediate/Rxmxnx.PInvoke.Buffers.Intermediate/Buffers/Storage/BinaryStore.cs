@@ -137,6 +137,21 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	}
 #endif
 	/// <summary>
+	/// Retrieves stored binary metadata for <paramref name="size"/>.
+	/// </summary>
+	/// <param name="size">Requested component size.</param>
+	/// <returns>The stored binary metadata, or <see langword="null"/> when it is not stored.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static BufferTypeMetadata<T>? GetStoredBinary(UInt16 size)
+	{
+#if NET8_0_OR_GREATER
+		// ReSharper disable once ConvertIfStatementToReturnStatement
+		if (size > BinaryStore<TMain, T>.initial.MaxStorageCapacity)
+			return MetadataStorage.GetExactNonBinaryBinary<T>(size);
+#endif
+		return BinaryStore<TMain, T>.GetBinaryValue(size);
+	}
+	/// <summary>
 	/// Retrieves the fundamental component of size <paramref name="space"/>.
 	/// </summary>
 	/// <param name="storage">A <see cref="MetadataStorage"/> instance.</param>
@@ -145,16 +160,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static BufferTypeMetadata<T>? GetFundamental(IMetadataStorage storage, UInt16 space)
 	{
-#if NET8_0_OR_GREATER
-		if (space > BinaryStore<TMain, T>.initial.MaxStorageCapacity)
-		{
-			if (MetadataStorage.GetExactNonBinaryBinary<T>(space) is { } stored)
-				return stored;
-		}
-		else if (BinaryStore<TMain, T>.GetBinaryValue(space) is { } metadata)
-#else
-		if (BinaryStore<TMain, T>.GetBinaryValue(space) is { } metadata)
-#endif
+		if (BinaryStore<TMain, T>.GetStoredBinary(space) is { } metadata)
 			return metadata;
 		if (space == 1)
 #if !NET5_0_OR_GREATER
@@ -215,7 +221,7 @@ internal static class BinaryStore<TMain, T> where TMain : struct, IMainBinarySto
 		while (count - result.Size > 0)
 		{
 			UInt16 diff = (UInt16)(count - result.Size);
-			BufferTypeMetadata<T>? aux = BinaryStore<TMain, T>.GetBinaryValue(diff) ??
+			BufferTypeMetadata<T>? aux = BinaryStore<TMain, T>.GetStoredBinary(diff) ??
 				BinaryStore<TMain, T>.ComputeBinaryMetadata(storage, diff);
 			{
 				// Auxiliary metadata not found. Use minimal.
