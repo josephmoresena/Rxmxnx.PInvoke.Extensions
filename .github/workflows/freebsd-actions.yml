@@ -77,7 +77,7 @@ jobs:
             #echo 'FreeBSD: { url: "pkg+http://pkg.freebsd.org/FreeBSD:14:amd64/latest" }' > /usr/local/etc/pkg/repos/FreeBSD.conf
             
             pkg update -f 
-            pkg install -y python311 py311-pillow sqlite3 unixODBC libgdiplus zip ca_root_nss binutils dotnet powershell pkgconf libinotify
+            pkg install -y python312 py312-pillow sqlite3 unixODBC libgdiplus zip ca_root_nss binutils dotnet powershell pkgconf libinotify
             
             mkdir -p ~/fake-python39/metadata
             cat > ~/fake-python39/metadata/+COMPACT_MANIFEST <<EOF
