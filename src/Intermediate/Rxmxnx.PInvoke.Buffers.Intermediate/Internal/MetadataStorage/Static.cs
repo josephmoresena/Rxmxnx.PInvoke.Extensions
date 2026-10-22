@@ -34,7 +34,7 @@ internal abstract partial class MetadataStorage
 
 #if NET8_0_OR_GREATER
 	/// <summary>
-	/// Initialize bootstrap object storage.
+	/// Initializes the bootstrap object storage.
 	/// </summary>
 	/// <param name="span">A <see cref="BufferTypeMetadata{Object}"/> span.</param>
 	/// <param name="bufferTypeMetadata">Initial <see cref="BufferTypeMetadata{Object}"/> instance.</param>

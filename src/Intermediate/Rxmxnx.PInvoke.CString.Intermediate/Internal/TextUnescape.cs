@@ -1,7 +1,7 @@
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// Unescape text utilities.
+/// Utilities for unescaping text.
 /// </summary>
 internal static class TextUnescape
 {
@@ -22,8 +22,8 @@ internal static class TextUnescape
 	/// <summary>
 	/// Unescapes the UTF-8 string in the buffer.
 	/// </summary>
-	/// <param name="buffer">A UTF-8 unescaped buffer.</param>
-	/// <returns>Number of bytes of escape adjustment.</returns>
+	/// <param name="buffer">A UTF-8 buffer that contains escaped text.</param>
+	/// <returns>The number of bytes removed while unescaping.</returns>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
@@ -71,7 +71,7 @@ internal static class TextUnescape
 	/// <summary>
 	/// Unescapes a UTF-8 unit in the buffer.
 	/// </summary>
-	/// <param name="buffer">A UTF-8 unescaped buffer.</param>
+	/// <param name="buffer">A UTF-8 buffer that contains the escaped unit.</param>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
 #endif
@@ -96,8 +96,8 @@ internal static class TextUnescape
 	/// <summary>
 	/// Unescapes a Unicode character in the buffer.
 	/// </summary>
-	/// <param name="escapedBuffer">Reference. A UTF-8 unescaped buffer.</param>
-	/// <param name="escapeIndex">Reference. Index of escape begin.</param>
+	/// <param name="escapedBuffer">Reference. A UTF-8 escaped buffer.</param>
+	/// <param name="escapeIndex">Reference. The index of the start of the escape sequence.</param>
 	/// <returns>The number of bytes that were not replaced.</returns>
 #if NET5_0_OR_GREATER
 	[SkipLocalsInit]
@@ -120,13 +120,13 @@ internal static class TextUnescape
 		return result;
 	}
 	/// <summary>
-	/// Retrieves the unescape rune from the buffer.
+	/// Retrieves the unescaped rune from the buffer.
 	/// </summary>
 	/// <param name="escapedBuffer">A UTF-8 escaped buffer.</param>
-	/// <param name="escapeIndex">Index of escape begin.</param>
-	/// <param name="lowChar">Low surrogate char.</param>
-	/// <param name="escapeSize">Escape size in bytes.</param>
-	/// <returns>The escape rune from the buffer.</returns>
+	/// <param name="escapeIndex">The index of the start of the escape sequence.</param>
+	/// <param name="lowChar">The low surrogate character.</param>
+	/// <param name="escapeSize">The escape sequence size, in bytes.</param>
+	/// <returns>The unescaped rune from the buffer.</returns>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
@@ -150,7 +150,7 @@ internal static class TextUnescape
 	/// Indicates whether the buffer has a high surrogate character at the specified escape index.
 	/// </summary>
 	/// <param name="escapedBuffer">A UTF-8 escaped buffer.</param>
-	/// <param name="escapeIndex">Index of escape begin.</param>
+	/// <param name="escapeIndex">The index of the start of the escape sequence.</param>
 	/// <param name="high">Output. High surrogate character.</param>
 	/// <returns>
 	/// <see langword="true"/> if the buffer has a high surrogate character at the specified escape index;

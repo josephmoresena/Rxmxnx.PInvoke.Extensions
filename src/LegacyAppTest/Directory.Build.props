@@ -1,0 +1,18 @@
+<Project>
+
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))"/>
+
+    <PropertyGroup>
+        <!-- MSBuild 16.10 cannot run the workload SDK resolver (hostfxr). Skip that import for this solution. -->
+        <MSBuildEnableWorkloadResolver>false</MSBuildEnableWorkloadResolver>
+        <!--
+          SDK 10's Git task needs ImmutableCollectionsMarshal from System.Collections.Immutable 8.
+          Mono MSBuild 16.10 loads an older copy, so LocateRepository fails before the project compiles.
+        -->
+        <EnableSourceControlManagerQueries>false</EnableSourceControlManagerQueries>
+        <!-- mmp reads LANG=C.UTF-8 and Mono rejects the culture name C. The build continues either way. -->
+        <!-- SDK 10 warns that the Framework Roslyn host, which Mono MSBuild still uses, is deprecated. -->
+        <NoWarn>$(NoWarn);MM0124;NETSDK1234</NoWarn>
+    </PropertyGroup>
+
+</Project>

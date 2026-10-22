@@ -1,6 +1,6 @@
 namespace Rxmxnx.PInvoke;
 
-public readonly partial struct ValPtr<T> 
+public readonly partial struct ValPtr<T>
 #if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 	: IEquatable<IntPtr>
 #endif

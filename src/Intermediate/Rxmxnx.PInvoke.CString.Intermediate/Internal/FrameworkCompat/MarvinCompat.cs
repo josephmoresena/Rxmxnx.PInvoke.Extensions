@@ -72,11 +72,7 @@ internal static class MarvinCompat
 	static MarvinCompat()
 	{
 		if (TrimInfo.SafeGetType(typeof(String), "System.Marvin") is not { } marvinType) return;
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (marvinType.GetProperty("DefaultSeed") is not { } defaultSeedProp) return;
-#else
-		if (marvinType.GetTypeInfo().GetDeclaredProperty("DefaultSeed") is not { } defaultSeedProp) return;
-#endif
 		MarvinCompat.DefaultSeed = Convert.ToUInt64(defaultSeedProp.GetValue(default));
 	}
 

@@ -1,8 +1,4 @@
-﻿#if !NET6_0_OR_GREATER
-using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
-#endif
-
-#if !NET5_0_OR_GREATER
+﻿#if !NET5_0_OR_GREATER
 using Convert = Rxmxnx.PInvoke.Internal.FrameworkCompat.ConvertCompat;
 #endif
 
@@ -452,10 +448,10 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <see cref="ReadOnlySpanFunc{Byte}"/> delegate provided.
 	/// </summary>
 	/// <param name="func">
-	/// A <see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns a UTF-8 string non-literal.
+	/// A <see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns a non-literal UTF-8 string.
 	/// </param>
 	/// <returns>
-	/// A new instance of the <see cref="CString"/> class, if the func is not <see langword="null"/>;
+	/// A new instance of the <see cref="CString"/> class if <paramref name="func"/> is not <see langword="null"/>;
 	/// otherwise, <see langword="null"/>.
 	/// </returns>
 	[return: NotNullIfNotNull(nameof(func))]
@@ -466,7 +462,7 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// </summary>
 	/// <param name="bytes">Binary internal information.</param>
 	/// <returns>
-	/// A new instance of the <see cref="CString"/> class, if the bytes are not <see langword="null"/>;
+	/// A new instance of the <see cref="CString"/> class if <paramref name="bytes"/> is not <see langword="null"/>;
 	/// otherwise, <see langword="null"/>.
 	/// </returns>
 	[return: NotNullIfNotNull(nameof(bytes))]
@@ -499,7 +495,7 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
 	/// </summary>
-	/// <typeparam name="TState">A <see cref="IUtf8FunctionState{TState}"/> type.</typeparam>
+	/// <typeparam name="TState">An <see cref="IUtf8FunctionState{TState}"/> type.</typeparam>
 	/// <param name="state">Function state parameter.</param>
 	/// <returns>
 	/// A new instance of the <see cref="CString"/> class.

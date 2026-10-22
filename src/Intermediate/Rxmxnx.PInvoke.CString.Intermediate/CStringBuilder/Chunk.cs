@@ -122,10 +122,10 @@ public partial class CStringBuilder
 		}
 #if NET8_0_OR_GREATER
 		/// <summary>
-		/// Appends a <see cref="IUtf8SpanFormattable"/> value to the sequence, allocating new chunks as needed.
+		/// Appends an <see cref="IUtf8SpanFormattable"/> value to the sequence, allocating new chunks as needed.
 		/// </summary>
-		/// <typeparam name="T">A <see cref="IUtf8SpanFormattable"/> instance.</typeparam>
-		/// <param name="value">A <see cref="IUtf8SpanFormattable"/> instance.</param>
+		/// <typeparam name="T">An <see cref="IUtf8SpanFormattable"/> instance.</typeparam>
+		/// <param name="value">An <see cref="IUtf8SpanFormattable"/> instance.</param>
 		/// <returns>The chunk into which the final portion of <paramref name="value"/> was written.</returns>
 		public Chunk AppendUtf8<T>(T value) where T : IUtf8SpanFormattable, ISpanFormattable
 		{
@@ -143,10 +143,10 @@ public partial class CStringBuilder
 #endif
 #if NET6_0_OR_GREATER
 		/// <summary>
-		/// Appends a <see cref="ISpanFormattable"/> value to the sequence, allocating new chunks as needed.
+		/// Appends an <see cref="ISpanFormattable"/> value to the sequence, allocating new chunks as needed.
 		/// </summary>
-		/// <typeparam name="T">A <see cref="ISpanFormattable"/> instance.</typeparam>
-		/// <param name="value">A <see cref="ISpanFormattable"/> instance.</param>
+		/// <typeparam name="T">An <see cref="ISpanFormattable"/> instance.</typeparam>
+		/// <param name="value">An <see cref="ISpanFormattable"/> instance.</param>
 		/// <returns>The chunk into which the final portion of <paramref name="value"/> was written.</returns>
 #if !NET8_0_OR_GREATER
 		public Chunk AppendUtf16<T>(T value) where T : ISpanFormattable
@@ -249,7 +249,7 @@ public partial class CStringBuilder
 			Span<Byte> firstChunkBuffer = chunk._buffer.AsSpan()[index..];
 
 			if (nextChunk is not null)
-				// Use unused bytes form the next chunk.
+				// Use unused bytes from the next chunk.
 				Chunk.Fill(nextChunk, ref lastNewData, ref oldData);
 
 			Int32 newRequiredBytes = lastNewData.Length + oldData.Length;

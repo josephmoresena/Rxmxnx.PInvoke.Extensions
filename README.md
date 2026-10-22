@@ -8,9 +8,12 @@
 
 Safe, typed, and allocation-conscious interop for .NET — from Native AOT to Mono, Unity, and WebAssembly.
 
-`Rxmxnx.PInvoke.Extensions` makes native memory, UTF-8 text, and P/Invoke feel like regular .NET code. You keep pointer intent in your signatures, pin memory only for as long as a callback or `using` scope lasts, and work with UTF-8 the way native APIs already do.
+`Rxmxnx.PInvoke.Extensions` makes native memory, UTF-8 text, and P/Invoke feel like regular .NET code. You keep pointer
+intent in your signatures, pin memory only for as long as a callback or `using` scope lasts, and work with UTF-8 the way
+native APIs already do.
 
-The goal is **interop without spreading `unsafe`**, **performance without giving up lifetime safety**, and **modern code that stays retrocompatible** when the framework or the runtime changes.
+The goal is **interop without spreading `unsafe`**, **performance without giving up lifetime safety**, and **modern code
+that stays backward-compatible** when the framework or the runtime changes.
 
 ```csharp
 CString message = new(() => "Hello from .NET"u8);
@@ -27,45 +30,50 @@ readonly struct UseUtf8 : IReadOnlyFixedContextAction<Byte>
 }
 ```
 
-Snippets in these guides use **C# 11** (`u8` literals, `scoped`). The library itself requires at least **C# 7.3**. On **.NET 9.0 and later**, use **C# 13**. See [language versions](docs/getting-started.md#language-versions).
+Snippets in these guides use **C# 11** (`u8` literals, `scoped`). The library itself requires at least **C# 7.3**. On
+**.NET 9.0 and later**, use **C# 13**. See [language versions](docs/getting-started.md#language-versions).
 
-## Until 2.9.5 — and what later versions add
+## Hosts
 
-Until version **2.9.5**, package compatibility was limited to modern runtimes that support **.NET Standard 2.1**. That remains the baseline in every later version.
+Functional interfaces and value-type fixed contexts are the callback form on every TFM. The target map is in
+[API surface by TFM](docs/api/compatibility.md). For a new project, see
+[support policy](docs/getting-started.md#support-policy).
 
-From versions after 2.9.5 the package also ships:
-
-- **Functional interfaces.** The preferred callback style on every TFM: state lives on a `readonly struct`, so hot paths avoid extra allocations and work naturally with `ref struct` values. Delegate overloads stay public on the original modern TFMs (.NET Standard 2.1 / .NET Core 3.0+).
-- **Value-type fixed contexts.** `FixedContextValue<T>` and `FixedPointerValue` keep pinning, spans, and typed pointers in a single scoped value.
-- **Dedicated and portable extra TFMs.** Binaries for .NET Framework, UWP, .NET Core 2.1, and .NET Standard 2.0 — **modern APIs on older hosts**, including production apps. Use **netstandard2.1** whenever the engine supports it; use **netstandard2.0 only when it does not**.
-
-If your code talks to native libraries, serializes UTF-8, reinterprets binary layouts, or has to stay trim/AOT-friendly, this package is built for that job.
+If your code talks to native libraries, serializes UTF-8, reinterprets binary layouts, or has to stay trim/AOT-friendly,
+this package is built for that job.
 
 ## Start here
 
-| I want to… | Go to |
-| --- | --- |
+| I want to…                                  | Go to                                      |
+|---------------------------------------------|--------------------------------------------|
 | Install the package and see a first example | [Getting started](docs/getting-started.md) |
-| Understand what the library can do | [Capabilities](docs/capabilities.md) |
-| See real scenarios | [Use cases](docs/use-cases.md) |
-| Look up types and APIs | [API reference](docs/api/README.md) |
-| Browse the full documentation index | [Documentation](docs/README.md) |
+| Understand what the library can do          | [Capabilities](docs/capabilities.md)       |
+| See real scenarios                          | [Use cases](docs/use-cases.md)             |
+| Look up types and APIs                      | [API reference](docs/api/README.md)        |
+| Browse the full documentation index         | [Documentation](docs/README.md)            |
 
 ```bash
 dotnet add package Rxmxnx.PInvoke.Extensions
 ```
 
-Officially supported on **.NET 8.0 and later**. Until 2.9.5 the package targeted .NET Standard 2.1 and .NET Core 3.0+. Later versions also ship **.NET Standard 2.0**, **.NET Core 2.1**, **.NET Framework 4.5.2–4.7.2**, and **UWP 10.0.16299** so the same modern style can run on those hosts. See [framework support](docs/getting-started.md#framework-support) and [API surface by TFM](docs/api/compatibility.md).
-
 ## Capabilities at a glance
 
-- **UTF-8 that matches native APIs.** `CString` wraps managed buffers, UTF-8 literals, or unmanaged pointers. `CStringSequence` stores null-terminated argument/environment lists. `CStringBuilder` is the UTF-8 counterpart of `StringBuilder`.
-- **Typed pointers without `unsafe`.** `ValPtr<T>`, `ReadOnlyValPtr<T>`, and `FuncPtr<TDelegate>` keep pointer meaning visible in P/Invoke signatures.
-- **Scoped fixed memory.** `WithSafeFixed` pins spans, strings, and references only for the duration of a callback or `using` block, then exposes them as spans, pointers, or typed contexts.
-- **Binary views with no extra copies.** `AsBytes`, `AsValues`, `ToBytes`, and `ToValue` reinterpret memory you already own. On desktop .NET Framework those span operations may be slower than on modern .NET; they follow the fast path when the **runtime** has it (current .NET, UWP, Mono).
-- **Multidimensional arrays as a rank-1 view.** `AsSpan` / `AsMemory` flatten `T[,]`, `T[,,]`, … without copying, on every TFM — including slow span and pre-.NET 5.0 hosts.
-- **Stack-backed references.** `BufferManager` allocates object or value buffers on the stack when possible, falling back to the heap only when needed. Unmanaged `T` uses `stackalloc`; `ScopedBuffer<T>` is a view.
-- **Runtime awareness.** `AotInfo` and `SystemInfo` help you adapt to Native AOT, Mono, WebAssembly, and OS differences without scattering `#if` everywhere.
+- **UTF-8 that matches native APIs.** `CString` wraps managed buffers, UTF-8 literals, or unmanaged pointers.
+  `CStringSequence` stores null-terminated argument/environment lists. `CStringBuilder` is the UTF-8 counterpart of
+  `StringBuilder`.
+- **Typed pointers without `unsafe`.** `ValPtr<T>`, `ReadOnlyValPtr<T>`, and `FuncPtr<TDelegate>` keep pointer meaning
+  visible in P/Invoke signatures.
+- **Scoped fixed memory.** `WithSafeFixed` pins spans, strings, and references only for the duration of a callback or
+  `using` block, then exposes them as spans, pointers, or typed contexts.
+- **Binary views with no extra copies.** `AsBytes`, `AsValues`, `ToBytes`, and `ToValue` reinterpret memory you already
+  own. On desktop .NET Framework those span operations may be slower than on modern .NET; they follow the fast path when
+  the **runtime** has it (current .NET, UWP, Mono).
+- **Multidimensional arrays as a rank-1 view.** `AsSpan` / `AsMemory` flatten `T[,]`, `T[,,]`, … without copying, on
+  every TFM — including slow span and pre-.NET 5.0 hosts.
+- **Stack-backed references.** `BufferManager` allocates object or value buffers on the stack when possible, falling
+  back to the heap only when needed. Unmanaged `T` uses `stackalloc`; `ScopedBuffer<T>` is a view.
+- **Runtime awareness.** `AotInfo` and `SystemInfo` help you adapt to Native AOT, Mono, WebAssembly, and OS differences
+  without scattering `#if` everywhere.
 
 A longer tour lives in [Capabilities](docs/capabilities.md). Concrete recipes live in [Use cases](docs/use-cases.md).
 
@@ -73,18 +81,19 @@ A longer tour lives in [Capabilities](docs/capabilities.md). Concrete recipes li
 
 Use this library when the problem benefits from explicit memory intent, scoped lifetimes, or low-allocation data access:
 
-| Scenario | Start with |
-| --- | --- |
-| UTF-8 text for native APIs, JSON, gRPC, or ASP.NET | `CString`, `CStringSequence`, `CStringBuilder` |
-| Typed native pointers without spreading `unsafe` | `ValPtr<T>`, `ReadOnlyValPtr<T>`, `FuncPtr<TDelegate>` |
-| Pin memory only for a callback or `using` scope | `WithSafeFixed`, `FixedContextValue<T>` (and `IFixedContext<T>` on .NET Standard 2.1 / .NET Core 3.0+) |
-| Native heap with .NET disposal | `NativeUtilities.HeapAlloc<T>()` |
-| Reinterpret or hash binary layouts | `AsBytes`, `AsValues`, `ToBytes`, `ToValue` |
-| Flatten a multidimensional array without copying | `AsSpan`, `AsMemory` |
-| Stack-first temporary storage | `BufferManager`, `ScopedBuffer<T>` |
-| AOT / Mono / platform checks | `AotInfo`, `SystemInfo`, `IsImageMethod`, `IsLiteral` |
+| Scenario                                           | Start with                                                                                             |
+|----------------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| UTF-8 text for native APIs, JSON, gRPC, or ASP.NET | `CString`, `CStringSequence`, `CStringBuilder`                                                         |
+| Typed native pointers without spreading `unsafe`   | `ValPtr<T>`, `ReadOnlyValPtr<T>`, `FuncPtr<TDelegate>`                                                 |
+| Pin memory only for a callback or `using` scope    | `WithSafeFixed`, `FixedContextValue<T>` (and `IFixedContext<T>` on .NET Standard 2.1 / .NET Core 3.0+) |
+| Native heap with .NET disposal                     | `NativeUtilities.HeapAlloc<T>()`                                                                       |
+| Reinterpret or hash binary layouts                 | `AsBytes`, `AsValues`, `ToBytes`, `ToValue`                                                            |
+| Flatten a multidimensional array without copying   | `AsSpan`, `AsMemory`                                                                                   |
+| Stack-first temporary storage                      | `BufferManager`, `ScopedBuffer<T>`                                                                     |
+| AOT / Mono / platform checks                       | `AotInfo`, `SystemInfo`, `IsImageMethod`, `IsLiteral`                                                  |
 
-Skip it when those flows are already covered, you prefer writing `unsafe` by hand, or UTF-8 and pointer contracts are not part of the workload.
+Skip it when those flows are already covered, you prefer writing `unsafe` by hand, or UTF-8 and pointer contracts are
+not part of the workload.
 
 ## Quick example
 
@@ -105,7 +114,8 @@ readonly struct Open : IReadOnlyFixedContextAction<Byte>
 path.WithSafeFixed(new Open());
 ```
 
-On .NET 7.0+, `CString` also supports source-generated marshalling as a null-terminated UTF-8 string, so many P/Invoke declarations can take `CString` directly.
+On .NET 7.0+, `CString` also supports source-generated marshalling as a null-terminated UTF-8 string, so many P/Invoke
+declarations can take `CString` directly.
 
 ## Documentation
 
@@ -116,14 +126,17 @@ On .NET 7.0+, `CString` also supports source-generated marshalling as a null-ter
 - [Use cases](docs/use-cases.md) — recipes for interop, UTF-8 pipelines, binary views, and AOT
 - [API reference](docs/api/README.md) — types, members, and contracts
 
-The XML documentation in the source remains the complete member-level reference. The guides above are written for reading, not for scanning a catalog.
+The XML documentation in the source remains the complete member-level reference. The guides above are written for
+reading, not for scanning a catalog.
 
 ## License
 
-This project is licensed under the **MIT License**. Use it in open-source or closed-source projects; the only requirement is to keep the copyright notice. See [LICENSE.md](LICENSE.md).
+This project is licensed under the **MIT License**. Use it in open-source or closed-source projects; the only
+requirement is to keep the copyright notice. See [LICENSE.md](LICENSE.md).
 
 ## Contributing
 
 Issues, ideas, translations, and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-The library currently ships messages in English, Arabic, Chinese, French, German, Italian, Japanese, Portuguese, Russian, and Spanish.
+The library currently ships messages in English, Arabic, Chinese, French, German, Italian, Japanese, Portuguese,
+Russian, and Spanish.

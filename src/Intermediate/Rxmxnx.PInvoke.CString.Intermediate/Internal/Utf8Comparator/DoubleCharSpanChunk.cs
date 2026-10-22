@@ -12,7 +12,7 @@ internal partial class Utf8Comparator
 	private readonly struct DoubleCharSpanChunk
 	{
 		/// <summary>
-		/// Long value for fast comparision.
+		/// Long value for fast comparison.
 		/// </summary>
 		[FieldOffset(0)]
 		public readonly Int64 Value;
@@ -28,7 +28,7 @@ internal partial class Utf8Comparator
 		/// </summary>
 		/// <param name="chunkA">First <see cref="DoubleCharSpanChunk"/> instance.</param>
 		/// <param name="chunkB">Second <see cref="DoubleCharSpanChunk"/> instance.</param>
-		/// <returns>Comparision value.</returns>
+		/// <returns>Comparison value.</returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Int32 Compare(DoubleCharSpanChunk chunkA, DoubleCharSpanChunk chunkB)
 		{

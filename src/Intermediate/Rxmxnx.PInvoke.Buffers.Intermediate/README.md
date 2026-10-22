@@ -1,14 +1,9 @@
-﻿`Rxmxnx.PInvoke.Extensions` supports the use of two types of buffers: binary and non-binary. The theoretical maximum of a
-**managed** buffer is (2<sup>16</sup>) − 1 elements. A single **binary** buffer is at most 2<sup>15</sup> elements;
-combining every maximum binary space still cannot exceed (2<sup>16</sup>) − 1. The runtime may offer less.
+﻿`Rxmxnx.PInvoke.Extensions` supports binary and non-binary buffers. Limits are in the
+[buffers guide](../../../docs/api/buffers.md).
 
-For the capability overview, recipes, and API map, see the [buffers guide](../../../docs/api/buffers.md),
-[use cases](../../../docs/use-cases.md#use-a-stack-buffer-in-a-hot-parser), and
-[documentation hub](../../../docs/README.md).
-
-Internally, all reference types utilize buffers of type `Object`. Only not unmanaged value types require the use of
-buffers specific to their type. Unmanaged types do not need a managed buffer: `ScopedBuffer<T>` is a view, and the
-allocation uses `stackalloc`.
+Internally, all reference types use buffers of type `Object`. Only managed value types require a buffer specific to
+their type. Unmanaged types do not need a managed buffer: `ScopedBuffer<T>` is a view, and the allocation uses
+`stackalloc`.
 
 ---
 
@@ -28,10 +23,19 @@ following conditions:
 - The runtime environment is JIT, or if it is AOT, metadata for the composed binary buffer is preserved and reflection
   is accessible at runtime.
 
-#### Native AOT
+#### NET Native, Native AOT, IL2CPP, and reflection-free mode
 
-In a Native AOT runtime, binary buffer composition requires metadata preservation through a Runtime Directives file.
-Below is an example of the metadata preservation needed to compose a binary buffer with a capacity of 10 elements of any
+Auto-composition on AOT has two alternatives.
+
+**Runtime directives.** Preserve the composite types in an RD.xml file. The file can be very long and is the manageable
+option when you would rather not list types in the source. It did not work in the obsolete reflection-free Native AOT
+mode.
+
+**Code registration.** Register the buffer type (`BufferManager.Register…`). This is easier to initialize and does not
+use reflection at all. IL2CPP has no path other than registration, and neither does reflection-free mode.
+
+In Native AOT and NET Native the runtime that still has reflection, binary buffer composition can use a directives' file
+below. The example preserves the metadata needed to compose a binary buffer with a capacity of 10 elements of any
 reference type Composite (2<sup>1</sup>, 2<sup>3</sup>, `Object`).
 
 **Notes**:
@@ -40,6 +44,7 @@ reference type Composite (2<sup>1</sup>, 2<sup>3</sup>, `Object`).
   1</sup>, `Object`), 2<sup>1</sup> is Composite (2<sup>0</sup>, 2<sup>0</sup>, `Object`) and 2<sup>0</sup> is Atomic
   (`Object`).
 * Once a buffer is composed, it becomes available for use. This process is executed only once for each capacity.
+* In Mono AOT, buffer auto-composition has limited support due to `gsharedvt` constraints.
 
 ```xml
 
@@ -104,13 +109,13 @@ reflection during buffer allocation.
 
 There are three buffer registration options:
 
-1. For `Object` type.
-2. For generic `struct` type.
-3. For generic nullable `struct` type.
+1. For the `Object` type.
+2. For a generic `struct` type.
+3. For a generic nullable `struct` type.
 
-## Binary buffer Preparation
+## Binary buffer preparation
 
-Binary buffers can be statically prepared for a given count number elements. This method requires the use of reflection
+Binary buffers can be statically prepared for a given number of elements. This method requires reflection
 and relies on the auto-composition feature.
 
 ## Buffer metadata storage
@@ -130,7 +135,7 @@ requirements, the following feature switches were introduced:
 * `PInvoke.BootstrapBufferStorage.Limited`: Restricts buffer storage and composition to a maximum binary capacity of
   2047 elements, with a binary space limit of 2<sup>10</sup> + 2<sup>9</sup> + 2<sup>8</sup> + 2<sup>7</sup> + 2<sup>
   6</sup> + 2<sup>5</sup> + 2<sup>4</sup> + 2<sup>3</sup> + 2<sup>2</sup> + 2<sup>1</sup> + 2<sup>0</sup>.
-* `PInvoke.BootstrapBufferStorage.Extended`: Uses the new storage system using a managed-buffer-based binary space of
+* `PInvoke.BootstrapBufferStorage.Extended`: Uses the new storage system, with a managed-buffer-based binary space of
   2047 elements, while still allowing extension to support larger binary metadata capacities.
 
 **Notes:**

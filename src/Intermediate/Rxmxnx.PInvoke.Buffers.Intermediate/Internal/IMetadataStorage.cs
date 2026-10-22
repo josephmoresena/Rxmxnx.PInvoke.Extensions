@@ -26,7 +26,7 @@ internal interface IMetadataStorage
 	/// </summary>
 	/// <typeparam name="T">The type of items in the buffer.</typeparam>
 	/// <param name="count">Number of items in the required buffer.</param>
-	/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
+	/// <exception cref="InvalidOperationException">Thrown if metadata for any buffer component is missing.</exception>
 	void PrepareBinaryMetadata<T>(UInt16 count);
 	/// <summary>
 	/// Registers buffer type.

@@ -1,9 +1,6 @@
 ﻿#if (NETCOREAPP && !NET5_0_OR_GREATER) || NET461_OR_GREATER || UAP10_0_16299
 using Enum = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
 #endif
-#if !NET6_0_OR_GREATER
-using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
-#endif
 
 #if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP && !NETFRAMEWORK && !UAP10_0_16299
 using InsufficientMemoryException = System.OutOfMemoryException;
@@ -139,11 +136,11 @@ internal static unsafe class ValidationUtilities
 	/// <summary>
 	/// Throws an exception if <paramref name="obj"/> is not a value pointer.
 	/// </summary>
-	/// <param name="obj">A <see cref="Object"/> instance.</param>
+	/// <param name="obj">An <see cref="Object"/> instance.</param>
 	/// <param name="ptr">An <see cref="IntPtr"/> value.</param>
 	/// <param name="nameofPtr">Name of a value pointer type.</param>
 	/// <typeparam name="T">Type of referenced value.</typeparam>
-	/// <returns>A <see cref="Int32"/> value that indicates the relative order of the objects being compared.</returns>
+	/// <returns>An <see cref="Int32"/> value that indicates the relative order of the objects being compared.</returns>
 	/// <exception cref="ArgumentException">Throws an exception if <paramref name="obj"/> is not a value pointer.</exception>
 	public static Int32 ThrowIfInvalidValuePointer<T>(Object? obj, IntPtr ptr, String nameofPtr)
 #if NET9_0_OR_GREATER
@@ -557,11 +554,7 @@ internal static unsafe class ValidationUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfNotUnmanagedType(Type? type, Boolean isUnmanaged)
 	{
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (type is null || (type.IsValueType && isUnmanaged)) return;
-#else
-		if (type is null || (type.GetTypeInfo().IsValueType && isUnmanaged)) return;
-#endif
 		String message = MessageResource.GetInstance().NotUnmanagedType(type);
 		throw new InvalidOperationException(message);
 	}
@@ -575,11 +568,7 @@ internal static unsafe class ValidationUtilities
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfNotReferenceType(Type? type)
 	{
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (type is not null && !type.IsValueType) return;
-#else
-		if (type is not null && !type.GetTypeInfo().IsValueType) return;
-#endif
 		String message = MessageResource.GetInstance().NotReferenceType(type ?? typeof(Byte));
 		throw new InvalidOperationException(message);
 	}
@@ -600,15 +589,9 @@ internal static unsafe class ValidationUtilities
 		Boolean unmanagedDestination)
 	{
 		IMessageResource resource = MessageResource.GetInstance();
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (!destinationType.IsValueType)
 		{
 			if (sourceType is null || sourceType.IsValueType)
-#else
-		if (!destinationType.GetTypeInfo().IsValueType)
-		{
-			if (sourceType is null || sourceType.GetTypeInfo().IsValueType)
-#endif
 				throw new InvalidOperationException(resource.NotValueType(destinationType));
 		}
 		else if (!unmanagedSource)
@@ -641,11 +624,7 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = MessageResource.GetInstance();
 		String? message = isItemUnmanaged switch
 		{
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 			false when isArrayUnmanaged => itemType.IsValueType ?
-#else
-			false when isArrayUnmanaged => itemType.GetTypeInfo().IsValueType ?
-#endif
 				resource.ContainsReferencesButUnmanaged(itemType, arrayType) :
 				resource.ReferencesTypeButUnmanaged(itemType, arrayType),
 			true when !isArrayUnmanaged => resource.UnmanagedTypeButContainsReferences(itemType, arrayType),

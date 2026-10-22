@@ -2,7 +2,7 @@ namespace Rxmxnx.PInvoke;
 
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 /// <summary>
-/// Defines a callable object that performs an operation using a <see cref="FixedPointerValueList"/> and .
+/// Defines a callable object that performs an operation using a <see cref="FixedPointerValueList"/>.
 /// </summary>
 /// <remarks>
 /// This interface provides an alternative to <see cref="ReadOnlyFixedListAction"/> or <see cref="FixedListAction{T}"/>
@@ -11,7 +11,7 @@ namespace Rxmxnx.PInvoke;
 /// </remarks>
 #else
 /// <summary>
-/// Defines a callable object that performs an operation using a <see cref="FixedPointerValueList"/> and .
+/// Defines a callable object that performs an operation using a <see cref="FixedPointerValueList"/>.
 /// </summary>
 #endif
 public interface IFixedPointerListAction

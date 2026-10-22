@@ -171,7 +171,7 @@ public abstract partial class ValueRegion<T>
 	/// Creates a new <see cref="ValueRegion{T}"/> instance from a pointer to a native memory region.
 	/// </summary>
 	/// <param name="ptr">Pointer to memory region.</param>
-	/// <param name="length">Amount of values in sequence.</param>
+	/// <param name="length">The number of values in the sequence.</param>
 	/// <returns>A new <see cref="ValueRegion{T}"/> instance.</returns>
 	/// <remarks>
 	/// If the provided pointer is <see langword="null"/>, the method returns an empty <see cref="ValueRegion{T}"/>

@@ -9,6 +9,9 @@ internal sealed class BufferTypeMetadata<[DynamicallyAccessedMembers(BuffersHelp
 	T> : BufferTypeMetadata<T> where TBuffer : struct, IManagedBuffer<T>
 {
 #if !NET7_0_OR_GREATER
+	/// <summary>
+	/// Action to append components to the metadata storage.
+	/// </summary>
 	private readonly Action<IMetadataStorage>? _appendComponents;
 #endif
 
@@ -94,17 +97,17 @@ internal sealed class BufferTypeMetadata<[DynamicallyAccessedMembers(BuffersHelp
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal override void Execute<TAction>(ref TAction action, Int32 spanLength)
-		=> BufferTypeMetadata.Execute<T, TBuffer, TAction>(in action, this, spanLength);
+		=> BufferTypeMetadata.Execute<T, TBuffer, TAction>(ref action, this, spanLength);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal override TResult Execute<TFunction, TResult>(ref TFunction func, Int32 spanLength)
-		=> BufferTypeMetadata.Execute<T, TBuffer, TFunction, TResult>(in func, this, spanLength);
+		=> BufferTypeMetadata.Execute<T, TBuffer, TFunction, TResult>(ref func, this, spanLength);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal override void Execute<TU, TAction>(ref TAction action, Int32 spanLength)
-		=> BufferTypeMetadata.Execute<TU, TBuffer, TAction>(in action, this, spanLength);
+		=> BufferTypeMetadata.Execute<TU, TBuffer, TAction>(ref action, this, spanLength);
 	/// <inheritdoc/>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal override TResult Execute<TU, TFunction, TResult>(ref TFunction func, Int32 spanLength)
-		=> BufferTypeMetadata.Execute<TU, TBuffer, TFunction, TResult>(in func, this, spanLength);
+		=> BufferTypeMetadata.Execute<TU, TBuffer, TFunction, TResult>(ref func, this, spanLength);
 }

@@ -16,7 +16,7 @@ internal partial class MemoryInspector
 			/// <summary>
 			/// Pointer to current process Kernel Information.
 			/// </summary>
-			public static readonly IntPtr KernelInfo = Util.GetKInfo(C.ProcessId);
+			public static readonly IntPtr KernelInfo = Util.GetKInfo(StandardC.ProcessId);
 #pragma warning disable SYSLIB1054
 			[DllImport("libutil", EntryPoint = "kinfo_getproc", SetLastError = true)]
 			private static extern IntPtr GetKInfo(Int32 pid);

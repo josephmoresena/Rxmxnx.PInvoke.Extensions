@@ -14,7 +14,8 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.1" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.1" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.17" PrivateAssets="all" />
+        <!-- 6.0 prefers the JSON runtime manifest. 5.0.17 always points the host at the XML file. -->
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.36" PrivateAssets="all" />
         <PackageReference Include="System.Net.Http.Json" Version="3.2.1" />
     </ItemGroup>
 
@@ -23,6 +24,19 @@
             <!-- WebAssembly BCL ships an older System.Runtime.CompilerServices.Unsafe, causing ILLink missing-method errors, so it is removed. -->
             <_WebAssemblyBCLAssembly Remove="$(ComponentsWebAssemblyBaseClassLibraryPath)System.Runtime.CompilerServices.Unsafe.dll" />
         </ItemGroup>
+    </Target>
+
+    <!--
+      netstandard2.1 makes the Razor SDK emit WebAssemblyAppTest.StaticWebAssets.xml.
+      DevServer 6.0 reads .staticwebassets.runtime.json when that file exists, and the
+      .NET 6 host parses it as JSON. A root pattern covers wwwroot, including _framework.
+    -->
+    <Target Name="WriteStaticWebAssetsRuntimeManifest" AfterTargets="Build">
+        <PropertyGroup>
+            <_StaticWebAssetsContentRoot>$([System.IO.Path]::GetFullPath('$(TargetDir)wwwroot'))$([System.IO.Path]::DirectorySeparatorChar)</_StaticWebAssetsContentRoot>
+            <_StaticWebAssetsContentRootJson>$([System.String]::Copy('$(_StaticWebAssetsContentRoot)').Replace('\', '\\'))</_StaticWebAssetsContentRootJson>
+        </PropertyGroup>
+        <WriteLinesToFile File="$(TargetDir)$(TargetName).staticwebassets.runtime.json" Overwrite="true" Lines="{&quot;ContentRoots&quot;:[&quot;$(_StaticWebAssetsContentRootJson)&quot;],&quot;Root&quot;:{&quot;Children&quot;:{},&quot;Patterns&quot;:[{&quot;ContentRootIndex&quot;:0,&quot;Pattern&quot;:&quot;**&quot;,&quot;Depth&quot;:0}]}}" />
     </Target>
 
 </Project>  

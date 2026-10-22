@@ -1,5 +1,6 @@
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || WINDOWS_UWP
 using System.Text.Json;
+
 #else
 using Newtonsoft.Json;
 #endif
@@ -99,7 +100,7 @@ public sealed class ConcurrentBuilderTest
 		CStringSequence.Builder builder = CStringSequence.CreateBuilder();
 
 		PInvokeAssert.StrictEqual(CStringSequence.Empty, builder.Build());
-		foreach (CString? value in seqRef)
+		foreach (CString value in seqRef)
 			builder.ConcurrentAppend(value);
 		PInvokeAssert.Equal(seqRef, builder.Build());
 	}
@@ -238,5 +239,35 @@ public sealed class ConcurrentBuilderTest
 			builder.Insert(index, strings[index]);
 
 		PInvokeAssert.Equal(seqRef, builder.Build());
+	}
+	[Fact]
+	public void ConcurrentMutationTest()
+	{
+		String[] strings = Enumerable.Range(0, 40).Select(i => new String('a', 64) + i).ToArray();
+		CStringSequence seqRef = new(strings);
+		CStringSequence.Builder builder = CStringSequence.CreateBuilder();
+		Int32[] oddIndexes = Enumerable.Range(0, strings.Length).Where(i => i % 2 != 0).ToArray();
+
+		foreach (String value in strings)
+			builder.ConcurrentAppend(value);
+		PInvokeAssert.Equal(seqRef, builder.ConcurrentBuild());
+
+		foreach (Int32 index in oddIndexes.AsEnumerable().Reverse())
+			builder.ConcurrentRemoveAt(index);
+		PInvokeAssert.Equal(new(Enumerable.Range(0, strings.Length).Except(oddIndexes).Select(i => strings[i])),
+		                    builder.ConcurrentBuild());
+
+		foreach (Int32 index in oddIndexes)
+			builder.ConcurrentInsert(index, strings[index]);
+		PInvokeAssert.Equal(seqRef, builder.ConcurrentBuild());
+
+		foreach (Int32 index in oddIndexes.AsEnumerable().Reverse())
+			builder.ConcurrentRemoveAt(index);
+		foreach (Int32 index in oddIndexes)
+			builder.ConcurrentInsert(index, seqRef[index]);
+		PInvokeAssert.Equal(seqRef, builder.ConcurrentBuild());
+
+		builder.ConcurrentClear();
+		PInvokeAssert.StrictEqual(CStringSequence.Empty, builder.ConcurrentBuild());
 	}
 }

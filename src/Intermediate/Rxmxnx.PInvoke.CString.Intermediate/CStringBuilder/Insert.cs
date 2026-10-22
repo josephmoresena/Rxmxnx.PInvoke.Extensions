@@ -26,7 +26,7 @@ public sealed partial class CStringBuilder
 	public CStringBuilder Insert(Int32 index, CString? value)
 		=> !CString.IsNullOrEmpty(value) ? this.Insert(index, value.AsSpan()) : this;
 	/// <summary>
-	/// Inserts UTF-8 representation of the characters in the specified array into this instance at the specified
+	/// Inserts the UTF-8 representation of the characters in the specified array into this instance at the specified
 	/// UTF-8 unit position.
 	/// </summary>
 	/// <param name="index">The position in this instance where insertion begins.</param>
@@ -55,7 +55,7 @@ public sealed partial class CStringBuilder
 	public CStringBuilder Insert(Int32 index, Byte[]? value)
 		=> value is not null && value.Length != 0 ? this.Insert(index, value.AsSpan()) : this;
 	/// <summary>
-	/// Inserts UTF-8 representation of the characters in the specified read-only span into this instance at the
+	/// Inserts the UTF-8 representation of the characters in the specified read-only span into this instance at the
 	/// specified UTF-8 unit position.
 	/// </summary>
 	/// <param name="index">The position in this instance where insertion begins.</param>
@@ -456,7 +456,7 @@ public sealed partial class CStringBuilder
 	/// Inserts the UTF-8 representation of the specified <typeparamref name="T"/> value into
 	/// <paramref name="builder"/> at the specified UTF-8 unit position.
 	/// </summary>
-	/// <typeparam name="T">A <see cref="IUtf8SpanFormattable"/> instance.</typeparam>
+	/// <typeparam name="T">An <see cref="IUtf8SpanFormattable"/> instance.</typeparam>
 	/// <param name="builder">A <see cref="CStringBuilder"/> instance.</param>
 	/// <param name="index">The position in this instance where insertion begins.</param>
 	/// <param name="value">The value to insert.</param>
@@ -476,7 +476,7 @@ public sealed partial class CStringBuilder
 	/// Inserts the UTF-8 representation of the specified <typeparamref name="T"/> value into
 	/// <paramref name="builder"/> at the specified UTF-8 unit position.
 	/// </summary>
-	/// <typeparam name="T">A <see cref="ISpanFormattable"/> instance.</typeparam>
+	/// <typeparam name="T">An <see cref="ISpanFormattable"/> instance.</typeparam>
 	/// <param name="builder">A <see cref="CStringBuilder"/> instance.</param>
 	/// <param name="index">The position in this instance where insertion begins.</param>
 	/// <param name="value">The value to insert.</param>

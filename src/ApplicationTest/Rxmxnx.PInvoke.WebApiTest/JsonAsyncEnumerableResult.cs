@@ -19,8 +19,8 @@ public abstract class JsonAsyncEnumerableResult
 		where TProvider : IEndpointMetadataProvider
 		=> TProvider.PopulateMetadata(method, builder);
 
-	[UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "Uses ASP .NET serialization context.")]
-	[UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Uses ASP .NET serialization context.")]
+	[UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "Uses ASP.NET serialization context.")]
+	[UnconditionalSuppressMessage("AOT", "IL3050", Justification = "Uses ASP.NET serialization context.")]
 	protected sealed class ResponseWriter : IAsyncDisposable
 	{
 		private readonly HttpResponse _response;

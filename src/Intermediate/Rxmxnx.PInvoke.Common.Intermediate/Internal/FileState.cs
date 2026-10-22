@@ -1,7 +1,7 @@
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
-/// This struct storages state for <c>/proc/self/maps</c> file reading.
+/// This struct stores state for <c>/proc/self/maps</c> file reading.
 /// </summary>
 [Preserve(AllMembers = true, Conditional = true)]
 #if !PACKAGE
@@ -15,11 +15,11 @@ internal ref struct FileState
 	/// </summary>
 	public Span<Byte> Buffer { get; set; }
 	/// <summary>
-	/// Count of read bytes.
+	/// The number of bytes read.
 	/// </summary>
 	public Int32 ReadBytes { get; set; }
 	/// <summary>
-	/// Index of search.
+	/// The current search index.
 	/// </summary>
 	public Int32 Index { get; set; }
 	/// <summary>
@@ -27,7 +27,7 @@ internal ref struct FileState
 	/// </summary>
 	public Int32 Offset { get; set; }
 	/// <summary>
-	/// Auxiliar value.
+	/// Auxiliary value.
 	/// </summary>
 	public Int32 Auxiliar { get; set; }
 

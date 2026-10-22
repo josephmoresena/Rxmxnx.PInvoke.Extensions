@@ -25,7 +25,7 @@ public delegate void FixedAction<in TArg>(in IFixedMemory fixedMemory, TArg arg)
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-;
+	;
 
 /// <summary>
 /// Represents an action that operates on a read-only fixed memory instance.
@@ -51,7 +51,7 @@ public delegate void ReadOnlyFixedAction<in TArg>(in IReadOnlyFixedMemory readOn
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-;
+	;
 
 /// <summary>
 /// Represents a function that operates on a fixed memory instance.
@@ -81,7 +81,7 @@ public delegate TResult FixedFunc<in TArg, out TResult>(in IFixedMemory fixedMem
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-;
+	;
 
 /// <summary>
 /// Represents a function that operates on a read-only fixed memory instance.
@@ -111,7 +111,7 @@ public delegate TResult ReadOnlyFixedFunc<in TArg, out TResult>(in IReadOnlyFixe
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-;
+	;
 
 /// <summary>
 /// Encapsulates a method that receives an instance of <see cref="IFixedContext{T}"/>.
@@ -140,7 +140,7 @@ public delegate void FixedContextAction<T, in TArg>(in IFixedContext<T> context,
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-;
+	;
 
 /// <summary>
 /// Encapsulates a method that receives an instance of <see cref="IReadOnlyFixedContext{T}"/>.
@@ -169,7 +169,7 @@ public delegate void ReadOnlyFixedContextAction<T, in TArg>(in IReadOnlyFixedCon
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-;
+	;
 
 /// <summary>
 /// Encapsulates a method that receives an instance of <see cref="IFixedContext{T}"/> and returns a value of
@@ -203,7 +203,7 @@ public delegate TResult FixedContextFunc<T, in TArg, out TResult>(in IFixedConte
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-;
+	;
 
 /// <summary>
 /// Encapsulates a method that receives an instance of <see cref="IReadOnlyFixedContext{T}"/> and
@@ -237,7 +237,7 @@ public delegate TResult ReadOnlyFixedContextFunc<T, in TArg, out TResult>(in IRe
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-;
+	;
 
 /// <summary>
 /// Encapsulates a method that receives an instance of <see cref="FixedMemoryList"/>.
@@ -264,7 +264,7 @@ public delegate void FixedListAction<in TArg>(FixedMemoryList memoryList, TArg a
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-;
+	;
 
 /// <summary>
 /// Encapsulates a method that receives an instance of <see cref="ReadOnlyFixedMemoryList"/>.
@@ -291,7 +291,7 @@ public delegate void ReadOnlyFixedListAction<in TArg>(ReadOnlyFixedMemoryList me
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-;
+	;
 
 /// <summary>
 /// Encapsulates a method that receives an instance of <see cref="FixedMemoryList"/> and returns a value of type
@@ -323,7 +323,7 @@ public delegate TResult FixedListFunc<in TArg, out TResult>(FixedMemoryList memo
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-;
+	;
 
 /// <summary>
 /// Encapsulates a method that receives an instance of <see cref="ReadOnlyFixedMemoryList"/> and returns a value of
@@ -355,6 +355,6 @@ public delegate TResult ReadOnlyFixedListFunc<in TArg, out TResult>(ReadOnlyFixe
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
 #endif
-;
+	;
 #pragma warning restore CS0618
 #endif

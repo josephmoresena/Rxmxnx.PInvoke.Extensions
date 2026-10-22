@@ -63,21 +63,21 @@ jobs:
           sudo rm -rf /usr/share/java/selenium-server.jar
 
           df -h
-      - name: Init FreeBSD 13.5 VM
+      - name: Init FreeBSD 14.5 VM
         id: vm
-        uses: vmactions/freebsd-vm@v1.4.5
+        uses: vmactions/freebsd-vm@v1.5.9
         with:
-          release: "13.5"
+          release: "14.5"
           usesh: true
           copyback: false
           sync: nfs
           envs: 'PackageVersion SHOW_DIAGNOSTICS PINVOKE_ONLY_NATIVE_TEST'
           prepare: |
             #mkdir -p /usr/local/etc/pkg/repos
-            #echo 'FreeBSD: { url: "pkg+http://pkg.freebsd.org/FreeBSD:13:amd64/latest" }' > /usr/local/etc/pkg/repos/FreeBSD.conf
+            #echo 'FreeBSD: { url: "pkg+http://pkg.freebsd.org/FreeBSD:14:amd64/latest" }' > /usr/local/etc/pkg/repos/FreeBSD.conf
             
             pkg update -f 
-            pkg install -y python311 py311-pillow sqlite3 unixODBC libgdiplus zip ca_root_nss binutils dotnet powershell pkgconf libinotify
+            pkg install -y python312 py312-pillow sqlite3 unixODBC libgdiplus zip ca_root_nss binutils dotnet powershell pkgconf libinotify
             
             mkdir -p ~/fake-python39/metadata
             cat > ~/fake-python39/metadata/+COMPACT_MANIFEST <<EOF
@@ -121,7 +121,7 @@ jobs:
           run: |
             dotnet dev-certs https --trust
             mono --version
-      - name: Run Tests (FreeBSD 13.5)
+      - name: Run Tests (FreeBSD 14.5)
         if: inputs.run_tests == true
         shell: freebsd {0}
         run: |
@@ -130,7 +130,7 @@ jobs:
           dotnet test ./src/Test/Rxmxnx.PInvoke.CString.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.CString.Tests.dll --logger 'console;verbosity=detailed';
           dotnet test ./src/Test/Rxmxnx.PInvoke.Extensions.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Extensions.Tests.dll --logger 'console;verbosity=detailed';
           dotnet test ./src/Test/Rxmxnx.PInvoke.Buffers.Tests/bin/Release/net9.0/Rxmxnx.PInvoke.Buffers.Tests.dll --logger 'console;verbosity=detailed';
-      - name: Run Mono tests (FreeBSD 13.5)
+      - name: Run Mono tests (FreeBSD 14.5)
         id: mono_freebsd
         if: inputs.run_tests == true
         shell: freebsd {0}
@@ -150,15 +150,15 @@ jobs:
           Remove-Item -Recurse -Force "src/Test"
           Remove-Item -Recurse -Force "src/Intermediate"
           Remove-Item -Recurse -Force "src/LegacyAppTest"
-      - name: Publish Launcher (FreeBSD 13.5)
+      - name: Publish Launcher (FreeBSD 14.5)
         if: inputs.build_artifacts == true
         shell: freebsd {0}
         run: |
           cd $GITHUB_WORKSPACE;
           cd ./src/ApplicationTest/Rxmxnx.PInvoke.LauncherTest;
-          dotnet publish -r freebsd.13-x64;
+          dotnet publish -r freebsd.14-x64;
           rm -rf ./obj
-      - name: Run launcher - Compile (FreeBSD 13.5)
+      - name: Run launcher - Compile (FreeBSD 14.5)
         if: inputs.build_artifacts == true
         shell: freebsd {0}
         run: |
@@ -186,7 +186,7 @@ jobs:
         if: inputs.build_artifacts == true && inputs.package_version == ''
         uses: actions/upload-artifact@v6
         with:
-          name: FreeBSD.13-Artifact-Logs
+          name: FreeBSD.14-Artifact-Logs
           path: |
             ./artifacts/Native/*
             ./artifacts/Mono/*Mono.Link.log
@@ -202,12 +202,12 @@ jobs:
             "./artifacts/Mono/*Mono.AOT*.log",
             "./artifacts/Mono/*Mono.Bundle*.log"
           )
-          ./ZipAndClean.ps1 -ZipName "FreeBSD.13-Assets-Logs.zip" -Patterns $logPatterns
+          ./ZipAndClean.ps1 -ZipName "FreeBSD.14-Assets-Logs.zip" -Patterns $logPatterns
       - name: Create Native Artifact
         if: inputs.build_artifacts == true && inputs.package_version == ''
         uses: actions/upload-artifact@v6
         with:
-          name: FreeBSD.13-Artifact
+          name: FreeBSD.14-Artifact
           path: |
             ./artifacts/*NAOT*
             ./artifacts/*RFM*
@@ -223,7 +223,7 @@ jobs:
             "./artifacts/*x64*RFM*",
             "./artifacts/Mono/X64/*"
           )
-          ./ZipAndClean.ps1 -ZipName "FreeBSD.13-x64-Assets.zip" -Patterns $binPatterns
+          ./ZipAndClean.ps1 -ZipName "FreeBSD.14-x64-Assets.zip" -Patterns $binPatterns
       - name: Upload Release Assets
         if: inputs.build_artifacts == true && inputs.package_version != ''
         env:

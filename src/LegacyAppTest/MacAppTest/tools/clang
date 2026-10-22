@@ -1,0 +1,13 @@
+#!/bin/bash
+real=/usr/bin/clang
+for arg in "$@"; do
+	if [[ "$arg" == "-arch" ]]; then
+		exec "$real" "$@"
+	fi
+done
+for arg in "$@"; do
+	if [[ "$arg" == *.o && -f "$arg" ]] && file -b "$arg" | grep -q x86_64; then
+		exec "$real" -arch x86_64 "$@"
+	fi
+done
+exec "$real" "$@"

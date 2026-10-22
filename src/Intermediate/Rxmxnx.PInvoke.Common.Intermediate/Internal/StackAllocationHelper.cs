@@ -17,14 +17,14 @@ internal static class StackAllocationHelper
 	private static Int32 stackallocByteConsumed;
 
 	/// <summary>
-	/// Initialize stack bytes consume.
+	/// Initializes the consumed stack-byte counter.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void InitStackBytes() => StackAllocationHelper.stackallocByteConsumed = 0;
 	/// <summary>
 	/// Consumes the stackalloc bytes if the required size is within the threshold.
 	/// </summary>
-	/// <param name="stackRequired">Required stack bytes to consume.</param>
+	/// <param name="stackRequired">The number of stack bytes to consume.</param>
 	/// <param name="stackConsumed">
 	/// Reference. Stack bytes consumed so far. This value is updated with the newly consumed bytes.
 	/// </param>
@@ -45,7 +45,7 @@ internal static class StackAllocationHelper
 	/// <summary>
 	/// Indicates whether if the required size is allocatable on the current stack.
 	/// </summary>
-	/// <param name="stackRequired">Required stack bytes to consume.</param>
+	/// <param name="stackRequired">The number of stack bytes to consume.</param>
 	/// <returns>
 	/// <see langword="true"/> if the required size is allocatable on the current stack; otherwise, <see langword="false"/>.
 	/// </returns>
@@ -87,9 +87,9 @@ internal static class StackAllocationHelper
 			ArrayPool<T>.Shared.Return(tArray);
 	}
 	/// <summary>
-	/// Releases the stack bytes consumed by the converter.
+	/// Releases previously consumed stack bytes.
 	/// </summary>
-	/// <param name="stackConsumed">Number of stack bytes consumed to release.</param>
+	/// <param name="stackConsumed">The number of consumed stack bytes to release.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ReleaseStackBytes(Int32 stackConsumed)
 	{
