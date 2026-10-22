@@ -114,7 +114,7 @@ jobs:
             pkg register -M ~/fake-py39-pillow/metadata/+COMPACT_MANIFEST
             
             fetch https://github.com/Thefrank/freebsd-port-sooners/releases/download/20230712/mono6.12-6.12.0.199_1.pkg
-            pkg add -f -ignore-osversion mono6.12-6.12.0.199_1.pkg
+            pkg add -f mono6.12-6.12.0.199_1.pkg
             rm mono6.12-6.12.0.199_1.pkg
             rm -rf ~/fake-py39-pillow
             rm -rf ~/fake-python39
