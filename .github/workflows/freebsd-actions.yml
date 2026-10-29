@@ -73,11 +73,16 @@ jobs:
           sync: nfs
           envs: 'PackageVersion SHOW_DIAGNOSTICS PINVOKE_ONLY_NATIVE_TEST'
           prepare: |
-            #mkdir -p /usr/local/etc/pkg/repos
-            #echo 'FreeBSD: { url: "pkg+http://pkg.freebsd.org/FreeBSD:14:amd64/latest" }' > /usr/local/etc/pkg/repos/FreeBSD.conf
-            
-            pkg update -f 
-            pkg install -y python312 py312-pillow sqlite3 unixODBC libgdiplus zip ca_root_nss binutils dotnet powershell pkgconf libinotify
+            mkdir -p /usr/local/etc/pkg/repos
+            pkgs='python312 py312-pillow sqlite3 unixODBC libgdiplus zip ca_root_nss binutils dotnet powershell pkgconf libinotify'
+            echo 'FreeBSD: { url: "pkg+https://pkg.FreeBSD.org/${ABI}/latest" }' > /usr/local/etc/pkg/repos/FreeBSD.conf
+            pkg update -f
+            if ! pkg install -y $pkgs; then
+              echo 'pkg install against latest failed; retrying with quarterly'
+              echo 'FreeBSD: { url: "pkg+https://pkg.FreeBSD.org/${ABI}/quarterly" }' > /usr/local/etc/pkg/repos/FreeBSD.conf
+              pkg update -f
+              pkg install -y $pkgs
+            fi
             
             mkdir -p ~/fake-python39/metadata
             cat > ~/fake-python39/metadata/+COMPACT_MANIFEST <<EOF
