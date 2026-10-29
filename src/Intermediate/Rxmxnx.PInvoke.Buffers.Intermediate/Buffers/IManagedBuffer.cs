@@ -22,10 +22,6 @@ public interface IManagedBuffer<T>
 
 #if NET7_0_OR_GREATER
 	/// <summary>
-	/// Current type components.
-	/// </summary>
-	internal static abstract BufferTypeMetadata<T>[] Components { get; }
-	/// <summary>
 	/// Buffer type metadata.
 	/// </summary>
 	private protected static abstract BufferTypeMetadata<T> TypeMetadata { get; }
@@ -36,13 +32,6 @@ public interface IManagedBuffer<T>
 	/// <param name="storage">An <see cref="IMetadataStorage"/> instance.</param>
 	internal static abstract void AppendComponent(IMetadataStorage storage);
 #elif NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-	/// <summary>
-	/// Current type components.
-	/// </summary>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	internal static BufferTypeMetadata<T>[] Components => [];
 	/// <summary>
 	/// Buffer type metadata.
 	/// </summary>

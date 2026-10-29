@@ -10,6 +10,37 @@ namespace Rxmxnx.PInvoke.Tests.Internal;
 [ExcludeFromCodeCoverage]
 public sealed class StandardBackendTest
 {
+	[Fact]
+	public void SlotStoreTest()
+	{
+		StandardBackendTest.AssertSlot<StandardValue>(256);
+		StandardBackendTest.AssertSlot<StandardObject>(2048);
+	}
+
+	private static void AssertSlot<T>(UInt16 slotSize)
+	{
+		StandardBackend left = default;
+		StandardBackend right = default;
+		BufferTypeMetadata<T> unit = Atomic<T>.TypeMetadata;
+		BufferTypeMetadata<T> slot = new BufferTypeMetadata<Atomic<T>, T>(slotSize, false);
+
+		left.TryAdd(unit);
+		PInvokeAssert.False(right.TryAdd(unit));
+		PInvokeAssert.Same(unit, left.GetBinaryValue<T>(1));
+		PInvokeAssert.Same(unit, right.GetBinaryValue<T>(1));
+
+		PInvokeAssert.Same(slot, left.SetBinaryValue(slot));
+		PInvokeAssert.Same(slot, right.GetBinaryValue<T>(slotSize));
+		PInvokeAssert.NotSame(left.GetBinaryValue<T>(1), left.GetBinaryValue<T>(slotSize));
+	}
+
+	private struct StandardValue
+	{
+		public String? Text { get; set; }
+	}
+
+	// ReSharper disable once ClassNeverInstantiated.Local
+	private sealed class StandardObject;
 #if NET5_0_OR_GREATER
 	[Fact]
 	public void SlotSegmentTest()
@@ -51,37 +82,4 @@ public sealed class StandardBackendTest
 	private static Int64 Distance<T>(ref BufferTypeMetadata<T>? origin, ref BufferTypeMetadata<T>? target)
 		=> Unsafe.ByteOffset(ref origin, ref target).ToInt64();
 #endif
-
-	[Fact]
-	public void SlotStoreTest()
-	{
-		StandardBackendTest.AssertSlot<StandardValue>(256);
-		StandardBackendTest.AssertSlot<StandardObject>(2048);
-	}
-
-	private static void AssertSlot<T>(UInt16 slotSize)
-	{
-		StandardBackend left = default;
-		StandardBackend right = default;
-		BufferTypeMetadata<T> unit = Atomic<T>.TypeMetadata;
-		BufferTypeMetadata<T> slot =
-			new BufferTypeMetadata<Atomic<T>, T>(slotSize, Array.Empty<BufferTypeMetadata<T>>(), false);
-
-		left.TryAdd(unit);
-		PInvokeAssert.False(right.TryAdd(unit));
-		PInvokeAssert.Same(unit, left.GetBinaryValue<T>(1));
-		PInvokeAssert.Same(unit, right.GetBinaryValue<T>(1));
-
-		PInvokeAssert.Same(slot, left.SetBinaryValue(slot));
-		PInvokeAssert.Same(slot, right.GetBinaryValue<T>(slotSize));
-		PInvokeAssert.NotSame(left.GetBinaryValue<T>(1), left.GetBinaryValue<T>(slotSize));
-	}
-
-	private struct StandardValue
-	{
-		public String? Text { get; set; }
-	}
-
-	// ReSharper disable once ClassNeverInstantiated.Local
-	private sealed class StandardObject;
 }

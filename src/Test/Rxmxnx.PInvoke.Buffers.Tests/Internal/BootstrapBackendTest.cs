@@ -1,6 +1,7 @@
 #if NET8_0_OR_GREATER
 using Rxmxnx.PInvoke.Buffers.Storage;
 using Rxmxnx.PInvoke.Buffers.Storage.Bootstrap;
+
 // ReSharper disable UnusedMember.Local
 // ReSharper disable ClassNeverInstantiated.Local
 
@@ -163,8 +164,7 @@ public sealed class BootstrapBackendTest
 	private static void AssertStored<TBackend, T>(UInt16 size) where TBackend : struct, IMetadataStorageBackend
 	{
 		MetadataStorage storage = new MetadataStorage<TBackend>();
-		BufferTypeMetadata<T> metadata =
-			new BufferTypeMetadata<Atomic<T>, T>(size, []);
+		BufferTypeMetadata<T> metadata = new BufferTypeMetadata<Atomic<T>, T>(size);
 		Assert.Null(storage.GetMetadata<T>(size));
 		Assert.Null(BootstrapBackendTest.NonBinary<T>(size));
 		Assert.True(storage.TryAdd(metadata));
@@ -175,11 +175,9 @@ public sealed class BootstrapBackendTest
 	private static void AssertAdded<TBackend, T>(UInt16 size) where TBackend : struct, IMetadataStorageBackend
 	{
 		MetadataStorage storage = new MetadataStorage<TBackend>();
-		BufferTypeMetadata<T> metadata =
-			new BufferTypeMetadata<Atomic<T>, T>(size, []);
-		BufferTypeMetadata<T> repeated =
-			new BufferTypeMetadata<Atomic<T>, T>(size, []);
-		Assert.Null(NonBinary<T>(size));
+		BufferTypeMetadata<T> metadata = new BufferTypeMetadata<Atomic<T>, T>(size);
+		BufferTypeMetadata<T> repeated = new BufferTypeMetadata<Atomic<T>, T>(size);
+		Assert.Null(BootstrapBackendTest.NonBinary<T>(size));
 		Assert.Same(metadata, storage.AddBinaryMetadata(metadata));
 		BootstrapBackendTest.AssertNonBinary(storage, size, metadata);
 		Assert.Same(repeated, storage.AddBinaryMetadata(repeated));
@@ -188,9 +186,9 @@ public sealed class BootstrapBackendTest
 	private static void AssertRegistered()
 	{
 		MetadataStorage storage = new MetadataStorage<BootstrapBackend31>();
-		Assert.Null(NonBinary<RegValue>(32));
+		Assert.Null(BootstrapBackendTest.NonBinary<RegValue>(32));
 		storage.RegisterBuffer<RegValue, R32>();
-		BufferTypeMetadata<RegValue>? stored = NonBinary<RegValue>(32);
+		BufferTypeMetadata<RegValue>? stored = BootstrapBackendTest.NonBinary<RegValue>(32);
 		Assert.NotNull(stored);
 		Assert.True(stored.IsBinary);
 		Assert.Equal((UInt16)32, stored.Size);
@@ -202,9 +200,9 @@ public sealed class BootstrapBackendTest
 	private static void AssertPrepared<TBackend, T>(UInt16 size) where TBackend : struct, IMetadataStorageBackend
 	{
 		MetadataStorage storage = new MetadataStorage<TBackend>();
-		Assert.Null(NonBinary<T>(size));
+		Assert.Null(BootstrapBackendTest.NonBinary<T>(size));
 		storage.PrepareBinaryMetadata<T>(size);
-		BufferTypeMetadata<T>? stored = NonBinary<T>(size);
+		BufferTypeMetadata<T>? stored = BootstrapBackendTest.NonBinary<T>(size);
 		Assert.NotNull(stored);
 		Assert.True(stored.IsBinary);
 		Assert.Equal(size, stored.Size);
@@ -215,12 +213,9 @@ public sealed class BootstrapBackendTest
 	private static void AssertReplaced<TBackend, T>(UInt16 size) where TBackend : struct, IMetadataStorageBackend
 	{
 		MetadataStorage storage = new MetadataStorage<TBackend>();
-		BufferTypeMetadata<T> nonBinary =
-			new BufferTypeMetadata<Atomic<T>, T>(size, Array.Empty<BufferTypeMetadata<T>>(), false);
-		BufferTypeMetadata<T> binary =
-			new BufferTypeMetadata<Atomic<T>, T>(size, []);
-		BufferTypeMetadata<T> repeated =
-			new BufferTypeMetadata<Atomic<T>, T>(size, []);
+		BufferTypeMetadata<T> nonBinary = new BufferTypeMetadata<Atomic<T>, T>(size, false);
+		BufferTypeMetadata<T> binary = new BufferTypeMetadata<Atomic<T>, T>(size);
+		BufferTypeMetadata<T> repeated = new BufferTypeMetadata<Atomic<T>, T>(size);
 		MetadataStorage.NonBinaryStore<T>.AddNonBinary(nonBinary);
 		BootstrapBackendTest.AssertNonBinary(storage, size, nonBinary);
 		Assert.Same(binary, storage.AddBinaryMetadata(binary));
@@ -233,11 +228,10 @@ public sealed class BootstrapBackendTest
 		where TBackend : struct, IMetadataStorageBackend
 	{
 		MetadataStorage storage = new MetadataStorage<TBackend>();
-		BufferTypeMetadata<T> nonBinary =
-			new BufferTypeMetadata<Atomic<T>, T>(size, Array.Empty<BufferTypeMetadata<T>>(), false);
+		BufferTypeMetadata<T> nonBinary = new BufferTypeMetadata<Atomic<T>, T>(size, false);
 		MetadataStorage.NonBinaryStore<T>.AddNonBinary(nonBinary);
 		storage.PrepareBinaryMetadata<T>(size);
-		BufferTypeMetadata<T>? stored = NonBinary<T>(size);
+		BufferTypeMetadata<T>? stored = BootstrapBackendTest.NonBinary<T>(size);
 		Assert.NotNull(stored);
 		Assert.True(stored.IsBinary);
 		Assert.NotSame(nonBinary, stored);
@@ -246,12 +240,15 @@ public sealed class BootstrapBackendTest
 	}
 	private static void AssertNonBinary<T>(MetadataStorage storage, UInt16 size, BufferTypeMetadata<T> metadata)
 	{
-		Assert.Same(metadata, NonBinary<T>(size));
+		Assert.Same(metadata, BootstrapBackendTest.NonBinary<T>(size));
 		Assert.Same(metadata, storage.GetMetadata<T>(size));
 	}
 	private static Int64 ContiguousOffset(Int32 fromSize, Int32 toSize) => (toSize - fromSize) * (Int64)IntPtr.Size;
 	private static Int64 Distance<T>(ref BufferTypeMetadata<T>? origin, ref BufferTypeMetadata<T>? target)
 		=> Unsafe.ByteOffset(ref origin, ref target).ToInt64();
+
+	private static BufferTypeMetadata<T>? NonBinary<T>(UInt16 size)
+		=> MetadataStorage.NonBinaryStore<T>.GetNonBinary(size, out _);
 
 	private struct LimitValue
 	{
@@ -316,8 +313,5 @@ public sealed class BootstrapBackendTest
 	{
 		public String? Text { get; set; }
 	}
-
-	private static BufferTypeMetadata<T>? NonBinary<T>(UInt16 size)
-		=> MetadataStorage.NonBinaryStore<T>.GetNonBinary(size, out _);
 }
 #endif

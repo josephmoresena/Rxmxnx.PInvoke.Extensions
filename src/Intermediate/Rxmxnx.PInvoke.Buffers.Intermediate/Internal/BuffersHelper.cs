@@ -177,26 +177,43 @@ internal static class BuffersHelper
 #endif
 	}
 	/// <summary>
-	/// Retrieves the components array for the composition type of <typeparamref name="TBufferA"/> and
-	/// <typeparamref name="TBufferB"/> .
+	/// Element count of <see cref="Composite{TBufferA,TBufferB,T}"/>.
 	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer.</typeparam>
 	/// <typeparam name="TBufferA">The type of low buffer.</typeparam>
 	/// <typeparam name="TBufferB">The type of high buffer.</typeparam>
-	/// <returns>The components array for the composition type.</returns>
-#if !PACKAGE && NET7_0_OR_GREATER
-	[ExcludeFromCodeCoverage]
+	/// <typeparam name="T">The type of items in the buffer.</typeparam>
+	/// <returns>Element count of the composition.</returns>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-	public static BufferTypeMetadata<T>[] GetComponents<T,
-		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBufferA,
-		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBufferB>()
-		where TBufferA : struct, IManagedBinaryBuffer<T> where TBufferB : struct, IManagedBinaryBuffer<T>
-
+	public static unsafe UInt16 CompositeSize<TBufferA, TBufferB, T>() where TBufferA : struct where TBufferB : struct
 	{
-		BufferTypeMetadata<T>[] components = new BufferTypeMetadata<T>[2];
-		components[0] = BuffersHelper.GetMetadata<T, TBufferA>();
-		components[1] = BuffersHelper.GetMetadata<T, TBufferB>();
-		return components;
+#pragma warning disable CS8500
+		return (UInt16)(sizeof(TBufferA) / sizeof(T) + sizeof(TBufferB) / sizeof(T));
+#pragma warning restore CS8500
+	}
+	/// <summary>
+	/// Indicates whether <typeparamref name="TBufferA"/> and <typeparamref name="TBufferB"/> satisfy the size rule of a
+	/// binary composition.
+	/// </summary>
+	/// <typeparam name="TBufferA">The type of low buffer.</typeparam>
+	/// <typeparam name="TBufferB">The type of high buffer.</typeparam>
+	/// <typeparam name="T">The type of items in the buffer.</typeparam>
+	/// <returns>
+	/// <see langword="true"/> when the low buffer is not larger than the high buffer and the high buffer size is a
+	/// power of two; otherwise, <see langword="false"/>.
+	/// </returns>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+	public static unsafe Boolean CanComposeBinary<TBufferA, TBufferB, T>()
+		where TBufferA : struct where TBufferB : struct
+	{
+#pragma warning disable CS8500
+		Int32 sizeA = sizeof(TBufferA) / sizeof(T);
+		Int32 sizeB = sizeof(TBufferB) / sizeof(T);
+#pragma warning restore CS8500
+		return sizeA <= sizeB && (sizeB & (sizeB - 1)) == 0;
 	}
 	/// <summary>
 	/// Retrieves metadata required for a buffer of <typeparamref name="TBuffer"/> type.
@@ -227,36 +244,6 @@ internal static class BuffersHelper
 		[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] Type bufferType)
 		=> bufferType == typeof(Atomic<T>) ? Atomic<T>.TypeMetadata : BuffersHelper.GetMetadataFromType<T>(bufferType);
 #endif
-	/// <summary>
-	/// Retrieves the capacity of a composite buffer of <paramref name="componentA"/> and <paramref name="componentB"/>.
-	/// </summary>
-	/// <typeparam name="T">The type of items in the buffer</typeparam>
-	/// <param name="componentA">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
-	/// <param name="componentB">A <see cref="BufferTypeMetadata"/> instance.</param>
-	/// <param name="isBinary">Output. Indicates whether the resulting composition type is binary.</param>
-	/// <returns>Resulting composition type capacity.</returns>
-#if NETFRAMEWORK || NETSTANDARD2_0
-	[SecuritySafeCritical]
-#endif
-	public static Int32 GetCapacity<T>(BufferTypeMetadata<T> componentA, BufferTypeMetadata<T> componentB,
-		out Boolean isBinary)
-	{
-		UInt16 sizeA = componentA.Size;
-		UInt16 sizeB = componentB.Size;
-		isBinary = false;
-
-		if (!componentA.IsBinary || !componentB.IsBinary ||
-		    (componentB.Components is { Length: 2, Span: var bComponents, } && bComponents[0] != bComponents[^1]))
-		{
-			isBinary = false;
-		}
-		else
-		{
-			Int32 diff = sizeB - sizeA;
-			isBinary = diff >= 0 && diff <= sizeB;
-		}
-		return componentA.Size + componentB.Size;
-	}
 	/// <summary>
 	/// Creates <see cref="BufferTypeMetadata{T}"/> for <see cref="Composite{TBufferA,TBufferB,T}"/>.
 	/// </summary>

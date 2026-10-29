@@ -11,13 +11,11 @@ internal static class ManagedBuffer<T>
 	/// </summary>
 	/// <param name="component">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
 	/// <param name="storage">An <see cref="IMetadataStorage"/> instance.</param>
-#if NETFRAMEWORK || NETSTANDARD2_0
-	[SecuritySafeCritical]
-#endif
 	public static void AppendComponent(BufferTypeMetadata<T> component, IMetadataStorage storage)
 	{
 		if (!storage.TryAdd(component)) return;
-		foreach (BufferTypeMetadata<T> metadataComponent in component.Components.Span)
-			ManagedBuffer<T>.AppendComponent(metadataComponent, storage);
+		Int32 count = component.ComponentCount;
+		for (Int32 index = 0; index < count; index++)
+			ManagedBuffer<T>.AppendComponent((BufferTypeMetadata<T>)component[index], storage);
 	}
 }

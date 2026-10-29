@@ -507,7 +507,7 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0006</DiagnosticId>
-    <Target>P:Rxmxnx.PInvoke.Buffers.IManagedBuffer`1.Components</Target>
+    <Target>P:Rxmxnx.PInvoke.Buffers.IManagedBinaryBuffer`2.IsStaticBinary</Target>
     <Left>lib/netcoreapp2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
@@ -555,7 +555,7 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0006</DiagnosticId>
-    <Target>P:Rxmxnx.PInvoke.Buffers.IManagedBuffer`1.Components</Target>
+    <Target>P:Rxmxnx.PInvoke.Buffers.IManagedBinaryBuffer`2.IsStaticBinary</Target>
     <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>

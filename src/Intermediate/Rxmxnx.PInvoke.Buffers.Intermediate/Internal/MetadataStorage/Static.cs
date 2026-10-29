@@ -48,8 +48,8 @@ internal abstract partial class MetadataStorage
 		if (refComponent is not null) return;
 
 		refComponent = bufferTypeMetadata;
-		foreach (BufferTypeMetadata<Object> metadataComponent in bufferTypeMetadata.Components.Span)
-			MetadataStorage.Initialize(span, metadataComponent);
+		for (Int32 index = 0; index < bufferTypeMetadata.ComponentCount; index++)
+			MetadataStorage.Initialize(span, (BufferTypeMetadata<Object>)bufferTypeMetadata[index]);
 	}
 #endif
 }

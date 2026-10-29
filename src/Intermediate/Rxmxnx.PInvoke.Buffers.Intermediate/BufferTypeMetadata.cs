@@ -52,21 +52,12 @@ public abstract partial class BufferTypeMetadata
 public abstract partial class BufferTypeMetadata<T> : BufferTypeMetadata
 {
 	/// <inheritdoc/>
-	public sealed override BufferTypeMetadata this[Int32 index]
-	{
-#if NETFRAMEWORK || NETSTANDARD2_0
-		[SecuritySafeCritical]
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
 #endif
-		get => this.Components.Span[index];
-	}
+	public override BufferTypeMetadata this[Int32 index] => throw new IndexOutOfRangeException();
 	/// <inheritdoc/>
-	public sealed override Int32 ComponentCount
-	{
-#if NETFRAMEWORK || NETSTANDARD2_0
-		[SecuritySafeCritical]
-#endif
-		get => this.Components.Length;
-	}
+	public override Int32 ComponentCount => 0;
 	/// <summary>
 	/// Size of a single element.
 	/// </summary>

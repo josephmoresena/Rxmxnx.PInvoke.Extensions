@@ -170,7 +170,7 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 		{
 			if (m is null) continue;
 			// ReSharper disable once HeapView.BoxingAllocation
-			Trace.WriteLine($"{typeof(T)} {m.Size}({String.Join(", ", m.Components.ToArray().Select(k => k.Size))})");
+			Trace.WriteLine($"{typeof(T)} {m.Size}({MetadataStorage<TBackend>.ComponentSizes(m)})");
 			count++;
 		}
 		foreach (BufferTypeMetadata<T>?[]? a in this._backend.GetSlots<T>())
@@ -179,14 +179,28 @@ internal sealed class MetadataStorage<TBackend> : MetadataStorage where TBackend
 			{
 				if (m is null) continue;
 				// ReSharper disable once HeapView.BoxingAllocation
-				Trace.WriteLine(
-					$"{typeof(T)} {m.Size}({String.Join(", ", m.Components.ToArray().Select(k => k.Size))})");
+				Trace.WriteLine($"{typeof(T)} {m.Size}({MetadataStorage<TBackend>.ComponentSizes(m)})");
 				count++;
 			}
 		}
 		// ReSharper disable once HeapView.BoxingAllocation
 		Trace.WriteLine($"{typeof(T)}: {count}");
 #pragma warning restore S6670
+	}
+
+	/// <summary>
+	/// Component sizes of <paramref name="metadata"/>, separated by a comma.
+	/// </summary>
+	/// <typeparam name="T">The type of items in the buffer.</typeparam>
+	/// <param name="metadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
+	/// <returns>The component sizes.</returns>
+	private static String ComponentSizes<T>(BufferTypeMetadata<T> metadata)
+	{
+		if (metadata.ComponentCount == 0) return String.Empty;
+		UInt16[] sizes = new UInt16[metadata.ComponentCount];
+		for (Int32 index = 0; index < sizes.Length; index++)
+			sizes[index] = ((BufferTypeMetadata<T>)metadata[index]).Size;
+		return String.Join(", ", sizes);
 	}
 #endif
 }
