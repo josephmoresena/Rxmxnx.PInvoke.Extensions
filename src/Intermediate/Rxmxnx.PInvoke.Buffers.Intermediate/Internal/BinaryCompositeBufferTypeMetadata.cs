@@ -6,22 +6,26 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <typeparam name="TBufferA">The type of low buffer.</typeparam>
 /// <typeparam name="TBufferB">The type of high buffer.</typeparam>
 /// <typeparam name="T">Type of items in the buffer.</typeparam>
+#if !PACKAGE
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
+#endif
 internal sealed class BinaryCompositeBufferTypeMetadata<
 	[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBufferA,
-	[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBufferB, T>
-	: BufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>
+	[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAccessedMembers)] TBufferB,
+	T> : BufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>
 	where TBufferA : struct, IManagedBinaryBuffer<TBufferA, T>
 	where TBufferB : struct, IManagedBinaryBuffer<TBufferB, T>
 {
 	/// <inheritdoc/>
 	public override Int32 ComponentCount => 2;
 	/// <inheritdoc/>
-	public override BufferTypeMetadata this[Int32 index] => index switch
-	{
-		0 => BufferTypeMetadata<T>.GetMetadata<TBufferA>(),
-		1 => BufferTypeMetadata<T>.GetMetadata<TBufferB>(),
-		_ => throw new IndexOutOfRangeException(),
-	};
+	public override BufferTypeMetadata this[Int32 index]
+		=> index switch
+		{
+			0 => BufferTypeMetadata<T>.GetMetadata<TBufferA>(),
+			1 => BufferTypeMetadata<T>.GetMetadata<TBufferB>(),
+			_ => base[index],
+		};
 
 	/// <summary>
 	/// Initializes a binary composite metadata instance.
@@ -52,21 +56,22 @@ internal sealed class BinaryCompositeBufferTypeMetadata<
 	/// <summary>
 	/// Low component.
 	/// </summary>
-	internal BufferTypeMetadata<T> Low { get; init; }
+	private BufferTypeMetadata<T> Low { get; }
 	/// <summary>
 	/// High component.
 	/// </summary>
-	internal BufferTypeMetadata<T> High { get; init; }
+	private BufferTypeMetadata<T> High { get; }
 
 	/// <inheritdoc/>
 	public override Int32 ComponentCount => 2;
 	/// <inheritdoc/>
-	public override BufferTypeMetadata this[Int32 index] => index switch
-	{
-		0 => this.Low,
-		1 => this.High,
-		_ => throw new IndexOutOfRangeException(),
-	};
+	public override BufferTypeMetadata this[Int32 index]
+		=> index switch
+		{
+			0 => this.Low,
+			1 => this.High,
+			_ => base[index],
+		};
 
 	/// <summary>
 	/// Initializes a binary composite metadata instance.

@@ -17,16 +17,15 @@ internal class BufferTypeMetadata<[DynamicallyAccessedMembers(BuffersHelper.Dyna
 #pragma warning disable CS8500
 	public sealed override unsafe Int32 SizeOf => sizeof(TBuffer);
 #pragma warning restore CS8500
-	/// <inheritdoc/>
-	public sealed override Int32 SizeOfElement => base.SizeOfElement;
 
 	/// <summary>
 	/// Internal implementation of <see cref="BufferTypeMetadata{T}"/>.
 	/// </summary>
 	/// <param name="capacity">Buffer's capacity.</param>
-	/// <param name="isBinary">Indicates if current buffer is binary.</param>
+	/// <param name="isBinary">Indicates if the current buffer is binary.</param>
 	public BufferTypeMetadata(Int32 capacity, Boolean isBinary = true) : base(isBinary, (UInt16)capacity) { }
 
+#if NET7_0_OR_GREATER
 	/// <inheritdoc/>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
@@ -34,10 +33,9 @@ internal class BufferTypeMetadata<[DynamicallyAccessedMembers(BuffersHelper.Dyna
 	internal override void AppendComponent(IMetadataStorage storage)
 	{
 		if (!this.IsBinary) return;
-#if NET7_0_OR_GREATER
 		TBuffer.AppendComponent(storage);
-#endif
 	}
+#endif
 	/// <inheritdoc/>
 	internal sealed override BufferTypeMetadata<T>? Compose(IMetadataStorage storage,
 		BufferTypeMetadata<T> otherMetadata)

@@ -472,8 +472,14 @@
   <Suppression>
     <DiagnosticId>CP0006</DiagnosticId>
     <Target>M:Rxmxnx.PInvoke.Buffers.IManagedBuffer`1.AppendComponent(Rxmxnx.PInvoke.Internal.IMetadataStorage)</Target>
-    <Left>lib/netcoreapp2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+    <Left>lib/net6.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net7.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0006</DiagnosticId>
+    <Target>P:Rxmxnx.PInvoke.Buffers.IManagedBinaryBuffer`2.IsStaticBinary</Target>
+    <Left>lib/net6.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net7.0/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0006</DiagnosticId>
@@ -502,12 +508,6 @@
   <Suppression>
     <DiagnosticId>CP0006</DiagnosticId>
     <Target>M:Rxmxnx.PInvoke.IWrapper`1.Create(`0)</Target>
-    <Left>lib/netcoreapp2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0006</DiagnosticId>
-    <Target>P:Rxmxnx.PInvoke.Buffers.IManagedBinaryBuffer`2.IsStaticBinary</Target>
     <Left>lib/netcoreapp2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
@@ -519,12 +519,6 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0006</DiagnosticId>
-    <Target>M:Rxmxnx.PInvoke.Buffers.IManagedBuffer`1.AppendComponent(Rxmxnx.PInvoke.Internal.IMetadataStorage)</Target>
-    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0006</DiagnosticId>
     <Target>M:Rxmxnx.PInvoke.Buffers.IManagedBuffer`1.GetMetadata``1</Target>
     <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
@@ -550,12 +544,6 @@
   <Suppression>
     <DiagnosticId>CP0006</DiagnosticId>
     <Target>M:Rxmxnx.PInvoke.IWrapper`1.Create(`0)</Target>
-    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
-    <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
-  </Suppression>
-  <Suppression>
-    <DiagnosticId>CP0006</DiagnosticId>
-    <Target>P:Rxmxnx.PInvoke.Buffers.IManagedBinaryBuffer`2.IsStaticBinary</Target>
     <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>

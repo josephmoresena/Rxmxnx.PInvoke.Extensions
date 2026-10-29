@@ -27,11 +27,7 @@ public struct Composite<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAcc
 	/// Internal metadata.
 	/// </summary>
 	internal static readonly BufferTypeMetadata<T> TypeMetadata =
-#if NET7_0_OR_GREATER
-		Composite<TBufferA, TBufferB, T>.CreateTypeMetadata();
-#else
 		Composite<TBufferA, TBufferB, T>.CreateBufferMetadata();
-#endif
 
 	/// <summary>
 	/// Low buffer.
@@ -67,21 +63,8 @@ public struct Composite<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAcc
 		IManagedBuffer<T>.AppendComponent<TBufferA>(storage);
 		IManagedBuffer<T>.AppendComponent<TBufferB>(storage);
 	}
+#endif
 
-	/// <summary>
-	/// Creates the <see cref="BufferTypeMetadata{T}"/> instance for the current type.
-	/// </summary>
-	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
-	private static BufferTypeMetadata<T> CreateTypeMetadata()
-	{
-		UInt16 size = BuffersHelper.CompositeSize<TBufferA, TBufferB, T>();
-		if (TBufferA.IsStaticBinary && TBufferB.IsStaticBinary &&
-		    BuffersHelper.CanComposeBinary<TBufferA, TBufferB, T>())
-			return new BinaryCompositeBufferTypeMetadata<TBufferA, TBufferB, T>(size);
-		return new BinaryCompositeBufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>(
-			size, TBufferA.TypeMetadata, TBufferB.TypeMetadata, false);
-	}
-#else
 	/// <summary>
 	/// Creates the <see cref="BufferTypeMetadata{T}"/> instance for the current type.
 	/// </summary>
@@ -89,11 +72,18 @@ public struct Composite<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAcc
 	private static BufferTypeMetadata<T> CreateBufferMetadata()
 	{
 		UInt16 size = BuffersHelper.CompositeSize<TBufferA, TBufferB, T>();
+#if !NET7_0_OR_GREATER
 		BufferTypeMetadata<T> low = BuffersHelper.GetMetadata<T, TBufferA>();
 		BufferTypeMetadata<T> high = BuffersHelper.GetMetadata<T, TBufferB>();
 		if (low.IsBinary && high.IsBinary && BuffersHelper.CanComposeBinary<TBufferA, TBufferB, T>())
 			return new BinaryCompositeBufferTypeMetadata<TBufferA, TBufferB, T>(size);
 		return new BinaryCompositeBufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>(size, low, high, false);
-	}
+#else
+		if (TBufferA.IsStaticBinary && TBufferB.IsStaticBinary &&
+		    BuffersHelper.CanComposeBinary<TBufferA, TBufferB, T>())
+			return new BinaryCompositeBufferTypeMetadata<TBufferA, TBufferB, T>(size);
+		return new BinaryCompositeBufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>(
+			size, TBufferA.TypeMetadata, TBufferB.TypeMetadata, false);
 #endif
+	}
 }

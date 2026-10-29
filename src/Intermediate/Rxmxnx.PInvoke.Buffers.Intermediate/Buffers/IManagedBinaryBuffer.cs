@@ -30,13 +30,5 @@ public interface
 	/// Indicates whether the buffer type satisfies the binary composition rule.
 	/// </summary>
 	internal static abstract Boolean IsStaticBinary { get; }
-#elif NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-	/// <summary>
-	/// Indicates whether the buffer type satisfies the binary composition rule.
-	/// </summary>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	internal static Boolean IsStaticBinary => false;
 #endif
 }

@@ -38,11 +38,18 @@ public abstract partial class BufferTypeMetadata
 	/// the count of the components.
 	/// </exception>
 	/// <returns>The component at the specified index within the buffer metadata.</returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
 	[IndexerName("Item")]
-	public abstract BufferTypeMetadata this[Int32 index] { get; }
+	public virtual BufferTypeMetadata this[Int32 index]
+	{
+#if !PACKAGE
+		[ExcludeFromCodeCoverage]
+#endif
+		get
+		{
+			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, 0);
+			return this;
+		}
+	}
 }
 
 /// <summary>
@@ -52,11 +59,6 @@ public abstract partial class BufferTypeMetadata
 public abstract partial class BufferTypeMetadata<T> : BufferTypeMetadata
 {
 	/// <inheritdoc/>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	public override BufferTypeMetadata this[Int32 index] => throw new IndexOutOfRangeException();
-	/// <inheritdoc/>
 	public override Int32 ComponentCount => 0;
 	/// <summary>
 	/// Size of a single element.
@@ -65,7 +67,7 @@ public abstract partial class BufferTypeMetadata<T> : BufferTypeMetadata
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 #pragma warning disable CS8500
-	public override unsafe Int32 SizeOfElement => sizeof(T);
+	public sealed override unsafe Int32 SizeOfElement => sizeof(T);
 #pragma warning restore CS8500
 
 	/// <summary>
