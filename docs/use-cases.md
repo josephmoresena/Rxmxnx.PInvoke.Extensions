@@ -301,10 +301,29 @@ if ("Hello"u8.IsLiteral())
 `AotInfo.IsNativeAot` is reliable on CoreCLR (including R2R and Native AOT). On Mono it may depend on when it is first
 read, because Mono AOT does not compile an entire assembly at once.
 
+## Pin a single local for a native call
+
+When the native API takes one value (or you need a mutable `ref T` while pinned), use a reference functional interface.
+The portable form returns `FixedReferenceValue<T>`:
+
+```csharp
+readonly struct WriteSlot : IFixedReferenceAction<Int32>
+{
+    public void Accept(scoped FixedReferenceValue<Int32> fixedReference)
+        => fixedReference.Reference = 42;
+}
+
+Int32 slot = 0;
+new WriteSlot().WithSafeFixed(ref slot);
+```
+
+On .NET 9.0+ the same overloads accept `ref struct` values, including `Span<T>`. Managed-like types keep empty
+`Bytes` / `Objects` and reject `Transformation` to another type.
+
 ## Pin several buffers for one native call
 
 Some native APIs take multiple pointers that must all remain valid for the duration of the call. `WithSafeFixed` can pin
-up to eight spans and hand them over as a list.
+up to eight **spans** or **references** and hand them over as a list.
 
 ```csharp
 readonly struct CallNative : IFixedPointerListAction
@@ -312,12 +331,31 @@ readonly struct CallNative : IFixedPointerListAction
     public void Accept(scoped FixedPointerValueList list)
     {
         // list[0], list[1], ... stay pinned until Accept returns.
+        // Spans → FixedContextValue<T>; single refs → FixedReferenceValue<T>.
+        FixedContextValue<Byte> header = (FixedContextValue<Byte>)list[0].Value;
+        _ = header.Values;
     }
 }
 
 Span<Byte> header = stackalloc Byte[16];
 Span<Byte> payload = new Byte[1024];
 new CallNative().WithSafeFixed(header, payload);
+
+readonly struct SumPair : IFixedPointerListAction
+{
+    public Int32 Sum;
+    public void Accept(scoped FixedPointerValueList list)
+    {
+        FixedReferenceValue<Int32> left = (FixedReferenceValue<Int32>)list[0].Value;
+        FixedReferenceValue<Int32> right = (FixedReferenceValue<Int32>)list[1].Value;
+        this.Sum = left.Reference + right.Reference;
+    }
+}
+
+Int32 a = 1;
+Int32 b = 2;
+SumPair sum = new();
+sum.WithSafeFixed(ref a, ref b);
 ```
 
 ## Wrap a value so an API can hold it without knowing the storage
@@ -345,6 +383,8 @@ callback payload or a diagnostic dump.
 | Growing UTF-8 text                                             | `CStringBuilder`                                          |
 | A typed pointer in a signature                                 | `ValPtr<T>` / `ReadOnlyValPtr<T>` / `FuncPtr<T>`          |
 | A pointer that dies with the callback                          | `WithSafeFixed` + functional interface                    |
+| A single pinned local / `ref T`                                | `IFixedReferenceAction<T>` + `FixedReferenceValue<T>`     |
+| Several locals pinned together                                 | `IFixedPointerListAction` + `ref` / `in` overloads        |
 | A native buffer with `using`                                   | `NativeUtilities.HeapAlloc<T>`                            |
 | A byte view of existing memory                                 | `AsBytes` / `AsValues`                                    |
 | Fast span (runtime optimizations) versus your own / older path | `SystemInfo.UsesNativeSpan` (usually array versus span)   |

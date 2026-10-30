@@ -48,12 +48,44 @@ Single values and small sequences of unmanaged `T`.
 | Rent a fixed block | `RentFixed`                                              |
 | Enum names         | `GetName` (uses native `Enum.GetName<T>` when available) |
 
-## References (`ReferenceExtensions`)
+## References (`ReferenceExtensions` / `FixedReferenceValueExtensions`)
 
-`in T` / `ref T` helpers: `Transform` / `TransformReference` to another unmanaged type, `WithSafeFixed` for a single
-reference, `GetUnsafeValPtr` / `GetUnsafeIntPtr`.
+`in T` / `ref T` helpers split across two types:
 
-From .NET 9.0, `T` may be a `ref struct` on several of these.
+| Type                            | Intent                                                                                                                                                                                                                        |
+|---------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ReferenceExtensions`           | `Transform` / `TransformReference` to another unmanaged type; delegate `WithSafeFixed` for a single reference (.NET Standard 2.1 / .NET Core 3.0+); `GetUnsafeValPtr` / `GetUnsafeIntPtr`.                                    |
+| `FixedReferenceValueExtensions` | Functional-interface pinning on every TFM: `WithSafeFixed` / `WithSafeReadOnlyFixed` (and `WithReferenceSafeFixed*`), plus `CreateValue` / `Transformation` adapters for `IFixedReference<T>` / `IReadOnlyFixedReference<T>`. |
+
+```csharp
+readonly struct Bump : IFixedReferenceAction<Int32>
+{
+    public void Accept(scoped FixedReferenceValue<Int32> fixedReference)
+        => fixedReference.Reference++;
+}
+
+Int32 value = 1;
+new Bump().WithSafeFixed(ref value);
+```
+
+From .NET 9.0, `T` may be a `ref struct` on the functional-interface overloads (including `Span<T>` /
+`ReadOnlySpan<T>`). Managed-like types (`IsReferenceOrContainsReferences`) cannot be `Transformation`’d to another
+reference type.
+
+## Multi-reference lists (`FixedPointerListValueExtensions`)
+
+Functional-interface overloads that pin **two to eight** spans **or** references at once and pass a
+`FixedPointerValueList` to `IFixedPointerListAction` / `IFixedPointerListFunction<TResult>`:
+
+| Shape                        | Example                                                    |
+|------------------------------|------------------------------------------------------------|
+| Spans                        | `action.WithSafeFixed(span0, span1, …)`                    |
+| Mutable references           | `action.WithSafeFixed(ref value0, ref value1, …)`          |
+| Read-only references         | `action.WithSafeReadOnlyFixed(in value0, in value1, …)`    |
+| Struct receiver (`this ref`) | `action.WithReferenceSafeFixed(ref value0, ref value1, …)` |
+
+On .NET 9.0+, the reference overloads accept `ref struct` element types. Cast each list entry’s `.Value` to
+`FixedReferenceValue<T>` (or the read-only counterpart) when you need `Reference`.
 
 ## Pointers (`PointerExtensions` / `ValuePointerExtensions`)
 

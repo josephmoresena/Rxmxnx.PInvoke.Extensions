@@ -125,5 +125,13 @@ public readonly ref partial struct FixedPointerValue
 	internal static IFixedContext<Byte> AsBinaryContext<T, TFixedContext>(TFixedContext ctx)
 		where TFixedContext : IFixedMemory<T>, allows ref struct
 		=> ctx.AsBinaryContext();
+	/// <inheritdoc cref="IFixedReference{T}.Transformation{TDestination}(out IFixedMemory)"/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	internal static IFixedReference<TDestination>
+		TransformationReference<T, TFixedReference, TDestination>(TFixedReference reference, out IFixedMemory residual)
+		where TFixedReference : IFixedReference<T>, allows ref struct where T : allows ref struct
+		=> reference.Transformation<TDestination>(out residual);
 #endif
 }

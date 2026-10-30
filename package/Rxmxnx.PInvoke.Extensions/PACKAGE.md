@@ -14,8 +14,10 @@ as a callback or `using` scope lasts.
 
 - **UTF-8 / ASCII strings** — `CString`, `CStringSequence`, and `CStringBuilder` for interop and binary pipelines.
 - **Typed pointers** — `ValPtr<T>`, `ReadOnlyValPtr<T>`, and `FuncPtr<TDelegate>` without spreading `unsafe`.
-- **Scoped fixed memory** — pin spans and references for a callback, including struct-based functional interfaces (the
-  form used on every TFM). Delegate overloads remain on the modern line.
+- **Scoped fixed memory** — pin spans, single references, or up to eight locals together for a callback, including
+  value-type contexts (`FixedContextValue<T>`, `FixedReferenceValue<T>`) and struct-based functional interfaces (the
+  form used on every TFM). On .NET 9.0+, reference pinning also accepts `ref struct` values. Delegate overloads remain
+  on the modern line.
 - **Managed buffers** — stack-first temporary storage for values and object references.
 - **Runtime awareness** — `AotInfo` and `SystemInfo` for Native AOT, Mono, and OS checks.
 - **Compatible hosts** — modern runtimes that support .NET Standard 2.1. Later versions also cover .NET Framework

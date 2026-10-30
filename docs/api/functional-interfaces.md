@@ -29,19 +29,28 @@ the result to an `out` parameter so the function struct can be a `ref struct`.
 
 ## Fixed-memory operations
 
-| Interface                                   | Modern-surface counterpart                                  | Parameter                             |
-|---------------------------------------------|-------------------------------------------------------------|---------------------------------------|
-| `IFixedAction`                              | `FixedAction`, `ReadOnlyFixedAction`, and stateful variants | `scoped FixedPointerValue`            |
-| `IFixedFunction<TResult>`                   | `FixedFunc<TResult>` and variants                           | `scoped FixedPointerValue`            |
-| `IFixedContextAction<T>`                    | `FixedContextAction<T>` and variants                        | `scoped FixedContextValue<T>`         |
-| `IFixedContextFunction<T, TResult>`         | `FixedContextFunc<T, TResult>` and variants                 | `scoped FixedContextValue<T>`         |
-| `IReadOnlyFixedContextAction<T>`            | `ReadOnlyFixedContextAction<T>` and variants                | `scoped ReadOnlyFixedContextValue<T>` |
-| `IReadOnlyFixedContextFunction<T, TResult>` | `ReadOnlyFixedContextFunc<T, TResult>` and variants         | `scoped ReadOnlyFixedContextValue<T>` |
-| `IFixedPointerListAction`                   | `FixedListAction`, `ReadOnlyFixedListAction`                | `scoped FixedPointerValueList`        |
-| `IFixedPointerListFunction<TResult>`        | `FixedListFunc<TResult>` and variants                       | `scoped FixedPointerValueList`        |
+| Interface                                     | Modern-surface counterpart                                  | Parameter                               |
+|-----------------------------------------------|-------------------------------------------------------------|-----------------------------------------|
+| `IFixedAction`                                | `FixedAction`, `ReadOnlyFixedAction`, and stateful variants | `scoped FixedPointerValue`              |
+| `IFixedFunction<TResult>`                     | `FixedFunc<TResult>` and variants                           | `scoped FixedPointerValue`              |
+| `IFixedContextAction<T>`                      | `FixedContextAction<T>` and variants                        | `scoped FixedContextValue<T>`           |
+| `IFixedContextFunction<T, TResult>`           | `FixedContextFunc<T, TResult>` and variants                 | `scoped FixedContextValue<T>`           |
+| `IReadOnlyFixedContextAction<T>`              | `ReadOnlyFixedContextAction<T>` and variants                | `scoped ReadOnlyFixedContextValue<T>`   |
+| `IReadOnlyFixedContextFunction<T, TResult>`   | `ReadOnlyFixedContextFunc<T, TResult>` and variants         | `scoped ReadOnlyFixedContextValue<T>`   |
+| `IFixedReferenceAction<T>`                    | `FixedReferenceAction<T>` and variants                      | `scoped FixedReferenceValue<T>`         |
+| `IFixedReferenceFunction<T, TResult>`         | `FixedReferenceFunc<T, TResult>` and variants               | `scoped FixedReferenceValue<T>`         |
+| `IReadOnlyFixedReferenceAction<T>`            | `ReadOnlyFixedReferenceAction<T>` and variants              | `scoped ReadOnlyFixedReferenceValue<T>` |
+| `IReadOnlyFixedReferenceFunction<T, TResult>` | `ReadOnlyFixedReferenceFunc<T, TResult>` and variants       | `scoped ReadOnlyFixedReferenceValue<T>` |
+| `IFixedPointerListAction`                     | `FixedListAction`, `ReadOnlyFixedListAction`                | `scoped FixedPointerValueList`          |
+| `IFixedPointerListFunction<TResult>`          | `FixedListFunc<TResult>` and variants                       | `scoped FixedPointerValueList`          |
 
 Implementations can store whatever state they need as fields. There is no separate `TArg` type parameter; put the
 argument on the struct.
+
+Reference interfaces pin a single `ref` / `in` value through `FixedReferenceValueExtensions.WithSafeFixed` /
+`WithSafeReadOnlyFixed` (and the `WithReferenceSafeFixed*` forms that take `this ref TAction`). List interfaces accept
+either spans or several references via `FixedPointerListValueExtensions`. On .NET 9.0+, `T` / `T0`…`T7` on those
+overloads may be a `ref struct`.
 
 ## Buffer operations
 

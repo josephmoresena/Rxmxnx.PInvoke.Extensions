@@ -58,15 +58,19 @@ Deep dive: [Pointers](api/pointers.md).
 What you can do:
 
 - Pin a `Span<T>`, `ReadOnlySpan<T>`, `String`, array, or single reference for the duration of an action or function.
-- Read `Pointer`, `ValuePointer`, `Values`, and `Bytes` from the same context.
-- Reinterpret the block as another unmanaged type with `Transformation<TDestination>()`.
-- Pin several spans at once (up to eight) and walk them as a `FixedPointerValueList` (every TFM) or `FixedMemoryList`
-  (.NET Standard 2.1 / .NET Core 3.0+).
-- Prefer **functional interfaces** (`IFixedContextAction<T>`, `IFixedAction`, …) so the callback is a `readonly struct`
-  that already holds its state.
+- Read `Pointer`, `ValuePointer`, `Values` / `Reference`, and `Bytes` from the same context.
+- Reinterpret an **unmanaged** block or reference as another unmanaged type with `Transformation<TDestination>()`.
+  Types that contain references (including `Span<T>` as a managed-like `ref struct` on .NET 9.0+) cannot be transformed
+  to a different type.
+- Pin several spans **or** references at once (up to eight) and walk them as a `FixedPointerValueList` (every TFM) or
+  `FixedMemoryList` (.NET Standard 2.1 / .NET Core 3.0+).
+- Prefer **functional interfaces** (`IFixedContextAction<T>`, `IFixedReferenceAction<T>`, `IFixedAction`, …) so the
+  callback is a `readonly struct` that already holds its state.
+- On .NET 9.0+, pin custom `ref struct`s and managed-like spans as **references** through
+  `FixedReferenceValueExtensions` / multi-reference list overloads (`allows ref struct`).
 
-Prefer value-type contexts (`FixedContextValue<T>`, `FixedPointerValue`) and functional interfaces. Delegate overloads
-that take the `IFixed*` interfaces exist only on the modern line. See
+Prefer value-type contexts (`FixedContextValue<T>`, `FixedReferenceValue<T>`, `FixedPointerValue`) and functional
+interfaces. Delegate overloads that take the `IFixed*` interfaces exist only on the modern line. See
 [compatibility](api/compatibility.md#apis-that-stay-on-the-modern-line).
 
 Whether `Memory<T>` whose `T` contains references can be pinned is a **host** decision. If the runtime allows pinning

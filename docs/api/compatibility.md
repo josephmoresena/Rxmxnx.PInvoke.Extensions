@@ -130,15 +130,19 @@ These are available from .NET Standard 2.0 / .NET Framework / UWP through curren
 
 - `CString`, `CStringSequence`, `CStringBuilder` (JSON converter attribute: .NET Core or .NET Framework 4.6.1+)
 - `ValPtr<T>`, `ReadOnlyValPtr<T>`, `FuncPtr<TDelegate>`
-- `FixedPointerValue`, `FixedContextValue<T>`, `ReadOnlyFixedContextValue<T>`, `FixedPointerValueList`
+- `FixedPointerValue`, `FixedContextValue<T>`, `ReadOnlyFixedContextValue<T>`, `FixedReferenceValue<T>`,
+  `ReadOnlyFixedReferenceValue<T>`, `FixedPointerValueList`
 - `IFixedPointer`, `IFixedMemory`, `IFixedContext<T>`, `IFixedReference<T>`, `IFixedMethod<TDelegate>` (and the
   `IReadOnly*` counterparts). Nested `IDisposable` on `IFixedPointer` / `IFixedMethod<TDelegate>` exists on every TFM;
-  nested `IDisposable` on memory, context, and reference types does not.
+  nested `IDisposable` on memory, context, and reference types does not. On .NET 9.0+, the reference value types
+  implement `IFixedReference<T>` / `IReadOnlyFixedReference<T>`.
 - Functional interfaces: `IFixedAction`, `IFixedContextAction<T>`, `IReadOnlyFixedContextAction<T>`,
-  `IFixedPointerListAction`, `IScopedBufferAction<T>`, and the function counterparts. `Accept` / `Apply` take
-  `FixedContextValue<T>` / `FixedPointerValue` / `ScopedBuffer<T>` on every TFM.
-- `WithSafeFixed` / `GetFixedContext` / `GetFixedMemory` overloads that take a functional interface or an `out` value
-  context
+  `IFixedReferenceAction<T>`, `IReadOnlyFixedReferenceAction<T>`, `IFixedPointerListAction`, `IScopedBufferAction<T>`,
+  and the function counterparts. `Accept` / `Apply` take `FixedContextValue<T>` / `FixedReferenceValue<T>` /
+  `FixedPointerValue` / `ScopedBuffer<T>` on every TFM.
+- `WithSafeFixed` / `WithSafeReadOnlyFixed` / `GetFixedContext` / `GetFixedMemory` overloads that take a functional
+  interface or an `out` value context, including single-reference (`FixedReferenceValueExtensions`) and multi-reference
+  (`FixedPointerListValueExtensions`) pinning
 - `BufferManager<T>.Alloc` / `AllocWithReference` with functional interfaces; `BufferManager.VisualBasic` (every TFM)
 - `NativeUtilities.HeapAlloc<T>(count, out FixedContextValue<T>)`
 - `NativeUtilities.TryCreateSpan<T>` / `TryCreateReadOnlySpan<T>` (fast-span view from a `ref`, or `false` so you keep

@@ -35,8 +35,8 @@ Snippets in these guides use **C# 11** (`u8` literals, `scoped`). The library it
 
 ## Hosts
 
-Functional interfaces and value-type fixed contexts are the callback form on every TFM. The target map is in
-[API surface by TFM](docs/api/compatibility.md). For a new project, see
+Functional interfaces and value-type fixed contexts (`FixedContextValue<T>`, `FixedReferenceValue<T>`, …) are the
+callback form on every TFM. The target map is in [API surface by TFM](docs/api/compatibility.md). For a new project, see
 [support policy](docs/getting-started.md#support-policy).
 
 If your code talks to native libraries, serializes UTF-8, reinterprets binary layouts, or has to stay trim/AOT-friendly,
@@ -63,8 +63,9 @@ dotnet add package Rxmxnx.PInvoke.Extensions
   `StringBuilder`.
 - **Typed pointers without `unsafe`.** `ValPtr<T>`, `ReadOnlyValPtr<T>`, and `FuncPtr<TDelegate>` keep pointer meaning
   visible in P/Invoke signatures.
-- **Scoped fixed memory.** `WithSafeFixed` pins spans, strings, and references only for the duration of a callback or
-  `using` block, then exposes them as spans, pointers, or typed contexts.
+- **Scoped fixed memory.** `WithSafeFixed` pins spans, strings, and single or multi-reference locals only for the
+  duration of a callback or `using` block, then exposes them as `FixedContextValue<T>`, `FixedReferenceValue<T>`,
+  spans, or typed pointers.
 - **Binary views with no extra copies.** `AsBytes`, `AsValues`, `ToBytes`, and `ToValue` reinterpret memory you already
   own. On desktop .NET Framework those span operations may be slower than on modern .NET; they follow the fast path when
   the **runtime** has it (current .NET, UWP, Mono).
@@ -81,16 +82,16 @@ A longer tour lives in [Capabilities](docs/capabilities.md). Concrete recipes li
 
 Use this library when the problem benefits from explicit memory intent, scoped lifetimes, or low-allocation data access:
 
-| Scenario                                           | Start with                                                                                             |
-|----------------------------------------------------|--------------------------------------------------------------------------------------------------------|
-| UTF-8 text for native APIs, JSON, gRPC, or ASP.NET | `CString`, `CStringSequence`, `CStringBuilder`                                                         |
-| Typed native pointers without spreading `unsafe`   | `ValPtr<T>`, `ReadOnlyValPtr<T>`, `FuncPtr<TDelegate>`                                                 |
-| Pin memory only for a callback or `using` scope    | `WithSafeFixed`, `FixedContextValue<T>` (and `IFixedContext<T>` on .NET Standard 2.1 / .NET Core 3.0+) |
-| Native heap with .NET disposal                     | `NativeUtilities.HeapAlloc<T>()`                                                                       |
-| Reinterpret or hash binary layouts                 | `AsBytes`, `AsValues`, `ToBytes`, `ToValue`                                                            |
-| Flatten a multidimensional array without copying   | `AsSpan`, `AsMemory`                                                                                   |
-| Stack-first temporary storage                      | `BufferManager`, `ScopedBuffer<T>`                                                                     |
-| AOT / Mono / platform checks                       | `AotInfo`, `SystemInfo`, `IsImageMethod`, `IsLiteral`                                                  |
+| Scenario                                           | Start with                                                                                                              |
+|----------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| UTF-8 text for native APIs, JSON, gRPC, or ASP.NET | `CString`, `CStringSequence`, `CStringBuilder`                                                                          |
+| Typed native pointers without spreading `unsafe`   | `ValPtr<T>`, `ReadOnlyValPtr<T>`, `FuncPtr<TDelegate>`                                                                  |
+| Pin memory only for a callback or `using` scope    | `WithSafeFixed`, `FixedContextValue<T>`, `FixedReferenceValue<T>` (and `IFixed*` on .NET Standard 2.1 / .NET Core 3.0+) |
+| Native heap with .NET disposal                     | `NativeUtilities.HeapAlloc<T>()`                                                                                        |
+| Reinterpret or hash binary layouts                 | `AsBytes`, `AsValues`, `ToBytes`, `ToValue`                                                                             |
+| Flatten a multidimensional array without copying   | `AsSpan`, `AsMemory`                                                                                                    |
+| Stack-first temporary storage                      | `BufferManager`, `ScopedBuffer<T>`                                                                                      |
+| AOT / Mono / platform checks                       | `AotInfo`, `SystemInfo`, `IsImageMethod`, `IsLiteral`                                                                   |
 
 Skip it when those flows are already covered, you prefer writing `unsafe` by hand, or UTF-8 and pointer contracts are
 not part of the workload.

@@ -9,8 +9,8 @@ source.
 | Area                                              | What you will find                                                                    |
 |---------------------------------------------------|---------------------------------------------------------------------------------------|
 | [Pointers](pointers.md)                           | `ValPtr<T>`, `ReadOnlyValPtr<T>`, `FuncPtr<TDelegate>`                                |
-| [Fixed memory](fixed-memory.md)                   | Fixed contexts, pointer values, memory lists, pinning APIs                            |
-| [Functional interfaces](functional-interfaces.md) | Struct callbacks used instead of, or alongside, delegates                             |
+| [Fixed memory](fixed-memory.md)                   | Fixed contexts, reference values, pointer values, memory lists, pinning APIs          |
+| [Functional interfaces](functional-interfaces.md) | Struct callbacks (context, reference, list, buffer) used with or instead of delegates |
 | [UTF-8 text](cstring.md)                          | `CString`, `CStringSequence`, `CStringBuilder`                                        |
 | [Buffers](buffers.md)                             | `BufferManager`, `ScopedBuffer<T>`, binary and non-binary spaces                      |
 | [Wrappers and regions](wrappers.md)               | `IWrapper<T>`, `IReferenceable<T>`, `ValueRegion<T>`                                  |

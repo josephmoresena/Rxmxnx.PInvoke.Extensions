@@ -4,8 +4,8 @@ Fixed memory APIs pin a managed object (or wrap native memory) and expose it as 
 for a **bounded lifetime**. When the callback returns or `Dispose` runs, the pin is released and the pointers must not
 be used.
 
-Value-type contexts (`FixedPointerValue`, `FixedContextValue<T>`) and [functional interfaces](functional-interfaces.md)
-are the portable form on every TFM.
+Value-type contexts (`FixedPointerValue`, `FixedContextValue<T>`, `FixedReferenceValue<T>`) and
+[functional interfaces](functional-interfaces.md) are the portable form on every TFM.
 
 ## Contexts you will hold
 
@@ -29,6 +29,29 @@ A `ref struct` for “a pinned block of `T`”:
 
 Read-only variants hide mutation at the C# level. Native code can still write through the raw pointer.
 
+### `FixedReferenceValue<T>` / `ReadOnlyFixedReferenceValue<T>`
+
+A `ref struct` for “a single pinned `T`” (every TFM). Prefer this over the interface forms when you pin one local or
+field:
+
+| Member          | Meaning                                                              |
+|-----------------|----------------------------------------------------------------------|
+| `Pointer`       | Address as `IntPtr`.                                                 |
+| `ValuePointer`  | `ValPtr<T>` or `ReadOnlyValPtr<T>`.                                  |
+| `Reference`     | `ref T` / `ref readonly T` to the pinned value.                      |
+| `Bytes`         | Byte view when `T` is unmanaged. Empty when `T` contains references. |
+| `Objects`       | Object view when `T` is a reference type. Empty for unmanaged `T`.   |
+| `IsNullOrEmpty` | Null address.                                                        |
+
+On .NET 9.0+, `T` may be a `ref struct` (`allows ref struct`). Types with
+`RuntimeHelpers.IsReferenceOrContainsReferences<T>() == true` (including `Span<T>` / `ReadOnlySpan<T>`) are treated as
+**managed**: `IsUnmanaged` is false, `Bytes` / `Objects` stay empty, and `Transformation<TDestination>` to a different
+type throws. Unmanaged custom `ref struct`s still allow reinterpretation when sizes allow.
+
+`CreateValue(IFixedReference<T>)` / `CreateValue(IReadOnlyFixedReference<T>)` adapts an interface instance to the value
+context. `Transformation<TDestination>(out residual)` reinterprets the reference and returns leftover bytes as a
+`FixedPointerValue`. Implicit conversions exist to `FixedPointerValue` and to the read-only reference value type.
+
 ### Interface contexts (`IFixedContext<T>` and friends)
 
 The historical surface:
@@ -43,14 +66,15 @@ The historical surface:
 | `*.IDisposable`                                     | Same contract, released with `using`. Nested on `IFixedMemory` / `IFixedContext<T>` / `IReadOnlyFixedContext<T>` **only** on .NET Standard 2.1 / .NET Core 3.0+. `IFixedPointer.IDisposable` and `IFixedMethod<TDelegate>.IDisposable` exist on every TFM. |
 
 `Transformation<TDestination>(out residual)` reinterprets the block as another unmanaged type and returns any leftover
-bytes as residual memory.
+bytes as residual memory. Managed sources (including reference-containing `ref struct`s) cannot be transformed to a
+different type.
 
-New code should prefer `FixedContextValue<T>` plus a functional interface. That combination is what every TFM the
-package ships actually exposes.
+New code should prefer `FixedContextValue<T>` / `FixedReferenceValue<T>` plus a functional interface. That combination
+is what every TFM the package ships actually exposes.
 
 ## Lists of pinned blocks
 
-When several spans must stay pinned together:
+When several spans or references must stay pinned together:
 
 | Type                                          | Contents                                                                                                                          |
 |-----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
@@ -59,12 +83,14 @@ When several spans must stay pinned together:
 | `FixedCStringSequence`                        | A `CStringSequence` whose UTF-8 buffer is fixed.                                                                                  |
 
 All list types are `ref struct`s and can be enumerated with `foreach`. `Count`, `IsEmpty`, an indexer, and `ToArray()`
-are available on the interface-based lists.
+are available on the interface-based lists. Each list entry’s `.Value` is a `FixedPointerValue` that you can cast to
+`FixedReferenceValue<T>` / `FixedContextValue<T>` when you know the element shape.
 
-Functional-interface overloads pin between two and eight spans. The **action is the receiver**:
-`action.WithSafeFixed(span0, span1, ...)`. Delegate overloads keep the historical `span.WithSafeFixed(...)` shape. Both
-pass the pinned list into `IFixedPointerListAction` / `IFixedPointerListFunction<TResult>` (or the older list
-delegates).
+Functional-interface overloads pin between two and eight **spans** or **references** (`ref` / `in`). The **action is
+the receiver**: `action.WithSafeFixed(span0, span1, …)` or `action.WithSafeFixed(ref value0, ref value1, …)`. Delegate
+overloads keep the historical `span.WithSafeFixed(...)` shape. Both pass the pinned list into
+`IFixedPointerListAction` / `IFixedPointerListFunction<TResult>` (or the older list delegates). On .NET 9.0+, reference
+list overloads accept `ref struct` element types (`allows ref struct` on `T0`…`T7`).
 
 ## How pinning is requested
 
@@ -75,12 +101,16 @@ callback finishes.
 
 Shapes:
 
-- Functional interfaces (`IFixedAction`, `IFixedContextAction<T>`, …) — available on every TFM the package ships.
-- Action / function delegates (`FixedAction`, `FixedContextAction<T>`, `FixedFunc<TResult>`, …) — **.NET Standard 2.1 /
-  .NET Core 3.0+ only**. Not present on .NET Framework, .NET Standard 2.0, .NET Core 2.1, or UWP.
+- Functional interfaces (`IFixedAction`, `IFixedContextAction<T>`, `IFixedReferenceAction<T>`,
+  `IFixedPointerListAction`, …) — available on every TFM the package ships.
+- Action / function delegates (`FixedAction`, `FixedContextAction<T>`, `FixedReferenceAction<T>`, `FixedFunc<TResult>`,
+  …) — **.NET Standard 2.1 / .NET Core 3.0+ only**. Not present on .NET Framework, .NET Standard 2.0, .NET Core 2.1, or
+  UWP.
 - Optional extra argument `TArg` on the delegate overloads (may be a `ref struct` on .NET 9.0+).
 
-There are read-only variants (`WithSafeReadOnlyFixed`) when you want a read-only context from a mutable span.
+There are read-only variants (`WithSafeReadOnlyFixed`) when you want a read-only context from a mutable span or an
+`in` reference. Single-reference functional-interface overloads live on `FixedReferenceValueExtensions`; multi-reference
+overloads live on `FixedPointerListValueExtensions`.
 
 ### `GetFixedContext` / `GetFixedMemory`
 
@@ -132,7 +162,8 @@ equivalent on every TFM. See [compatibility](compatibility.md#apis-that-stay-on-
 `ReadOnlySpanFunc<T>` / `ReadOnlySpanFunc<T, TState>` are **not** in that set — they exist on every TFM and back
 `CString` / `ValueRegion<T>`.
 
-From .NET 9.0, `TArg` / `TState` on many of these may be a `ref struct`.
+From .NET 9.0, `TArg` / `TState` on many of these may be a `ref struct`. The same applies to `T` on reference value
+contexts and to `T0`…`T7` on multi-reference list overloads.
 
 ## Validity rules
 
