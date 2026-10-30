@@ -331,7 +331,7 @@ readonly struct CallNative : IFixedPointerListAction
     public void Accept(scoped FixedPointerValueList list)
     {
         // list[0], list[1], ... stay pinned until Accept returns.
-        // Spans → FixedContextValue<T>; single refs → FixedReferenceValue<T>.
+        // Spans → FixedContextValue<T>. Single refs → FixedReferenceValue<T> (size ≥ sizeof(T)).
         FixedContextValue<Byte> header = (FixedContextValue<Byte>)list[0].Value;
         _ = header.Values;
     }

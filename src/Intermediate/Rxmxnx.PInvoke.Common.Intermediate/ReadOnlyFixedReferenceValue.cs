@@ -140,9 +140,7 @@ public readonly unsafe ref partial struct ReadOnlyFixedReferenceValue<T>
 		                                   !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>());
 		Int32 sizeOf = sizeof(TDestination);
 		this._value.ValidateReferenceSize(typeof(TDestination), sizeOf);
-		Int32 count = this._value.Size / sizeOf;
-		Int32 offset = count * sizeOf;
-		residual = this._value.CreateOffset(offset);
+		residual = this._value.CreateOffset(sizeOf);
 		return new(this._value);
 	}
 
@@ -161,6 +159,7 @@ public readonly unsafe ref partial struct ReadOnlyFixedReferenceValue<T>
 	{
 		value.ValidateOperation(true);
 		value.ValidateTransformation(typeof(T), !RuntimeHelpers.IsReferenceOrContainsReferences<T>());
+		value.ValidateReferenceSize(typeof(T), sizeof(T));
 		return new(value);
 	}
 #pragma warning restore CS8500

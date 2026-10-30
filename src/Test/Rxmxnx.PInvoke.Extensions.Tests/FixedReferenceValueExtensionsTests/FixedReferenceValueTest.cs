@@ -23,6 +23,32 @@ public sealed class FixedReferenceValueTest
 		PInvokeAssert.Equal(4, action.Seen);
 		PInvokeAssert.Equal(4, value);
 	}
+	[Fact]
+	public void TransformationResidualTest()
+	{
+		Int64 value = 0x0102030405060708L;
+		TransformationResidualAction action = new();
+		action.WithSafeFixed(ref value);
+		PInvokeAssert.True(action.ResidualAtDestinationSize);
+		PInvokeAssert.Equal(sizeof(Int64) - sizeof(Int32), action.ResidualBytesLength);
+	}
+	[Fact]
+	public void ReadOnlyTransformationResidualTest()
+	{
+		Int64 value = 0x0102030405060708L;
+		ReadOnlyTransformationResidualAction action = new();
+		action.WithSafeReadOnlyFixed(in value);
+		PInvokeAssert.True(action.ResidualAtDestinationSize);
+		PInvokeAssert.Equal(sizeof(Int64) - sizeof(Int32), action.ResidualBytesLength);
+	}
+	[Fact]
+	public void ExplicitCastRejectsInsufficientSizeTest()
+	{
+		Int16 value = 7;
+		InsufficientSizeCastAction action = new();
+		action.WithSafeFixed(ref value);
+		PInvokeAssert.True(action.Rejected);
+	}
 
 #if NET9_0_OR_GREATER
 	[Fact]
@@ -98,6 +124,50 @@ public sealed class FixedReferenceValueTest
 		public Int32 Seen;
 		public void Accept(scoped ReadOnlyFixedReferenceValue<Int32> fixedReference)
 			=> this.Seen = fixedReference.Reference;
+	}
+	private sealed class TransformationResidualAction : IFixedReferenceAction<Int64>
+	{
+		public Boolean ResidualAtDestinationSize;
+		public Int32 ResidualBytesLength;
+		public void Accept(scoped FixedReferenceValue<Int64> fixedReference)
+		{
+			FixedReferenceValue<Int32> transformed = fixedReference.Transformation<Int32>(out FixedPointerValue residual);
+			this.ResidualAtDestinationSize = residual.Pointer == fixedReference.Pointer + sizeof(Int32);
+			FixedReferenceValue<Int32> leftover = (FixedReferenceValue<Int32>)residual;
+			this.ResidualBytesLength = leftover.Bytes.Length;
+			PInvokeAssert.Equal(fixedReference.Bytes.Length, transformed.Bytes.Length);
+		}
+	}
+	private sealed class ReadOnlyTransformationResidualAction : IReadOnlyFixedReferenceAction<Int64>
+	{
+		public Boolean ResidualAtDestinationSize;
+		public Int32 ResidualBytesLength;
+		public void Accept(scoped ReadOnlyFixedReferenceValue<Int64> fixedReference)
+		{
+			ReadOnlyFixedReferenceValue<Int32> transformed =
+				fixedReference.Transformation<Int32>(out FixedPointerValue residual);
+			this.ResidualAtDestinationSize = residual.Pointer == fixedReference.Pointer + sizeof(Int32);
+			ReadOnlyFixedReferenceValue<Int32> leftover = (ReadOnlyFixedReferenceValue<Int32>)residual;
+			this.ResidualBytesLength = leftover.Bytes.Length;
+			PInvokeAssert.Equal(fixedReference.Bytes.Length, transformed.Bytes.Length);
+		}
+	}
+	private sealed class InsufficientSizeCastAction : IFixedReferenceAction<Int16>
+	{
+		public Boolean Rejected;
+		public void Accept(scoped FixedReferenceValue<Int16> fixedReference)
+		{
+			FixedPointerValue pointer = fixedReference;
+			try
+			{
+				_ = (FixedReferenceValue<Int32>)pointer;
+				this.Rejected = false;
+			}
+			catch (InsufficientMemoryException)
+			{
+				this.Rejected = true;
+			}
+		}
 	}
 
 #if NET9_0_OR_GREATER

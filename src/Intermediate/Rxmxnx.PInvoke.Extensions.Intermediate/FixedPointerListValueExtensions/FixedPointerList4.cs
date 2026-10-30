@@ -91,6 +91,7 @@ public static partial class FixedPointerListValueExtensions
 				});
 			}
 		}
+
 		/// <summary>
 		/// Pins the given read-only spans and executes <paramref name="action"/>.
 		/// </summary>
@@ -157,6 +158,7 @@ public static partial class FixedPointerListValueExtensions
 				});
 			}
 		}
+
 		/// <summary>
 		/// Pins the given spans and executes <paramref name="func"/>.
 		/// </summary>
@@ -225,6 +227,7 @@ public static partial class FixedPointerListValueExtensions
 				});
 			}
 		}
+
 		/// <summary>
 		/// Pins the given read-only spans and executes <paramref name="func"/>.
 		/// </summary>
@@ -354,65 +357,6 @@ public static partial class FixedPointerListValueExtensions
 			}
 		}
 
-		/// <summary>Pins 4 read-only references and executes <paramref name="action"/>.</summary>
-#if NETFRAMEWORK || NETSTANDARD2_0
-		[SecuritySafeCritical]
-#endif
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-#if !PACKAGE
-		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
-#endif
-		internal static void WithSafeReadOnlyFixed<TAction, T0, T1, T2, T3>(ref TAction action, in T0 value0,
-			in T1 value1, in T2 value2, in T3 value3)
-#if !NET9_0_OR_GREATER
-			where TAction : IFixedPointerListAction
-#else
-			where T0 : allows ref struct
-			where T1 : allows ref struct
-			where T2 : allows ref struct
-			where T3 : allows ref struct
-			where TAction : IFixedPointerListAction, allows ref struct
-#endif
-		{
-			fixed (void* ptr0 = &value0)
-			fixed (void* ptr1 = &value1)
-			fixed (void* ptr2 = &value2)
-			fixed (void* ptr3 = &value3)
-			{
-#if !NET5_0_OR_GREATER
-				B4 bufferType = new();
-				Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-				Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
-#else
-				void* infoPtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
-				Span<FixedPointerInfo> info =
-					MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(infoPtr, types.Length);
-#endif
-				info[0] = FixedPointerListValueExtensions.CreateFixedPointerInfo<T0>(ptr0, out types[0]);
-				info[1] = FixedPointerListValueExtensions.CreateFixedPointerInfo<T1>(ptr1, out types[1]);
-				info[2] = FixedPointerListValueExtensions.CreateFixedPointerInfo<T2>(ptr2, out types[2]);
-				info[3] = FixedPointerListValueExtensions.CreateFixedPointerInfo<T3>(ptr3, out types[3]);
-#endif
-				action.Accept(new()
-				{
-					IsReadOnly = true,
-					Instances = [],
-#if !NET5_0_OR_GREATER
-					Information = info,
-#else
-					Information =
-					[
-						FixedPointerListValueExtensions.CreateFixedPointerInfo<T0>(ptr0),
-						FixedPointerListValueExtensions.CreateFixedPointerInfo<T1>(ptr1),
-						FixedPointerListValueExtensions.CreateFixedPointerInfo<T2>(ptr2),
-						FixedPointerListValueExtensions.CreateFixedPointerInfo<T3>(ptr3),
-					],
-#endif
-				});
-			}
-		}
-
 		/// <summary>Pins 4 references and executes <paramref name="func"/>.</summary>
 #if NETFRAMEWORK || NETSTANDARD2_0
 		[SecuritySafeCritical]
@@ -456,6 +400,65 @@ public static partial class FixedPointerListValueExtensions
 				result = func.Apply(new()
 				{
 					IsReadOnly = false,
+					Instances = [],
+#if !NET5_0_OR_GREATER
+					Information = info,
+#else
+					Information =
+					[
+						FixedPointerListValueExtensions.CreateFixedPointerInfo<T0>(ptr0),
+						FixedPointerListValueExtensions.CreateFixedPointerInfo<T1>(ptr1),
+						FixedPointerListValueExtensions.CreateFixedPointerInfo<T2>(ptr2),
+						FixedPointerListValueExtensions.CreateFixedPointerInfo<T3>(ptr3),
+					],
+#endif
+				});
+			}
+		}
+
+		/// <summary>Pins 4 read-only references and executes <paramref name="action"/>.</summary>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecuritySafeCritical]
+#endif
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3218)]
+#endif
+		internal static void WithSafeReadOnlyFixed<TAction, T0, T1, T2, T3>(ref TAction action, in T0 value0,
+			in T1 value1, in T2 value2, in T3 value3)
+#if !NET9_0_OR_GREATER
+			where TAction : IFixedPointerListAction
+#else
+			where T0 : allows ref struct
+			where T1 : allows ref struct
+			where T2 : allows ref struct
+			where T3 : allows ref struct
+			where TAction : IFixedPointerListAction, allows ref struct
+#endif
+		{
+			fixed (void* ptr0 = &value0)
+			fixed (void* ptr1 = &value1)
+			fixed (void* ptr2 = &value2)
+			fixed (void* ptr3 = &value3)
+			{
+#if !NET5_0_OR_GREATER
+				B4 bufferType = new();
+				Span<Type> types = NativeUtilities.CreateTypeSpan(ref bufferType);
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+				Span<FixedPointerInfo> info = stackalloc FixedPointerInfo[types.Length];
+#else
+				void* infoPtr = stackalloc Byte[sizeof(FixedPointerInfo) * types.Length];
+				Span<FixedPointerInfo> info =
+					MemoryMarshalCompat.CreateUnsafeSpan<FixedPointerInfo>(infoPtr, types.Length);
+#endif
+				info[0] = FixedPointerListValueExtensions.CreateFixedPointerInfo<T0>(ptr0, out types[0]);
+				info[1] = FixedPointerListValueExtensions.CreateFixedPointerInfo<T1>(ptr1, out types[1]);
+				info[2] = FixedPointerListValueExtensions.CreateFixedPointerInfo<T2>(ptr2, out types[2]);
+				info[3] = FixedPointerListValueExtensions.CreateFixedPointerInfo<T3>(ptr3, out types[3]);
+#endif
+				action.Accept(new()
+				{
+					IsReadOnly = true,
 					Instances = [],
 #if !NET5_0_OR_GREATER
 					Information = info,
@@ -530,6 +533,7 @@ public static partial class FixedPointerListValueExtensions
 				});
 			}
 		}
+
 #pragma warning restore CS8500
 	}
 }
