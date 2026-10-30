@@ -26,34 +26,8 @@ public readonly unsafe ref partial struct ReadOnlyFixedReferenceValue<T>
 			return new(value);
 		if (instance is not IDisposable dis)
 			return new(Unsafe.AsPointer(ref Unsafe.AsRef(in instance.Reference)));
-		ReadOnlyFixedReferenceValue<T>.CreateDisposable(
-			(ReadOnlyValPtr<T>)Unsafe.AsPointer(ref Unsafe.AsRef(in instance.Reference)), dis,
-			out ReadOnlyFixedReferenceValue<T> result);
-		return result;
-	}
-
-	/// <summary>
-	/// Retrieves an <see langword="unsafe"/> <see cref="ReadOnlyFixedReferenceValue{T}"/> instance from the current
-	/// read-only reference pointer.
-	/// </summary>
-	/// <typeparam name="TDisposable">Type of <see cref="IDisposable"/> instance.</typeparam>
-	/// <param name="ptr">Current <see cref="ReadOnlyValPtr{T}"/> value.</param>
-	/// <param name="disposable">Object to dispose to free <see langword="unmanaged"/> resources.</param>
-	/// <param name="fixedReference">
-	/// Output. The <see cref="ReadOnlyFixedReferenceValue{T}"/> instance representing the fixed memory.
-	/// </param>
-	/// <returns>The <see cref="IDisposable"/> instance to release <see langword="unmanaged"/> resources.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static IDisposable CreateDisposable<TDisposable>(ReadOnlyValPtr<T> ptr, TDisposable disposable,
-		out ReadOnlyFixedReferenceValue<T> fixedReference) where TDisposable : IDisposable
-	{
-		if (ptr.IsZero)
-		{
-			fixedReference = default;
-			return FixedValueHandle.EmptyDisposable;
-		}
-		FixedValueHandle result = FixedValueHandle.CreateFromDisposable(disposable);
-		fixedReference = new(ptr, result);
-		return result;
+		if (instance.Pointer == default)
+			return default;
+		return new((ReadOnlyValPtr<T>)instance.Pointer, FixedValueHandle.CreateFromDisposable(dis));
 	}
 }

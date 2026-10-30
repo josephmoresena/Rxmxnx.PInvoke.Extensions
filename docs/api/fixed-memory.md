@@ -48,8 +48,10 @@ On .NET 9.0+, `T` may be a `ref struct` (`allows ref struct`). Types with
 **managed**: `IsUnmanaged` is false, `Bytes` / `Objects` stay empty, and `Transformation<TDestination>` to a different
 type throws. Unmanaged custom `ref struct`s still allow reinterpretation when sizes allow.
 
-`CreateValue(IFixedReference<T>)` / `CreateValue(IReadOnlyFixedReference<T>)` adapts an interface instance to the value
-context. `Transformation<TDestination>(out residual)` reinterprets the reference and returns leftover bytes as a
+`FixedReferenceValue<T>.CreateValue(IFixedReference<T>)` /
+`ReadOnlyFixedReferenceValue<T>.CreateValue(IReadOnlyFixedReference<T>)` adapt an interface instance to the value
+context (likewise `FixedContextValue<T>.CreateValue` / `ReadOnlyFixedContextValue<T>.CreateValue` for blocks).
+`Transformation<TDestination>(out residual)` on the value reinterprets the reference and returns leftover bytes as a
 `FixedPointerValue`. Implicit conversions exist to `FixedPointerValue` and to the read-only reference value type.
 
 ### Interface contexts (`IFixedContext<T>` and friends)

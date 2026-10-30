@@ -13,6 +13,13 @@ public sealed class FixedReferenceValueTest
 		action.WithSafeFixed(ref value);
 		PInvokeAssert.Equal(7, action.Seen);
 		PInvokeAssert.Equal(11, value);
+
+		// Class callbacks exercise NonGenericFixedReference* wrappers.
+		value = 7;
+		ReferenceFunction func = new();
+		func.WithSafeFixed(ref value, out Int32 result);
+		PInvokeAssert.Equal(7, result);
+		PInvokeAssert.Equal(21, value);
 	}
 	[Fact]
 	public void ReadOnlyReferenceTest()
@@ -21,6 +28,11 @@ public sealed class FixedReferenceValueTest
 		ReadOnlyReferenceAction action = new();
 		action.WithSafeReadOnlyFixed(in value);
 		PInvokeAssert.Equal(4, action.Seen);
+		PInvokeAssert.Equal(4, value);
+
+		ReadOnlyReferenceFunction func = new();
+		func.WithSafeReadOnlyFixed(in value, out Int32 result);
+		PInvokeAssert.Equal(4, result);
 		PInvokeAssert.Equal(4, value);
 	}
 	[Fact]
@@ -48,6 +60,86 @@ public sealed class FixedReferenceValueTest
 		InsufficientSizeCastAction action = new();
 		action.WithSafeFixed(ref value);
 		PInvokeAssert.True(action.Rejected);
+	}
+
+	private sealed class ReferenceAction : IFixedReferenceAction<Int32>
+	{
+		public Int32 Seen;
+		public void Accept(scoped FixedReferenceValue<Int32> fixedReference)
+		{
+			this.Seen = fixedReference.Reference;
+			fixedReference.Reference = 11;
+		}
+	}
+
+	private sealed class ReferenceFunction : IFixedReferenceFunction<Int32, Int32>
+	{
+		public Int32 Apply(scoped FixedReferenceValue<Int32> fixedReference)
+		{
+			Int32 seen = fixedReference.Reference;
+			fixedReference.Reference = 21;
+			return seen;
+		}
+	}
+
+	private sealed class ReadOnlyReferenceFunction : IReadOnlyFixedReferenceFunction<Int32, Int32>
+	{
+		public Int32 Apply(scoped ReadOnlyFixedReferenceValue<Int32> fixedReference) => fixedReference.Reference;
+	}
+
+	private sealed class ReadOnlyReferenceAction : IReadOnlyFixedReferenceAction<Int32>
+	{
+		public Int32 Seen;
+		public void Accept(scoped ReadOnlyFixedReferenceValue<Int32> fixedReference)
+			=> this.Seen = fixedReference.Reference;
+	}
+
+	private sealed class TransformationResidualAction : IFixedReferenceAction<Int64>
+	{
+		public Boolean ResidualAtDestinationSize;
+		public Int32 ResidualBytesLength;
+		public void Accept(scoped FixedReferenceValue<Int64> fixedReference)
+		{
+			FixedReferenceValue<Int32> transformed =
+				fixedReference.Transformation<Int32>(out FixedPointerValue residual);
+			this.ResidualAtDestinationSize = residual.Pointer == fixedReference.Pointer + sizeof(Int32);
+			FixedReferenceValue<Int32> leftover = (FixedReferenceValue<Int32>)residual;
+			this.ResidualBytesLength = leftover.Bytes.Length;
+			PInvokeAssert.Equal(fixedReference.Bytes.Length, transformed.Bytes.Length);
+		}
+	}
+
+	private sealed class ReadOnlyTransformationResidualAction : IReadOnlyFixedReferenceAction<Int64>
+	{
+		public Boolean ResidualAtDestinationSize;
+		public Int32 ResidualBytesLength;
+		public void Accept(scoped ReadOnlyFixedReferenceValue<Int64> fixedReference)
+		{
+			ReadOnlyFixedReferenceValue<Int32> transformed =
+				fixedReference.Transformation<Int32>(out FixedPointerValue residual);
+			this.ResidualAtDestinationSize = residual.Pointer == fixedReference.Pointer + sizeof(Int32);
+			ReadOnlyFixedReferenceValue<Int32> leftover = (ReadOnlyFixedReferenceValue<Int32>)residual;
+			this.ResidualBytesLength = leftover.Bytes.Length;
+			PInvokeAssert.Equal(fixedReference.Bytes.Length, transformed.Bytes.Length);
+		}
+	}
+
+	private sealed class InsufficientSizeCastAction : IFixedReferenceAction<Int16>
+	{
+		public Boolean Rejected;
+		public void Accept(scoped FixedReferenceValue<Int16> fixedReference)
+		{
+			FixedPointerValue pointer = fixedReference;
+			try
+			{
+				_ = (FixedReferenceValue<Int32>)pointer;
+				this.Rejected = false;
+			}
+			catch (InsufficientMemoryException)
+			{
+				this.Rejected = true;
+			}
+		}
 	}
 
 #if NET9_0_OR_GREATER
@@ -109,67 +201,6 @@ public sealed class FixedReferenceValueTest
 	}
 #endif
 
-	private sealed class ReferenceAction : IFixedReferenceAction<Int32>
-	{
-		public Int32 Seen;
-		public void Accept(scoped FixedReferenceValue<Int32> fixedReference)
-		{
-			this.Seen = fixedReference.Reference;
-			fixedReference.Reference = 11;
-		}
-	}
-
-	private sealed class ReadOnlyReferenceAction : IReadOnlyFixedReferenceAction<Int32>
-	{
-		public Int32 Seen;
-		public void Accept(scoped ReadOnlyFixedReferenceValue<Int32> fixedReference)
-			=> this.Seen = fixedReference.Reference;
-	}
-	private sealed class TransformationResidualAction : IFixedReferenceAction<Int64>
-	{
-		public Boolean ResidualAtDestinationSize;
-		public Int32 ResidualBytesLength;
-		public void Accept(scoped FixedReferenceValue<Int64> fixedReference)
-		{
-			FixedReferenceValue<Int32> transformed = fixedReference.Transformation<Int32>(out FixedPointerValue residual);
-			this.ResidualAtDestinationSize = residual.Pointer == fixedReference.Pointer + sizeof(Int32);
-			FixedReferenceValue<Int32> leftover = (FixedReferenceValue<Int32>)residual;
-			this.ResidualBytesLength = leftover.Bytes.Length;
-			PInvokeAssert.Equal(fixedReference.Bytes.Length, transformed.Bytes.Length);
-		}
-	}
-	private sealed class ReadOnlyTransformationResidualAction : IReadOnlyFixedReferenceAction<Int64>
-	{
-		public Boolean ResidualAtDestinationSize;
-		public Int32 ResidualBytesLength;
-		public void Accept(scoped ReadOnlyFixedReferenceValue<Int64> fixedReference)
-		{
-			ReadOnlyFixedReferenceValue<Int32> transformed =
-				fixedReference.Transformation<Int32>(out FixedPointerValue residual);
-			this.ResidualAtDestinationSize = residual.Pointer == fixedReference.Pointer + sizeof(Int32);
-			ReadOnlyFixedReferenceValue<Int32> leftover = (ReadOnlyFixedReferenceValue<Int32>)residual;
-			this.ResidualBytesLength = leftover.Bytes.Length;
-			PInvokeAssert.Equal(fixedReference.Bytes.Length, transformed.Bytes.Length);
-		}
-	}
-	private sealed class InsufficientSizeCastAction : IFixedReferenceAction<Int16>
-	{
-		public Boolean Rejected;
-		public void Accept(scoped FixedReferenceValue<Int16> fixedReference)
-		{
-			FixedPointerValue pointer = fixedReference;
-			try
-			{
-				_ = (FixedReferenceValue<Int32>)pointer;
-				this.Rejected = false;
-			}
-			catch (InsufficientMemoryException)
-			{
-				this.Rejected = true;
-			}
-		}
-	}
-
 #if NET9_0_OR_GREATER
 	private ref struct SampleRefStruct
 	{
@@ -179,10 +210,10 @@ public sealed class FixedReferenceValueTest
 
 	private sealed class SpanReferenceAction : IFixedReferenceAction<Span<Byte>>
 	{
-		public Int32 Length;
+		public Boolean BytesEmpty;
 		public Byte First;
 		public Boolean IsManagedLike;
-		public Boolean BytesEmpty;
+		public Int32 Length;
 		public Boolean ObjectsEmpty;
 		public void Accept(scoped FixedReferenceValue<Span<Byte>> fixedReference)
 		{
@@ -201,12 +232,13 @@ public sealed class FixedReferenceValueTest
 			catch (InvalidOperationException) { }
 		}
 	}
+
 	private sealed class ReadOnlySpanReferenceAction : IReadOnlyFixedReferenceAction<ReadOnlySpan<Int32>>
 	{
-		public Int32 Length;
+		public Boolean BytesEmpty;
 		public Int32 First;
 		public Boolean IsManagedLike;
-		public Boolean BytesEmpty;
+		public Int32 Length;
 		public Boolean ObjectsEmpty;
 		public void Accept(scoped ReadOnlyFixedReferenceValue<ReadOnlySpan<Int32>> fixedReference)
 		{
@@ -218,11 +250,12 @@ public sealed class FixedReferenceValueTest
 			this.First = fixedReference.Reference[0];
 		}
 	}
+
 	private sealed class SampleRefStructAction : IFixedReferenceAction<SampleRefStruct>
 	{
-		public Int32 Seen;
 		public Boolean Flag;
 		public Boolean IsManagedLike;
+		public Int32 Seen;
 		public void Accept(scoped FixedReferenceValue<SampleRefStruct> fixedReference)
 		{
 			FixedPointerValue pointer = fixedReference;
@@ -232,10 +265,11 @@ public sealed class FixedReferenceValueTest
 			fixedReference.Reference.Value = 42;
 		}
 	}
+
 	private sealed class SampleRefStructReadOnlyAction : IReadOnlyFixedReferenceAction<SampleRefStruct>
 	{
-		public Int32 Seen;
 		public Boolean Flag;
+		public Int32 Seen;
 		public void Accept(scoped ReadOnlyFixedReferenceValue<SampleRefStruct> fixedReference)
 		{
 			this.Seen = fixedReference.Reference.Value;

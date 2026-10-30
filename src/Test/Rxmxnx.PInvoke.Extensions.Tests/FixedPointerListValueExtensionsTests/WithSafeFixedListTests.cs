@@ -177,70 +177,72 @@ public sealed class WithSafeFixedListTests
 		ReadOnlySpan<UInt32> ros6 = (ReadOnlySpan<UInt32>)array[6]!;
 		ReadOnlySpan<String> ros7 = (ReadOnlySpan<String>)array[7]!;
 
+		// Reference-type callbacks force NonGenericAction / NonGenericFunction wrappers.
 		ClassListAction action = new();
 		ClassListFunction func = new();
+
 		action.WithSafeFixed(s0, s1);
-		func.WithSafeFixed(s0, s1, out Int32 count);
+		func.WithSafeFixed(s0, s1, out Array[] result);
+		WithSafeFixedListTests.AssertArray(array, result);
 		PInvokeAssert.Equal(2, action.Count);
-		PInvokeAssert.Equal(2, count);
 		action.WithSafeFixed(ros0, ros1);
-		func.WithSafeFixed(ros0, ros1, out count);
+		func.WithSafeFixed(ros0, ros1, out result);
+		WithSafeFixedListTests.AssertArray(array, result);
 		PInvokeAssert.Equal(2, action.Count);
-		PInvokeAssert.Equal(2, count);
 
 		action.WithSafeFixed(s0, s1, s2);
-		func.WithSafeFixed(s0, s1, s2, out count);
+		func.WithSafeFixed(s0, s1, s2, out result);
+		WithSafeFixedListTests.AssertArray(array, result);
 		PInvokeAssert.Equal(3, action.Count);
-		PInvokeAssert.Equal(3, count);
 		action.WithSafeFixed(ros0, ros1, ros2);
-		func.WithSafeFixed(ros0, ros1, ros2, out count);
+		func.WithSafeFixed(ros0, ros1, ros2, out result);
+		WithSafeFixedListTests.AssertArray(array, result);
 		PInvokeAssert.Equal(3, action.Count);
-		PInvokeAssert.Equal(3, count);
 
 		action.WithSafeFixed(s0, s1, s2, s3);
-		func.WithSafeFixed(s0, s1, s2, s3, out count);
+		func.WithSafeFixed(s0, s1, s2, s3, out result);
+		WithSafeFixedListTests.AssertArray(array, result);
 		PInvokeAssert.Equal(4, action.Count);
-		PInvokeAssert.Equal(4, count);
 		action.WithSafeFixed(ros0, ros1, ros2, ros3);
-		func.WithSafeFixed(ros0, ros1, ros2, ros3, out count);
+		func.WithSafeFixed(ros0, ros1, ros2, ros3, out result);
+		WithSafeFixedListTests.AssertArray(array, result);
 		PInvokeAssert.Equal(4, action.Count);
-		PInvokeAssert.Equal(4, count);
 
 		action.WithSafeFixed(s0, s1, s2, s3, s4);
-		func.WithSafeFixed(s0, s1, s2, s3, s4, out count);
+		func.WithSafeFixed(s0, s1, s2, s3, s4, out result);
+		WithSafeFixedListTests.AssertArray(array, result);
 		PInvokeAssert.Equal(5, action.Count);
-		PInvokeAssert.Equal(5, count);
 		action.WithSafeFixed(ros0, ros1, ros2, ros3, ros4);
-		func.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, out count);
+		func.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, out result);
+		WithSafeFixedListTests.AssertArray(array, result);
 		PInvokeAssert.Equal(5, action.Count);
-		PInvokeAssert.Equal(5, count);
 
 		action.WithSafeFixed(s0, s1, s2, s3, s4, s5);
-		func.WithSafeFixed(s0, s1, s2, s3, s4, s5, out count);
+		func.WithSafeFixed(s0, s1, s2, s3, s4, s5, out result);
+		WithSafeFixedListTests.AssertArray(array, result);
 		PInvokeAssert.Equal(6, action.Count);
-		PInvokeAssert.Equal(6, count);
 		action.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5);
-		func.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, out count);
+		func.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, out result);
+		WithSafeFixedListTests.AssertArray(array, result);
 		PInvokeAssert.Equal(6, action.Count);
-		PInvokeAssert.Equal(6, count);
 
 		action.WithSafeFixed(s0, s1, s2, s3, s4, s5, s6);
-		func.WithSafeFixed(s0, s1, s2, s3, s4, s5, s6, out count);
+		func.WithSafeFixed(s0, s1, s2, s3, s4, s5, s6, out result);
+		WithSafeFixedListTests.AssertArray(array, result);
 		PInvokeAssert.Equal(7, action.Count);
-		PInvokeAssert.Equal(7, count);
 		action.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, ros6);
-		func.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, ros6, out count);
+		func.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, ros6, out result);
+		WithSafeFixedListTests.AssertArray(array, result);
 		PInvokeAssert.Equal(7, action.Count);
-		PInvokeAssert.Equal(7, count);
 
 		action.WithSafeFixed(s0, s1, s2, s3, s4, s5, s6, s7);
-		func.WithSafeFixed(s0, s1, s2, s3, s4, s5, s6, s7, out count);
+		func.WithSafeFixed(s0, s1, s2, s3, s4, s5, s6, s7, out result);
+		WithSafeFixedListTests.AssertArray(array, result);
 		PInvokeAssert.Equal(8, action.Count);
-		PInvokeAssert.Equal(8, count);
 		action.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, ros6, ros7);
-		func.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, ros6, ros7, out count);
+		func.WithSafeFixed(ros0, ros1, ros2, ros3, ros4, ros5, ros6, ros7, out result);
+		WithSafeFixedListTests.AssertArray(array, result);
 		PInvokeAssert.Equal(8, action.Count);
-		PInvokeAssert.Equal(8, count);
 	}
 
 	private static Array[] GetArray(Int32 length)
@@ -351,16 +353,13 @@ public sealed class WithSafeFixedListTests
 		public void Accept(scoped FixedPointerValueList fixedPointerValueList)
 		{
 			this.Count = fixedPointerValueList.Count;
-			PInvokeAssert.False(fixedPointerValueList[0].Value.IsNullOrEmpty);
+			new FixedListAction().Accept(fixedPointerValueList);
 		}
 	}
 
-	private sealed class ClassListFunction : IFixedPointerListFunction<Int32>
+	private sealed class ClassListFunction : IFixedPointerListFunction<Array[]>
 	{
-		public Int32 Apply(scoped FixedPointerValueList fixedPointerValueList)
-		{
-			PInvokeAssert.False(fixedPointerValueList[0].Value.IsNullOrEmpty);
-			return fixedPointerValueList.Count;
-		}
+		public Array[] Apply(scoped FixedPointerValueList fixedPointerValueList)
+			=> new FixedListFunction().Apply(fixedPointerValueList);
 	}
 }

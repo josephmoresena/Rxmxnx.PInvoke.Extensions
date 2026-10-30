@@ -19,6 +19,9 @@ internal sealed class BinaryCompositeBufferTypeMetadata<
 	/// <inheritdoc/>
 	public override Int32 ComponentCount => 2;
 	/// <inheritdoc/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public override BufferTypeMetadata this[Int32 index]
 		=> index switch
 		{
@@ -65,6 +68,9 @@ internal sealed class BinaryCompositeBufferTypeMetadata<
 	/// <inheritdoc/>
 	public override Int32 ComponentCount => 2;
 	/// <inheritdoc/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public override BufferTypeMetadata this[Int32 index]
 		=> index switch
 		{

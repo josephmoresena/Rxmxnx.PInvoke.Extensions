@@ -28,8 +28,7 @@ public static unsafe class FixedReferenceValueExtensions
 #if !NET9_0_OR_GREATER
 		where TAction : IFixedReferenceAction<T>
 #else
-		where T : allows ref struct
-		where TAction : IFixedReferenceAction<T>, allows ref struct
+		where T : allows ref struct where TAction : IFixedReferenceAction<T>, allows ref struct
 #endif
 	{
 		if (action is null) return;
@@ -53,8 +52,7 @@ public static unsafe class FixedReferenceValueExtensions
 #if !NET9_0_OR_GREATER
 		where TFunction : IFixedReferenceFunction<T, TResult>
 #else
-		where T : allows ref struct
-		where TFunction : IFixedReferenceFunction<T, TResult>, allows ref struct
+		where T : allows ref struct where TFunction : IFixedReferenceFunction<T, TResult>, allows ref struct
 #endif
 	{
 		if (func is null)
@@ -80,8 +78,7 @@ public static unsafe class FixedReferenceValueExtensions
 #if !NET9_0_OR_GREATER
 		where TAction : IFixedReferenceAction<T>
 #else
-		where T : allows ref struct
-		where TAction : IFixedReferenceAction<T>, allows ref struct
+		where T : allows ref struct where TAction : IFixedReferenceAction<T>, allows ref struct
 #endif
 	{
 		if (typeof(TAction).IsValueType)
@@ -111,8 +108,7 @@ public static unsafe class FixedReferenceValueExtensions
 #if !NET9_0_OR_GREATER
 		where TFunction : IFixedReferenceFunction<T, TResult>
 #else
-		where T : allows ref struct
-		where TFunction : IFixedReferenceFunction<T, TResult>, allows ref struct
+		where T : allows ref struct where TFunction : IFixedReferenceFunction<T, TResult>, allows ref struct
 #endif
 	{
 		if (typeof(TFunction).IsValueType)
@@ -141,8 +137,7 @@ public static unsafe class FixedReferenceValueExtensions
 #if !NET9_0_OR_GREATER
 		where TAction : IReadOnlyFixedReferenceAction<T>
 #else
-		where T : allows ref struct
-		where TAction : IReadOnlyFixedReferenceAction<T>, allows ref struct
+		where T : allows ref struct where TAction : IReadOnlyFixedReferenceAction<T>, allows ref struct
 #endif
 	{
 		if (action is null) return;
@@ -167,8 +162,7 @@ public static unsafe class FixedReferenceValueExtensions
 #if !NET9_0_OR_GREATER
 		where TFunction : IReadOnlyFixedReferenceFunction<T, TResult>
 #else
-		where T : allows ref struct
-		where TFunction : IReadOnlyFixedReferenceFunction<T, TResult>, allows ref struct
+		where T : allows ref struct where TFunction : IReadOnlyFixedReferenceFunction<T, TResult>, allows ref struct
 #endif
 	{
 		if (func is null)
@@ -194,8 +188,7 @@ public static unsafe class FixedReferenceValueExtensions
 #if !NET9_0_OR_GREATER
 		where TAction : IReadOnlyFixedReferenceAction<T>
 #else
-		where T : allows ref struct
-		where TAction : IReadOnlyFixedReferenceAction<T>, allows ref struct
+		where T : allows ref struct where TAction : IReadOnlyFixedReferenceAction<T>, allows ref struct
 #endif
 	{
 		if (typeof(TAction).IsValueType)
@@ -225,8 +218,7 @@ public static unsafe class FixedReferenceValueExtensions
 #if !NET9_0_OR_GREATER
 		where TFunction : IReadOnlyFixedReferenceFunction<T, TResult>
 #else
-		where T : allows ref struct
-		where TFunction : IReadOnlyFixedReferenceFunction<T, TResult>, allows ref struct
+		where T : allows ref struct where TFunction : IReadOnlyFixedReferenceFunction<T, TResult>, allows ref struct
 #endif
 	{
 		if (typeof(TFunction).IsValueType)
@@ -258,8 +250,7 @@ public static unsafe class FixedReferenceValueExtensions
 #if !NET9_0_OR_GREATER
 		where TAction : struct, IFixedReferenceAction<T>
 #else
-		where T : allows ref struct
-		where TAction : struct, IFixedReferenceAction<T>, allows ref struct
+		where T : allows ref struct where TAction : struct, IFixedReferenceAction<T>, allows ref struct
 #endif
 		=> FixedReferenceValueExtensions.WithSafeFixed(ref action, ref value);
 
@@ -284,8 +275,7 @@ public static unsafe class FixedReferenceValueExtensions
 #if !NET9_0_OR_GREATER
 		where TFunction : struct, IFixedReferenceFunction<T, TResult>
 #else
-		where T : allows ref struct
-		where TFunction : struct, IFixedReferenceFunction<T, TResult>, allows ref struct
+		where T : allows ref struct where TFunction : struct, IFixedReferenceFunction<T, TResult>, allows ref struct
 #endif
 		=> FixedReferenceValueExtensions.WithSafeFixed(ref func, ref value, out result);
 
@@ -307,8 +297,7 @@ public static unsafe class FixedReferenceValueExtensions
 #if !NET9_0_OR_GREATER
 		where TAction : struct, IReadOnlyFixedReferenceAction<T>
 #else
-		where T : allows ref struct
-		where TAction : struct, IReadOnlyFixedReferenceAction<T>, allows ref struct
+		where T : allows ref struct where TAction : struct, IReadOnlyFixedReferenceAction<T>, allows ref struct
 #endif
 		=> FixedReferenceValueExtensions.WithSafeReadOnlyFixed(ref action, in value);
 
@@ -337,76 +326,5 @@ public static unsafe class FixedReferenceValueExtensions
 		where TFunction : struct, IReadOnlyFixedReferenceFunction<T, TResult>, allows ref struct
 #endif
 		=> FixedReferenceValueExtensions.WithSafeReadOnlyFixed(ref func, in value, out result);
-
-	/// <summary>
-	/// Creates a <see cref="FixedReferenceValue{T}"/> from <paramref name="reference"/>.
-	/// </summary>
-	/// <typeparam name="T">Type of the referenced value.</typeparam>
-	/// <param name="reference">An <see cref="IFixedReference{T}"/> instance.</param>
-	/// <returns>A <see cref="FixedReferenceValue{T}"/> instance.</returns>
-#if NETFRAMEWORK || NETSTANDARD2_0
-	[SecuritySafeCritical]
-#endif
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static FixedReferenceValue<T> CreateValue<T>(this IFixedReference<T> reference)
-#if NET9_0_OR_GREATER
-		where T : allows ref struct
-#endif
-		=> FixedReferenceValue<T>.CreateValue(reference);
-	/// <summary>
-	/// Creates a <see cref="ReadOnlyFixedReferenceValue{T}"/> from <paramref name="reference"/>.
-	/// </summary>
-	/// <typeparam name="T">Type of the referenced value.</typeparam>
-	/// <param name="reference">An <see cref="IReadOnlyFixedReference{T}"/> instance.</param>
-	/// <returns>A <see cref="ReadOnlyFixedReferenceValue{T}"/> instance.</returns>
-#if NETFRAMEWORK || NETSTANDARD2_0
-	[SecuritySafeCritical]
-#endif
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static ReadOnlyFixedReferenceValue<T> CreateValue<T>(this IReadOnlyFixedReference<T> reference)
-#if NET9_0_OR_GREATER
-		where T : allows ref struct
-#endif
-		=> ReadOnlyFixedReferenceValue<T>.CreateValue(reference);
-	/// <summary>
-	/// Reinterprets <paramref name="reference"/> as a <typeparamref name="TDestination"/>
-	/// <see cref="FixedReferenceValue{TDestination}"/>.
-	/// </summary>
-	/// <typeparam name="T">Type of the source referenced value.</typeparam>
-	/// <typeparam name="TDestination">Type of the reinterpreted reference.</typeparam>
-	/// <param name="reference">An <see cref="IFixedReference{T}"/> instance.</param>
-	/// <param name="residual">Output. Residual fixed pointer from the transformation.</param>
-	/// <returns>The reinterpreted fixed reference.</returns>
-#if NETFRAMEWORK || NETSTANDARD2_0
-	[SecuritySafeCritical]
-#endif
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static FixedReferenceValue<TDestination> Transformation<T, TDestination>(this IFixedReference<T> reference,
-		out FixedPointerValue residual)
-#if NET9_0_OR_GREATER
-		where T : allows ref struct
-		where TDestination : allows ref struct
-#endif
-		=> FixedReferenceValue<T>.CreateValue(reference).Transformation<TDestination>(out residual);
-	/// <summary>
-	/// Reinterprets <paramref name="reference"/> as a <typeparamref name="TDestination"/>
-	/// <see cref="ReadOnlyFixedReferenceValue{TDestination}"/>.
-	/// </summary>
-	/// <typeparam name="T">Type of the source referenced value.</typeparam>
-	/// <typeparam name="TDestination">Type of the reinterpreted reference.</typeparam>
-	/// <param name="reference">An <see cref="IReadOnlyFixedReference{T}"/> instance.</param>
-	/// <param name="residual">Output. Residual fixed pointer from the transformation.</param>
-	/// <returns>The reinterpreted read-only fixed reference.</returns>
-#if NETFRAMEWORK || NETSTANDARD2_0
-	[SecuritySafeCritical]
-#endif
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static ReadOnlyFixedReferenceValue<TDestination> Transformation<T, TDestination>(
-		this IReadOnlyFixedReference<T> reference, out FixedPointerValue residual)
-#if NET9_0_OR_GREATER
-		where T : allows ref struct
-		where TDestination : allows ref struct
-#endif
-		=> ReadOnlyFixedReferenceValue<T>.CreateValue(reference).Transformation<TDestination>(out residual);
 }
 #pragma warning restore CS8500

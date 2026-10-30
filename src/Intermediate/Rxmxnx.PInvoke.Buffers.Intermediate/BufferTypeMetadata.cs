@@ -39,11 +39,11 @@ public abstract partial class BufferTypeMetadata
 	/// </exception>
 	/// <returns>The component at the specified index within the buffer metadata.</returns>
 	[IndexerName("Item")]
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
 	public virtual BufferTypeMetadata this[Int32 index]
 	{
-#if !PACKAGE
-		[ExcludeFromCodeCoverage]
-#endif
 		get
 		{
 			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, 0);

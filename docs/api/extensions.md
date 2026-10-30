@@ -52,10 +52,10 @@ Single values and small sequences of unmanaged `T`.
 
 `in T` / `ref T` helpers split across two types:
 
-| Type                            | Intent                                                                                                                                                                                                                        |
-|---------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `ReferenceExtensions`           | `Transform` / `TransformReference` to another unmanaged type; delegate `WithSafeFixed` for a single reference (.NET Standard 2.1 / .NET Core 3.0+); `GetUnsafeValPtr` / `GetUnsafeIntPtr`.                                    |
-| `FixedReferenceValueExtensions` | Functional-interface pinning on every TFM: `WithSafeFixed` / `WithSafeReadOnlyFixed` (and `WithReferenceSafeFixed*`), plus `CreateValue` / `Transformation` adapters for `IFixedReference<T>` / `IReadOnlyFixedReference<T>`. |
+| Type                            | Intent                                                                                                                                                                                     |
+|---------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ReferenceExtensions`           | `Transform` / `TransformReference` to another unmanaged type; delegate `WithSafeFixed` for a single reference (.NET Standard 2.1 / .NET Core 3.0+); `GetUnsafeValPtr` / `GetUnsafeIntPtr`. |
+| `FixedReferenceValueExtensions` | Functional-interface pinning on every TFM: `WithSafeFixed` / `WithSafeReadOnlyFixed` (and `WithReferenceSafeFixed*`).                                                                      |
 
 ```csharp
 readonly struct Bump : IFixedReferenceAction<Int32>
