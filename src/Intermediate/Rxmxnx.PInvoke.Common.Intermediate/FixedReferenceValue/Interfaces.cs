@@ -50,73 +50,7 @@ public readonly unsafe ref partial struct FixedReferenceValue<T> : IFixedPointer
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	IFixedContext<Byte> IFixedMemory.AsBinaryContext() => this.AsBinaryContext();
-#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
-	[Obsolete]
-#endif
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext() => this.AsBinaryContext();
-#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
-	[Obsolete]
-#endif
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	IFixedContext<Object> IFixedMemory.AsObjectContext() => this.AsObjectContext();
-#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
-	[Obsolete]
-#endif
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	IReadOnlyFixedContext<Object> IReadOnlyFixedMemory.AsObjectContext() => this.AsObjectContext();
-
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>()
-		=> this.TransformationInterface<TDestination>(out _);
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IFixedMemory residual)
-		=> this.TransformationInterface<TDestination>(out residual);
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
-	{
-		Unsafe.SkipInit(out residual);
-		ref IFixedMemory refResidual = ref Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual);
-		return FixedPointerValue.TransformationReference<T, FixedReferenceValue<T>, TDestination>(
-			this, out refResidual);
-	}
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>()
-		=> this.TransformationInterface<TDestination>(out _);
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
-		out IReadOnlyFixedMemory residual)
-	{
-		Unsafe.SkipInit(out residual);
-		ref IFixedMemory refResidual = ref Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual);
-		return FixedPointerValue.TransformationReference<T, FixedReferenceValue<T>, TDestination>(
-			this, out refResidual);
-	}
-
-#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
-	[Obsolete]
-#endif
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	private IFixedContext<Byte> AsBinaryContext()
+	IFixedContext<Byte> IFixedMemory.AsBinaryContext()
 	{
 		this._value.ValidateOperation();
 		this._value.ValidateTransformation(typeof(Byte), true);
@@ -130,7 +64,21 @@ public readonly unsafe ref partial struct FixedReferenceValue<T> : IFixedPointer
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	private IFixedContext<Object> AsObjectContext()
+	IReadOnlyFixedContext<Byte> IReadOnlyFixedMemory.AsBinaryContext()
+	{
+		this._value.ValidateOperation(true);
+		this._value.ValidateTransformation(typeof(Byte), true);
+		if (this.IsNullOrEmpty) return ReadOnlyFixedContext<Byte>.Empty;
+		FixedValueHandle handle = FixedPointerValue.GetValidationObject(this);
+		return new ReadOnlyFixedContext<Byte>(this._value.Pointer.ToPointer(), this._value.Size, handle);
+	}
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+	[Obsolete]
+#endif
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	IFixedContext<Object> IFixedMemory.AsObjectContext()
 	{
 		this._value.ValidateOperation();
 		this._value.ValidateTransformation(typeof(Object), false);
@@ -139,10 +87,34 @@ public readonly unsafe ref partial struct FixedReferenceValue<T> : IFixedPointer
 		Int32 count = this._value.Size / IntPtr.Size;
 		return new FixedContext<Object>(this._value.Pointer.ToPointer(), count, handle);
 	}
+#if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
+	[Obsolete]
+#endif
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	private IFixedReference<TDestination> TransformationInterface<TDestination>(out IFixedMemory residual)
+	IReadOnlyFixedContext<Object> IReadOnlyFixedMemory.AsObjectContext()
+	{
+		this._value.ValidateOperation(true);
+		this._value.ValidateTransformation(typeof(Object), false);
+		if (this.IsNullOrEmpty) return ReadOnlyFixedContext<Object>.Empty;
+		FixedValueHandle handle = FixedPointerValue.GetValidationObject(this);
+		Int32 count = this._value.Size / IntPtr.Size;
+		return new ReadOnlyFixedContext<Object>(this._value.Pointer.ToPointer(), count, handle);
+	}
+
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>()
+	{
+		Unsafe.SkipInit(out IFixedMemory residual);
+		return FixedPointerValue.TransformationReference<T, FixedReferenceValue<T>, TDestination>(this, out residual);
+	}
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IFixedMemory residual)
 	{
 		this._value.ValidateOperation();
 		this._value.ValidateTransformation(typeof(TDestination),
@@ -160,6 +132,35 @@ public readonly unsafe ref partial struct FixedReferenceValue<T> : IFixedPointer
 		FixedReference<TDestination> result = source.GetTransformation<TDestination>(out FixedOffset offset);
 		residual = offset;
 		return result;
+	}
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>(out IReadOnlyFixedMemory residual)
+	{
+		Unsafe.SkipInit(out residual);
+		ref IFixedMemory refResidual = ref Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual);
+		return FixedPointerValue.TransformationReference<T, FixedReferenceValue<T>, TDestination>(
+			this, out refResidual);
+	}
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>()
+	{
+		Unsafe.SkipInit(out IFixedMemory residual);
+		return FixedPointerValue.TransformationReference<T, FixedReferenceValue<T>, TDestination>(this, out residual);
+	}
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
+		out IReadOnlyFixedMemory residual)
+	{
+		Unsafe.SkipInit(out residual);
+		ref IFixedMemory refResidual = ref Unsafe.As<IReadOnlyFixedMemory, IFixedMemory>(ref residual);
+		return FixedPointerValue.TransformationReference<T, FixedReferenceValue<T>, TDestination>(
+			this, out refResidual);
 	}
 #pragma warning restore CS8500
 }

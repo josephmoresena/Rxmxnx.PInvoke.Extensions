@@ -63,18 +63,20 @@ public readonly unsafe ref partial struct
 	[ExcludeFromCodeCoverage]
 #endif
 	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>()
-		=> this.TransformationInterface<TDestination>(out _);
+	{
+		this._value.ValidateOperation(true);
+		this._value.ValidateTransformation(typeof(TDestination),
+		                                   !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>());
+		Int32 sizeOf = sizeof(TDestination);
+		this._value.ValidateReferenceSize(typeof(TDestination), sizeOf);
+		if (this.IsNullOrEmpty) return new ReadOnlyFixedReference<TDestination>(null);
+		FixedValueHandle handle = FixedPointerValue.GetValidationObject(this);
+		return new ReadOnlyFixedReference<TDestination>(this._value.Pointer.ToPointer(), this._value.Size, handle);
+	}
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
 	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>(
-		out IReadOnlyFixedMemory residual)
-		=> this.TransformationInterface<TDestination>(out residual);
-
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	private IReadOnlyFixedReference<TDestination> TransformationInterface<TDestination>(
 		out IReadOnlyFixedMemory residual)
 	{
 		this._value.ValidateOperation(true);
