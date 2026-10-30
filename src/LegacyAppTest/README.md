@@ -21,6 +21,33 @@ legacy Xamarin Android, iOS, and macOS applications.
 * When these applications are built using the `Release` configuration, AOT compilation is enabled.
 * AOT detection was deliberately implemented according to the particular characteristics of each runtime.
 
+## Xamarin.Mac on Apple Silicon
+
+`MacAppTest` can target `x86_64` on an arm64 Mac with Xcode 27. `AppleSilicon.targets`, next to `MacAppTest.csproj`, is
+imported only when the system dyld cache `dyld_shared_cache_arm64e` exists. That file belongs to the OS, not to
+Rosetta, so the import still happens when Rosetta is absent and MSBuild is the arm64 Mono. On an Intel Mac the cache is
+not there, and the targets is never imported.
+
+When `XamMacArch` is `x86_64`, the targets does two things:
+
+* It passes `--link_flags=-Wl,-rpath,/usr/lib/swift` through `MonoBundlingExtraArgs`. With `LinkMode` set to `None`,
+  Xcode 27 records `@rpath/libswiftCoreMedia.dylib` and `mmp` writes no `LC_RPATH`.
+* It prepends `MacAppTest/tools` to `PATH` before the native compile. Mono assembles with `-arch x86_64` and links with
+  `clang --shared` without `-arch`, which on arm64 produces an empty dylib. `tools/clang` leaves a command unchanged
+  when `-arch` is already present, and adds `-arch x86_64` when linking an x86_64 object. Everything else runs through
+  `/usr/bin/clang`.
+
+`mmp` still calls `lipo -extract_family`, which Xcode 27 no longer accepts. From `MacAppTest`:
+
+```bash
+./tools/patch-lipo
+```
+
+The script runs only on arm64 with Xcode 27 and asks for an administrator password to write into the toolchain. It
+copies the binary to `lipo.real` and leaves a script in place of `lipo`. If the patch is already applied, or this
+machine is not that case, it exits without changing anything. It is harmless because it only intercepts the call:
+`-extract_family` is replaced with `-thin`, and `lipo.real` runs with the rest of the command line unchanged.
+
 ---
 
 # WebAssembly App Test

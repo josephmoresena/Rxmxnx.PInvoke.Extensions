@@ -18,6 +18,14 @@ public sealed class SerializationTest
 	private static readonly JsonSerializerOptions jsonOptions = new() { Converters = { new CStringJsonConverter(), }, };
 #endif
 
+#if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || WINDOWS_UWP
+	[Fact]
+	public void InvalidTokenTest()
+	{
+		PInvokeAssert.Throws<JsonException>(() => JsonSerializer.Deserialize<CString>("1", SerializationTest.jsonOptions));
+		PInvokeAssert.Throws<JsonException>(() => JsonSerializer.Deserialize<CString>("{}", SerializationTest.jsonOptions));
+	}
+#endif
 	[Fact]
 	public void UnicodePrefixTest() => PInvokeAssert.True(TextUnescape.UnicodePrefix.SequenceEqual("\\u"u8));
 	[Fact]
@@ -47,6 +55,45 @@ public sealed class SerializationTest
 #endif
 			SerializationTest.EscapedSequenceAssert(text, newtonsoftEncoded);
 		}
+	}
+
+	private static void EscapedSequenceAssert(ReadOnlySpanFunc<Byte> text, Byte[] encoded)
+	{
+		Byte[] encodedStandard = JsonEncoderStandard.EncodeToUtf8Bytes(text());
+
+		CString valueStandard = CString.Unescape(new ReadOnlySequence<Byte>(encodedStandard));
+		CString value = CString.Unescape(new ReadOnlySequence<Byte>(encoded));
+
+		SerializationTest.AssertUnescaped(text(), value);
+		SerializationTest.AssertUnescaped(text(), valueStandard);
+	}
+	private static void AssertUnescaped(TextContainer unescaped)
+	{
+		ReadOnlySpan<Byte> newtonsoftEncoded =
+			Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(unescaped.Utf16.Value)[1..^1]);
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || WINDOWS_UWP
+		ReadOnlySpan<Byte> systemEncoded = JsonEncodedText.Encode(unescaped.Utf8.Value).EncodedUtf8Bytes;
+		SerializationTest.AssertUnescaped(unescaped, CString.Unescape(systemEncoded));
+#endif
+		SerializationTest.AssertUnescaped(unescaped, CString.Unescape(newtonsoftEncoded));
+	}
+	private static void AssertUnescaped(TextContainer unescaped, CString value)
+	{
+		Byte[] encodedStandard = JsonEncoderStandard.EncodeToUtf8Bytes(unescaped.Utf8.Value);
+		CString valueStandard = CString.Unescape(encodedStandard);
+
+		SerializationTest.AssertUnescaped(unescaped.Utf8.Value, valueStandard);
+		SerializationTest.AssertUnescaped(unescaped.Utf8.Value, value);
+	}
+	private static void AssertUnescaped(ReadOnlySpan<Byte> unescaped, CString value)
+	{
+		PInvokeAssert.False(value.IsFunction);
+		PInvokeAssert.False(value.IsReference);
+		PInvokeAssert.False(value.IsZero);
+		PInvokeAssert.False(value.IsSegmented);
+		PInvokeAssert.True(value.IsNullTerminated);
+
+		PInvokeAssert.True(unescaped.SequenceEqual(value.AsSpan()));
 	}
 
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || WINDOWS_UWP
@@ -126,45 +173,6 @@ public sealed class SerializationTest
 	public void QuoteTest()
 		=> SerializationTest.AssertSerialization(TextContainer.Quotes.Utf16, TextContainer.Quotes.Utf8);
 #endif
-
-	private static void EscapedSequenceAssert(ReadOnlySpanFunc<Byte> text, Byte[] encoded)
-	{
-		Byte[] encodedStandard = JsonEncoderStandard.EncodeToUtf8Bytes(text());
-
-		CString valueStandard = CString.Unescape(new ReadOnlySequence<Byte>(encodedStandard));
-		CString value = CString.Unescape(new ReadOnlySequence<Byte>(encoded));
-
-		SerializationTest.AssertUnescaped(text(), value);
-		SerializationTest.AssertUnescaped(text(), valueStandard);
-	}
-	private static void AssertUnescaped(TextContainer unescaped)
-	{
-		ReadOnlySpan<Byte> newtonsoftEncoded =
-			Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(unescaped.Utf16.Value)[1..^1]);
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || WINDOWS_UWP
-		ReadOnlySpan<Byte> systemEncoded = JsonEncodedText.Encode(unescaped.Utf8.Value).EncodedUtf8Bytes;
-		SerializationTest.AssertUnescaped(unescaped, CString.Unescape(systemEncoded));
-#endif
-		SerializationTest.AssertUnescaped(unescaped, CString.Unescape(newtonsoftEncoded));
-	}
-	private static void AssertUnescaped(TextContainer unescaped, CString value)
-	{
-		Byte[] encodedStandard = JsonEncoderStandard.EncodeToUtf8Bytes(unescaped.Utf8.Value);
-		CString valueStandard = CString.Unescape(encodedStandard);
-
-		SerializationTest.AssertUnescaped(unescaped.Utf8.Value, valueStandard);
-		SerializationTest.AssertUnescaped(unescaped.Utf8.Value, value);
-	}
-	private static void AssertUnescaped(ReadOnlySpan<Byte> unescaped, CString value)
-	{
-		PInvokeAssert.False(value.IsFunction);
-		PInvokeAssert.False(value.IsReference);
-		PInvokeAssert.False(value.IsZero);
-		PInvokeAssert.False(value.IsSegmented);
-		PInvokeAssert.True(value.IsNullTerminated);
-
-		PInvokeAssert.True(unescaped.SequenceEqual(value.AsSpan()));
-	}
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || WINDOWS_UWP
 	private static void AssertSerialization(TextContainer<String> valueS, TextContainer<CString> valueC)
 	{

@@ -1,4 +1,6 @@
-﻿using AppKit;
+﻿using System;
+
+using AppKit;
 
 using Foundation;
 
@@ -6,7 +8,7 @@ namespace MacAppTest
 {
 	[Register("AppDelegate")]
 	public class AppDelegate : NSApplicationDelegate
-    {
+	{
 		public override void DidFinishLaunching(NSNotification notification)
 		{
 			// Insert code here to initialize your application
@@ -15,9 +17,6 @@ namespace MacAppTest
 		{
 			// Insert code here to tear down your application
 		}
-		public override bool ApplicationShouldTerminateAfterLastWindowClosed(NSApplication sender)
-		{
-			return true;
-		}
+		public override Boolean ApplicationShouldTerminateAfterLastWindowClosed(NSApplication sender) => true;
 	}
 }

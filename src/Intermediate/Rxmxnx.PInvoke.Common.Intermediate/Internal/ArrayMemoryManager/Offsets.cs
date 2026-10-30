@@ -21,7 +21,7 @@ internal partial class ArrayMemoryManager<T>
 	/// <summary>
 	/// Retrieves the array offset for given array.
 	/// </summary>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 	/// <returns>A managed reference to the array offset.</returns>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]

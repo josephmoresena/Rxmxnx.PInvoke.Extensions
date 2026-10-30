@@ -23,7 +23,7 @@ public partial class NativeUtilities
 	/// Retrieves the <see cref="Iso639P1"/> enum value corresponding to the specified <paramref name="culture"/>.
 	/// </summary>
 	/// <param name="culture">A <see cref="CultureInfo"/> instance.</param>
-	/// <returns>A <see cref="Iso639P1"/> enum value.</returns>
+	/// <returns>An <see cref="Iso639P1"/> enum value.</returns>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

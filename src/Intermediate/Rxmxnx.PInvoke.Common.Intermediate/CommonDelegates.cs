@@ -21,7 +21,7 @@ public delegate ReadOnlySpan<T> ReadOnlySpanFunc<T, in TState>(TState arg);
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 /// <summary>
 /// Encapsulates a method that receives a span of type <typeparamref name="T"/>, a
-/// state object of type <typeparamref name="TArg"/> and returns a result of type <typeparamref name="TResult"/>.
+/// state object of type <typeparamref name="TArg"/>, and returns a result of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="T">The type of the elements in the span.</typeparam>
 /// <typeparam name="TArg">The type of the state object passed to the method.</typeparam>
@@ -38,7 +38,7 @@ public delegate TResult SpanFunc<T, in TArg, out TResult>(Span<T> span, TArg arg
 
 /// <summary>
 /// Encapsulates a method that receives a read-only span of type <typeparamref name="T"/>, a
-/// state object of type <typeparamref name="TArg"/> and returns a result of type <typeparamref name="TResult"/>.
+/// state object of type <typeparamref name="TArg"/>, and returns a result of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="T">The type of the elements in the span.</typeparam>
 /// <typeparam name="TArg">The type of the state object passed to the method.</typeparam>
@@ -72,7 +72,7 @@ public delegate void FixedReferenceAction<T>(in IFixedReference<T> reference)
 /// <typeparam name="T">The type of the fixed reference.</typeparam>
 /// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <param name="reference">An instance of the fixed reference.</param>
-/// <param name="arg">A state object of type TArg.</param>
+/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 public delegate void FixedReferenceAction<T, in TArg>(in IFixedReference<T> reference, TArg arg)
 #if NET9_0_OR_GREATER
 	where T : allows ref struct where TArg : allows ref struct
@@ -97,7 +97,7 @@ public delegate void ReadOnlyFixedReferenceAction<T>(in IReadOnlyFixedReference<
 /// <typeparam name="T">The type of the fixed reference.</typeparam>
 /// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <param name="reference">A read-only instance of the fixed reference.</param>
-/// <param name="arg">A state object of type TArg.</param>
+/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 public delegate void ReadOnlyFixedReferenceAction<T, in TArg>(in IReadOnlyFixedReference<T> reference, TArg arg)
 #if NET9_0_OR_GREATER
 	where T : allows ref struct where TArg : allows ref struct
@@ -105,7 +105,7 @@ public delegate void ReadOnlyFixedReferenceAction<T, in TArg>(in IReadOnlyFixedR
 	;
 
 /// <summary>
-/// Encapsulates a method that receives an instance of <see cref="IFixedReference{T}"/> and returns a value of
+/// Encapsulates a method that receives an instance of <see cref="IFixedReference{T}"/>, and returns a value of
 /// type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="T">The type of the fixed reference.</typeparam>
@@ -126,7 +126,7 @@ public delegate TResult FixedReferenceFunc<T, out TResult>(in IFixedReference<T>
 /// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <typeparam name="TResult">The type of the return value.</typeparam>
 /// <param name="reference">An instance of the fixed reference.</param>
-/// <param name="arg">A state object of type TArg.</param>
+/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The return value from the encapsulated method.</returns>
 public delegate TResult FixedReferenceFunc<T, in TArg, out TResult>(in IFixedReference<T> reference, TArg arg)
 #if NET9_0_OR_GREATER
@@ -156,7 +156,7 @@ public delegate TResult ReadOnlyFixedReferenceFunc<T, out TResult>(in IReadOnlyF
 /// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <typeparam name="TResult">The type of the return value.</typeparam>
 /// <param name="reference">A read-only instance of the fixed reference.</param>
-/// <param name="arg">A state object of type TArg.</param>
+/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 /// <returns>The return value from the encapsulated method.</returns>
 public delegate TResult ReadOnlyFixedReferenceFunc<T, in TArg, out TResult>(in IReadOnlyFixedReference<T> reference,
 		TArg arg)
@@ -179,7 +179,7 @@ public delegate void FixedMethodAction<T>(in IFixedMethod<T> method) where T : D
 /// <typeparam name="T">The type of the fixed method delegate.</typeparam>
 /// <typeparam name="TArg">The type of the state object.</typeparam>
 /// <param name="method">An instance of the fixed method delegate.</param>
-/// <param name="arg">A state object of type TArg.</param>
+/// <param name="arg">A state object of type <typeparamref name="TArg"/>.</param>
 public delegate void FixedMethodAction<T, in TArg>(in IFixedMethod<T> method, TArg arg) where T : Delegate
 #if NET9_0_OR_GREATER
 	where TArg : allows ref struct
@@ -187,7 +187,7 @@ public delegate void FixedMethodAction<T, in TArg>(in IFixedMethod<T> method, TA
 ;
 
 /// <summary>
-/// Encapsulates a method that receives an instance of <see cref="IFixedMethod{T}"/> and returns a value
+/// Encapsulates a method that receives an instance of <see cref="IFixedMethod{T}"/>, and returns a value
 /// of type <typeparamref name="TResult"/>.
 /// </summary>
 /// <typeparam name="T">The type of the fixed method delegate.</typeparam>

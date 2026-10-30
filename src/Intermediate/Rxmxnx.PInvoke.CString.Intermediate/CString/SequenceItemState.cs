@@ -28,8 +28,8 @@ public partial class CString
 		/// <summary>
 		/// State value for sequence item.
 		/// </summary>
-		/// <param name="utf8">A <typaramref name="TBuffer"/> instance.</param>
-		/// <param name="index">The zero-based index of the element into the sequence.</param>
+		/// <param name="utf8">A <typeparamref name="TBuffer"/> instance.</param>
+		/// <param name="index">The zero-based index of the element in the sequence.</param>
 		/// <param name="length">Current UTF-8 text length.</param>
 		public BufferItemState(TBuffer utf8, Int32 index, Int32 length)
 		{

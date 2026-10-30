@@ -12,7 +12,7 @@ internal partial class Utf8Comparator
 	private readonly struct CharSpanChunk
 	{
 		/// <summary>
-		/// Integer value for fast comparision.
+		/// Integer value for fast comparison.
 		/// </summary>
 		[FieldOffset(0)]
 		public readonly Int32 Value;
@@ -28,7 +28,7 @@ internal partial class Utf8Comparator
 		/// </summary>
 		/// <param name="chunkA">First <see cref="CharSpanChunk"/> instance.</param>
 		/// <param name="chunkB">Second <see cref="CharSpanChunk"/> instance.</param>
-		/// <returns>Comparision value.</returns>
+		/// <returns>Comparison value.</returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Int32 Compare(CharSpanChunk chunkA, CharSpanChunk chunkB)
 		{

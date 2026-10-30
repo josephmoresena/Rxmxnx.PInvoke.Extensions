@@ -9,7 +9,11 @@ internal abstract partial class MetadataStorage
 	[ExcludeFromCodeCoverage]
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2743)]
 #endif
+#if !PACKAGE
+	internal static class NonBinaryStore<T>
+#else
 	protected static class NonBinaryStore<T>
+#endif
 	{
 		/// <summary>
 		/// Reader-Writer lock object initialized lazily to orchestrate concurrent access.
@@ -24,8 +28,8 @@ internal abstract partial class MetadataStorage
 		/// <summary>
 		/// Retrieves non-binary metadata required for a buffer with <paramref name="count"/> items.
 		/// </summary>
-		/// <param name="count">Amount of items in required buffer.</param>
-		/// <param name="minimal">Output. Minimal non-binary buffer.</param>
+		/// <param name="count">The number of items in the required buffer.</param>
+		/// <param name="minimal">Output. The smallest non-binary buffer.</param>
 		/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 		public static BufferTypeMetadata<T>? GetNonBinary(UInt16 count, out BufferTypeMetadata<T>? minimal)
 		{
@@ -57,11 +61,12 @@ internal abstract partial class MetadataStorage
 		}
 
 		/// <summary>
-		/// Adds non-binary metadata to current cache.
+		/// Adds non-binary metadata to the current cache.
 		/// </summary>
 		/// <param name="typeMetadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
 		public static void AddNonBinary(BufferTypeMetadata<T> typeMetadata)
 		{
+			Debug.Assert(!typeMetadata.IsBinary);
 			using WriteScope scope = NonBinaryStore<T>.GetLock();
 #if NETSTANDARD2_1 || NETCOREAPP2_0_OR_GREATER
 			NonBinaryStore<T>.GetNonBinaryMap().TryAdd(typeMetadata.Size, typeMetadata);
@@ -78,6 +83,62 @@ internal abstract partial class MetadataStorage
 			}
 #endif
 		}
+#if NET8_0_OR_GREATER
+		/// <summary>
+		/// Tries to add <paramref name="typeMetadata"/> to the non-binary cache.
+		/// </summary>
+		/// <param name="typeMetadata">A <see cref="BufferTypeMetadata{T}"/> instance.</param>
+		/// <returns>
+		/// <see langword="true"/> if <paramref name="typeMetadata"/> was stored; otherwise, <see langword="false"/>.
+		/// </returns>
+		/// <remarks>
+		/// A stored non-binary entry is replaced when <paramref name="typeMetadata"/> is binary.
+		/// A stored binary entry is left unchanged.
+		/// </remarks>
+		public static Boolean TryAddBinary(BufferTypeMetadata<T> typeMetadata)
+		{
+			Debug.Assert(typeMetadata.IsBinary);
+			using WriteScope scope = NonBinaryStore<T>.GetLock();
+			SortedList<UInt16, BufferTypeMetadata<T>> map = NonBinaryStore<T>.GetNonBinaryMap();
+#if NET8_0_OR_GREATER
+			// ReSharper disable once InvertIf
+			if (map.TryGetValue(typeMetadata.Size, out BufferTypeMetadata<T>? current))
+			{
+				if (current.IsBinary || !typeMetadata.IsBinary) return false;
+				map[typeMetadata.Size] = typeMetadata;
+				return true;
+			}
+#endif
+#if NETSTANDARD2_1 || NETCOREAPP2_0_OR_GREATER
+			return map.TryAdd(typeMetadata.Size, typeMetadata);
+#else
+			try
+			{
+				map.Add(typeMetadata.Size, typeMetadata);
+				return true;
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+#endif
+		}
+		/// <summary>
+		/// Retrieves the exact binary metadata for a buffer with <paramref name="count"/> items.
+		/// </summary>
+		/// <param name="count">The number of items in the required buffer.</param>
+		/// <returns>
+		/// The exact binary metadata. A non-binary entry breaks composition and is reported as missing.
+		/// </returns>
+		public static BufferTypeMetadata<T>? GetExactBinary(UInt16 count)
+		{
+			if (!NonBinaryStore<T>.HasNonBinaryMap()) return default;
+
+			using ReadScope scope = NonBinaryStore<T>.GetLock();
+			SortedList<UInt16, BufferTypeMetadata<T>> map = NonBinaryStore<T>.GetNonBinaryMap();
+			return map.TryGetValue(count, out BufferTypeMetadata<T>? result) && result.IsBinary ? result : default;
+		}
+#endif
 
 		/// <summary>
 		/// Retrieves the reader-writer lock object for concurrent operations.

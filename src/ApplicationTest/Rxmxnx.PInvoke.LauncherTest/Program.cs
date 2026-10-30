@@ -55,4 +55,3 @@ if (run)
 			ConsoleNotifier.Results(results);
 	}
 }
-

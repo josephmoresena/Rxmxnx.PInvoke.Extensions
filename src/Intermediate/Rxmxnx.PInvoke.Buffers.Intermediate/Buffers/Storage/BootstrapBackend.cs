@@ -17,7 +17,7 @@ internal readonly struct BootstrapBackend31 : IMetadataStorageBackend
 	public Int32 MaxStorageCapacity
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get => 31;
+		get => G31<Object>.MaxStorageCapacity;
 	}
 
 	/// <inheritdoc/>
@@ -69,7 +69,7 @@ internal readonly struct BootstrapBackend127 : IMetadataStorageBackend
 	public Int32 MaxStorageCapacity
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get => 127;
+		get => G127<Object>.MaxStorageCapacity;
 	}
 
 	/// <inheritdoc/>
@@ -121,7 +121,7 @@ internal readonly struct BootstrapBackend<TSpace> : IMetadataStorageBackend wher
 	public Int32 MaxStorageCapacity
 	{
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		get => (1 << TSpace.Dimension) - 1;
+		get => G2047<TSpace, Object>.MaxStorageCapacity;
 	}
 
 	/// <inheritdoc/>

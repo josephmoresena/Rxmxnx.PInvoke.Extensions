@@ -9,7 +9,7 @@ internal partial class ReadOnlyFixedOffset : IConvertibleDisposable<IReadOnlyFix
 	/// <summary>
 	/// Creates a <see cref="Disposable"/> instance from current instance.
 	/// </summary>
-	/// <param name="disposable">A <see cref="IDisposable"/> instance.</param>
+	/// <param name="disposable">An <see cref="IDisposable"/> instance.</param>
 	/// <returns>A <see cref="Disposable"/> instance.</returns>
 	private Disposable CreateDisposable(IDisposable? disposable) => new(this, disposable);
 

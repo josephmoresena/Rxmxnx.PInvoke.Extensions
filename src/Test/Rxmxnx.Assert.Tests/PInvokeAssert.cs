@@ -7,6 +7,7 @@ namespace Rxmxnx.PInvoke.Tests;
 
 #if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 using TestDelegate = Action;
+
 #else
 using TestDelegate = TestDelegate;
 #endif

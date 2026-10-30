@@ -180,12 +180,12 @@ internal partial class Utf8Comparator<TChar>
 			return this.Compare(this._culture.CompareInfo, CompareOptions.OrdinalIgnoreCase, textA, textB, stringB);
 
 #if !NET7_0_OR_GREATER
-		// .NET Core 2.0 and .NET Framework uses package-provided System.Memory assembly.
+		// .NET Core 2.0 and .NET Framework use the package-provided System.Memory assembly.
 		// In .NET Framework and Mono Framework, System.AppDomain implements System._AppDomain interface.
 		// Starting with .NET 7.0, System.Runtime.InteropServices.GCHandle implements
 		// System.IEquatable<System.Runtime.InteropServices.GCHandle>.
 		if (!SystemInfo.UsesNativeSpan ||
-		    SystemInfo.CountInterfaces<AppDomain>() == 0 && !SystemInfo.IsSelfEquatable<GCHandle>())
+		    (SystemInfo.CountInterfaces<AppDomain>() == 0 && !SystemInfo.IsSelfEquatable<GCHandle>()))
 			return String.CompareOrdinal(Utf8Comparator.GetStringFromUtf8(textA), stringB ?? this.GetString(textB));
 #endif
 
@@ -254,7 +254,7 @@ internal partial class Utf8Comparator<TChar>
 		if (result || compareOptions is CompareOptions.Ordinal)
 			return result;
 
-		// If not ordinal equality, perform a text comparison.
+		// If the comparison is not ordinal, perform a text comparison.
 #if NET5_0_OR_GREATER
 		Span<Char> temp = stackalloc Char[4];
 

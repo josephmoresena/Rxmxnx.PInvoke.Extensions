@@ -68,12 +68,11 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 #endif
 		get
 		{
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			if (!this._value.IsUnmanaged || this._value.Type is { IsValueType: false, }) return default;
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			ref Byte refByte = ref Unsafe.As<T, Byte>(ref MemoryMarshal.GetReference(this.Values));
 			return MemoryMarshal.CreateSpan(ref refByte, this._value.Size);
 #else
-			if (!this._value.IsUnmanaged || this._value.Type?.GetTypeInfo() is { IsValueType: false, }) return default;
 			void* ptr = Unsafe.AsPointer(ref MemoryMarshal.GetReference(this.Values));
 			return new(ptr, this._value.Size);
 #endif
@@ -89,13 +88,11 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 #endif
 		get
 		{
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			if (this._value.IsUnmanaged || this._value.Type is not { IsValueType: false, }) return default;
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 			ref Object refObject = ref Unsafe.As<T, Object>(ref MemoryMarshal.GetReference(this.Values));
 			return MemoryMarshal.CreateSpan(ref refObject, this._value.Size / sizeof(IntPtr));
 #else
-			if (this._value.IsUnmanaged || this._value.Type?.GetTypeInfo() is not { IsValueType: false, })
-				return default;
 			void* ptr = Unsafe.AsPointer(ref MemoryMarshal.GetReference(this.Values));
 			return MemoryMarshalCompat.CreateUnsafeSpan<Object>(ptr, this._value.Size / sizeof(IntPtr));
 #endif

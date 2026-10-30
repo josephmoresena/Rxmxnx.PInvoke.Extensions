@@ -11,11 +11,7 @@ public readonly ref partial struct FixedPointerValue
 	/// </returns>
 	public Boolean TryGetReadOnlyBinaryContext(out ReadOnlyFixedContextValue<Byte> binaryContext)
 	{
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (this.IsUnmanaged && this.Type is not { IsValueType: false, })
-#else
-		if (this.IsUnmanaged && this.Type?.GetTypeInfo() is not { IsValueType: false, })
-#endif
 		{
 			binaryContext = new(this);
 			return true;
@@ -32,11 +28,7 @@ public readonly ref partial struct FixedPointerValue
 	/// </returns>
 	public Boolean TryGetReadOnlyObjectContext(out ReadOnlyFixedContextValue<Object> objectContext)
 	{
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (!this.IsUnmanaged && this.Type is { IsValueType: false, })
-#else
-		if (!this.IsUnmanaged && this.Type?.GetTypeInfo() is { IsValueType: false, })
-#endif
 		{
 			objectContext = new(this);
 			return true;
@@ -53,11 +45,7 @@ public readonly ref partial struct FixedPointerValue
 	/// </returns>
 	public Boolean TryGetBinaryContext(out FixedContextValue<Byte> binaryContext)
 	{
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (!this.IsReadOnly && this.IsUnmanaged && this.Type is not { IsValueType: false, })
-#else
-		if (!this.IsReadOnly && this.IsUnmanaged && this.Type?.GetTypeInfo() is not { IsValueType: false, })
-#endif
 		{
 			binaryContext = new(this);
 			return true;
@@ -74,11 +62,7 @@ public readonly ref partial struct FixedPointerValue
 	/// </returns>
 	public Boolean TryGetObjectContext(out FixedContextValue<Object> objectContext)
 	{
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (!this.IsReadOnly && !this.IsUnmanaged && this.Type is { IsValueType: false, })
-#else
-		if (!this.IsReadOnly && this.IsUnmanaged && this.Type?.GetTypeInfo() is { IsValueType: false, })
-#endif
 		{
 			objectContext = new(this);
 			return true;

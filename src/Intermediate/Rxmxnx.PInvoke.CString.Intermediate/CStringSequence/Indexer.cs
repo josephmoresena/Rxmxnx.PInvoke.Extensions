@@ -135,12 +135,14 @@ public partial class CStringSequence : IReadOnlyList<CString>, IEnumerableSequen
 	{
 		CString[] result = new CString[this._lengths.Length];
 		for (Int32 i = 0; i < this._lengths.Length; i++)
+		{
 			result[i] = this._lengths[i] switch
 			{
 				< 0 => CString.Zero,
 				0 => CString.Empty,
 				_ => this.GetCString(i, this._lengths[i]),
 			};
+		}
 		return result;
 	}
 

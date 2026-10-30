@@ -110,7 +110,7 @@ public partial class CStringSequence
 				this._charBuffer.Insert(charIndex, utf8Text);
 			}
 			/// <summary>
-			/// Inserts UTF-8 representation of the characters in the specified read-only span into this instance at the
+			/// Inserts the UTF-8 representation of the characters in the specified read-only span into this instance at the
 			/// specified UTF-8 unit position.
 			/// </summary>
 			/// <param name="index">The zero-based index at which UTF-8 text should be inserted.</param>
@@ -230,7 +230,7 @@ public partial class CStringSequence
 			/// Retrieves the char index from the beginning to <paramref name="lengthIndex"/>.
 			/// </summary>
 			/// <param name="lengths">Lengths list.</param>
-			/// <param name="lengthIndex">Index of the current length.</param>
+			/// <param name="lengthIndex">The index of the current length.</param>
 			/// <returns>The char index to the current length index.</returns>
 			private static Int32 GetCharIndex(List<Int32> lengths, Int32 lengthIndex)
 			{

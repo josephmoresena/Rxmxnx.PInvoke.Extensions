@@ -22,55 +22,20 @@ public interface IManagedBuffer<T>
 
 #if NET7_0_OR_GREATER
 	/// <summary>
-	/// Current type components.
-	/// </summary>
-	internal static abstract BufferTypeMetadata<T>[] Components { get; }
-	/// <summary>
 	/// Buffer type metadata.
 	/// </summary>
 	private protected static abstract BufferTypeMetadata<T> TypeMetadata { get; }
 
 	/// <summary>
-	/// Appends all components from current type.
+	/// Appends all components from the current type.
 	/// </summary>
-	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
+	/// <param name="storage">An <see cref="IMetadataStorage"/> instance.</param>
 	internal static abstract void AppendComponent(IMetadataStorage storage);
-#elif NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-	/// <summary>
-	/// Current type components.
-	/// </summary>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	internal static BufferTypeMetadata<T>[] Components => [];
-	/// <summary>
-	/// Buffer type metadata.
-	/// </summary>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	private protected static BufferTypeMetadata<T> TypeMetadata => default!;
-
-	/// <summary>
-	/// Appends all components from current type.
-	/// </summary>
-	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	// ReSharper disable once UnusedParameter.Global
-	internal static void AppendComponent(IMetadataStorage storage)
-	{
-		// This method is declared for compatibility with .NET 7.0 APIs but is not usable. 
-	}
-#endif
-
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Appends all components from <typeparamref name="TBuffer"/> type.
 	/// </summary>
 	/// <typeparam name="TBuffer">Type of the buffer.</typeparam>
-	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
+	/// <param name="storage">An <see cref="IMetadataStorage"/> instance.</param>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[Browsable(false)]
 #if !PACKAGE && !NET7_0_OR_GREATER
@@ -87,7 +52,9 @@ public interface IManagedBuffer<T>
 		if (bufferTypeMetadata.IsBinary)
 			ManagedBuffer<T>.AppendComponent(bufferTypeMetadata, storage);
 	}
+#endif
 
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Retrieves the <see cref="BufferTypeMetadata{T}"/> instance from <typeparamref name="TBuffer"/>.
 	/// </summary>

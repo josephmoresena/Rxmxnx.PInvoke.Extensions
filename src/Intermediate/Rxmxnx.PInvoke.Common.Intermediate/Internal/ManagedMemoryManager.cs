@@ -47,7 +47,9 @@ internal abstract unsafe class ManagedMemoryManager<T> : MemoryManager<T>
 #endif
 	public override Span<T> GetSpan()
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-		=> this._count.HasValue ? MemoryMarshal.CreateSpan(ref this.GetMemoryReference(out _), this._count.Value) : default;
+		=> this._count.HasValue ?
+			MemoryMarshal.CreateSpan(ref this.GetMemoryReference(out _), this._count.Value) :
+			default;
 #else
 	{
 		if (!this._count.HasValue) return default;

@@ -7,13 +7,8 @@ namespace Rxmxnx.PInvoke.Internal;
 /// Implementations must be read-only structs to enable devirtualization of calls and avoid relying on generic math
 /// abstractions.
 /// </remarks>
-internal interface IMetadataStorageBackend
+internal interface IMetadataStorageBackend : IStorageCapacity
 {
-	/// <summary>
-	/// Maximum storage capacity.
-	/// </summary>
-	Int32 MaxStorageCapacity { get; }
-
 	/// <summary>
 	/// Tries to add the current component
 	/// </summary>
@@ -54,8 +49,10 @@ internal interface IMetadataStorageBackend
 	/// </summary>
 	/// <typeparam name="T">Type of items in the buffer.</typeparam>
 	/// <param name="storage">A <see cref="MetadataStorage"/> instance.</param>
-	/// <param name="count">Amount of items in required buffer.</param>
-	/// <param name="nonBinaryMinimal">Indicates the value fo the non-binary buffer minimal.</param>
+	/// <param name="count">The number of items in the required buffer.</param>
+	/// <param name="nonBinaryMinimal">
+	/// The capacity of the smallest non-binary buffer already found, or a negative value when none is available.
+	/// </param>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 	BufferTypeMetadata<T>? ComputeBinaryMetadata<T>(MetadataStorage storage, UInt16 count, Int32 nonBinaryMinimal);
 	/// <summary>

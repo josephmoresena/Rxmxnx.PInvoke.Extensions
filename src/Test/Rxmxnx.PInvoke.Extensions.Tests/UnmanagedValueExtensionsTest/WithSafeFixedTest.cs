@@ -43,7 +43,7 @@ public sealed class WithSafeFixedTest
 	public void UInt64Test() => this.Test<UInt64>();
 #pragma warning restore CS0612
 
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 #endif
 	private void Test<T>() where T : unmanaged
@@ -51,7 +51,7 @@ public sealed class WithSafeFixedTest
 		T[]? values = WithSafeFixedTest.fixture.CreateMany<T>(10).ToArray();
 
 		this._array = values;
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 		values.WithSafeFixed(this.ActionTest);
 		values.WithSafeFixed(this.ActionReadOnlyTest);
 
@@ -70,13 +70,17 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(values, result);
 		values.WithSafeFixed(new ReadOnlyFixedFunction<T>(this._array), out result);
 		PInvokeAssert.Equal(values, result);
+
+		// Reference-type callbacks force NonGenericFixedContext* wrappers.
+		WithSafeFixedTest.ClassCallbackTest(values, this._array);
+
 #if !NETFRAMEWORK || NET46_OR_GREATER
 		values = Array.Empty<T>();
 #else
 		values = ArrayCompat.Empty<T>();
 #endif
 		this._array = values;
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 		values.WithSafeFixed(this.ActionTest);
 		values.WithSafeFixed(this.ActionReadOnlyTest);
 
@@ -95,9 +99,10 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(values, result);
 		values.WithSafeFixed(new ReadOnlyFixedFunction<T>(this._array), out result);
 		PInvokeAssert.Equal(values, result);
+		WithSafeFixedTest.ClassCallbackTest(values, this._array);
 		values = default;
 		this._array = values;
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 		values.WithSafeFixed(this.NullActionTest);
 		values.WithSafeFixed(this.NullActionReadOnlyTest);
 
@@ -113,8 +118,18 @@ public sealed class WithSafeFixedTest
 		values.WithSafeFixed(new FixedFunction<T>(this._array), out result);
 		PInvokeAssert.Equal(values, result);
 		values.WithSafeFixed(new ReadOnlyFixedFunction<T>(this._array), out result);
+		WithSafeFixedTest.ClassCallbackTest(values, this._array);
 	}
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+	private static void ClassCallbackTest<T>(T[]? values, Array? array) where T : unmanaged
+	{
+		values.WithSafeFixed(new ClassFixedAction<T>(array));
+		values.WithSafeFixed(new ClassReadOnlyFixedAction<T>(array));
+		values.WithSafeFixed(new ClassFixedFunction<T>(array), out T[]? result);
+		PInvokeAssert.Equal(values, result);
+		values.WithSafeFixed(new ClassReadOnlyFixedFunction<T>(array), out result);
+		PInvokeAssert.Equal(values, result);
+	}
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 	private void ActionTest<T>(in IFixedContext<T> ctx) where T : unmanaged
 	{
@@ -290,6 +305,7 @@ public sealed class WithSafeFixedTest
 		WithSafeFixedTest test) where T : unmanaged
 		=> test.NullFuncReadOnlyTest(ctx);
 #endif
+
 	private readonly struct FixedAction<T>(Array? array) : IFixedContextAction<T> where T : unmanaged
 	{
 		public void Accept(scoped FixedContextValue<T> ctx)
@@ -432,5 +448,26 @@ public sealed class WithSafeFixedTest
 			new ReadOnlyFixedAction<T>(array).Accept(ctx);
 			return array is not null ? ctx.Values.ToArray() : default;
 		}
+	}
+
+	private sealed class ClassFixedAction<T>(Array? array) : IFixedContextAction<T> where T : unmanaged
+	{
+		public void Accept(scoped FixedContextValue<T> ctx) => new FixedAction<T>(array).Accept(ctx);
+	}
+
+	private sealed class ClassReadOnlyFixedAction<T>(Array? array) : IReadOnlyFixedContextAction<T> where T : unmanaged
+	{
+		public void Accept(scoped ReadOnlyFixedContextValue<T> ctx) => new ReadOnlyFixedAction<T>(array).Accept(ctx);
+	}
+
+	private sealed class ClassFixedFunction<T>(Array? array) : IFixedContextFunction<T, T[]?> where T : unmanaged
+	{
+		public T[]? Apply(scoped FixedContextValue<T> ctx) => new FixedFunction<T>(array).Apply(ctx);
+	}
+
+	private sealed class ClassReadOnlyFixedFunction<T>(Array? array) : IReadOnlyFixedContextFunction<T, T[]?>
+		where T : unmanaged
+	{
+		public T[]? Apply(scoped ReadOnlyFixedContextValue<T> ctx) => new ReadOnlyFixedFunction<T>(array).Apply(ctx);
 	}
 }

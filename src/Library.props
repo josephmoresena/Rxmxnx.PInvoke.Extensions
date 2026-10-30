@@ -16,6 +16,10 @@
         <TrimmerSingleWarn>false</TrimmerSingleWarn>
         <CopyLocalLockFileAssemblies Condition="'$(Version)' != ''">false</CopyLocalLockFileAssemblies>
         <DefineConstants Condition="'$(GITHUB_ACTIONS)' == 'true'">$(DefineConstants);GITHUB_ACTIONS</DefineConstants>
+        <Features>$(Features);strict</Features>
+    </PropertyGroup>
+    <PropertyGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'netcoreapp3.0'))">
+        <Features>$(Features);nullablePublicOnly</Features>
     </PropertyGroup>
 
 </Project>

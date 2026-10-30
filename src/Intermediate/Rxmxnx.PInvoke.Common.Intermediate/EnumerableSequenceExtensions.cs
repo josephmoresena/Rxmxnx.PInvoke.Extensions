@@ -9,12 +9,12 @@ namespace Rxmxnx.PInvoke;
 [EditorBrowsable(EditorBrowsableState.Never)]
 public static class EnumerableSequenceExtensions
 {
-#if !PACKAGE && NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#if (!PACKAGE && NETSTANDARD2_1) || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
-	/// Creates an enumerator that iterates through <paramref name="instance"/> instance.
+	/// Creates an enumerator that iterates through <paramref name="instance"/>.
 	/// </summary>
-	/// <param name="instance">A <see cref="IEnumerableSequence{T}"/> instance.</param>
-	/// <param name="disposeEnumeration">Delegate to dispose enumeration.</param>
+	/// <param name="instance">An <see cref="IEnumerableSequence{T}"/> instance.</param>
+	/// <param name="disposeEnumeration">The delegate that disposes the enumeration.</param>
 	/// <returns>
 	/// An <see cref="IEnumerator{T}"/> that can be used to iterate through the sequence.
 	/// </returns>
@@ -24,11 +24,11 @@ public static class EnumerableSequenceExtensions
 	/// </remarks>
 #else
 	/// <summary>
-	/// Creates an enumerator that iterates through <paramref name="instance"/> instance.
+	/// Creates an enumerator that iterates through <paramref name="instance"/>.
 	/// </summary>
 	/// <typeparam name="T">The type of elements in the sequence.</typeparam>
-	/// <param name="instance">A <see cref="IEnumerableSequence{T}"/> instance.</param>
-	/// <param name="disposeEnumeration">Delegate to dispose enumeration.</param>
+	/// <param name="instance">An <see cref="IEnumerableSequence{T}"/> instance.</param>
+	/// <param name="disposeEnumeration">The delegate that disposes the enumeration.</param>
 	/// <returns>
 	/// An <see cref="IEnumerator{T}"/> that can be used to iterate through the sequence.
 	/// </returns>
@@ -41,12 +41,12 @@ public static class EnumerableSequenceExtensions
 #endif
 		=> new SequenceEnumerator<T, IEnumerableSequence<T>>(instance, disposeEnumeration);
 	/// <summary>
-	/// Creates an enumerator that iterates through <paramref name="instance"/> instance.
+	/// Creates an enumerator that iterates through <paramref name="instance"/>.
 	/// </summary>
 	/// <typeparam name="T">The type of elements in the sequence.</typeparam>
-	/// <typeparam name="TEnumerable">The type of current enumerable.</typeparam>
-	/// <param name="instance">A <see cref="IEnumerableSequence{T}"/> instance.</param>
-	/// <param name="disposeEnumeration">Delegate to dispose enumeration.</param>
+	/// <typeparam name="TEnumerable">The type of the current enumerable.</typeparam>
+	/// <param name="instance">An <see cref="IEnumerableSequence{T}"/> instance.</param>
+	/// <param name="disposeEnumeration">The delegate that disposes the enumeration.</param>
 	/// <returns>
 	/// An <see cref="IEnumerator{T}"/> that can be used to iterate through the sequence.
 	/// </returns>

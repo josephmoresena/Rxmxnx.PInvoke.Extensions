@@ -11,17 +11,18 @@ internal partial class MemoryInspector
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-		protected static unsafe class C
+		protected static unsafe class StandardC
 		{
 			/// <summary>
 			/// POSIX process identifier.
 			/// </summary>
-			public static readonly Int32 ProcessId = C.GetProcessId();
+			public static readonly Int32 ProcessId = StandardC.GetProcessId();
 
 #pragma warning disable SYSLIB1054
 			[DllImport("libc", EntryPoint = "free")]
 			public static extern void Free(void* ptr);
-
+			[DllImport("libc", EntryPoint = "dladdr", SetLastError = false)]
+			public static extern Int32 LocateImage(IntPtr address, void* image);
 			[DllImport("libc", EntryPoint = "getpid", SetLastError = false)]
 			private static extern Int32 GetProcessId();
 #pragma warning restore SYSLIB1054

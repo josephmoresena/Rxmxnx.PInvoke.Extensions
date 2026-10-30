@@ -164,6 +164,10 @@ public partial class NativeUtilities
 	/// <typeparam name="T">Generic type.</typeparam>
 	/// <returns>The CLR type for <typeparamref name="T"/>.</returns>
 	[MethodImpl(MethodImplOptions.NoInlining)]
-	internal static Type GetType<T>() => typeof(T);
+	internal static Type GetType<T>()
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
+		=> typeof(T);
 #endif
 }

@@ -7,7 +7,7 @@ internal static unsafe partial class MemoryMarshalCompat
 {
 #pragma warning disable CS8500
 	/// <summary>
-	/// Creates a new span of <typeparamref name="T"/> items using an <see cref="Pinnable{T}"/> instance.
+	/// Creates a new span of <typeparamref name="T"/> items using a <see cref="Pinnable{T}"/> instance.
 	/// </summary>
 	/// <typeparam name="T">The type of the data items.</typeparam>
 	/// <param name="pinnable">A <see cref="Pinnable{T}"/> instance.</param>
