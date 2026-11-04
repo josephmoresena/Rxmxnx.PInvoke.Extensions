@@ -43,41 +43,41 @@ jobs:
       - name: APT deb822 sources
         if: runner.os == 'Linux'
         run: |
-          if [[ $ImageOS == "ubuntu24" ]]; then
+          if [[ $ImageOS == "ubuntu26" ]]; then
            sudo bash -c 'cat > /etc/apt/sources.list.d/ubuntu.sources <<EOF
           Types: deb
           URIs: https://archive.ubuntu.com/ubuntu/
-          Suites: noble
+          Suites: resolute
           Components: main restricted universe
           Architectures: amd64
 
           Types: deb
           URIs: https://security.ubuntu.com/ubuntu/
-          Suites: noble-security
+          Suites: resolute-security
           Components: main restricted universe
           Architectures: amd64
 
           Types: deb
           URIs: https://archive.ubuntu.com/ubuntu/
-          Suites: noble-updates
+          Suites: resolute-updates
           Components: main restricted universe
           Architectures: amd64
 
           Types: deb
           URIs: https://azure.ports.ubuntu.com/ubuntu-ports/
-          Suites: noble
+          Suites: resolute
           Components: main restricted multiverse universe
           Architectures: arm64
 
           Types: deb
           URIs: https://azure.ports.ubuntu.com/ubuntu-ports/
-          Suites: noble-updates
+          Suites: resolute-updates
           Components: main restricted multiverse universe
           Architectures: arm64
 
           Types: deb
           URIs: https://azure.ports.ubuntu.com/ubuntu-ports/
-          Suites: noble-updates
+          Suites: resolute-updates
           Components: main restricted multiverse universe
           Architectures: armhf
           EOF'
@@ -89,15 +89,15 @@ jobs:
           sudo dpkg --add-architecture armhf
 
           sudo bash -c 'cat > /etc/apt/sources.list.d/arm64.list <<EOF
-          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ noble main restricted
-          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ noble-updates main restricted
-          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ noble-backports main restricted universe multiverse
+          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ resolute main restricted
+          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ resolute-updates main restricted
+          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ resolute-backports main restricted universe multiverse
           EOF'
 
           sudo bash -c 'cat > /etc/apt/sources.list.d/armhf.list <<EOF
-          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ noble main restricted
-          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ noble-updates main restricted
-          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ noble-backports main restricted universe multiverse
+          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ resolute main restricted
+          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ resolute-updates main restricted
+          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ resolute-backports main restricted universe multiverse
           EOF'
 
           sudo sed -i -e 's/deb http/deb [arch=amd64] http/g' /etc/apt/sources.list
