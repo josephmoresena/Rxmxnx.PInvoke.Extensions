@@ -5,14 +5,6 @@
 # which is a managed application and does not replace the runtime.
 set -euo pipefail
 
-# Cross builds only execute mono. They do not compile with msbuild.
-# The msbuild debs are Ubuntu 20.04 packages; registering them on a newer
-# distro leaves apt trying to downgrade libssl, libstdc++ and gcc.
-runtime_only=false
-if [[ "${1:-}" == "--runtime-only" ]]; then
-  runtime_only=true
-fi
-
 mono_repo=https://download.mono-project.com/repo/ubuntu
 
 ubuntu_major() {
@@ -48,20 +40,15 @@ install_mono_612() {
     | sudo tee /etc/apt/sources.list.d/mono-official-stable.list >/dev/null
   sudo apt-get update
   install_openssl_compat "${workdir}"
-  if [[ "$runtime_only" == true ]]; then
-    sudo apt-get install -y mono-runtime
-    return
-  fi
   sudo apt-get install -y mono-complete mono-vbnc mono-dbg gdb libssl3
 }
 
 install_mono_614() {
   local workdir="$1"
-  if [[ "$runtime_only" == true ]]; then
-    sudo apt-get install -y mono-runtime
-    return
-  fi
   sudo apt-get install -y mono-devel mono-libraries-debug gdb
+  if [[ "${NO_MONO_COMPILATION:-}" == "true" ]]; then
+      return 0
+  fi
   cd "${workdir}"
   # Mono 6.14 still verifies TLS with its own store (BoringSSL), but Ubuntu
   # 26.04 no longer ships ca-certificates-mono, the package that fills it.
@@ -110,7 +97,8 @@ else
   install_mono_614 "${workdir}"
 fi
 
-if [[ "$runtime_only" != true ]]; then
+mono --version
+
+if [[ "${NO_MONO_COMPILATION:-}" != "true" ]]; then
   msbuild -version
 fi
-mono --version
