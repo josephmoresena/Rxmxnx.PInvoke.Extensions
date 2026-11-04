@@ -64,11 +64,6 @@ from pathlib import Path
 
 host_archs = os.environ["HOST_ARCHS"].split(",")
 
-source_dirs = [
-    Path("/etc/apt"),
-    Path("/etc/apt/sources.list.d"),
-]
-
 ubuntu_hosts = (
     "archive.ubuntu.com",
     "security.ubuntu.com",
@@ -77,6 +72,10 @@ ubuntu_hosts = (
 )
 
 def is_ubuntu_uri(uri):
+    # GitHub Actions uses a local mirror list to resolve Ubuntu mirrors.
+    if uri.startswith("mirror+file:/etc/apt/apt-mirrors.txt"):
+        return True
+
     return any(
         uri == host or uri.endswith("." + host)
         for host in ubuntu_hosts
@@ -85,14 +84,21 @@ def is_ubuntu_uri(uri):
 def restrict_deb822(path):
     content = path.read_text()
     blocks = re.split(r"\n\s*\n", content)
-    changed = False
     result = []
+    changed = False
 
     for block in blocks:
         lines = block.splitlines()
+
+        if not lines:
+            result.append(block)
+            continue
+
         uris_index = next(
-            (i for i, line in enumerate(lines)
-             if re.match(r"^\s*URIs\s*:", line, re.I)),
+            (
+                i for i, line in enumerate(lines)
+                if re.match(r"^\s*URIs\s*:", line, re.I)
+            ),
             None,
         )
 
@@ -107,18 +113,22 @@ def restrict_deb822(path):
             result.append(block)
             continue
 
-        arch_index = next(
-            (i for i, line in enumerate(lines)
-             if re.match(r"^\s*Architectures\s*:", line, re.I)),
-            None,
-        )
+        # Replace existing architecture restrictions or add one.
+        arch_indices = [
+            i for i, line in enumerate(lines)
+            if re.match(r"^\s*Architectures\s*:", line, re.I)
+        ]
 
-        if arch_index is None:
-            lines.append("Architectures: " + " ".join(host_archs))
-        else:
-            lines[arch_index] = (
+        if arch_indices:
+            lines[arch_indices[0]] = (
                 "Architectures: " + " ".join(host_archs)
             )
+
+            # Remove duplicate architecture fields if present.
+            for index in reversed(arch_indices[1:]):
+                del lines[index]
+        else:
+            lines.append("Architectures: " + " ".join(host_archs))
 
         result.append("\n".join(lines))
         changed = True
@@ -153,6 +163,7 @@ def restrict_legacy_list(path):
             option for option in option_list
             if not option.startswith("arch=")
         ]
+
         option_list.append("arch=" + ",".join(host_archs))
 
         output.append(
@@ -166,11 +177,13 @@ def restrict_legacy_list(path):
 
 # Process the conventional source list.
 legacy = Path("/etc/apt/sources.list")
+
 if legacy.is_file():
     restrict_legacy_list(legacy)
 
 # Process source files without following symlinks.
 source_dir = Path("/etc/apt/sources.list.d")
+
 if source_dir.is_dir():
     for path in source_dir.iterdir():
         if path.is_symlink() or not path.is_file():
@@ -180,6 +193,7 @@ if source_dir.is_dir():
             restrict_deb822(path)
         elif path.suffix == ".list":
             restrict_legacy_list(path)
+
 PY
 
 # Install a dedicated Ubuntu Ports source for foreign ARM architectures.
@@ -191,12 +205,22 @@ deb [arch=${port_archs}] https://ports.ubuntu.com/ubuntu-ports/ ${suite}-backpor
 deb [arch=${port_archs}] https://ports.ubuntu.com/ubuntu-ports/ ${suite}-security main restricted universe multiverse
 EOF
 
+# Restrict the Microsoft repository to architectures supported by the
+# runner configuration, avoiding unnecessary armhf index requests.
+sudo sed -i \
+    's/arch=amd64,arm64,armhf/arch=amd64,arm64/g' \
+    /etc/apt/sources.list.d/microsoft-prod.list 2>/dev/null || true
+
 echo "=== Configured Ubuntu source architectures ==="
+
 grep -R -n -E \
     '^(Architectures:|URIs:|deb \[arch=)' \
     /etc/apt/sources.list \
     /etc/apt/sources.list.d \
     2>/dev/null || true
+
+echo "=== Ubuntu DEB822 configuration ==="
+cat /etc/apt/sources.list.d/ubuntu.sources 2>/dev/null || true
 
 # Fail the workflow if the package indexes cannot be refreshed.
 sudo apt-get update
