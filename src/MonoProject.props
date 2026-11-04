@@ -5,11 +5,12 @@
         <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
         <DebugSymbols>false</DebugSymbols>
         <DebugType>None</DebugType>
+        <MonoCorlibPath Condition="'$(MonoCorlibPath)' == ''">$(MonoFrameworkPath)\4.5\mscorlib.dll</MonoCorlibPath>
     </PropertyGroup>
 
     <ItemGroup>
         <Reference Include="mscorlib">
-            <HintPath>$(MonoFrameworkPath)\4.5\mscorlib.dll</HintPath>
+            <HintPath>$(MonoCorlibPath)</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="netstandard">

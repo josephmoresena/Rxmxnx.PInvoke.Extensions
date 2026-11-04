@@ -62,6 +62,10 @@ install_mono_614() {
   sudo apt-get install -y ./*.deb
   sudo cert-sync /etc/ssl/certs/ca-certificates.crt
   install_roslyn "${workdir}"
+  # csc 3.9 cannot read this corlib's ReadOnlySpan indexer. The app uses the other path.
+  if [ -n "${GITHUB_ENV:-}" ]; then
+    echo MONO_SPAN_BYREF_INDEXER=true >> "${GITHUB_ENV}"
+  fi
 }
 
 # msbuild imports Current/bin/Roslyn/Microsoft.CSharp.Core.targets. That tree

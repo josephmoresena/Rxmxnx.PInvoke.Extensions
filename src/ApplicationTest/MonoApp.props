@@ -5,6 +5,8 @@
 
     <PropertyGroup>
         <AssemblyName>$(AssemblyName).mono</AssemblyName>
+        <!-- Ubuntu's Mono 6.14 corlib exposes ReadOnlySpan's indexer as a plain byref. csc 3.9 rejects it. -->
+        <DefineConstants Condition="'$(MONO_SPAN_BYREF_INDEXER)' == 'true'">$(DefineConstants);MONO_SPAN_BYREF_INDEXER</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>

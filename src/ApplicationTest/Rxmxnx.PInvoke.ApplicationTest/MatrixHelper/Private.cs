@@ -37,7 +37,12 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			{
 				Double sum = 0;
 				for (Int32 col = 0; col < n; col++)
+#if MONO_SPAN_BYREF_INDEXER
+					sum += MatrixHelper.ReadAt(matrixA, row * n + col) *
+						MatrixHelper.ReadAt(matrixB, col * bCol + aCol);
+#else
 					sum += matrixA[row * n + col] * matrixB[col * bCol + aCol];
+#endif
 				result[row * bCol + aCol] = sum;
 			}
 		}
@@ -54,9 +59,17 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				strBuild?.Append("\t|\t");
 				for (Int32 col = 0; col < nCol; col++)
 				{
+#if MONO_SPAN_BYREF_INDEXER
+					writer.Write($"{MatrixHelper.ReadAt(matrix, row * (nCol + addCol) + col):0.####}\t");
+#else
 					writer.Write($"{matrix[row * (nCol + addCol) + col]:0.####}\t");
+#endif
 					if (strBuild is null || col >= addCol) continue;
+#if MONO_SPAN_BYREF_INDEXER
+					strBuild.Append($"{MatrixHelper.ReadAt(matrix, row * (nCol + addCol) + col + nRow):0.####}\t");
+#else
 					strBuild.Append($"{matrix[row * (nCol + addCol) + col + nRow]:0.####}\t");
+#endif
 				}
 				writer.WriteLine(strBuild?.ToString());
 				strBuild?.Clear();
@@ -126,8 +139,13 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			for (Int32 row = 0; row < n; row++)
 			for (Int32 col = 0; col < n; col++)
 			{
+#if MONO_SPAN_BYREF_INDEXER
+				(augmented[row * 2 * n + col], augmented[row * 2 * n + col + n]) =
+					(MatrixHelper.ReadAt(matrix, row * n + col), row == col ? 1.0 : 0.0);
+#else
 				(augmented[row * 2 * n + col], augmented[row * 2 * n + col + n]) =
 					(matrix[row * n + col], row == col ? 1.0 : 0.0);
+#endif
 			}
 		}
 		private static void CopyInverse(Span<Double> augmented, Int32 n, Span<Double> inverseAsSpan)
@@ -159,12 +177,31 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			Int32 multiplier = isAugmented ? 2 : 1;
 			for (Int32 row = currentRow + 1; row < n; row++)
 			{
+#if MONO_SPAN_BYREF_INDEXER
+				if (Math.Abs(MatrixHelper.ReadAt(matrix, row * multiplier * n + currentRow)) >
+				    Math.Abs(MatrixHelper.ReadAt(matrix, maxRow * multiplier * n + currentRow)))
+#else
 				if (Math.Abs(matrix[row * multiplier * n + currentRow]) >
 				    Math.Abs(matrix[maxRow * multiplier * n + currentRow]))
+#endif
 					maxRow = row;
 			}
+#if MONO_SPAN_BYREF_INDEXER
+			return MatrixHelper.ReadAt(matrix, maxRow * multiplier * n + currentRow);
+#else
 			return matrix[maxRow * multiplier * n + currentRow];
+#endif
 		}
+#if MONO_SPAN_BYREF_INDEXER
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static T ReadAt<T>(ReadOnlySpan<T> span, Int32 index) where T : unmanaged
+		{
+			// This corlib's ReadOnlySpan indexer is a plain byref. csc 3.9 rejects it.
+			Span<T> tmp = stackalloc T[1];
+			span.Slice(index, 1).CopyTo(tmp);
+			return tmp[0];
+		}
+#endif
 		private static Boolean SwapRow(Span<Double> matrix, Int32 nCol, Int32 row1, Int32 row2)
 		{
 			if (row1 == row2) return false;
