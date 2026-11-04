@@ -43,16 +43,10 @@ jobs:
       - name: APT deb822 sources
         if: runner.os == 'Linux'
         run: |
-          # ubuntu-latest is rolling from 24.04 to 26.04. Keep the rewritten
-          # sources on the same release as the runner.
-          ubuntu_major="$(. /etc/os-release && echo "${VERSION_ID%%.*}")"
-          if [[ "$ubuntu_major" -ge 26 ]]; then
-            suite=resolute
-            security_suite=resolute-security
-          else
-            suite=noble
-            security_suite=noble-security
-          fi
+          # UBUNTU_CODENAME is the release name (noble, plucky, questing, resolute).
+          . /etc/os-release
+          suite="${UBUNTU_CODENAME:-$VERSION_CODENAME}"
+          security_suite="${suite}-security"
           printf '%s\n' \
             'Types: deb' \
             'URIs: https://archive.ubuntu.com/ubuntu/' \
@@ -93,14 +87,13 @@ jobs:
       - name: Setup Mono Framework and NativeAOT pre-requisites (Linux)
         if: runner.os == 'Linux'
         run: |
-          # Same release as the host. Noble has libicu74; resolute has libicu78.
-          ubuntu_major="$(. /etc/os-release && echo "${VERSION_ID%%.*}")"
-          if [[ "$ubuntu_major" -ge 26 ]]; then
-            suite=resolute
-            libicu=libicu78
-          else
-            suite=noble
-            libicu=libicu74
+          # Suite comes from the image. libicuNN is whichever SONAME that image installed.
+          . /etc/os-release
+          suite="${UBUNTU_CODENAME:-$VERSION_CODENAME}"
+          libicu="$(dpkg-query -W -f='${Package}\n' | grep -E '^libicu[0-9]+$' | sort -V | tail -1)"
+          if [[ -z "$libicu" ]]; then
+            echo "The runner has no libicu runtime package installed." >&2
+            exit 1
           fi
 
           sudo dpkg --add-architecture arm64
