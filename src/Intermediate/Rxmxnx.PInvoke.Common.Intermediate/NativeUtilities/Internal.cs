@@ -91,6 +91,7 @@ public partial class NativeUtilities
 		T? previous = Interlocked.CompareExchange(ref fieldReference, newObj, null);
 		return previous ?? newObj;
 	}
+#if !PACKAGE || !NET5_0_OR_GREATER
 	/// <summary>
 	/// Creates a <see cref="Type"/> span from <typeparamref name="TBuffer"/> reference.
 	/// </summary>
@@ -125,7 +126,8 @@ public partial class NativeUtilities
 		return MemoryMarshalCompat.CreateUnsafeSpan<Type>(Unsafe.AsPointer(ref buffer), length);
 #endif
 	}
-#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#endif
+#if (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER) && (!PACKAGE || !NET5_0_OR_GREATER)
 	/// <summary>
 	/// Creates a <see cref="Func{IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory}"/> span from
 	/// <typeparamref name="TBuffer"/> reference.

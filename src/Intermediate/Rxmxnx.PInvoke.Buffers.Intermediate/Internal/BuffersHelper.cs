@@ -362,6 +362,7 @@ internal static class BuffersHelper
 	}
 #nullable restore
 #endif
+#if !PACKAGE || !NET7_0_OR_GREATER
 	/// <summary>
 	/// Retrieves metadata required for a buffer of <paramref name="bufferType"/> type.
 	/// </summary>
@@ -411,4 +412,5 @@ internal static class BuffersHelper
 		return (result as BufferTypeMetadata<T>)!;
 #endif
 	}
+#endif
 }

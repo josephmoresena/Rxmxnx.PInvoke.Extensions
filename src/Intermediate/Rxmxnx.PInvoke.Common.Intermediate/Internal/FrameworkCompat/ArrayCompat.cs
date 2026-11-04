@@ -1,3 +1,4 @@
+#if !PACKAGE || !NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 /// <summary>
@@ -53,3 +54,4 @@ internal static class ArrayCompat
 		return lowerBounds;
 	}
 }
+#endif
