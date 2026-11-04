@@ -117,7 +117,7 @@ jobs:
           bash ./Install-Mono.sh
 
           sudo apt-get install clang llvm zlib1g-dev libkrb5-dev libssl-dev \
-            qemu-user qemu-user-static binfmt-support ${libicu}:arm64 ${libicu}:armhf \
+            qemu-user qemu-user-binfmt binfmt-support ${libicu}:arm64 ${libicu}:armhf \
             binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu zlib1g-dev:arm64 libssl-dev:arm64 \
             binutils-arm-linux-gnueabihf gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf zlib1g-dev:armhf libssl-dev:armhf \
             --assume-yes --no-install-recommends
