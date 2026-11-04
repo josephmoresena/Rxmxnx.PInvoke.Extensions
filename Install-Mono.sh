@@ -47,6 +47,10 @@ install_mono_614() {
   local workdir="$1"
   sudo apt-get install -y mono-devel mono-libraries-debug gdb
   cd "${workdir}"
+  # Mono 6.14 still verifies TLS with its own store (BoringSSL), but Ubuntu
+  # 26.04 no longer ships ca-certificates-mono, the package that fills it.
+  # Without that store, NuGet fails with CERTIFICATE_VERIFY_FAILED.
+  curl -fsSL -O https://archive.ubuntu.com/ubuntu/pool/universe/m/mono/ca-certificates-mono_6.12.0.199+dfsg-6_all.deb
   curl -fsSL -O "${mono_repo}/pool/main/c/core-setup/msbuild-libhostfxr_3.0.0.2019.04.16.02.13-0xamarin4+ubuntu2004b1_amd64.deb"
   curl -fsSL -O "${mono_repo}/pool/main/m/msbuild/msbuild-sdkresolver_16.10.1+xamarinxplat.2021.05.26.14.00-0xamarin2+ubuntu2004b1_all.deb"
   curl -fsSL -O "${mono_repo}/pool/main/m/msbuild/msbuild_16.10.1+xamarinxplat.2021.05.26.14.00-0xamarin2+ubuntu2004b1_all.deb"
@@ -56,6 +60,7 @@ install_mono_614() {
   # Local debs only. apt satisfies libmono-* from mono-libraries Provides
   # instead of downloading the 6.12 packages that require mono-runtime 6.12.
   sudo apt-get install -y ./*.deb
+  sudo cert-sync /etc/ssl/certs/ca-certificates.crt
 }
 
 workdir="$(mktemp -d)"
