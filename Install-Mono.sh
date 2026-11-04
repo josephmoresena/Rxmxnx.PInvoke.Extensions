@@ -61,6 +61,23 @@ install_mono_614() {
   # instead of downloading the 6.12 packages that require mono-runtime 6.12.
   sudo apt-get install -y ./*.deb
   sudo cert-sync /etc/ssl/certs/ca-certificates.crt
+  install_roslyn "${workdir}"
+}
+
+# msbuild imports Current/bin/Roslyn/Microsoft.CSharp.Core.targets. That tree
+# is in mono-roslyn, whose package pins libmono-corlib4.5-cil to 6.12.0.200.
+install_roslyn() {
+  local workdir="$1"
+  local root="${workdir}/mono-roslyn"
+  curl -fsSL -o "${workdir}/mono-roslyn.deb" \
+    "${mono_repo}/pool/main/m/mono/mono-roslyn_6.12.0.200-0xamarin2+ubuntu2004b1_all.deb"
+  dpkg-deb -x "${workdir}/mono-roslyn.deb" "${root}"
+  local roslyn="${root}/usr/lib/mono/msbuild/Current/bin/Roslyn"
+  # Keep the compiler inside the msbuild directory. Its symlinks point at the
+  # 6.12 profile assemblies packed in the same deb.
+  find "${roslyn}" -type l -exec bash -c 'cp --remove-destination "$(readlink -f "$1")" "$1"' _ {} \;
+  sudo mkdir -p /usr/lib/mono/msbuild/Current/bin
+  sudo cp -a "${roslyn}" /usr/lib/mono/msbuild/Current/bin/
 }
 
 workdir="$(mktemp -d)"
