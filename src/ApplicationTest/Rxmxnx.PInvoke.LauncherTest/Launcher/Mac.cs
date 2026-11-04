@@ -17,11 +17,11 @@ public partial class Launcher
 			this.Architectures = Enum.GetValues<Architecture>()
 			                         .Where(a => a == this.CurrentArch || a is Architecture.X64).ToArray();
 			initialize = Task.CompletedTask;
+			// Intel keeps only Mono.framework (x64). Homebrew is the arm64 runtime.
 			Mac.AppendMonoLauncher("/Library/Frameworks/Mono.framework/Versions/Current", Architecture.X64,
 			                       ref this._monoLaunchers);
 			if (this.CurrentArch is Architecture.Arm64)
-				Mac.AppendMonoLauncher("/opt/homebrew/Cellar/mono/6.14.1/", Architecture.Arm64,
-				                       ref this._monoLaunchers);
+				Mac.AppendMonoLauncher("/opt/homebrew/opt/mono", Architecture.Arm64, ref this._monoLaunchers);
 		}
 
 		public override ICppCompiler GetCompiler(Architecture arch) => new XCppCompiler(arch);
