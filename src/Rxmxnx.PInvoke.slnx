@@ -51,6 +51,7 @@
         <File Path="..\.gitignore"/>
         <File Path="..\CONTRIBUTING.md"/>
         <File Path="..\LICENSE.md"/>
+        <File Path="..\Install-ArmSources.sh"/>
         <File Path="..\Install-Mono.sh"/>
         <File Path="..\Print-MonoTest-Results.ps1"/>
         <File Path="..\README.md"/>
