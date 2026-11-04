@@ -43,62 +43,80 @@ jobs:
       - name: APT deb822 sources
         if: runner.os == 'Linux'
         run: |
-          if [[ $ImageOS == "ubuntu26" ]]; then
-           sudo bash -c 'cat > /etc/apt/sources.list.d/ubuntu.sources <<EOF
-          Types: deb
-          URIs: https://archive.ubuntu.com/ubuntu/
-          Suites: resolute
-          Components: main restricted universe
-          Architectures: amd64
-
-          Types: deb
-          URIs: https://security.ubuntu.com/ubuntu/
-          Suites: resolute-security
-          Components: main restricted universe
-          Architectures: amd64
-
-          Types: deb
-          URIs: https://archive.ubuntu.com/ubuntu/
-          Suites: resolute-updates
-          Components: main restricted universe
-          Architectures: amd64
-
-          Types: deb
-          URIs: https://azure.ports.ubuntu.com/ubuntu-ports/
-          Suites: resolute
-          Components: main restricted multiverse universe
-          Architectures: arm64
-
-          Types: deb
-          URIs: https://azure.ports.ubuntu.com/ubuntu-ports/
-          Suites: resolute-updates
-          Components: main restricted multiverse universe
-          Architectures: arm64
-
-          Types: deb
-          URIs: https://azure.ports.ubuntu.com/ubuntu-ports/
-          Suites: resolute-updates
-          Components: main restricted multiverse universe
-          Architectures: armhf
-          EOF'
+          # ubuntu-latest is rolling from 24.04 to 26.04. Keep the rewritten
+          # sources on the same release as the runner.
+          ubuntu_major="$(. /etc/os-release && echo "${VERSION_ID%%.*}")"
+          if [[ "$ubuntu_major" -ge 26 ]]; then
+            suite=resolute
+            security_suite=resolute-security
+          else
+            suite=noble
+            security_suite=noble-security
           fi
+          printf '%s\n' \
+            'Types: deb' \
+            'URIs: https://archive.ubuntu.com/ubuntu/' \
+            "Suites: ${suite}" \
+            'Components: main restricted universe' \
+            'Architectures: amd64' \
+            '' \
+            'Types: deb' \
+            'URIs: https://security.ubuntu.com/ubuntu/' \
+            "Suites: ${security_suite}" \
+            'Components: main restricted universe' \
+            'Architectures: amd64' \
+            '' \
+            'Types: deb' \
+            'URIs: https://archive.ubuntu.com/ubuntu/' \
+            "Suites: ${suite}-updates" \
+            'Components: main restricted universe' \
+            'Architectures: amd64' \
+            '' \
+            'Types: deb' \
+            'URIs: https://azure.ports.ubuntu.com/ubuntu-ports/' \
+            "Suites: ${suite}" \
+            'Components: main restricted multiverse universe' \
+            'Architectures: arm64' \
+            '' \
+            'Types: deb' \
+            'URIs: https://azure.ports.ubuntu.com/ubuntu-ports/' \
+            "Suites: ${suite}-updates" \
+            'Components: main restricted multiverse universe' \
+            'Architectures: arm64' \
+            '' \
+            'Types: deb' \
+            'URIs: https://azure.ports.ubuntu.com/ubuntu-ports/' \
+            "Suites: ${suite}-updates" \
+            'Components: main restricted multiverse universe' \
+            'Architectures: armhf' \
+            | sudo tee /etc/apt/sources.list.d/ubuntu.sources >/dev/null
       - name: Setup Mono Framework and NativeAOT pre-requisites (Linux)
         if: runner.os == 'Linux'
         run: |
+          # Same release as the host. Noble has libicu74; resolute has libicu78.
+          ubuntu_major="$(. /etc/os-release && echo "${VERSION_ID%%.*}")"
+          if [[ "$ubuntu_major" -ge 26 ]]; then
+            suite=resolute
+            libicu=libicu78
+          else
+            suite=noble
+            libicu=libicu74
+          fi
+
           sudo dpkg --add-architecture arm64
           sudo dpkg --add-architecture armhf
 
-          sudo bash -c 'cat > /etc/apt/sources.list.d/arm64.list <<EOF
-          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ resolute main restricted
-          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ resolute-updates main restricted
-          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ resolute-backports main restricted universe multiverse
-          EOF'
+          printf '%s\n' \
+            "deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ ${suite} main restricted" \
+            "deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ ${suite}-updates main restricted" \
+            "deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ ${suite}-backports main restricted universe multiverse" \
+            | sudo tee /etc/apt/sources.list.d/arm64.list >/dev/null
 
-          sudo bash -c 'cat > /etc/apt/sources.list.d/armhf.list <<EOF
-          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ resolute main restricted
-          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ resolute-updates main restricted
-          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ resolute-backports main restricted universe multiverse
-          EOF'
+          printf '%s\n' \
+            "deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ ${suite} main restricted" \
+            "deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ ${suite}-updates main restricted" \
+            "deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ ${suite}-backports main restricted universe multiverse" \
+            | sudo tee /etc/apt/sources.list.d/armhf.list >/dev/null
 
           sudo sed -i -e 's/deb http/deb [arch=amd64] http/g' /etc/apt/sources.list
           sudo sed -i -e 's/deb mirror/deb [arch=amd64] mirror/g' /etc/apt/sources.list
@@ -106,7 +124,7 @@ jobs:
           bash ./Install-Mono.sh
 
           sudo apt-get install clang llvm zlib1g-dev libkrb5-dev libssl-dev \
-            qemu-user qemu-user-static binfmt-support libicu74:arm64 libicu74:armhf \
+            qemu-user qemu-user-static binfmt-support ${libicu}:arm64 ${libicu}:armhf \
             binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu zlib1g-dev:arm64 libssl-dev:arm64 \
             binutils-arm-linux-gnueabihf gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf zlib1g-dev:armhf libssl-dev:armhf \
             --assume-yes --no-install-recommends
