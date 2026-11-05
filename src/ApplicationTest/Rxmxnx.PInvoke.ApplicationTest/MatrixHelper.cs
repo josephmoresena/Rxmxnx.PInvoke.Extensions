@@ -57,11 +57,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			ReadOnlySpan<Double> sourceSpan = source.AsSpan();
 			Span<String> resultSpan = result.AsSpan();
 			for (Int32 i = 0; i < sourceSpan.Length; i++)
-#if MONO_SPAN_BYREF_INDEXER
-				resultSpan[i] = MatrixHelper.ReadAt(sourceSpan, i).ToString(CultureInfo.InvariantCulture);
-#else
 				resultSpan[i] = sourceSpan[i].ToString(CultureInfo.InvariantCulture);
-#endif
 			return result;
 		}
 		public static void Print(Double[,] matrix, TextWriter writer)
