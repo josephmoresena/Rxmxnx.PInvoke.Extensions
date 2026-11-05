@@ -11,11 +11,12 @@ sudo chmod +r /usr/share/keyrings/mono-official-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
 sudo apt update
 
-sudo apt-get install \
-  mono-complete=6.12.0.200-0xamarin2+ubuntu2004b1 \
-  mono-runtime=6.12.0.200-0xamarin2+ubuntu2004b1 \
-  mono-runtime-sgen=6.12.0.200-0xamarin2+ubuntu2004b1 \
-  --allow-downgrades
+sudo apt-get install -y \
+    mono-complete \
+    mono-vbnc \
+    mono-dbg \
+    --allow-downgrades \
+    -o Debug::pkgProblemResolver=yes
 
 mono --version
 
