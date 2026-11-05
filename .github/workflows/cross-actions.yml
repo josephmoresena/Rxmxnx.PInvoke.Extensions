@@ -65,7 +65,7 @@ jobs:
             "${libicu}:arm64" "${libicu}:armhf" \
             zlib1g-dev:arm64 zlib1g-dev:armhf \
             libssl-dev:arm64 libssl-dev:armhf \
-            --assume-yes --no-install-recommends
+            --assume-yes --no-install-recommends --allow-downgrades
 
           sudo mkdir -p /usr/share/dotnet
           sudo chown -R $(whoami):$(whoami) /usr/share/dotnet
