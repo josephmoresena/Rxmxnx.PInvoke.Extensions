@@ -11,7 +11,10 @@ sudo chmod +r /usr/share/keyrings/mono-official-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
 sudo apt update
 
-sudo apt install mono-complete
+sudo apt install mono-complete \
+  --allow-downgrades \
+  --allow-change-held-packages \
+  --fix-broken
 
 mono --version
 
