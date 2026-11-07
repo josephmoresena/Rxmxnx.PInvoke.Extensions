@@ -13,6 +13,8 @@ There are three types of `CString`:
 3. **Unmanaged Pointer-Based**: This type is based on an unmanaged pointer and a specified length. When you use this
    type, you must ensure that the memory address holding the UTF-8/ASCII units remains valid for the lifetime of the
    `CString` instance.
+4. **Function pointer-Based**: Same as delegate-Based, but uses function pointers instead of delegates. Requires .NET
+   7.0 or later and unsafe compilation.
 
 ---
 
@@ -65,11 +67,46 @@ Console.WriteLine(cstring);                     // Output: "Hello"
 Console.WriteLine(cstring.IsNullTerminated);    // Output: True
 ```
 
-This constructor enables the creation of `CString` instances
+Compiling with /unsafe (on .NET 7.0 or later)
+
+```csharp
+CString cstring = new(&LiteralFunction);
+
+Console.WriteLine(cstring);                     // Output: "Hello"
+Console.WriteLine(cstring.IsNullTerminated);    // Output: True
+static ReadOnlySpan<Byte> LiteralFunction() => "Hello"u8;
+```
+
+These constructors enable the creation of `CString` instances
 using [UTF-8/ASCII literals](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-11.0/utf8-string-literals).
 
-**Note:** This constructor is considered **primary** because these literals are constants, ensuring their memory
+**Note:** These constructor are considered **primary** because these literals are constants, ensuring their memory
 location remains fixed.
+
+### Literal Factory
+
+Starting with .NET 7.0, the `IUtf8LiteralSource<TIdentifier>` interface can be used to define a factory that provides
+multiple UTF-8 literals identified by a custom identifier.
+
+```csharp
+CString cstring = CString.Create<LiteralFactory, Byte>(2);
+
+Console.WriteLine(cstring);                    // Output: "world"
+Console.WriteLine(cstring.IsNullTerminated);   // Output: True
+
+struct LiteralFactory : IUtf8LiteralSource<Byte>
+{
+    ReadOnlySpan<Byte> GetLiteral(Byte identifier)
+        => identifier switch
+        {
+            1 => "Hello"u8,
+            2 => "world"u8,
+            _ => ReadOnlySpan<Byte>.Empty,
+        };
+}
+```
+
+**Note:** Any `CString` instance created using this factory is considered null-terminated.
 
 ### Span constructor
 

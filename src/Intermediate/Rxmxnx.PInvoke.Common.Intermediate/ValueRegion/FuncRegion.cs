@@ -19,14 +19,10 @@ public partial class ValueRegion<T>
 		public FuncRegion(ReadOnlySpanFunc<T> func) => this._func = func;
 
 		/// <summary>
-		/// Gets the memory region provided by the function.
-		/// </summary>
-		/// <returns>The memory region provided by the function.</returns>
-		public ReadOnlySpanFunc<T> AsReadOnlySpanFunc() => this._func;
-		/// <summary>
 		/// Invokes internal function and retrieves span length.
 		/// </summary>
 		/// <returns>Current span length.</returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Int32 GetLength() => this._func().Length;
 
 		/// <inheritdoc/>
@@ -53,6 +49,13 @@ public partial class ValueRegion<T>
 		[SecuritySafeCritical]
 #endif
 		internal override ReadOnlySpan<T> AsSpan() => this._func();
+
+		/// <summary>
+		/// Defines an implicit conversion of a given <see cref="ValueRegion{T}.FuncRegion"/> to a delegate.
+		/// </summary>
+		/// <param name="region">A <see cref="ValueRegion{T}.FuncRegion"/> to implicitly convert.</param>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static implicit operator ReadOnlySpanFunc<T>(FuncRegion region) => region._func;
 	}
 
 	/// <summary>
@@ -98,6 +101,7 @@ public partial class ValueRegion<T>
 		/// <param name="state">Function state.</param>
 		/// <param name="alloc">Function for state allocation.</param>
 		/// <returns>The memory region provided by the function.</returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ReadOnlySpanFunc<T, TState> AsReadOnlySpanFunc(out TState state,
 			out Func<TState, GCHandleType, GCHandle>? alloc)
 		{
@@ -109,6 +113,7 @@ public partial class ValueRegion<T>
 		/// Invokes internal function and retrieves span length.
 		/// </summary>
 		/// <returns>Current span length.</returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Int32 GetLength() => this._func(this._state).Length;
 
 		/// <inheritdoc/>

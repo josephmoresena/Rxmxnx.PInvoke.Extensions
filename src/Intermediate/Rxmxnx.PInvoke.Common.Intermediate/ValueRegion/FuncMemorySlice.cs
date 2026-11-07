@@ -20,13 +20,13 @@ public partial class ValueRegion<T>
 		/// <param name="offset">The offset for the range.</param>
 		/// <param name="length">The length of the range.</param>
 		public FuncMemorySlice(FuncRegion region, Int32 offset, Int32 length) : base(region.GetLength(), offset, length)
-			=> this._func = region.AsReadOnlySpanFunc();
+			=> this._func = region;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ValueRegion{T}.FuncMemorySlice"/> class from a sub-range of an
 		/// existing <see cref="ValueRegion{T}.FuncMemorySlice"/>.
 		/// </summary>
-		/// <param name="region">A <see cref="ValueRegion{T}.FuncRegion"/> instance.</param>
+		/// <param name="region">A <see cref="ValueRegion{T}.FuncMemorySlice"/> instance.</param>
 		/// <param name="offset">The offset for the range.</param>
 		/// <param name="length">The length of the range.</param>
 		private FuncMemorySlice(FuncMemorySlice region, Int32 offset, Int32 length) : base(
@@ -62,10 +62,10 @@ public partial class ValueRegion<T>
 		private readonly TState _state;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ValueRegion{T}.FuncMemorySlice"/> class from a sub-range of an
-		/// existing <see cref="ValueRegion{T}.FuncRegion"/>.
+		/// Initializes a new instance of the <see cref="ValueRegion{T}.FuncMemorySlice{FuncRegion}"/> class from a
+		/// sub-range of an existing <see cref="ValueRegion{T}.FuncRegion"/>.
 		/// </summary>
-		/// <param name="region">A <see cref="ValueRegion{T}.FuncRegion"/> instance.</param>
+		/// <param name="region">A <see cref="ValueRegion{T}.FuncRegion{FuncRegion}"/> instance.</param>
 		/// <param name="offset">The offset for the range.</param>
 		/// <param name="length">The length of the range.</param>
 		public FuncMemorySlice(FuncRegion<TState> region, Int32 offset, Int32 length) : base(
@@ -73,10 +73,10 @@ public partial class ValueRegion<T>
 			=> this._func = region.AsReadOnlySpanFunc(out this._state, out this._alloc);
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ValueRegion{T}.FuncMemorySlice"/> class from a sub-range of an
-		/// existing <see cref="ValueRegion{T}.FuncMemorySlice"/>.
+		/// Initializes a new instance of the <see cref="ValueRegion{T}.FuncMemorySlice{TState}"/> class from a
+		/// sub-range of an existing <see cref="ValueRegion{T}.FuncMemorySlice{TState}"/>.
 		/// </summary>
-		/// <param name="region">A <see cref="ValueRegion{T}.FuncRegion"/> instance.</param>
+		/// <param name="region">A <see cref="ValueRegion{T}.FuncMemorySlice{TState}"/> instance.</param>
 		/// <param name="offset">The offset for the range.</param>
 		/// <param name="length">The length of the range.</param>
 		private FuncMemorySlice(FuncMemorySlice<TState> region, Int32 offset, Int32 length) : base(
