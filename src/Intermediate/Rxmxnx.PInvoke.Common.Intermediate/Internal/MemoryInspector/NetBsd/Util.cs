@@ -19,14 +19,14 @@ internal partial class MemoryInspector
 			/// <param name="bsd">A <see cref="FreeBsd"/> instance</param>
 			public static void AppendMaps(NetBsd bsd)
 			{
-				void* maps = Util.GetMaps(C.ProcessId, out UIntPtr count);
+				void* maps = Util.GetMaps(StandardC.ProcessId, out UIntPtr count);
 				try
 				{
 					VmMap.AppendMaps(maps, (UInt32)count, bsd);
 				}
 				finally
 				{
-					C.Free(maps);
+					StandardC.Free(maps);
 				}
 			}
 

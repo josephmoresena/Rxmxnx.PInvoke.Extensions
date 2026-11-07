@@ -122,4 +122,12 @@ public readonly ref partial struct FixedPointerValue
 		if (type == this.Type) return;
 		ValidationUtilities.ThrowIfInvalidTransformation(this.Type, this.IsUnmanaged, type, unmanagedType);
 	}
+	/// <summary>
+	/// Validates the size of the referenced value type from the current instance.
+	/// </summary>
+	/// <param name="typeOf">CLR Type.</param>
+	/// <param name="sizeOf">Type size in bytes.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal void ValidateReferenceSize(Type typeOf, Int32 sizeOf)
+		=> ValidationUtilities.ThrowIfInvalidRefTypePointer(this.Size, typeOf, sizeOf);
 }

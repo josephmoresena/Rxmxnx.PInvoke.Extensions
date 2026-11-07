@@ -40,88 +40,32 @@ jobs:
           key: internal-nuget-${{ github.run_id }}
           fail-on-cache-miss: true
           enableCrossOsArchive: true
-      - name: APT deb822 sources
-        if: runner.os == 'Linux'
-        run: |
-          if [[ $ImageOS == "ubuntu24" ]]; then
-           sudo bash -c 'cat > /etc/apt/sources.list.d/ubuntu.sources <<EOF
-          Types: deb
-          URIs: https://archive.ubuntu.com/ubuntu/
-          Suites: noble
-          Components: main restricted universe
-          Architectures: amd64
-
-          Types: deb
-          URIs: https://security.ubuntu.com/ubuntu/
-          Suites: noble-security
-          Components: main restricted universe
-          Architectures: amd64
-
-          Types: deb
-          URIs: https://archive.ubuntu.com/ubuntu/
-          Suites: noble-updates
-          Components: main restricted universe
-          Architectures: amd64
-
-          Types: deb
-          URIs: https://azure.ports.ubuntu.com/ubuntu-ports/
-          Suites: noble
-          Components: main restricted multiverse universe
-          Architectures: arm64
-
-          Types: deb
-          URIs: https://azure.ports.ubuntu.com/ubuntu-ports/
-          Suites: noble-updates
-          Components: main restricted multiverse universe
-          Architectures: arm64
-
-          Types: deb
-          URIs: https://azure.ports.ubuntu.com/ubuntu-ports/
-          Suites: noble-updates
-          Components: main restricted multiverse universe
-          Architectures: armhf
-          EOF'
-          fi
       - name: Setup Mono Framework and NativeAOT pre-requisites (Linux)
         if: runner.os == 'Linux'
         run: |
-          sudo dpkg --add-architecture arm64
-          sudo dpkg --add-architecture armhf
+          # libicuNN is whichever SONAME that image installed.
+          libicu="$(dpkg-query -W -f='${Package}\n' | grep -E '^libicu[0-9]+$' | sort -V | tail -1)"
+          if [[ -z "$libicu" ]]; then
+            echo "The runner has no libicu runtime package installed." >&2
+            exit 1
+          fi
 
-          sudo bash -c 'cat > /etc/apt/sources.list.d/arm64.list <<EOF
-          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ noble main restricted
-          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ noble-updates main restricted
-          deb [arch=arm64] https://ports.ubuntu.com/ubuntu-ports/ noble-backports main restricted universe multiverse
-          EOF'
-
-          sudo bash -c 'cat > /etc/apt/sources.list.d/armhf.list <<EOF
-          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ noble main restricted
-          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ noble-updates main restricted
-          deb [arch=armhf] https://ports.ubuntu.com/ubuntu-ports/ noble-backports main restricted universe multiverse
-          EOF'
-
-          sudo sed -i -e 's/deb http/deb [arch=amd64] http/g' /etc/apt/sources.list
-          sudo sed -i -e 's/deb mirror/deb [arch=amd64] mirror/g' /etc/apt/sources.list
-
-          sudo apt install ca-certificates gnupg --assume-yes
-          sudo gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-          echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
-
-          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-
-          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
-          sudo dpkg -i libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
-          rm libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
-
-          sudo apt update 
+          # amd64 first, while the image sources are untouched.
+          bash ./Install-Mono.sh
           sudo apt-get install clang llvm zlib1g-dev libkrb5-dev libssl-dev \
-            qemu-user qemu-user-static binfmt-support libicu74:arm64 libicu74:armhf \
-            binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu zlib1g-dev:arm64 libssl-dev:arm64 \
-            binutils-arm-linux-gnueabihf gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf zlib1g-dev:armhf libssl-dev:armhf \
-            mono-complete mono-vbnc mono-dbg gdb libssl3 \
+            qemu-user qemu-user-binfmt binfmt-support \
+            binutils-aarch64-linux-gnu gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
+            binutils-arm-linux-gnueabihf gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
             --assume-yes --no-install-recommends
+
+          # Foreign architectures only after the host packages are in place.
+          bash ./Install-ArmSources.sh
+
+          sudo apt-get install \
+            "${libicu}:arm64" "${libicu}:armhf" \
+            zlib1g-dev:arm64 zlib1g-dev:armhf \
+            libssl-dev:arm64 libssl-dev:armhf \
+            --assume-yes --no-install-recommends --allow-downgrades
 
           sudo mkdir -p /usr/share/dotnet
           sudo chown -R $(whoami):$(whoami) /usr/share/dotnet
@@ -141,7 +85,7 @@ jobs:
           sudo rm -rf /usr/share/java/selenium-server.jar
 
           df -h
-      - name: Setup Mono Development Kit And Runtime (macOS)
+      - name: Setup Mono Runtime (macOS)
         if: runner.os == 'MacOS'
         run: |
           sudo rm -rf /Users/runner/Library/Android
@@ -156,10 +100,23 @@ jobs:
             rm -rf "$vendor"
           done
 
-          brew install --cask mono-mdk
+          # mono-mdk is Mono 6.12, x86_64. Install it before macOS 28 when this process
+          # can run x86_64: Intel, or Apple Silicon with Rosetta. On Intel it stays a
+          # valid x64 runtime next to Homebrew's Mono 6.14.
+          macos_major="$(sw_vers -productVersion | cut -d. -f1)"
+          if [[ "$macos_major" -lt 28 ]] && arch -x86_64 /usr/bin/true >/dev/null 2>&1; then
+            brew install --cask mono-mdk
+            /Library/Frameworks/Mono.framework/Commands/mono --version
+          fi
+
+          # Homebrew mono is native: arm64 on Apple Silicon, x64 6.14 on Intel.
+          # --overwrite keeps its links if the cask also wrote /usr/local/bin/mono.
+          # ApplicationTest for Mono is compiled with msbuild on Linux.
           brew install --overwrite mono
-          mono --version
-          /opt/homebrew/bin/mono --version
+          "$(brew --prefix mono)/bin/mono" --version
+          if [[ ! -x /Library/Frameworks/Mono.framework/Commands/mono ]]; then
+            echo "$(brew --prefix)/bin" >> "$GITHUB_PATH"
+          fi
 
       - name: Setup MinGW i686
         if: runner.os == 'Windows' && inputs.build_artifacts == true
@@ -244,7 +201,7 @@ jobs:
       - name: Run Mono tests (Apple Silicon)
         id: mono_mac
         shell: pwsh
-        if: inputs.run_tests == true && runner.os == 'MacOS'
+        if: inputs.run_tests == true && runner.os == 'MacOS' && runner.arch == 'ARM64'
         run: ./Run-MonoTest.ps1 -MonoPath "/opt/homebrew/bin/mono"
       - name: Results Mono tests (x86 or Apple Silicon)
         shell: pwsh

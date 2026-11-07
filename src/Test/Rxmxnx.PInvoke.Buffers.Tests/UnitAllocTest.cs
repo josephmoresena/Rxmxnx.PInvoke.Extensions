@@ -115,8 +115,7 @@ public sealed unsafe class UnitAllocTest
 		public void Accept(scoped ScopedBuffer<T> buffer) => UnitAllocTest.Do(buffer);
 	}
 
-	private readonly struct ScopedBufferFunction<T>(UInt16 count)
-		: IScopedBufferFunction<T, IntPtr>
+	private readonly struct ScopedBufferFunction<T>(UInt16 count) : IScopedBufferFunction<T, IntPtr>
 	{
 		public Boolean IsMinimalCount => false;
 		public UInt16 Count => count;

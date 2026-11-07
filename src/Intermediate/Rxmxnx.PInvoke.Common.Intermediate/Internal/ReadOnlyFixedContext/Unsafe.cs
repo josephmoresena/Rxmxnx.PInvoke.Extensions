@@ -13,7 +13,7 @@ internal unsafe partial class ReadOnlyFixedContext<T>
 	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> value.</param>
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
 	/// <param name="disposable">Object to dispose in order to free <see langword="unmanaged"/> resources.</param>
-	/// <returns>A <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance.</returns>
+	/// <returns>An <see cref="IReadOnlyFixedContext{T}.IDisposable"/> instance.</returns>
 	/// <remarks>
 	/// This method serves as a reference for the assembly patcher in .NET 9.0+. It is important to keep the
 	/// attributes of its parameters compatible.

@@ -1,8 +1,4 @@
-﻿#if !NET6_0_OR_GREATER
-using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
-#endif
-
-#if !NET5_0_OR_GREATER
+﻿#if !NET5_0_OR_GREATER
 using Convert = Rxmxnx.PInvoke.Internal.FrameworkCompat.ConvertCompat;
 #endif
 
@@ -35,29 +31,6 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	public static readonly CString Zero;
 	/// <inheritdoc cref="Environment.NewLine"/>
 	public static readonly CString NewLine;
-
-	/// <summary>
-	/// Static constructor.
-	/// </summary>
-#if NETFRAMEWORK || NETSTANDARD2_0
-	[SecuritySafeCritical]
-#endif
-#if !PACKAGE
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3963)]
-#endif
-	static CString()
-	{
-		CString.Empty = new(ValueRegion<Byte>.Create(TrimInfo.EmptyUt8Text), true, true, 0);
-		CString.Zero = new(IntPtr.Zero, 0, true);
-		CString.NewLine =
-#if NET5_0_OR_GREATER
-			OperatingSystem.IsWindows() ?
-#else
-			RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
-#endif
-				new(ValueRegion<Byte>.Create(TrimInfo.WindowsNewLine), true, true, 2) :
-				new(ValueRegion<Byte>.Create(TrimInfo.NonWindowsNewLine), true, true, 1);
-	}
 
 	/// <summary>
 	/// Gets a value indicating whether the text in the current <see cref="CString"/> instance
@@ -452,10 +425,10 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <see cref="ReadOnlySpanFunc{Byte}"/> delegate provided.
 	/// </summary>
 	/// <param name="func">
-	/// A <see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns a UTF-8 string non-literal.
+	/// A <see cref="ReadOnlySpanFunc{Byte}"/> delegate that returns a non-literal UTF-8 string.
 	/// </param>
 	/// <returns>
-	/// A new instance of the <see cref="CString"/> class, if the func is not <see langword="null"/>;
+	/// A new instance of the <see cref="CString"/> class if <paramref name="func"/> is not <see langword="null"/>;
 	/// otherwise, <see langword="null"/>.
 	/// </returns>
 	[return: NotNullIfNotNull(nameof(func))]
@@ -466,7 +439,7 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// </summary>
 	/// <param name="bytes">Binary internal information.</param>
 	/// <returns>
-	/// A new instance of the <see cref="CString"/> class, if the bytes are not <see langword="null"/>;
+	/// A new instance of the <see cref="CString"/> class if <paramref name="bytes"/> is not <see langword="null"/>;
 	/// otherwise, <see langword="null"/>.
 	/// </returns>
 	[return: NotNullIfNotNull(nameof(bytes))]
@@ -483,9 +456,7 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 	/// <param name="getSpan">Function to retrieve utf-8 span from the state.</param>
 	/// <param name="isNullTerminated">Indicates whether resulting UTF-8 text is null-terminated.</param>
 	/// <param name="alloc">Function to allocate a <see cref="GCHandle"/> for the state.</param>
-	/// <returns>
-	/// A new instance of the <see cref="CString"/> class.
-	/// </returns>
+	/// <returns>A new instance of the <see cref="CString"/> class.</returns>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -495,22 +466,6 @@ public sealed partial class CString : IEquatable<CString>, IEquatable<String>
 		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, getSpan, alloc);
 		return new(data, true, isNullTerminated, getSpan(state).Length);
 	}
-#if NET7_0_OR_GREATER
-	/// <summary>
-	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
-	/// </summary>
-	/// <typeparam name="TState">A <see cref="IUtf8FunctionState{TState}"/> type.</typeparam>
-	/// <param name="state">Function state parameter.</param>
-	/// <returns>
-	/// A new instance of the <see cref="CString"/> class.
-	/// </returns>
-	public static CString Create<TState>(TState state) where TState : struct, IUtf8FunctionState<TState>
-	{
-		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, TState.GetSpan, TState.Alloc);
-		Int32 length = TState.GetLength(state);
-		return new(data, true, state.IsNullTerminated, length);
-	}
-#endif
 	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using the pointer to a UTF-8
 	/// character array and length provided.

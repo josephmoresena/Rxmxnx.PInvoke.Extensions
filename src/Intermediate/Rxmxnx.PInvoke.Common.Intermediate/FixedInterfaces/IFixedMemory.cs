@@ -35,7 +35,7 @@ public interface IFixedMemory : IReadOnlyFixedMemory
 
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
-	/// Interface representing a <see cref="IDisposable"/> <see cref="IFixedMemory"/> object.
+	/// Interface representing an <see cref="IDisposable"/> <see cref="IFixedMemory"/> object.
 	/// </summary>
 	// ReSharper disable once PossibleInterfaceMemberAmbiguity
 	public new interface IDisposable : IFixedMemory, IReadOnlyFixedMemory.IDisposable;

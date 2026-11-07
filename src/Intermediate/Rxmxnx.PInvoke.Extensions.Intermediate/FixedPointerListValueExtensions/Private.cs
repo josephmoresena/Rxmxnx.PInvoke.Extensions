@@ -103,5 +103,55 @@ public static unsafe partial class FixedPointerListValueExtensions
 			TypeOrFunctionPointer = FixedPointerInfo.ToUnmanaged(&NativeUtilities.GetType<T>),
 		};
 #endif
+
+#if !NET5_0_OR_GREATER
+	/// <summary>
+	/// Retrieves the <see cref="FixedPointerInfo"/> instance for a pinned address.
+	/// </summary>
+	/// <typeparam name="T">Type of the referenced value.</typeparam>
+	/// <param name="ptr">Pinned address.</param>
+	/// <param name="typeRef">Output. Current type.</param>
+	/// <returns>A <see cref="FixedPointerInfo"/> instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static FixedPointerInfo CreateFixedPointerInfo<T>(void* ptr, out Type typeRef)
+	{
+		typeRef = typeof(T);
+		return new()
+		{
+			Pointer = ptr,
+			Count = 1,
+			SizeOf = sizeof(T),
+			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+			ConstructorOrFunctionPointer = default,
+#endif
+			TypeOrFunctionPointer = Unsafe.AsPointer(ref typeRef),
+		};
+	}
+#else
+	/// <summary>
+	/// Retrieves the <see cref="FixedPointerInfo"/> instance for a pinned address.
+	/// </summary>
+	/// <typeparam name="T">Type of the referenced value.</typeparam>
+	/// <param name="ptr">Pinned address.</param>
+	/// <returns>A <see cref="FixedPointerInfo"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static FixedPointerInfo CreateFixedPointerInfo<T>(void* ptr)
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
+		=> new()
+		{
+			Pointer = ptr,
+			Count = 1,
+			SizeOf = sizeof(T),
+			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
+			ConstructorOrFunctionPointer = default,
+			TypeOrFunctionPointer = FixedPointerInfo.ToUnmanaged(&NativeUtilities.GetType<T>),
+		};
+#endif
 #pragma warning restore CS8500
 }

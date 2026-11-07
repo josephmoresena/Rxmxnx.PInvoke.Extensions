@@ -43,7 +43,7 @@ public sealed class WithSafeFixedTest
 	public void UInt64Test() => this.Test<UInt64>();
 #pragma warning restore CS0612
 
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 #endif
 	private void Test<T>() where T : unmanaged
@@ -53,7 +53,7 @@ public sealed class WithSafeFixedTest
 		ReadOnlySpan<Byte> readOnlySpan = span;
 
 		this._array = values;
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 		span.WithSafeFixed(this.ActionTest<T>);
 		span.WithSafeFixed(this.ActionReadOnlyTest<T>);
 		readOnlySpan.WithSafeFixed(this.ReadOnlyActionReadOnlyTest<T>);
@@ -80,8 +80,19 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.True(span.SequenceEqual(result.AsSpan()));
 		readOnlySpan.WithSafeFixed(new FixedFunction<T>(this._array, true), out result);
 		PInvokeAssert.True(readOnlySpan.SequenceEqual(result.AsSpan()));
+
+		// Reference-type callbacks force NonGenericFixedAction / NonGenericFixedFunction wrappers.
+		span.WithSafeFixed(new ClassFixedAction<T>(this._array, false));
+		span.WithSafeFixed(new ClassFixedAction<T>(this._array, true));
+		readOnlySpan.WithSafeFixed(new ClassFixedAction<T>(this._array, true));
+		span.WithSafeFixed(new ClassFixedFunction<T>(this._array, false), out result);
+		PInvokeAssert.True(span.SequenceEqual(result.AsSpan()));
+		span.WithSafeFixed(new ClassFixedFunction<T>(this._array, true), out result);
+		PInvokeAssert.True(span.SequenceEqual(result.AsSpan()));
+		readOnlySpan.WithSafeFixed(new ClassFixedFunction<T>(this._array, true), out result);
+		PInvokeAssert.True(readOnlySpan.SequenceEqual(result.AsSpan()));
 	}
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 	private void ActionTest<T>(in IFixedMemory mem) where T : unmanaged
 	{
@@ -244,6 +255,7 @@ public sealed class WithSafeFixedTest
 		where T : unmanaged
 		=> test.ReadOnlyFuncReadOnlyTest<T>(mem);
 #endif
+
 	private readonly unsafe struct FixedAction<T>(Array array, Boolean isReadOnly) : IFixedAction where T : unmanaged
 	{
 		public void Accept(scoped FixedPointerValue fptr)
@@ -366,5 +378,16 @@ public sealed class WithSafeFixedTest
 			fptr.TryGetReadOnlyBinaryContext(out ReadOnlyFixedContextValue<Byte> ctx);
 			return ctx.Values.ToArray();
 		}
+	}
+
+	private sealed class ClassFixedAction<T>(Array array, Boolean isReadOnly) : IFixedAction where T : unmanaged
+	{
+		public void Accept(scoped FixedPointerValue fptr) => new FixedAction<T>(array, isReadOnly).Accept(fptr);
+	}
+
+	private sealed class ClassFixedFunction<T>(Array array, Boolean isReadOnly) : IFixedFunction<Byte[]>
+		where T : unmanaged
+	{
+		public Byte[] Apply(scoped FixedPointerValue fptr) => new FixedFunction<T>(array, isReadOnly).Apply(fptr);
 	}
 }

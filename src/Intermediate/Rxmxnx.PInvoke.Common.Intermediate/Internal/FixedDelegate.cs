@@ -46,7 +46,7 @@ internal abstract unsafe partial class FixedDelegate : FixedPointer
 /// <summary>
 /// Fixed method class, used to hold a fixed pointer to a method delegate.
 /// </summary>
-/// <typeparam name="TDelegate">Type of the method delegate which is being fixed.</typeparam>
+/// <typeparam name="TDelegate">Type of the method delegate that is being fixed.</typeparam>
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif

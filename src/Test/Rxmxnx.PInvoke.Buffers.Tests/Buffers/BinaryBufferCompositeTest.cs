@@ -105,13 +105,12 @@ public sealed class BinaryBufferCompositeTest
 		PInvokeAssert.Equal(atomicMetadata, BuffersHelper.GetMetadata<T>(typeofAtomic));
 		PInvokeAssert.Equal(composite2Metadata, BuffersHelper.GetMetadata<T>(typeofComposite2));
 		PInvokeAssert.Equal(binaryMetadata, BuffersHelper.GetMetadata<T>(binaryMetadata.BufferType));
-		PInvokeAssert.Equal(binaryMetadata.Components.ToArray(), [
-			BuffersHelper.GetMetadata<T>(typeofAtomic),
-			BuffersHelper.GetMetadata<T>(typeofComposite2),
-		]);
-		foreach (BufferTypeMetadata<T> metadata in binaryMetadata.Components.Span)
+		for (Int32 index = 0; index < binaryMetadata.ComponentCount; index++)
+		{
+			BufferTypeMetadata<T> metadata = (BufferTypeMetadata<T>)binaryMetadata[index];
 			PInvokeAssert.Equal(metadata, BuffersHelper.GetMetadata<T>(metadata.BufferType));
-		
+		}
+
 		PInvokeAssert.Equal(sizeOf, atomicMetadata.SizeOfElement);
 		PInvokeAssert.Equal(sizeOf, composite2Metadata.SizeOfElement);
 		PInvokeAssert.Equal(sizeOf, binaryMetadata.SizeOfElement);

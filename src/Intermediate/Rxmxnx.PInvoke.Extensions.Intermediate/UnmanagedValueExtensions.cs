@@ -1,9 +1,8 @@
-﻿// ReSharper disable ConvertToExtensionBlock
-
-#if !NET6_0_OR_GREATER && (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER)
-using ArgumentNullExceptionCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArgumentNullExceptionCompat;
+﻿#if NETFRAMEWORK && !NET46_OR_GREATER
+using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
 #endif
-using EnumCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
+
+// ReSharper disable ConvertToExtensionBlock
 
 namespace Rxmxnx.PInvoke;
 
@@ -39,7 +38,7 @@ public static class UnmanagedValueExtensions
 	/// <typeparam name="T">
 	/// The unmanaged type from which the contiguous region of memory will be fixed.
 	/// </typeparam>
-	/// <param name="arrayPool">A <see cref="ArrayPool{T}"/> instance.</param>
+	/// <param name="arrayPool">An <see cref="ArrayPool{T}"/> instance.</param>
 	/// <param name="count">Minimum size of rented array.</param>
 	/// <param name="clearArray">Indicates whether the contents of the buffer should be cleared before reuse.</param>
 	/// <returns>An <see cref="IFixedContext{T}.IDisposable"/> instance representing the pinned memory.</returns>
@@ -66,7 +65,7 @@ public static class UnmanagedValueExtensions
 	/// <typeparam name="T">
 	/// The unmanaged type from which the contiguous region of memory will be fixed.
 	/// </typeparam>
-	/// <param name="arrayPool">A <see cref="ArrayPool{T}"/> instance.</param>
+	/// <param name="arrayPool">An <see cref="ArrayPool{T}"/> instance.</param>
 	/// <param name="count">Minimum size of rented array.</param>
 	/// <param name="clearArray">Indicates whether the contents of the buffer should be cleared before reuse.</param>
 	/// <param name="arrayLength">Output. Rented array length.</param>
@@ -205,7 +204,8 @@ public static class UnmanagedValueExtensions
 #endif
 	private static Byte[] ToArray(ReadOnlySpan<Byte> span)
 	{
-		if (span.IsEmpty) return [];
+		// ReSharper disable once UseCollectionExpression
+		if (span.IsEmpty) return Array.Empty<Byte>();
 		Byte[] result = UnmanagedValueExtensions.CreateValueArray<Byte>(span.Length);
 		span.CopyTo(result);
 		return result;
@@ -221,7 +221,8 @@ public static class UnmanagedValueExtensions
 #endif
 	private static T[] ToArray<T>(ReadOnlySpan<T> span) where T : unmanaged
 	{
-		if (span.IsEmpty) return [];
+		// ReSharper disable once UseCollectionExpression
+		if (span.IsEmpty) return Array.Empty<T>();
 		T[] result = UnmanagedValueExtensions.CreateValueArray<T>(span.Length);
 		span.CopyTo(result);
 		return result;

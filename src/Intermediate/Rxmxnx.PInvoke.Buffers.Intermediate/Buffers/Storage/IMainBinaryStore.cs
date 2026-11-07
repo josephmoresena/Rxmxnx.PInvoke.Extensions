@@ -1,10 +1,18 @@
 namespace Rxmxnx.PInvoke.Buffers.Storage;
 
+#if NET8_0_OR_GREATER
+/// <summary>
+/// Represents the main binary store.
+/// </summary>
+/// <typeparam name="T">Type of items in the buffer.</typeparam>
+internal interface IMainBinaryStore<T> : IStorageCapacity
+#else
 /// <summary>
 /// Represents the main binary store.
 /// </summary>
 /// <typeparam name="T">Type of items in the buffer.</typeparam>
 internal interface IMainBinaryStore<T>
+#endif
 {
 	/// <summary>
 	/// Initial storage length.

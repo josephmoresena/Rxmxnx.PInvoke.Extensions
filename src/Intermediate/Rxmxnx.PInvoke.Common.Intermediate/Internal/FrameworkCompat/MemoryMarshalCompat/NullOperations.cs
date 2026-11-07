@@ -69,6 +69,7 @@ internal static unsafe partial class MemoryMarshalCompat
 		return MemoryMarshal.CreateReadOnlySpanFromNullTerminated(value);
 #endif
 	}
+#if !PACKAGE || !NET6_0_OR_GREATER
 	/// <summary>
 	/// Retrieves the index of the first null occurrence in the buffer represented by <paramref name="buffer"/>.
 	/// </summary>
@@ -94,4 +95,5 @@ internal static unsafe partial class MemoryMarshalCompat
 
 		return (Int32)result;
 	}
+#endif
 }

@@ -187,7 +187,7 @@ internal partial class MemoryInspector
 #endif
 
 			/// <summary>
-			/// Parses the span of UTF-8 hexadecimal characters into a <see cref="IntPtr"/> value.
+			/// Parses the span of UTF-8 hexadecimal characters into an <see cref="IntPtr"/> value.
 			/// </summary>
 			/// <param name="addressText">The span of UTF-8 characters to parse.</param>
 			/// <returns>The result of parsing <paramref name="addressText"/>.</returns>

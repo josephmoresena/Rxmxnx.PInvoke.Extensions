@@ -54,7 +54,7 @@ internal partial class MemoryInspector
 			/// Appends to <paramref name="bsdInspector"/> the maps from <paramref name="maps"/>.
 			/// </summary>
 			/// <param name="maps">A pointer to <see cref="VmMap"/> buffer.</param>
-			/// <param name="count">Count of <see cref="VmMap"/> in the buffer.</param>
+			/// <param name="count">The number of <see cref="VmMap"/> instances in the buffer.</param>
 			/// <param name="bsdInspector">A <see cref="BsdInspector"/> instance.</param>
 			[MethodImpl(MethodImplOptions.AggressiveInlining)]
 			public static void AppendMaps(void* maps, UInt32 count, BsdInspector bsdInspector)

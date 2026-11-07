@@ -89,6 +89,16 @@ internal partial class MemoryInspector
 				return this.TryGetProtection(ptr, out isReadOnly) && isReadOnly;
 			}
 		}
+		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecurityCritical]
+#endif
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public override Boolean IsImageMethod(RuntimeMethodHandle methodHandle)
+		{
+			Byte* image = stackalloc Byte[4 * IntPtr.Size];
+			return StandardC.LocateImage(methodHandle.GetFunctionPointer(), image) != 0;
+		}
 
 		/// <summary>
 		/// Processes memory maps from current process.

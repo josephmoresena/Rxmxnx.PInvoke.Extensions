@@ -1,9 +1,10 @@
+#if !PACKAGE || !NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class ArrayMemoryManager<T>
 {
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -22,7 +23,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -41,7 +42,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -61,7 +62,7 @@ internal partial class ArrayMemoryManager<T>
 	}
 #if !UAP || UAP10_0_16299
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -80,7 +81,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -99,7 +100,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -118,7 +119,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -137,7 +138,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -156,7 +157,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -175,7 +176,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -194,7 +195,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -213,7 +214,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -232,7 +233,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -251,7 +252,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -270,7 +271,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -289,7 +290,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -308,7 +309,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -327,7 +328,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -346,7 +347,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -365,7 +366,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -384,7 +385,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -403,7 +404,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -422,7 +423,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -441,7 +442,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -460,7 +461,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -479,7 +480,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -498,7 +499,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -517,7 +518,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -536,7 +537,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -555,7 +556,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -574,7 +575,7 @@ internal partial class ArrayMemoryManager<T>
 		return memoryManager.Memory;
 	}
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
-	/// <param name="array">A <see cref="Array"/> instance.</param>
+	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER
 	[ExcludeFromCodeCoverage]
 #endif
@@ -594,3 +595,4 @@ internal partial class ArrayMemoryManager<T>
 	}
 #endif
 }
+#endif

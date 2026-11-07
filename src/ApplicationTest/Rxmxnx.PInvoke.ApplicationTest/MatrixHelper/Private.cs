@@ -1,7 +1,7 @@
 using System;
-using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Rxmxnx.PInvoke.ApplicationTest
@@ -13,101 +13,21 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 
 		private static readonly Double[,] emptyMatrix = new Double[0, 0];
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static Double GetDeterminant(ReadOnlySpan<Double> matrix, Int32 n)
 		{
-			Double[]? array = default;
-			Span<Double> tempMatrix = n > 4 ?
-#if NETCOREAPP3_0_OR_GREATER || NETFRAMEWORK && (MONO || NET462_OR_GREATER) || WINDOWS_UWP
-				(array = ArrayPool<Double>.Shared.Rent(matrix.Length)).AsSpan()[..matrix.Length] :
-#else
-				(array = ArrayPool<Double>.Shared.Rent(matrix.Length)).AsSpan().Slice(0, matrix.Length) :
-#endif
-				stackalloc Double[matrix.Length];
-			try
-			{
-				matrix.CopyTo(tempMatrix);
-
-				Double det = 1;
-				Int32 swaps = 0;
-
-				for (Int32 row = 0; row < n; row++)
-				{
-					Double pivot = MatrixHelper.GetPivot(tempMatrix, n, false, row, out Int32 maxRow);
-
-					if (Math.Abs(pivot) < MatrixHelper.epsilon)
-						return 0;
-
-					swaps += MatrixHelper.SwapRow(tempMatrix, n, row, maxRow) ? 1 : 0;
-
-					for (Int32 k = row + 1; k < n; k++)
-					{
-						Double factor = tempMatrix[k * n + row] / tempMatrix[row * n + row];
-						for (Int32 j = row; j < n; j++)
-							tempMatrix[k * n + j] -= factor * tempMatrix[row * n + j];
-					}
-				}
-
-				for (Int32 i = 0; i < n; i++)
-					det *= tempMatrix[i * n + i];
-				if (swaps % 2 != 0) det = -det;
-				return det;
-			}
-			finally
-			{
-#if !CSHARP9_0
-				if (array != null)
-#else
-				if (array is not null)
-#endif
-					ArrayPool<Double>.Shared.Return(array);
-			}
+			if (n <= 4)
+				return MatrixHelper.ComputeDeterminant(matrix, n, stackalloc Double[matrix.Length]);
+			using IDisposable _ = NativeUtilities.HeapAlloc(2 * matrix.Length, out FixedContextValue<Double> tmpMatrix);
+			return MatrixHelper.ComputeDeterminant(matrix, n, tmpMatrix.Values);
 		}
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static Double GetDeterminant(ReadOnlySpan<Double> matrix, Int32 n, out Double[,] inverse)
 		{
-			Double[]? array = default;
-			Span<Double> augmented = n > 4 ?
-#if NETCOREAPP3_0_OR_GREATER || NETFRAMEWORK && (MONO || NET462_OR_GREATER) || WINDOWS_UWP
-				(array = ArrayPool<Double>.Shared.Rent(2 * matrix.Length)).AsSpan()[..(2 * matrix.Length)] :
-#else
-				(array = ArrayPool<Double>.Shared.Rent(2 * matrix.Length)).AsSpan().Slice(0, 2 * matrix.Length) :
-#endif
-				stackalloc Double[2 * matrix.Length];
-			try
-			{
-				Double determinant = 1.0;
-				Int32 swaps = 0;
-
-				MatrixHelper.FillAugmented(matrix, n, augmented);
-				for (Int32 row = 0; row < n; row++)
-				{
-					Double pivot = MatrixHelper.GetPivot(augmented, n, true, row, out Int32 maxRow);
-					if (Math.Abs(pivot) < MatrixHelper.epsilon)
-					{
-						inverse = MatrixHelper.emptyMatrix;
-						return 0;
-					}
-
-					determinant *= pivot;
-					swaps += MatrixHelper.SwapRow(augmented, 2 * n, row, maxRow) ? 1 : 0;
-					MatrixHelper.NormalizeRow(augmented, n, row, pivot);
-					MatrixHelper.RowReduction(augmented, n, row);
-				}
-
-				inverse = new Double[n, n];
-				if (swaps % 2 != 0)
-					determinant = -determinant;
-				MatrixHelper.CopyInverse(augmented, n, inverse.AsSpan());
-				return determinant;
-			}
-			finally
-			{
-#if !CSHARP9_0
-				if (array != null)
-#else
-				if (array is not null)
-#endif
-					ArrayPool<Double>.Shared.Return(array);
-			}
+			if (n <= 4)
+				return MatrixHelper.ComputeDeterminant(matrix, n, stackalloc Double[2 * matrix.Length], out inverse);
+			using IDisposable _ = NativeUtilities.HeapAlloc(2 * matrix.Length, out FixedContextValue<Double> augmented);
+			return MatrixHelper.ComputeDeterminant(matrix, n, augmented.Values, out inverse);
 		}
 		private static void MultiplyMatrices(ReadOnlySpan<Double> matrixA, ReadOnlySpan<Double> matrixB, Int32 aRow,
 			Int32 bCol, Int32 n, Span<Double> result)
@@ -121,7 +41,85 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 				result[row * bCol + aCol] = sum;
 			}
 		}
+		public static void PrintMatrix(ReadOnlySpan<Double> matrix, Int32 nRow, Int32 nCol, TextWriter writer)
+		{
+			Int32 addCol = (matrix.Length - nRow * nCol) / nRow;
+#if !CSHARP9_0
+			StringBuilder? strBuild = addCol > 0 ? new StringBuilder() : default;
+#else
+			StringBuilder? strBuild = addCol > 0 ? new() : default;
+#endif
+			for (Int32 row = 0; row < nRow; row++)
+			{
+				strBuild?.Append("\t|\t");
+				for (Int32 col = 0; col < nCol; col++)
+				{
+					writer.Write($"{matrix[row * (nCol + addCol) + col]:0.####}\t");
+					if (strBuild is null || col >= addCol) continue;
+					strBuild.Append($"{matrix[row * (nCol + addCol) + col + nRow]:0.####}\t");
+				}
+				writer.WriteLine(strBuild?.ToString());
+				strBuild?.Clear();
+			}
+		}
 
+		private static Double ComputeDeterminant(ReadOnlySpan<Double> matrix, Int32 n, Span<Double> tmpMatrix)
+		{
+			matrix.CopyTo(tmpMatrix);
+
+			Double det = 1;
+			Int32 swaps = 0;
+
+			for (Int32 row = 0; row < n; row++)
+			{
+				Double pivot = MatrixHelper.GetPivot(tmpMatrix, n, false, row, out Int32 maxRow);
+
+				if (Math.Abs(pivot) < MatrixHelper.epsilon)
+					return 0;
+
+				swaps += MatrixHelper.SwapRow(tmpMatrix, n, row, maxRow) ? 1 : 0;
+
+				for (Int32 k = row + 1; k < n; k++)
+				{
+					Double factor = tmpMatrix[k * n + row] / tmpMatrix[row * n + row];
+					for (Int32 j = row; j < n; j++)
+						tmpMatrix[k * n + j] -= factor * tmpMatrix[row * n + j];
+				}
+			}
+
+			for (Int32 i = 0; i < n; i++)
+				det *= tmpMatrix[i * n + i];
+			if (swaps % 2 != 0) det = -det;
+			return det;
+		}
+		private static Double ComputeDeterminant(ReadOnlySpan<Double> matrix, Int32 n, Span<Double> augmented,
+			out Double[,] inverse)
+		{
+			Double determinant = 1.0;
+			Int32 swaps = 0;
+
+			MatrixHelper.FillAugmented(matrix, n, augmented);
+			for (Int32 row = 0; row < n; row++)
+			{
+				Double pivot = MatrixHelper.GetPivot(augmented, n, true, row, out Int32 maxRow);
+				if (Math.Abs(pivot) < MatrixHelper.epsilon)
+				{
+					inverse = MatrixHelper.emptyMatrix;
+					return 0;
+				}
+
+				determinant *= pivot;
+				swaps += MatrixHelper.SwapRow(augmented, 2 * n, row, maxRow) ? 1 : 0;
+				MatrixHelper.NormalizeRow(augmented, n, row, pivot);
+				MatrixHelper.RowReduction(augmented, n, row);
+			}
+
+			inverse = new Double[n, n];
+			if (swaps % 2 != 0)
+				determinant = -determinant;
+			MatrixHelper.CopyInverse(augmented, n, inverse.AsSpan());
+			return determinant;
+		}
 		private static void FillAugmented(ReadOnlySpan<Double> matrix, Int32 n, Span<Double> augmented)
 		{
 			// [A | I]
@@ -166,27 +164,6 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					maxRow = row;
 			}
 			return matrix[maxRow * multiplier * n + currentRow];
-		}
-		public static void PrintMatrix(ReadOnlySpan<Double> matrix, Int32 nRow, Int32 nCol, TextWriter writer)
-		{
-			Int32 addCol = (matrix.Length - nRow * nCol) / nRow;
-#if !CSHARP9_0
-			StringBuilder? strBuild = addCol > 0 ? new StringBuilder() : default;
-#else
-			StringBuilder? strBuild = addCol > 0 ? new() : default;
-#endif
-			for (Int32 row = 0; row < nRow; row++)
-			{
-				strBuild?.Append("\t|\t");
-				for (Int32 col = 0; col < nCol; col++)
-				{
-					writer.Write($"{matrix[row * (nCol + addCol) + col]:0.####}\t");
-					if (strBuild is null || col >= addCol) continue;
-					strBuild.Append($"{matrix[row * (nCol + addCol) + col + nRow]:0.####}\t");
-				}
-				writer.WriteLine(strBuild?.ToString());
-				strBuild?.Clear();
-			}
 		}
 		private static Boolean SwapRow(Span<Double> matrix, Int32 nCol, Int32 row1, Int32 row2)
 		{

@@ -7,7 +7,7 @@ public sealed class WithSafeFixedTest
 	private static readonly IFixture fixture = new Fixture();
 
 	[Theory]
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 #pragma warning disable CA1041
 	[Obsolete]
 #endif
@@ -16,7 +16,7 @@ public sealed class WithSafeFixedTest
 	public void EmptyTest(Boolean nullInput)
 	{
 		String? value = !nullInput ? String.Empty : default;
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 		value.WithSafeFixed(WithSafeFixedTest.EmptyActionTest);
 		value.WithSafeFixed(value, WithSafeFixedTest.EmptyActionTest);
 
@@ -26,26 +26,35 @@ public sealed class WithSafeFixedTest
 		value.WithSafeFixed(new ReadOnlyFixedAction(value));
 		value.WithSafeFixed(new ReadOnlyFixedFunction(value), out String? result);
 		PInvokeAssert.Equal(value, result);
+
+		// Reference-type callbacks force NonGenericReadOnlyFixedContext* wrappers.
+		value.WithSafeFixed(new ClassReadOnlyFixedAction(value));
+		value.WithSafeFixed(new ClassReadOnlyFixedFunction(value), out result);
+		PInvokeAssert.Equal(value, result);
 	}
 
 	[Fact]
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 #pragma warning disable CA1041
 	[Obsolete]
 #endif
 	public void NormalTest()
 	{
 		String value = WithSafeFixedTest.fixture.Create<String>();
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 		value.WithSafeFixed(value, WithSafeFixedTest.ActionTest);
 		PInvokeAssert.Equal(value, value.WithSafeFixed(WithSafeFixedTest.FuncTest));
 #endif
 		value.WithSafeFixed(new ReadOnlyFixedAction(value));
 		value.WithSafeFixed(new ReadOnlyFixedFunction(value), out String? result);
 		PInvokeAssert.Equal(value, result);
+
+		value.WithSafeFixed(new ClassReadOnlyFixedAction(value));
+		value.WithSafeFixed(new ClassReadOnlyFixedFunction(value), out result);
+		PInvokeAssert.Equal(value, result);
 	}
 
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 	private static unsafe void EmptyActionTest(in IReadOnlyFixedContext<Char> ctx)
 	{
@@ -118,5 +127,15 @@ public sealed class WithSafeFixedTest
 			new ReadOnlyFixedAction(value).Accept(ctx);
 			return !String.IsNullOrEmpty(value) ? ctx.Values.ToString() : value;
 		}
+	}
+
+	private sealed class ClassReadOnlyFixedAction(String? value) : IReadOnlyFixedContextAction<Char>
+	{
+		public void Accept(scoped ReadOnlyFixedContextValue<Char> ctx) => new ReadOnlyFixedAction(value).Accept(ctx);
+	}
+
+	private sealed class ClassReadOnlyFixedFunction(String? value) : IReadOnlyFixedContextFunction<Char, String?>
+	{
+		public String? Apply(scoped ReadOnlyFixedContextValue<Char> ctx) => new ReadOnlyFixedFunction(value).Apply(ctx);
 	}
 }

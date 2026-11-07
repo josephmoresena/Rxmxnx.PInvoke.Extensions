@@ -42,10 +42,10 @@ internal static class ManagedBinaryBuffer<T>
 	/// <summary>
 	/// Retrieves the <see cref="BufferTypeMetadata{T}"/> instance from <paramref name="bufferType"/>.
 	/// </summary>
-	/// <param name="bufferType">Type of buffer</param>
+	/// <param name="bufferType">The buffer type.</param>
 	/// <returns>The <see cref="BufferTypeMetadata{T}"/> instance from <paramref name="bufferType"/>.</returns>
 	/// <remarks>
-	/// This method allocates in heap a <paramref name="bufferType"/> instance to retrieve the
+	/// This method allocates a <paramref name="bufferType"/> instance on the heap to retrieve the
 	/// <see cref="BufferTypeMetadata{T}"/> instance.
 	/// </remarks>
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -83,7 +83,7 @@ internal static class ManagedBinaryBuffer<T>
 #endif
 		try
 		{
-			// This allocates a buffer in heap temporally.
+			// This temporarily allocates a buffer on the heap.
 			IManagedBinaryBuffer<T> binaryBuffer = (IManagedBinaryBuffer<T>)Activator.CreateInstance(bufferType)!;
 			return binaryBuffer.Metadata;
 		}

@@ -96,7 +96,7 @@ public partial class CString
 	/// </summary>
 	/// <param name="separator">Byte to use as a separator between concatenated elements.</param>
 	/// <param name="value">Array of UTF-8 text elements to concatenate.</param>
-	/// <param name="startIndex">Index of the first element in the array to be used in concatenation.</param>
+	/// <param name="startIndex">The index of the first element in the array to be used in concatenation.</param>
 	/// <param name="count">Number of elements from the array to use in concatenation.</param>
 	/// <returns>
 	/// Concatenated UTF-8 text with separators or an empty <see cref="CString"/> if count is zero.

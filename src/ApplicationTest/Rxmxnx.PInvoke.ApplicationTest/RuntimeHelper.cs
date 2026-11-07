@@ -1,17 +1,16 @@
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 #if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 using System.Reflection;
-#endif
-using System.Runtime.InteropServices;
-#if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
-using System.Diagnostics;
 #endif
 
 #if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && !NET452_OR_GREATER && !WINDOWS_UWP
 using System.Runtime.CompilerServices;
 #endif
+
 #if NET5_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 #endif
@@ -96,7 +95,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		public static readonly CString Null = new(static () =>
 		{
 			Byte[] utf8 = { (Byte)'N', (Byte)'u', (Byte)'l', (Byte)'l', (Byte)'\0', };
-#if NETCOREAPP3_0_OR_GREATER || NETFRAMEWORK && (MONO || NET462_OR_GREATER) || WINDOWS_UWP
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER || NETFRAMEWORK && (MONO || NET462_OR_GREATER) || WINDOWS_UWP
 			return utf8.AsSpan()[..^1];
 #else
 			return utf8.AsSpan().Slice(0, utf8.Length - 1);
@@ -181,7 +180,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #if !RELEASE_PACKAGE
 			writer.WriteLine($"Package: {SystemInfo.CompilationFramework}");
 #elif (NETSTANDARD2_1 || NETFRAMEWORK && !NET452_OR_GREATER) && !LEGACY
-			writer.WriteLine($"Package: .NET Standard 2.1");
+			writer.WriteLine("Package: .NET Standard 2.1");
 #elif (NETSTANDARD2_1 || NETFRAMEWORK && !NET452_OR_GREATER) && LEGACY
 			writer.WriteLine($"Package: .NET Standard 2.0");
 #endif
@@ -228,11 +227,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			writer.WriteLine(
 				$"CString.Null pointer: 0x{NativeUtilities.GetUnsafeIntPtr(in CString.Zero.GetPinnableReference()).ToString("X")}");
 #endif
-#if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
-			if (SystemInfo.IsWebRuntime || AotInfo.IsReflectionDisabled || !SystemInfo.IsMonoRuntime) return;
+			if (SystemInfo.IsWebRuntime || AotInfo.IsReflectionDisabled) return;
 			writer.WriteLine("========== StackTrace information ==========");
 			RuntimeHelper.PrintStackInfo(writer);
-#endif
 		}
 
 #if NETSTANDARD2_1 || NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
@@ -263,12 +260,18 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 			}
 		}
 #endif
-#if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
 #if NET5_0_OR_GREATER
 		[UnconditionalSuppressMessage("Trimming", "IL2026")]
 #endif
 		private static void PrintStackInfo(TextWriter writer)
 		{
+#if WINDOWS_UWP
+			if (typeof(MethodBase).GetProperty(nameof(MethodBase.MethodHandle)) is not { } handle)
+			{
+				writer.WriteLine("**Unable to retrieve method handle**");
+				return;
+			}
+#endif
 			try
 			{
 				Boolean hasFrame = false;
@@ -287,7 +290,18 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 #else
 					if (!(frame?.GetMethod() is MethodBase methodBase)) continue;
 #endif
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || NETFRAMEWORK && !LEGACY
 					writer.WriteLine($"{methodBase.DeclaringType}.{methodBase.Name} -> {methodBase.IsImageMethod()}");
+#elif WINDOWS_UWP
+					if (handle.GetValue(methodBase) is RuntimeMethodHandle methodHandle)
+						writer.WriteLine(
+							$"{methodBase.DeclaringType}.{methodBase.Name} -> {methodHandle.IsImageCode()}");
+					else
+						writer.WriteLine(
+							$"{methodBase.DeclaringType}.{methodBase.Name} -> *Unable to retrieve method handle*");
+#else
+					writer.WriteLine($"{methodBase.DeclaringType}.{methodBase.Name} -> {methodBase.MethodHandle.IsImageCode()}");
+#endif
 					hasFrame = true;
 				}
 				if (!hasFrame)
@@ -300,7 +314,6 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					writer.WriteLine(ex);
 			}
 		}
-#endif
 		private static String GetName(this Architecture architecture)
 			=> architecture switch
 			{
@@ -353,7 +366,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		private static ReadOnlySpan<Byte> NullBytes()
 		{
 			Byte[] utf8 = { (Byte)'N', (Byte)'u', (Byte)'l', (Byte)'l', (Byte)'\0', };
-#if NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && (NET462_OR_GREATER || WINDOWS_UWP)
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER || !NETCOREAPP && (NET462_OR_GREATER || WINDOWS_UWP)
 			return utf8.AsSpan()[..^1];
 #else
 			return utf8.AsSpan().Slice(0, utf8.Length - 1);

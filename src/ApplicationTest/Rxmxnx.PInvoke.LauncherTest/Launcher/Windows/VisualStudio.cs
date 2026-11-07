@@ -13,7 +13,7 @@ public partial class Launcher
 		private const String zLib32Url = "https://www.winimage.com/zLibDll/zlib123dll.zip ";
 		private const String zLib64Url = "https://www.winimage.com/zLibDll/zlib123dllx64.zip ";
 #endif
-		
+
 		Object? IStrongBox.Value { get; set; }
 
 		public override async Task<String?> GetZlibPath()
