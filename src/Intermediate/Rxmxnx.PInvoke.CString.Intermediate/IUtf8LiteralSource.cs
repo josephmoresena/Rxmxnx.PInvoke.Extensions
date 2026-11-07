@@ -6,6 +6,9 @@ namespace Rxmxnx.PInvoke;
 /// </summary>
 /// <typeparam name="TIdentifier">The type used to identify a UTF-8 literal.</typeparam>
 public interface IUtf8LiteralSource<in TIdentifier>
+#if NET9_0_OR_GREATER
+	where TIdentifier : allows ref struct
+#endif
 {
 	/// <summary>
 	/// Gets the UTF-8 byte sequence associated with the specified identifier.
