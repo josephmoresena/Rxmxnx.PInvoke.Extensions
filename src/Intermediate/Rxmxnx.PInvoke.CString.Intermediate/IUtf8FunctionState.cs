@@ -13,6 +13,7 @@ public interface IUtf8FunctionState<TSelf> where TSelf : struct, IUtf8FunctionSt
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+	[Obsolete("Implement TryAlloc method instead.")]
 	static virtual Func<TSelf, GCHandleType, GCHandle>? Alloc => default;
 
 	/// <summary>
@@ -45,8 +46,10 @@ public interface IUtf8FunctionState<TSelf> where TSelf : struct, IUtf8FunctionSt
 	/// <returns>
 	/// <see langword="true"/> if a <paramref name="handle"/> was successfully created; otherwise, <see langword="false"/>.
 	/// </returns>
+	/// <remarks>The current implementation uses <see cref="Alloc"/> property.</remarks>
 	static virtual Boolean TryAlloc(TSelf state, GCHandleType type, out GCHandle handle)
 	{
+#pragma warning disable CS0618
 		if (TSelf.Alloc is null)
 		{
 			handle = default;
@@ -54,6 +57,7 @@ public interface IUtf8FunctionState<TSelf> where TSelf : struct, IUtf8FunctionSt
 		}
 
 		handle = TSelf.Alloc(state, GCHandleType.Pinned);
+#pragma warning restore CS061
 		return handle.IsAllocated;
 	}
 }

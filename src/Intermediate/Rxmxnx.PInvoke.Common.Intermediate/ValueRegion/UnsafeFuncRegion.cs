@@ -101,7 +101,7 @@ public unsafe partial class ValueRegion<T>
 		/// Gets the memory region provided by the function.
 		/// </summary>
 		/// <param name="state">Function state.</param>
-		/// <param name="alloc">Function for state allocation.</param>
+		/// <param name="tryAlloc">Function for state allocation.</param>
 		/// <returns>The memory region provided by the function.</returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public delegate*<TState, ReadOnlySpan<T>> AsFunctionPointer(out TState state,
