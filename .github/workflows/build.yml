@@ -34,7 +34,7 @@ jobs:
             10.0.x
       - name: Setup Tree .NET Core Pre-requisites
         run: |
-          sudo apt-get install tree unzip --assume-yes
+          sudo apt-get install tree unzip gdb lldb libc6-dbg --assume-yes
           
           wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
           sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
