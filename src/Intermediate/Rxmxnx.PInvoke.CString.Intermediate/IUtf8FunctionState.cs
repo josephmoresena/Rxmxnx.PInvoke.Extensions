@@ -14,6 +14,9 @@ public interface IUtf8FunctionState<TSelf> where TSelf : struct, IUtf8FunctionSt
 	[ExcludeFromCodeCoverage]
 #endif
 	[Obsolete("Implement TryAlloc method instead.")]
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1133)]
+#endif
 	static virtual Func<TSelf, GCHandleType, GCHandle>? Alloc => default;
 
 	/// <summary>
