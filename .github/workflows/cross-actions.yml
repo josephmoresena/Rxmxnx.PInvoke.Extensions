@@ -29,11 +29,11 @@ jobs:
       NO_MONO_COMPILATION: true
       PackageVersion: ${{ inputs.package_version }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
       - name: Restore Internal NuGet Package
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         if: inputs.build_artifacts == true
         with:
           path: ./package/Nuget
@@ -130,7 +130,7 @@ jobs:
           winget install Mono.Mono --architecture x86 --silent --force --disable-interactivity --accept-source-agreements --accept-package-agreements
           winget install Mono.Mono --architecture x64 --silent --force --disable-interactivity --accept-source-agreements --accept-package-agreements
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         if: runner.os != 'Windows' || inputs.run_tests != true
         with:
           dotnet-version: |
@@ -287,7 +287,7 @@ jobs:
             }
           }
       - name: Restore Compiled ApplicationTest (Mono-Build)
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         if: inputs.build_artifacts == true
         with:
           path: |
@@ -344,7 +344,7 @@ jobs:
           df -h
       - name: Create Native Artifact Logs
         if: inputs.build_artifacts == true && inputs.package_version == ''
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ runner.os }}-Artifact-Logs
           path: |
@@ -373,7 +373,7 @@ jobs:
 
       - name: Create Native Artifact
         if: inputs.build_artifacts == true && inputs.package_version == ''
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ runner.os }}-Artifact
           path: |

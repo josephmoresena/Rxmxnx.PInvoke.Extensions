@@ -13,9 +13,9 @@ jobs:
     env:
       SNK_BASE64: ${{ secrets.SN_KEY }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.x
       - name: Setup Tree
@@ -37,7 +37,7 @@ jobs:
           done
           echo "-----------------------------------"
       - name: Cache NuGet Package
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: ./package/Nuget
           key: internal-nuget-${{ github.run_id }}
@@ -48,13 +48,13 @@ jobs:
     needs: [ build ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.x
       - name: Restore NuGet Package
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: ./package/Nuget
           key: internal-nuget-${{ github.run_id }}
@@ -78,7 +78,7 @@ jobs:
             /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest.Legacy
           rm -rf ./obj
       - name: Cache Compiled ApplicationTest (Mono-Build)
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: |
             ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
@@ -116,7 +116,7 @@ jobs:
     if: always()
     steps:
       - name: Restore NuGet Package
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: ./package/Nuget
           key: internal-nuget-${{ github.run_id }}

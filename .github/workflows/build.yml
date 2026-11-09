@@ -14,12 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up JDK 21
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: 21
           distribution: 'zulu'
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: |
             2.0.x
@@ -48,18 +48,18 @@ jobs:
           wget https://archive.ubuntu.com/ubuntu/pool/main/i/icu/libicu70_70.1-2_amd64.deb
           sudo dpkg -i libicu70_70.1-2_amd64.deb
           rm libicu70_70.1-2_amd64.deb
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Cache SonarCloud packages
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Cache SonarCloud scanner
         id: cache-sonar-scanner
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ./.sonar/scanner
           key: ${{ runner.os }}-sonar-scanner
@@ -230,13 +230,13 @@ jobs:
             /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest.Legacy
           rm -rf ./obj
       - name: Cache NuGet Packages
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: ./package/Nuget
           key: internal-nuget-${{ github.run_id }}
           enableCrossOsArchive: true
       - name: Cache Compiled ApplicationTest (Mono-Build)
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: |
             ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
@@ -244,7 +244,7 @@ jobs:
           key: internal-monoapp-bin-${{ github.run_id }}
           enableCrossOsArchive: true
       - name: Cache Compiled Tests
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: |
             ./src/Test/**/bin/Release/netstandard2.0
