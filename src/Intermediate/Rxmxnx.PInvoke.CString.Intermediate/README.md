@@ -14,7 +14,8 @@ There are three types of `CString`:
    type, you must ensure that the memory address holding the UTF-8/ASCII units remains valid for the lifetime of the
    `CString` instance.
 4. **Function pointer-Based**: Same as delegate-Based, but uses function pointers instead of delegates. Requires .NET
-   7.0 or later and unsafe compilation.
+   5.0 or later, `/unsafe`, and an `unsafe` context at the call site. A UTF-8 literal passed this way does not allocate
+   a `ReadOnlySpanFunc<Byte>`.
 
 ---
 
@@ -67,15 +68,22 @@ Console.WriteLine(cstring);                     // Output: "Hello"
 Console.WriteLine(cstring.IsNullTerminated);    // Output: True
 ```
 
-Compiling with /unsafe (on .NET 7.0 or later)
+Compiling with `/unsafe` (on .NET 5.0 or later). The call itself must be in an `unsafe` context:
 
 ```csharp
-CString cstring = new(&LiteralFunction);
+unsafe
+{
+    CString cstring = new(&LiteralFunction);
 
-Console.WriteLine(cstring);                     // Output: "Hello"
-Console.WriteLine(cstring.IsNullTerminated);    // Output: True
+    Console.WriteLine(cstring);                     // Output: "Hello"
+    Console.WriteLine(cstring.IsNullTerminated);    // Output: True
+}
 static ReadOnlySpan<Byte> LiteralFunction() => "Hello"u8;
 ```
+
+`new(() => "Hello"u8)` builds a `ReadOnlySpanFunc<Byte>`. The function-pointer overload stores `delegate*` and calls it
+directly, so a literal does not pay for that delegate. `CString.Create<TState>(state, delegate*<…>, isNullTerminated)`
+and `ValueRegion<T>.Create(delegate*<ReadOnlySpan<T>>)` are the stateful and region forms of the same change.
 
 These constructors enable the creation of `CString` instances
 using [UTF-8/ASCII literals](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-11.0/utf8-string-literals).

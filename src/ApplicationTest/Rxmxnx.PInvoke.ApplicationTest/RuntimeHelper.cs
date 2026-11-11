@@ -28,7 +28,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 	internal static class RuntimeHelper
 	{
 		private const String runtimeName =
-#if NET10_0_OR_GREATER
+#if NET11_0_OR_GREATER
+				".NET 11.0"
+#elif NET10_0_OR_GREATER
 				".NET 10.0"
 #elif NET9_0_OR_GREATER
 				".NET 9.0"

@@ -101,6 +101,22 @@ declaration can take `CString` directly.
 Creating a `CString` from a `String` with the explicit operator encodes to UTF-8 and always null-terminates. Prefer the
 literal constructor for constants; it does not copy.
 
+On .NET 5.0+ the same literal can be a function pointer, so the `CString` does not keep a `ReadOnlySpanFunc<Byte>`.
+The project must compile with `/unsafe` (`AllowUnsafeBlocks`), and the call must sit in an `unsafe` context:
+
+```csharp
+static ReadOnlySpan<Byte> ResourceLiteral() => "devices/usb0"u8;
+
+unsafe
+{
+    CString resource = new(&ResourceLiteral);
+}
+```
+
+`CString.Create<TState>(state, &GetSpan, isNullTerminated)` and `ValueRegion<T>.Create(delegate*<ReadOnlySpan<T>>)` are
+the same idea when the span comes from state instead of a closed-over literal. Both require `/unsafe`. The delegate
+overloads remain the portable form.
+
 ## Pass an argument vector to native code
 
 `CStringSequence` stores consecutive null-terminated UTF-8 strings in one buffer — the same layout as `char* argv[]`
@@ -298,7 +314,7 @@ if ("Hello"u8.IsLiteral())
 }
 ```
 
-`AotInfo.IsNativeAot` is reliable on CoreCLR (including R2R and Native AOT). On Mono it may depend on when it is first
+`AotInfo.IsNativeAot` is reliable on CoreCLR (including R2R and Native AOT). On Mono, it may depend on when it is first
 read, because Mono AOT does not compile an entire assembly at once.
 
 ## Pin a single local for a native call

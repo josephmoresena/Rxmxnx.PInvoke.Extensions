@@ -6,8 +6,8 @@
         <NoWarn>$(NoWarn);NU1101</NoWarn>
     </PropertyGroup>
     <PropertyGroup Condition="!$([MSBuild]::IsOSPlatform('FREEBSD'))">
-        <DefaultFramework>net10.0</DefaultFramework>
-        <DefaultFrameworks>net10.0;net9.0</DefaultFrameworks>
+        <DefaultFramework>net11.0</DefaultFramework>
+        <DefaultFrameworks>net11.0;net10.0;net9.0</DefaultFrameworks>
     </PropertyGroup>
     <PropertyGroup Condition="'$(TargetFramework)' == 'uap10.0.10240' Or '$(TargetFramework)' == 'uap10.0.16299'">
         <TargetFrameworkIdentifier>.NETCore</TargetFrameworkIdentifier>

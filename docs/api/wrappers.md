@@ -40,7 +40,7 @@ view may be a `ref struct`.
 Generic `Create(T?)` methods on `IWrapper<T>` itself exist only on the original modern TFMs (.NET Standard 2.1 / .NET
 Core 3.0+).
 
-Use wrappers when an API should accept “some `T`” without caring whether it is boxed, nullable, or a class — logging,
+Use wrappers when an API should accept "some `T`" without caring whether it is boxed, nullable, or a class — logging,
 callback payloads, adapter layers.
 
 ## `ValueRegion<T>`
@@ -62,9 +62,12 @@ A region of `T` values. Not inheritable (except through the nested `Memory` help
 
 - `Create(T[])` — array backing.
 - `Create(IntPtr, Int32)` — native memory.
-- `Create(ReadOnlySpanFunc<T>)` — function backing.
-- `Create<TState>(state, ReadOnlySpanFunc<T, TState>)` — stateful function.
-- `Create<TState>(state, func, gcAlloc)` — stateful function that can produce a `GCHandle`.
+- `Create(ReadOnlySpanFunc<T>)` — function backing through a delegate.
+- `Create<TState>(state, ReadOnlySpanFunc<T, TState>)` — stateful function through a delegate.
+- `Create<TState>(state, func, gcAlloc)` — stateful delegate that can produce a `GCHandle`.
+- `Create(delegate*<ReadOnlySpan<T>>)` — **.NET 5.0+**. Same function backing, without a delegate. Requires `/unsafe`.
+- `Create<TState>(state, delegate*<TState, ReadOnlySpan<T>>, tryAlloc)` — **.NET 5.0+**. Stateful function pointer.
+  `tryAlloc` is an optional `delegate*` that produces a `GCHandle`. Requires `/unsafe`.
 
 Nested abstract class `ValueRegion<T>.Memory` lets you build a custom region from `ReadOnlyMemory<T>`.
 

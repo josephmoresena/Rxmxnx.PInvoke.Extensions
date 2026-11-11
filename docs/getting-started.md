@@ -66,25 +66,26 @@ Samples in these guides assume C# 11 unless a snippet is marked otherwise.
 
 ## Support policy
 
-For new work, use **.NET 8.0 and later**. If a new project stays on .NET Framework, use **4.7.2**. Which runtimes the
-package covers, and which APIs stay on the modern line, is in
+For new work, use **.NET 10.0** (LTS) and later**. If a new project stays on .NET Framework, use **4.7.2**. Which
+runtimes the package covers, and which APIs stay on the modern line, is in
 [Target frameworks and public API surface](api/compatibility.md).
 
-| Target                     | Support            | Remarks                                                                          |
-|----------------------------|--------------------|----------------------------------------------------------------------------------|
-| .NET 10.0                  | Current LTS        |                                                                                  |
-| .NET 9.0                   | Current            | Supports generic `ref struct` types with pointers and many APIs; requires C# 13. |
-| .NET 8.0                   | LTS                | No additional package dependencies.                                              |
-| .NET 7.0                   | Extended           | Supports static virtual members and source-generated marshalling.                |
-| .NET 6.0                   | Extended LTS       | AOT detection on desktop platforms does not use reflection.                      |
-| .NET 5.0 / .NET Core 3.x   | Modern legacy line | Provides support for `NativeLibrary`.                                            |
-| .NET Standard 2.1          | Modern Portable    | Provides support for `RuntimeHelpers` and fast-span.                             |
-| .NET Standard 2.0          | Portable fallback  |                                                                                  |
-| .NET Framework 4.5.2–4.6   | Transition Legacy  |                                                                                  |
-| .NET Framework 4.6.1       | Legacy             | Provides support for `System.Text.Json`.                                         |
-| .NET Framework 4.6.2–4.7.2 | Supported          |                                                                                  |
-| UAP 10.0.16299             | Supported          | Provides support for `System.Text.Json` and `RuntimeHelpers`.                    |
-| .NET Core 2.1              | Extended           | Provides support for `System.Text.Json`, `RuntimeHelpers`, and fast-span.        |
+| Target                     | Support            | Remarks                                                                   |
+|----------------------------|--------------------|---------------------------------------------------------------------------|
+| .NET 11.0                  | Current            | Supported. Not an LTS release.                                            |
+| .NET 10.0                  | Current LTS        | No additional package dependencies.                                       |
+| .NET 9.0                   | Modern             | Generic `ref struct` types with pointers; requires C# 13.                 |
+| .NET 8.0                   | Modern LTS         |                                                                           |
+| .NET 7.0                   | Extended           | Supports static virtual members and source-generated marshalling.         |
+| .NET 6.0                   | Extended LTS       | AOT detection on desktop platforms does not use reflection.               |
+| .NET 5.0 / .NET Core 3.x   | Modern legacy line | Provides support for `NativeLibrary`.                                     |
+| .NET Standard 2.1          | Modern Portable    | Provides support for `RuntimeHelpers` and fast-span.                      |
+| .NET Standard 2.0          | Portable fallback  |                                                                           |
+| .NET Framework 4.5.2–4.6   | Transition Legacy  |                                                                           |
+| .NET Framework 4.6.1       | Legacy             | Provides support for `System.Text.Json`.                                  |
+| .NET Framework 4.6.2–4.7.2 | Supported          |                                                                           |
+| UAP 10.0.16299             | Supported          | Provides support for `System.Text.Json` and `RuntimeHelpers`.             |
+| .NET Core 2.1              | Legacy Extended    | Provides support for `System.Text.Json`, `RuntimeHelpers`, and fast-span. |
 
 ## Framework support
 

@@ -1,7 +1,7 @@
 # Target frameworks and public API surface
 
 Until version **2.9.5**, the package was compatible only with modern runtimes that support **.NET Standard 2.1**: the
-portable `netstandard2.1` assembly and a dedicated assembly for each .NET Core and .NET version, through .NET 10.0.
+portable `netstandard2.1` assembly and a dedicated assembly for each .NET Core and .NET version, through .NET 11.0.
 
 Later versions extend compatibility to frameworks that are not compatible with .NET Standard 2.1, and ship dedicated and
 portable assemblies for them. The original modern surface remains. The goal is **modern, backward-compatible code** —
@@ -19,7 +19,7 @@ target; you write to the public API.
 | Kind of assembly           | TFMs                                                                               | Role                                                                                                                                                |
 |----------------------------|------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
 | Portable                   | `netstandard2.1`, `netstandard2.0`                                                 | **2.1** is the portable assembly for modern runtimes. **2.0** is for runtimes that are not compatible with 2.1. Both keep the dependency set small. |
-| Dedicated .NET / .NET Core | `netcoreapp2.1`, `netcoreapp3.0`–`net10.0`                                         | Own `lib/` per TFM. Features and optimizations are added as the runtime admits them.                                                                |
+| Dedicated .NET / .NET Core | `netcoreapp2.1`, `netcoreapp3.0`–`net11.0`                                         | Own `lib/` per TFM. Features and optimizations are added as the runtime admits them.                                                                |
 | Dedicated UAP              | `uap10.0.16299`                                                                    | Modern APIs and runtime-level optimizations. See below.                                                                                             |
 | Dedicated .NET Framework   | `net452`, `net46`, `net461`, `net462`, `net472` (`net470` / `net471` restore only) | Transition through 4.6, then dedicated support. See below.                                                                                          |
 
@@ -88,7 +88,7 @@ TFMs that existed **until 2.9.5**.
 
 | Surface               | TFMs                                                                                                                    | What you get                                                                                                                                                                |
 |-----------------------|-------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Until 2.9.5**       | `netstandard2.1`, `netcoreapp3.0`, `netcoreapp3.1`, `net5.0`–`net10.0`                                                  | The original modern API **plus** value-type contexts and functional interfaces.                                                                                             |
+| **Until 2.9.5**       | `netstandard2.1`, `netcoreapp3.0`, `netcoreapp3.1`, `net5.0`–`net11.0`                                                  | The original modern API **plus** value-type contexts and functional interfaces.                                                                                             |
 | **Added after 2.9.5** | `netstandard2.0`, `netcoreapp2.1`, `net452`, `net46`, `net461`, `net462`, `net470`, `net471`, `net472`, `uap10.0.16299` | Value-type contexts and functional interfaces. Delegate pinning/buffer APIs and nested `IFixedMemory` / `IFixedContext<T>` `IDisposable` helpers were **not** brought over. |
 
 Delegate `WithSafeFixed` / `BufferManager.Alloc` overloads and the `IFixed*` interfaces remain **public and supported**
@@ -161,10 +161,11 @@ Callers do not need to distinguish those; only custom interface implementations 
 | Gate                                    | Effect                                                                                                                                                                                                                                            |
 |-----------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | .NET Core 3.0+                          | `NativeLibrary` helpers; `System.Text.Json` on Core (3.0 uses 5.0.2, 3.1+ uses later versions)                                                                                                                                                    |
-| .NET 5.0+                               | Native `Enum.GetName<T>`, `Convert.ToHexString`                                                                                                                                                                                                   |
+| .NET 5.0+                               | Native `Enum.GetName<T>`, `Convert.ToHexString`. Function-pointer `CString` and `ValueRegion<T>` constructors so a UTF-8 literal does not pay for a `ReadOnlySpanFunc<T>` delegate. The call site requires `/unsafe`.                             | 
 | .NET 7.0+                               | `[NativeMarshalling]` for `CString`, `CStringSequence`, `ValPtr<T>`, `ReadOnlyValPtr<T>`, `FuncPtr<TDelegate>`; `IUtf8FunctionState<TSelf>`; `IParsable` on pointers                                                                              |
-| .NET 8.0+                               | No extra package dependencies; buffer storage feature switches                                                                                                                                                                                    |
+| .NET 8.0+                               | Buffer storage feature switches.                                                                                                                                                                                                                  |
 | .NET 9.0+                               | `allows ref struct` on many generics; `params ReadOnlySpan<T>`; some pointer helpers patched in IL. Consumers should use **C# 13**.                                                                                                               |
+| .NET 10.0+                              | No extra package dependencies                                                                                                                                                                                                                     |       
 | .NET Core **or** net461+                | `[JsonConverter]` on `CString` / `CStringSequence`. Not on .NET Standard 2.0/2.1 (portable Mono/Xamarin/Unity story) or on the net452/net46 transition assemblies. Classic Mono can use [`Rxmxnx.PInvoke.Json`](../../src/MonoFacades/README.md). |
 | .NET Framework / UWP dedicated binaries | `System.Memory` or `Microsoft.Bcl.Memory`; span helpers adapt to fast vs slow layout at runtime                                                                                                                                                   |
 
@@ -184,8 +185,9 @@ From the package’s own `Packages.props`:
 | Limited Core              | `netcoreapp2.1`, `netcoreapp3.0`       | `System.Text.Json` 5.0.2, `Unsafe` 5.0; netcoreapp2.1 also pins `Microsoft.NETCore.App` 2.1.30                                                             |
 | Legacy                    | `netcoreapp3.1`, `net5.0`, `net461`    | `Unsafe` 6.0, `System.Text.Json` 6.0.11; net461 adds `Microsoft.Bcl.AsyncInterfaces`, `System.Memory`, `ValueTuple`                                        |
 | Extended                  | `net6.0`, `net7.0`                     | `Unsafe` 6.1.2 on net6.0; `System.Text.Json` 8.0.6 on both                                                                                                 |
-| Current                   | `net8.0`, `net9.0`, `net10.0`          | None                                                                                                                                                       |
-| Framework 4.6.2+          | `net462`, `net470`, `net471`, `net472` | `Microsoft.Bcl.Memory` 10.0.12, `Microsoft.Bcl.HashCode` 6.0.0, `System.Text.Json` 10.0.12                                                                 |
+| Modern                    | `net8.0`, `net9.0`                     | `System.Text.Json` 10.0.15 on both.                                                                                                                        |
+| Current                   | `net10.0`, `net11.0`                   | None.                                                                                                                                                      |
+| Framework 4.6.2+          | `net462`, `net470`, `net471`, `net472` | `Microsoft.Bcl.Memory` 11.0.0, `Microsoft.Bcl.HashCode` 6.0.0, `System.Text.Json` 11.0.0                                                                   |
 | UWP / UAP                 | `uap10.0.16299`                        | `Microsoft.Bcl.Memory` 9.0.19, `Microsoft.Bcl.HashCode` 6.0.0, `System.Text.Json` 6.0.11. UWP compiler packs are private and are not package dependencies. |
 
 On Mono with a .NET Framework TFM, `System.Runtime.CompilerServices.Unsafe` 5.0 is referenced and runtime assets are

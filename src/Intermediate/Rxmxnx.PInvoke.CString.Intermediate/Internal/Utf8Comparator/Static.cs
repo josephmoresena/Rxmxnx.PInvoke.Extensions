@@ -13,6 +13,47 @@ namespace Rxmxnx.PInvoke.Internal;
 #endif
 internal abstract unsafe partial class Utf8Comparator
 {
+#if !NETFRAMEWORK && !UAP
+	/// <summary>
+	/// Cache for <see cref="UsesOrdinalTail"/>.
+	/// </summary>
+	private static Boolean? usesOrdinalTail;
+#endif
+#if !NET7_0_OR_GREATER && !UAP
+	/// <summary>
+	/// Cache for <see cref="UsesBclOrdinalCompare"/>.
+	/// </summary>
+	private static Boolean? usesBclOrdinalCompare;
+#endif
+
+#if !NETFRAMEWORK && !UAP
+	/// <summary>
+	/// <see langword="true"/> when <c>System.Text.Rune</c> implements at least nine interfaces.
+	/// </summary>
+	/// <remarks>Read the first time an ordinal tail needs it. .NET 11 is the first runtime with nine.</remarks>
+	private static Boolean UsesOrdinalTail
+		=> Utf8Comparator.usesOrdinalTail ??=
+#if NETCOREAPP3_0_OR_GREATER
+			SystemInfo.CountInterfaces<Rune>() >= 9;
+#else
+			TrimInfo.SafeGetType(typeof(String), "System.Text.Rune") is { } runeType &&
+			runeType.GetInterfaces().Length >= 9;
+#endif
+#endif
+#if !NET7_0_OR_GREATER && !UAP
+	/// <summary>
+	/// <see langword="true"/> when ordinal comparison must be delegated to <c>String.CompareOrdinal</c>.
+	/// </summary>
+	/// <remarks>
+	/// .NET Core 2.0 and .NET Framework use the package-provided <c>System.Memory</c> assembly.
+	/// In .NET Framework and Mono, <see cref="AppDomain"/> implements <c>System._AppDomain</c>.
+	/// Starting with .NET 7.0, <see cref="GCHandle"/> implements <see cref="IEquatable{GCHandle}"/>.
+	/// </remarks>
+	protected static Boolean UsesBclOrdinalCompare
+		=> Utf8Comparator.usesBclOrdinalCompare ??= !SystemInfo.UsesNativeSpan ||
+			(SystemInfo.CountInterfaces<AppDomain>() == 0 && !SystemInfo.IsSelfEquatable<GCHandle>());
+#endif
+
 	/// <summary>
 	/// Retrieves the string representation of <paramref name="source"/>.
 	/// </summary>
@@ -67,7 +108,10 @@ internal abstract unsafe partial class Utf8Comparator
 	/// </returns>
 	/// <remarks>
 	/// Comparison is performed using the numeric values of UTF-16 code units and is independent of culture or
-	/// normalization.
+	/// normalization. The first two code units still follow the historic <c>CompareOrdinalHelper</c> rule and may
+	/// observe the implicit null terminator. On .NET 11 and later the remainder matches
+	/// <c>SpanHelpers.SequenceCompareTo</c>: a string that is a prefix compares by length. Earlier runtimes
+	/// zero-extend a one-unit remainder and return that next code unit.
 	/// </remarks>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
@@ -103,6 +147,15 @@ internal abstract unsafe partial class Utf8Comparator
 		}
 		while (Math.Min(spanA.Length, spanB.Length) > 0)
 		{
+#if !NETFRAMEWORK && !UAP
+			// .NET 11 routes this tail through SequenceCompareTo. Do not invent U+0000 past the shorter span.
+			if ((spanA.Length == 1 || spanB.Length == 1) && Utf8Comparator.UsesOrdinalTail)
+			{
+				result = Utf8Comparator.Read<Char>(ref spanA) - Utf8Comparator.Read<Char>(ref spanB);
+				if (result != 0) return result;
+				break;
+			}
+#endif
 			CharSpanChunk chunkA = Utf8Comparator.Read<CharSpanChunk>(ref spanA);
 			CharSpanChunk chunkB = Utf8Comparator.Read<CharSpanChunk>(ref spanB);
 			result = CharSpanChunk.Compare(chunkA, chunkB);

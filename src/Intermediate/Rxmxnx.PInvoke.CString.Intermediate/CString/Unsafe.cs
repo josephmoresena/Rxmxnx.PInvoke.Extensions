@@ -82,7 +82,6 @@ public sealed unsafe partial class CString
 		where TSource : IUtf8LiteralSource<TIdentifier>
 	{
 		Int32 length = TSource.GetLiteral(identifier).Length;
-		if (length == 0) return CString.Empty;
 		ValueRegion<Byte> data = ValueRegion<Byte>.Create(identifier, &TSource.GetLiteral);
 		return new(data, true, true, length);
 	}

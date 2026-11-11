@@ -15,11 +15,12 @@ Instances can be **fixed** (the library pins the backing) but not **GCHandle-pin
 
 ### Backing kinds
 
-| Kind               | How you get it                                                 | Notes                                                                                                                          |
-|--------------------|----------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| Managed buffer     | implicit `Byte[]`, `new CString(span)`, `Create(span)`         | Copies into a managed buffer when needed.                                                                                      |
-| Function / literal | `new CString(() => "Hi"u8)`, `Create(ReadOnlySpanFunc<Byte>)`  | Preferred for UTF-8 literals (**C# 11**); memory stays in the image. Without `u8`, pass a `Byte[]` or a span-returning method. |
-| Unmanaged pointer  | `CreateUnsafe(ptr, length)`, `CreateNullTerminatedUnsafe(ptr)` | You keep the address valid.                                                                                                    |
+| Kind               | How you get it                                                 | Notes                                                                                                                                                                                          |
+|--------------------|----------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Managed buffer     | implicit `Byte[]`, `new CString(span)`, `Create(span)`         | Copies into a managed buffer when needed.                                                                                                                                                      |
+| Function / literal | `new CString(() => "Hi"u8)`, `Create(ReadOnlySpanFunc<Byte>)`  | Preferred portable form for UTF-8 literals (**C# 11**); memory stays in the image. The delegate is the cost of that form. Without `u8`, pass a `Byte[]` or a span-returning method.            |
+| Function pointer   | `new CString(&Literal)`, `Create<TState>(state, &GetSpan, …)`  | **.NET 5.0+**. Same literal or span function, stored as `delegate*` so construction does not allocate a `ReadOnlySpanFunc<Byte>`. Requires `/unsafe` and an `unsafe` context at the call site. |
+| Unmanaged pointer  | `CreateUnsafe(ptr, length)`, `CreateNullTerminatedUnsafe(ptr)` | You keep the address valid.                                                                                                                                                                    |
 
 There is also `CString.Backing`, an abstract type you can subclass to plug in a custom store.
 
@@ -38,15 +39,17 @@ Static fields: `Empty` (empty literal), `Zero` (null pointer), `NewLine` (platfo
 
 ### Construction cheatsheet
 
-| API                                          | Terminator                                                            | Copy                                               |
-|----------------------------------------------|-----------------------------------------------------------------------|----------------------------------------------------|
-| implicit `Byte[]`                            | `true` if the last byte is `0x00` (that byte is excluded from length) | No extra copy of the array                         |
-| explicit `String`                            | Always `true`                                                         | Encodes to a new buffer — inefficient for literals |
-| `new CString(ReadOnlySpan<Byte>)`            | Always `true` (appends a null)                                        | Copy                                               |
-| `CString.Create(ReadOnlySpan<Byte>)`         | Always `false`                                                        | Copy, no terminator check                          |
-| `new CString(ReadOnlySpanFunc<Byte>)`        | Depends on the span                                                   | No copy                                            |
-| `CString.Create<TState>(state)`              | From `IUtf8FunctionState<TSelf>` (.NET 7.0+)                          | No copy                                            |
-| `CreateUnsafe(IntPtr, Int32, useFullLength)` | `false` if `useFullLength` is true                                    | No copy                                            |
+| API                                           | Terminator                                                            | Copy                                               |
+|-----------------------------------------------|-----------------------------------------------------------------------|----------------------------------------------------|
+| implicit `Byte[]`                             | `true` if the last byte is `0x00` (that byte is excluded from length) | No extra copy of the array                         |
+| explicit `String`                             | Always `true`                                                         | Encodes to a new buffer — inefficient for literals |
+| `new CString(ReadOnlySpan<Byte>)`             | Always `true` (appends a null)                                        | Copy                                               |
+| `CString.Create(ReadOnlySpan<Byte>)`          | Always `false`                                                        | Copy, no terminator check                          |
+| `new CString(ReadOnlySpanFunc<Byte>)`         | Depends on the span                                                   | No copy; allocates the delegate                    |
+| `new CString(delegate*<ReadOnlySpan<Byte>>)`  | Literal path treats the span as null-terminated (.NET 5.0+)           | No copy and no delegate. Requires `/unsafe`        |
+| `CString.Create<TState>(state, delegate*<…>)` | Caller passes `isNullTerminated` (.NET 5.0+)                          | No copy and no delegate. Requires `/unsafe`        |
+| `CString.Create<TState>(state)`               | From `IUtf8FunctionState<TSelf>` (.NET 7.0+)                          | No copy                                            |
+| `CreateUnsafe(IntPtr, Int32, useFullLength)`  | `false` if `useFullLength` is true                                    | No copy                                            |
 
 `CString.Unescape` builds from escaped UTF-8 (`\\n`, `\\t`, …).
 

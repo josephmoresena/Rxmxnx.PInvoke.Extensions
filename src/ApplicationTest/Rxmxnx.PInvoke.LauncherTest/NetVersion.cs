@@ -9,6 +9,9 @@ public enum NetVersion : Byte
 #if NET10_0_OR_GREATER
 	Net100 = 10,
 #endif
+#if NET11_0_OR_GREATER
+	Net110 = 11,
+#endif
 }
 
 public static class NetVersionExtensions

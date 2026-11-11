@@ -13,7 +13,9 @@ backing; the public API stays the same.
 
 What you can do:
 
-- Build UTF-8 from literals (`new CString(() => "Hello"u8)`, **C# 11**), byte arrays, spans, or pointers.
+- Build UTF-8 from literals (`new CString(() => "Hello"u8)`, **C# 11**), byte arrays, spans, or pointers. On **.NET
+  5.0+**, `new CString(&Literal)` takes a function pointer and skips the delegate that the lambda form allocates. That
+  call requires `/unsafe`.
 - Know whether the instance is null-terminated, a slice, a function, or a null pointer (`IsNullTerminated`,
   `IsSegmented`, `IsFunction`, `IsZero`).
 - Concatenate, compare, and hash with `String`-compatible hash codes.

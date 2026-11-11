@@ -17,7 +17,9 @@ public static partial class SystemInfo
 	/// Target framework for the current build.
 	/// </summary>
 	public const String CompilationFramework =
-#if NET10_0_OR_GREATER
+#if NET11_0_OR_GREATER
+			".NET 11.0"
+#elif NET10_0_OR_GREATER
 			".NET 10.0"
 #elif NET9_0_OR_GREATER
 			".NET 9.0"
