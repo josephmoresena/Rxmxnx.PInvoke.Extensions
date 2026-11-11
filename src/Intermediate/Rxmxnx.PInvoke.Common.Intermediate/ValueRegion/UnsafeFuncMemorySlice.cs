@@ -89,6 +89,7 @@ public unsafe partial class ValueRegion<T>
 		{
 			this._func = region._func;
 			this._state = region._state;
+			this._tryAlloc = region._tryAlloc;
 		}
 
 #if !PACKAGE

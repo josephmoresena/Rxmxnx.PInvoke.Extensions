@@ -139,11 +139,12 @@ jobs:
             8.0.x
             9.0.x
             10.0.x
+            11.0.x
       - name: Setup .NET (Windows)
         if: runner.os == 'Windows' && inputs.run_tests == true
         shell: pwsh
         run: |
-          $versions = 6..10
+          $versions = 6..11
           $archs = @("x86", "x64")
           foreach ($v in $versions) {
             foreach ($a in $archs) {

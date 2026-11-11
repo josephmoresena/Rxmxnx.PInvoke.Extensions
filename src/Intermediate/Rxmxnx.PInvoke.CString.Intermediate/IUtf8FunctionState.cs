@@ -49,7 +49,7 @@ public interface IUtf8FunctionState<TSelf> where TSelf : struct, IUtf8FunctionSt
 	/// <returns>
 	/// <see langword="true"/> if a <paramref name="handle"/> was successfully created; otherwise, <see langword="false"/>.
 	/// </returns>
-	/// <remarks>The current implementation uses <see cref="Alloc"/> property.</remarks>
+	/// <remarks>The current implementation forwards <paramref name="type"/> to <see cref="Alloc"/>.</remarks>
 	static virtual Boolean TryAlloc(TSelf state, GCHandleType type, out GCHandle handle)
 	{
 #pragma warning disable CS0618
@@ -59,8 +59,8 @@ public interface IUtf8FunctionState<TSelf> where TSelf : struct, IUtf8FunctionSt
 			return false;
 		}
 
-		handle = TSelf.Alloc(state, GCHandleType.Pinned);
-#pragma warning restore CS061
+		handle = TSelf.Alloc(state, type);
+#pragma warning restore CS0618
 		return handle.IsAllocated;
 	}
 }
