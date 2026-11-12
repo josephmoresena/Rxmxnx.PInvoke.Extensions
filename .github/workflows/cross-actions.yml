@@ -144,17 +144,20 @@ jobs:
         if: runner.os == 'Windows' && inputs.run_tests == true
         shell: pwsh
         run: |
+          winget install "Microsoft.DotNet.SDK.11" `
+            --architecture x64 `
+            --silent --force --disable-interactivity `
+            --accept-source-agreements --accept-package-agreements
+          
           $versions = 6..11
           $archs = @("x86", "x64")
           foreach ($v in $versions) {
             foreach ($a in $archs) {
-              winget install "Microsoft.DotNet.SDK.$v" `
+              if ($v -eq 11 -and $a -eq "x64") { continue }
+              winget install "Microsoft.DotNet.Runtime.$v" `
               --architecture $a `
-              --silent `
-              --force `
-              --disable-interactivity `
-              --accept-source-agreements `
-              --accept-package-agreements
+              --silent --force --disable-interactivity `
+              --accept-source-agreements --accept-package-agreements
             }
           }
           dotnet workload update
@@ -219,14 +222,11 @@ jobs:
         if: inputs.run_tests == true && runner.os == 'Windows'
         shell: pwsh
         run: |
-          $versions = 6..10
+          $versions = 6..11
           $latestVersion = ($versions | Measure-Object -Maximum).Maximum
-          $previousVersion = $latestVersion - 1
           foreach ($v in $versions) {
-            if ($v -eq $latestVersion -or $v -eq $previousVersion) {
-                continue
-            }
-            winget uninstall "Microsoft.DotNet.SDK.$v" `
+            if ($v -eq $latestVersion -and $a -eq "x64") { continue }
+            winget uninstall "Microsoft.DotNet.Runtime.$v" `
                 --force `
                 --purge `
                 --silent `
