@@ -130,7 +130,7 @@ internal static class TextUnescape
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
-	private static Rune GetUnescapeRune(Span<Byte> escapedBuffer, ref Int32 escapeIndex, Char lowChar,
+	private static Rune GetUnescapeRune(ReadOnlySpan<Byte> escapedBuffer, ref Int32 escapeIndex, Char lowChar,
 		ref Int32 escapeSize)
 	{
 		Rune rune;
