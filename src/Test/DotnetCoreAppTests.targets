@@ -22,7 +22,8 @@
                 TestAssemblyName="$(AssemblyName)"/>
     </Target>
 
-    <Target Name="ConfigureSdk10VSTest" BeforeTargets="VSTest" Condition="!$([MSBuild]::IsOSPlatform('WINDOWS'))">
+    <Target Name="ConfigureSdk10VSTest" BeforeTargets="VSTest"
+            Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' And !$([MSBuild]::IsOSPlatform('WINDOWS'))">
         <ItemGroup>
             <_VSTestSdk10Candidate Include="$(MSBuildSDKsPath)/../../10.*/vstest.console.dll"/>
             <_VSTestSdk10Available Include="@(_VSTestSdk10Candidate->Exists())"/>
