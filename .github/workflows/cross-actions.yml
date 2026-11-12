@@ -274,6 +274,7 @@ jobs:
         if: inputs.build_artifacts == true
         shell: pwsh
         run: |
+          dotnet build-server shutdown
           dotnet nuget locals all --clear
           Get-ChildItem -Recurse -Include *.csproj,*.fsproj,*.vbproj | ForEach-Object {
             $projDir = Split-Path $_.FullName
