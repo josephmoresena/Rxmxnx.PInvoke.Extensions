@@ -1,17 +1,26 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+    <PropertyGroup>
+        <IsArm64 Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">true</IsArm64>
+        <IsMacOS Condition="$([MSBuild]::IsOSPlatform('OSX'))">true</IsMacOS>
+        <IsWindows Condition="$([MSBuild]::IsOSPlatform('Windows'))">true</IsWindows>
+        <IsMacOSOrWindows Condition="'$(IsMacOS)' == 'true' Or '$(IsWindows)' == 'true'">true</IsMacOSOrWindows>
+        <IsWindowsOnGitHub Condition="'$(IsWindows)' == 'true' And '$(GITHUB_ACTIONS)' == 'true'">true</IsWindowsOnGitHub>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(MultipleFrameworkTest)' != 'true'">
         <TargetFrameworks>$(DefaultFramework);netstandard2.1;netstandard2.0</TargetFrameworks>
-        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('WINDOWS'))">$(TargetFrameworks);net472</TargetFrameworks>
+        <TargetFrameworks Condition="'$(IsWindows)' == 'true'">$(TargetFrameworks);net472</TargetFrameworks>
     </PropertyGroup>
     <PropertyGroup Condition="'$(MultipleFrameworkTest)' == 'true'">
         <TargetFrameworks>$(DefaultFrameworks);net8.0;net7.0;net6.0;netstandard2.1;netstandard2.0</TargetFrameworks>
-        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('WINDOWS'))">$(TargetFrameworks);net462;net470;net471;net472</TargetFrameworks>
+        <TargetFrameworks Condition="'$(IsWindows)' == 'true'">$(TargetFrameworks);net462;net470;net471;net472</TargetFrameworks>
     </PropertyGroup>
     <PropertyGroup Condition="'$(MultipleFrameworkTest)' == 'true' And '$(OnlySupportedFrameworkTest)' != 'true'">
-        <TargetFrameworks>$(TargetFrameworks);net5.0;netcoreapp3.1;netcoreapp3.0;netcoreapp2.1;netcoreapp2.0</TargetFrameworks>
+        <TargetFrameworks Condition="'$(IsArm64)' != 'true' Or '$(IsMacOS)' != 'true'">$(TargetFrameworks);net5.0</TargetFrameworks>
+        <TargetFrameworks Condition="'$(IsArm64)' != 'true' Or '$(IsMacOSOrWindows)' != 'true'">$(TargetFrameworks);netcoreapp3.1;netcoreapp3.0;netcoreapp2.1</TargetFrameworks>
+        <TargetFrameworks Condition="'$(IsArm64)' != 'true'">$(TargetFrameworks);netcoreapp2.0</TargetFrameworks>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(MultipleFrameworkTest)' == 'true' And ('$(OnlySupportedFrameworkTest)' != 'true' Or ($([MSBuild]::IsOSPlatform('WINDOWS')) And '$(GITHUB_ACTIONS)' == 'true'))">
+    <PropertyGroup Condition="'$(MultipleFrameworkTest)' == 'true' And ('$(OnlySupportedFrameworkTest)' != 'true' Or '$(IsWindowsOnGitHub)' == 'true')">
         <TargetFrameworks>$(TargetFrameworks);net452;net46;net461</TargetFrameworks>
     </PropertyGroup>
 

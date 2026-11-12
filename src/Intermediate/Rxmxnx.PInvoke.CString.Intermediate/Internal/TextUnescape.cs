@@ -159,7 +159,7 @@ internal static class TextUnescape
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
-	private static Boolean HasHighSurrogate(Span<Byte> escapedBuffer, Int32 escapeIndex, out Char high)
+	private static Boolean HasHighSurrogate(ReadOnlySpan<Byte> escapedBuffer, Int32 escapeIndex, out Char high)
 	{
 		Boolean hasHighSurrogate = escapedBuffer.Length - escapeIndex >= 6 &&
 			escapedBuffer.Slice(escapeIndex - 6, 2).SequenceEqual(TextUnescape.UnicodePrefix); // Check for "\u" prefix.

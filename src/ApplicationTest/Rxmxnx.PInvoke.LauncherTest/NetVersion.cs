@@ -23,7 +23,11 @@ public static class NetVersionExtensions
 			NetVersion.Net70 => "net7.0",
 			NetVersion.Net80 => "net8.0",
 			NetVersion.Net90 => "net9.0",
+#if NET10_0_OR_GREATER
 			NetVersion.Net100 => "net10.0",
+#else
+			(NetVersion)10 => "net10.0",
+#endif
 			_ => "net11.0",
 		};
 }

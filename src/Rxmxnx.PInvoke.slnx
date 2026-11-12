@@ -95,6 +95,7 @@
         <File Path="..\package\Rxmxnx.PInvoke.Extensions\PACKAGE.md"/>
     </Folder>
     <Folder Name="/Tests/">
+        <File Path="Test\xunit.runner.mono.json"/>
         <Project Path="Test\Rxmxnx.Assert.Tests\Rxmxnx.Assert.Tests.csproj"/>
         <Project Path="Test\Rxmxnx.Patch.Tests\Rxmxnx.Patch.Tests.csproj"/>
         <Project Path="Test\Rxmxnx.PInvoke.Buffers.Tests\Rxmxnx.PInvoke.Buffers.Tests.csproj"/>

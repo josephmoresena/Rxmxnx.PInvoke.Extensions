@@ -50,7 +50,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#pragma warning disable CA1517
 	private static FixedPointerInfo CreateFixedPointerInfo<T>(this Span<T> span, void* ptr, out Type typeRef)
+#pragma warning restore CA1517
 	{
 		typeRef = typeof(T);
 		return new()
@@ -92,7 +94,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="ptr">Fixed unmanaged pointer.</param>
 	/// <returns>A <see cref="FixedPointerInfo"/> instance.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#pragma warning disable CA1517
 	private static FixedPointerInfo CreateFixedPointerInfo<T>(this Span<T> span, void* ptr)
+#pragma warning restore CA1517
 		=> new()
 		{
 			Pointer = ptr,

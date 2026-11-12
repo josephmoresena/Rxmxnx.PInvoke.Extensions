@@ -8,7 +8,6 @@
             <Private>False</Private>
         </ProjectReference>
     </ItemGroup>
-
     <UsingTask TaskName="XUnitDisplayNamePatch"
                AssemblyFile="Rxmxnx.Patch.Tests\bin\$(Configuration)\netstandard2.0\Rxmxnx.Patch.Tests.dll"/>
 
@@ -21,6 +20,35 @@
                 OutputPath="$(AssemblyOutputPath)"
                 TargetFramework="$(AssemblyTargetFramework)"
                 TestAssemblyName="$(AssemblyName)"/>
+    </Target>
+
+    <Target Name="ConfigureSdk10VSTest" BeforeTargets="VSTest" Condition="!$([MSBuild]::IsOSPlatform('WINDOWS'))">
+        <ItemGroup>
+            <_VSTestSdk10Candidate Include="$(MSBuildSDKsPath)/../../10.*/vstest.console.dll"/>
+            <_VSTestSdk10Available Include="@(_VSTestSdk10Candidate->Exists())"/>
+        </ItemGroup>
+
+        <PropertyGroup>
+            <_Sdk10VSTestCandidates>@(_VSTestSdk10Available->'%(FullPath)', ';')</_Sdk10VSTestCandidates>
+            <_Sdk10VSTestPath Condition="'$(_Sdk10VSTestCandidates)' != ''">$([System.String]::Copy('$(_Sdk10VSTestCandidates)').Split(';')[0])</_Sdk10VSTestPath>
+            <VSTestConsolePath Condition="'$(_Sdk10VSTestPath)' != ''">$(_Sdk10VSTestPath)</VSTestConsolePath>
+        </PropertyGroup>
+
+        <Warning Condition="'$(_Sdk10VSTestPath)' == '' And '$(TargetFrameworkIdentifier)' == '.NETFramework'"
+                 Text=".NET SDK 10 was not found. .NET Framework tests may fail on macOS/Linux because the current VSTest no longer supports Mono."/>
+        <Warning Condition="@(_VSTestSdk10Available->Count()) &gt; 1"
+                 Text="Multiple .NET SDK 10 installations found; using the first detected VSTest: $(VSTestConsolePath). Selection is not guaranteed to be the newest SDK."/>
+        <Message Condition="'$(_Sdk10VSTestPath)' != ''"
+                 Importance="high"
+                 Text="Using VSTest from .NET SDK 10: $(VSTestConsolePath)"/>
+    </Target>
+
+    <Target Name="CopyMonoXunitConfiguration" AfterTargets="Build"
+            Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' And !$([MSBuild]::IsOSPlatform('WINDOWS'))
+                   And '$(DisableMonoTestParallelization)' == 'true'">
+        <Copy SourceFiles="$(MSBuildThisFileDirectory)xunit.runner.mono.json"
+              DestinationFiles="$(TargetDir)xunit.runner.json"
+              SkipUnchangedFiles="true"/>
     </Target>
 
 </Project>
