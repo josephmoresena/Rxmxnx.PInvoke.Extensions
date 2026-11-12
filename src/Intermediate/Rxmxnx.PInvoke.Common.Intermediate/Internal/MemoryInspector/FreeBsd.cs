@@ -13,6 +13,13 @@ internal partial class MemoryInspector
 	{
 		/// <inheritdoc/>
 		protected override void ProcessMaps() => Procstat.AppendMaps(this);
+
+		/// <inheritdoc/>
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+		public override unsafe Boolean IsImageMethod(RuntimeMethodHandle methodHandle)
+			=> this.IsReadOnlyAddress(methodHandle.Value.ToPointer());
 	}
 }
 #endif
