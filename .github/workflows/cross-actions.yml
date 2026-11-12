@@ -245,6 +245,7 @@ jobs:
         if: inputs.build_artifacts == true
         shell: pwsh
         run: |
+          dotnet build-server shutdown
           dotnet nuget locals all --clear
           if ($IsWindows) {
             Remove-Item -Recurse -Force "C:\Android" -ErrorAction SilentlyContinue
