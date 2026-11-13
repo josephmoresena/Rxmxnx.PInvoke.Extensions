@@ -29,6 +29,14 @@ internal partial class MemoryInspector
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2696)]
 #endif
 		private static Int64 lastThreadTickCount;
+		/// <summary>
+		/// Indicates whether the refresh method has been executed once.
+		/// </summary>
+		[ThreadStatic]
+#if !PACKAGE
+		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2696)]
+#endif
+		private static Boolean hasThreadRefreshed;
 
 		/// <summary>
 		/// Lock object.
@@ -89,6 +97,16 @@ internal partial class MemoryInspector
 				return this.TryGetProtection(ptr, out isReadOnly) && isReadOnly;
 			}
 		}
+		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecurityCritical]
+#endif
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public override Boolean IsImageMethod(RuntimeMethodHandle methodHandle)
+		{
+			Byte* image = stackalloc Byte[4 * IntPtr.Size];
+			return StandardC.LocateImage(methodHandle.GetFunctionPointer(), image) != 0;
+		}
 
 		/// <summary>
 		/// Processes memory maps from current process.
@@ -118,9 +136,13 @@ internal partial class MemoryInspector
 #if NETCOREAPP3_0_OR_GREATER
 				= Environment.TickCount64;
 #else
-				= DateTime.Now.Ticks;
+				= DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 #endif
-			if (tickCount - this._lastTickCount < MapsInspector.globalReadDelay ||
+
+			if (this._lastTickCount >= 0 && tickCount - this._lastTickCount < MapsInspector.globalReadDelay)
+				return;
+
+			if (MapsInspector.hasThreadRefreshed &&
 			    tickCount - MapsInspector.lastThreadTickCount < MapsInspector.localReadDelay)
 				return;
 
@@ -129,9 +151,10 @@ internal partial class MemoryInspector
 #if NETCOREAPP3_0_OR_GREATER
 				= Environment.TickCount64;
 #else
-				= DateTime.Now.Ticks;
+				= DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
 #endif
 			MapsInspector.lastThreadTickCount = this._lastTickCount;
+			MapsInspector.hasThreadRefreshed = true;
 		}
 		/// <summary>
 		/// Tries to retrieve <paramref name="address"/> protection.

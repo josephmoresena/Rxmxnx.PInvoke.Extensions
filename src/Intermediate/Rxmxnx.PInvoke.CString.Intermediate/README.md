@@ -10,9 +10,12 @@ There are three types of `CString`:
 1. **Managed Buffer-Based**: This type is based on a managed buffer containing UTF-8/ASCII units.
 2. **Delegate-Based**: This type relies on a delegate that returns a `Span<Byte>`. The delegate can represent a UTF-8 or
    ASCII literal, or an arbitrary function, with or without a state object.
-3. **Unmanaged Pointer-Based**: This type is based on an unmanaged pointer and a specified length. When use this type,
-   the developer have to ensure that the memory address holding the UTF-8/ASCII units remains valid for the lifetime of
-   the `CString` instance.
+3. **Unmanaged Pointer-Based**: This type is based on an unmanaged pointer and a specified length. When you use this
+   type, you must ensure that the memory address holding the UTF-8/ASCII units remains valid for the lifetime of the
+   `CString` instance.
+4. **Function pointer-Based**: Same as delegate-Based, but uses function pointers instead of delegates. Requires .NET
+   5.0 or later, `/unsafe`, and an `unsafe` context at the call site. A UTF-8 literal passed this way does not allocate
+   a `ReadOnlySpanFunc<Byte>`.
 
 ---
 
@@ -65,11 +68,53 @@ Console.WriteLine(cstring);                     // Output: "Hello"
 Console.WriteLine(cstring.IsNullTerminated);    // Output: True
 ```
 
-This constructor enables the creation of `CString` instances
+Compiling with `/unsafe` (on .NET 5.0 or later). The call itself must be in an `unsafe` context:
+
+```csharp
+unsafe
+{
+    CString cstring = new(&LiteralFunction);
+
+    Console.WriteLine(cstring);                     // Output: "Hello"
+    Console.WriteLine(cstring.IsNullTerminated);    // Output: True
+}
+static ReadOnlySpan<Byte> LiteralFunction() => "Hello"u8;
+```
+
+`new(() => "Hello"u8)` builds a `ReadOnlySpanFunc<Byte>`. The function-pointer overload stores `delegate*` and calls it
+directly, so a literal does not pay for that delegate. `CString.Create<TState>(state, delegate*<…>, isNullTerminated)`
+and `ValueRegion<T>.Create(delegate*<ReadOnlySpan<T>>)` are the stateful and region forms of the same change.
+
+These constructors enable the creation of `CString` instances
 using [UTF-8/ASCII literals](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-11.0/utf8-string-literals).
 
-**Note:** This constructor is considered **primary** because these literals are constants, ensuring their memory
+**Note:** These constructor are considered **primary** because these literals are constants, ensuring their memory
 location remains fixed.
+
+### Literal Factory
+
+Starting with .NET 7.0, the `IUtf8LiteralSource<TIdentifier>` interface can be used to define a factory that provides
+multiple UTF-8 literals identified by a custom identifier.
+
+```csharp
+CString cstring = CString.Create<LiteralFactory, Byte>(2);
+
+Console.WriteLine(cstring);                    // Output: "world"
+Console.WriteLine(cstring.IsNullTerminated);   // Output: True
+
+struct LiteralFactory : IUtf8LiteralSource<Byte>
+{
+    ReadOnlySpan<Byte> GetLiteral(Byte identifier)
+        => identifier switch
+        {
+            1 => "Hello"u8,
+            2 => "world"u8,
+            _ => ReadOnlySpan<Byte>.Empty,
+        };
+}
+```
+
+**Note:** Any `CString` instance created using this factory is considered null-terminated.
 
 ### Span constructor
 

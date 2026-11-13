@@ -11,12 +11,7 @@ public struct Atomic<T> : IManagedBinaryBuffer<Atomic<T>, T>
 	/// <summary>
 	/// Internal metadata.
 	/// </summary>
-	internal static readonly BufferTypeMetadata<T> TypeMetadata =
-#if NET7_0_OR_GREATER
-		new BufferTypeMetadata<Atomic<T>, T>(1);
-#else
-		new BufferTypeMetadata<Atomic<T>, T>(1, []);
-#endif
+	internal static readonly BufferTypeMetadata<T> TypeMetadata = new BufferTypeMetadata<Atomic<T>, T>(1);
 
 	/// <summary>
 	/// Internal value.
@@ -24,8 +19,8 @@ public struct Atomic<T> : IManagedBinaryBuffer<Atomic<T>, T>
 	private T _val0;
 
 #if NET7_0_OR_GREATER
+	static Boolean IManagedBinaryBuffer<Atomic<T>, T>.IsStaticBinary => true;
 	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => Atomic<T>.TypeMetadata;
-	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [];
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

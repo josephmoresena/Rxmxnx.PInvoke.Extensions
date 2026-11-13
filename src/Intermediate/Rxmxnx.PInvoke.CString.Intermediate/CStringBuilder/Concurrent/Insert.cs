@@ -5,7 +5,7 @@ public partial class CStringBuilder
 	private readonly partial struct Concurrent
 	{
 		/// <summary>
-		/// Inserts UTF-8 representation of the characters in the specified read-only span into this instance at the
+		/// Inserts the UTF-8 representation of the characters in the specified read-only span into this instance at the
 		/// specified UTF-8 unit position.
 		/// </summary>
 		/// <param name="index">The position in this instance where insertion begins.</param>
@@ -341,7 +341,7 @@ public partial class CStringBuilder
 		/// Inserts the UTF-8 representation of the specified <typeparamref name="T"/> value into
 		/// <paramref name="concurrent"/> at the specified UTF-8 unit position.
 		/// </summary>
-		/// <typeparam name="T">A <see cref="IUtf8SpanFormattable"/> instance.</typeparam>
+		/// <typeparam name="T">An <see cref="IUtf8SpanFormattable"/> instance.</typeparam>
 		/// <param name="concurrent">A <see cref="Concurrent"/> instance.</param>
 		/// <param name="index">The position in this instance where insertion begins.</param>
 		/// <param name="value">The value to insert.</param>
@@ -364,7 +364,7 @@ public partial class CStringBuilder
 		/// Inserts the UTF-8 representation of the specified <typeparamref name="T"/> value into
 		/// <paramref name="concurrent"/> at the specified UTF-8 unit position.
 		/// </summary>
-		/// <typeparam name="T">A <see cref="ISpanFormattable"/> instance.</typeparam>
+		/// <typeparam name="T">An <see cref="ISpanFormattable"/> instance.</typeparam>
 		/// <param name="concurrent">A <see cref="Concurrent"/> instance.</param>
 		/// <param name="index">The position in this instance where insertion begins.</param>
 		/// <param name="value">The value to insert.</param>

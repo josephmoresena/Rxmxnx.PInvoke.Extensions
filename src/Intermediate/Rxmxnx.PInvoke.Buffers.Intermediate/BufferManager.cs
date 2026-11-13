@@ -20,9 +20,8 @@ public static partial class BufferManager
 	/// Maximum supported binary buffer size at runtime.
 	/// </summary>
 	/// <remarks>
-	/// Binary metadata is only available for buffer sizes up to this limit. Requests exceeding this limit are allocated
-	/// on the heap.
-	/// Operations that prepare or register binary metadata may throw when the requested size exceeds this limit.
+	/// Binary metadata is stored up to this limit. A binary buffer that does not fit that store is kept as non-binary
+	/// metadata, which has no size limit. Requests that still have no metadata are allocated on the heap.
 	/// </remarks>
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
@@ -171,7 +170,7 @@ public static partial class BufferManager
 	/// Prepares the binary buffer metadata needed to allocate <paramref name="count"/> objects.
 	/// </summary>
 	/// <param name="count">Number of items in the required buffer.</param>
-	/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
+	/// <exception cref="InvalidOperationException">Thrown if metadata for any buffer component is missing.</exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void PrepareBinaryBuffer(UInt16 count) => BufferManager.Storage.PrepareBinaryMetadata<Object>(count);
 	/// <summary>
@@ -179,11 +178,11 @@ public static partial class BufferManager
 	/// </summary>
 	/// <typeparam name="T">Type of items in the buffer.</typeparam>
 	/// <param name="count">Number of items in the required buffer.</param>
-	/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
+	/// <exception cref="InvalidOperationException">Thrown if metadata for any buffer component is missing.</exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void PrepareBinaryBuffer<T>(UInt16 count) where T : struct
 	{
-		// If unmanaged type, stackalloc should be used.
+		// If the type is unmanaged, stackalloc should be used.
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
 		BufferManager.Storage.PrepareBinaryMetadata<T>(count);
 	}
@@ -193,11 +192,11 @@ public static partial class BufferManager
 	/// </summary>
 	/// <typeparam name="T">Type of nullable items in the buffer.</typeparam>
 	/// <param name="count">Number of items in the required buffer.</param>
-	/// <exception cref="InvalidOperationException">Throw if missing metadata for any buffer component.</exception>
+	/// <exception cref="InvalidOperationException">Thrown if metadata for any buffer component is missing.</exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void PrepareBinaryBufferNullable<T>(UInt16 count) where T : struct
 	{
-		// If unmanaged type, stackalloc should be used.
+		// If the type is unmanaged, stackalloc should be used.
 		if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return;
 		BufferManager.Storage.PrepareBinaryMetadata<T?>(count);
 	}
@@ -227,14 +226,19 @@ public static partial class BufferManager<T>
 #endif
 	{
 		if (action is null) return;
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+		if (typeof(TAction).IsValueType)
+		{
+			if (typeof(T).IsValueType)
+				BufferManager<T>.AllocValue(ref action);
+			else
+				BufferManager<T>.AllocObject(ref action);
+			return;
+		}
+		NonGenericAction nonGeneric = NonGenericAction.Create(action);
 		if (typeof(T).IsValueType)
-#else
-		if (typeof(T).GetTypeInfo().IsValueType)
-#endif
-			BufferManager<T>.AllocValue(ref action);
+			BufferManager<T>.AllocValue(ref nonGeneric);
 		else
-			BufferManager<T>.AllocObject(ref action);
+			BufferManager<T>.AllocObject(ref nonGeneric);
 	}
 	/// <summary>
 	/// Allocates a buffer with <see cref="IScopedBufferFunction{T, TResult}.Count"/> elements and executes
@@ -260,16 +264,23 @@ public static partial class BufferManager<T>
 			Unsafe.SkipInit(out result);
 			return;
 		}
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
-		if (typeof(T).IsValueType)
-#else
-		if (typeof(T).GetTypeInfo().IsValueType)
-#endif
+		if (typeof(TFunction).IsValueType)
 		{
-			BufferManager<T>.AllocValue(ref func, out result);
+			if (typeof(T).IsValueType)
+			{
+				BufferManager<T>.AllocValue(ref func, out result);
+				return;
+			}
+			BufferManager<T>.AllocObject(ref func, out result);
 			return;
 		}
-		BufferManager<T>.AllocObject(ref func, out result);
+		NonGenericFunction<TResult> nonGeneric = NonGenericFunction<TResult>.Create(func);
+		if (typeof(T).IsValueType)
+		{
+			BufferManager<T>.AllocValue(ref nonGeneric, out result);
+			return;
+		}
+		BufferManager<T>.AllocObject(ref nonGeneric, out result);
 	}
 
 	/// <summary>
@@ -289,11 +300,7 @@ public static partial class BufferManager<T>
 		where TAction : struct, IScopedBufferAction<T>, allows ref struct
 #endif
 	{
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (typeof(T).IsValueType)
-#else
-		if (typeof(T).GetTypeInfo().IsValueType)
-#endif
 			BufferManager<T>.AllocValue(ref action);
 		else
 			BufferManager<T>.AllocObject(ref action);
@@ -317,11 +324,7 @@ public static partial class BufferManager<T>
 		where TFunction : struct, IScopedBufferFunction<T, TResult>, allows ref struct
 #endif
 	{
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		if (typeof(T).IsValueType)
-#else
-		if (typeof(T).GetTypeInfo().IsValueType)
-#endif
 		{
 			BufferManager<T>.AllocValue(ref func, out result);
 			return;

@@ -1,8 +1,6 @@
 #if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
 using IEnumerator = System.Collections.IEnumerator;
 using IEnumerable = System.Collections.IEnumerable;
-
-using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
 #endif
 
 namespace Rxmxnx.PInvoke.VisualBasic;

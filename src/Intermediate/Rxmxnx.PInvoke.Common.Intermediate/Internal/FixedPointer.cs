@@ -376,11 +376,11 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	}
 	/// <summary>
 	/// Retrieves the number of <paramref name="sizeOf"/> items that can be
-	/// referenced into the fixed memory block.
+	/// referenced in the fixed memory block.
 	/// </summary>
 	/// <param name="sizeOf">Type size in bytes.</param>
 	/// <returns>
-	/// The number of <paramref name="sizeOf"/> items that can be referenced into the
+	/// The number of <paramref name="sizeOf"/> items that can be referenced in the
 	/// fixed memory block.
 	/// </returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -12,6 +12,10 @@
         <NoWarn Condition="'$(PublishAotLegacy)' == 'true'">$(NoWarn);IL3050;IL2026</NoWarn>
     </PropertyGroup>
 
+    <PropertyGroup Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
+        <Features>$(Features);runtime-async=on</Features>
+    </PropertyGroup>
+
     <Import Project="NativeAot.props"/>
 
     <PropertyGroup Condition="'$(SelfContained)' == 'true' And '$(PublishAot)' != 'true' And '$(PublishAotLegacy)' != 'true'">

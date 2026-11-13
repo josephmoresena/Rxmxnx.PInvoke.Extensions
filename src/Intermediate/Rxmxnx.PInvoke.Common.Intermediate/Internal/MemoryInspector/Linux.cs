@@ -21,6 +21,17 @@ internal partial class MemoryInspector
 		private const Int32 permissionTokenLength = 6;
 
 		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecurityCritical]
+#endif
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public override Boolean IsImageMethod(RuntimeMethodHandle methodHandle)
+		{
+			IntPtr address = methodHandle.GetFunctionPointer();
+			return DynamicLinker.LocateImage(address) != 0;
+		}
+
+		/// <inheritdoc/>
 		protected override void ProcessMaps() => this.ParseMaps(File.ReadAllBytes(Linux.mapsFileName));
 
 		/// <summary>
@@ -68,8 +79,8 @@ internal partial class MemoryInspector
 		/// Retrieves permission index.
 		/// </summary>
 		/// <param name="buffer">A read-only buffer.</param>
-		/// <param name="isReadOnly"> Output. Indicates whether <paramref name="buffer"/> is read-only permission.</param>
-		/// <returns>Index of permission token in <paramref name="buffer"/>.</returns>
+		/// <param name="isReadOnly">Output. Indicates whether <paramref name="buffer"/> has read-only permission.</param>
+		/// <returns>The index of the permission token in <paramref name="buffer"/>.</returns>
 		private static Int32 GetPermissionIndex(ReadOnlySpan<Byte> buffer, out Boolean isReadOnly)
 		{
 			Int32 index = 0;

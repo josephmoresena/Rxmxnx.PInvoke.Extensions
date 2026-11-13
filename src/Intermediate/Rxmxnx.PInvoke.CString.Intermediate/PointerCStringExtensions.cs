@@ -41,7 +41,7 @@ public static unsafe class PointerCStringExtensions
 	/// Generates a <see cref="CString"/> instance using the memory reference pointed to by the
 	/// given <see cref="UIntPtr"/>, considering it as the start of a UTF-8 encoded string.
 	/// </summary>
-	/// <param name="uptr">An <see cref="UIntPtr"/> pointing to the start of the UTF-8 text.</param>
+	/// <param name="uptr">A <see cref="UIntPtr"/> pointing to the start of the UTF-8 text.</param>
 	/// <param name="length">The number of <see cref="Byte"/> elements in the UTF-8 text.</param>
 	/// <returns>A <see cref="CString"/> representation of the UTF-8 text.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown when the provided length is negative.</exception>

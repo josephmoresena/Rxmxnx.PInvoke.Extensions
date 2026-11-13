@@ -79,6 +79,8 @@ internal static class ConvertCompat
 #endif
 	}
 
+#if !PACKAGE || !NET5_0_OR_GREATER
+
 	#region CORECLR
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
@@ -93,4 +95,6 @@ internal static class ConvertCompat
 		buffer[startingIndex] = (Char)(packedResult >> 8);
 	}
 	#endregion
+
+#endif
 }

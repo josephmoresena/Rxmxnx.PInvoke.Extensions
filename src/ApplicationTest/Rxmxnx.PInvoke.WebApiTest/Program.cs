@@ -157,11 +157,28 @@ internal static class SampleCollections
 
 	public static readonly Todo[] Todos =
 	[
-		new(1, new(() => "Walk the dog"u8)), new(2, new(() => "Do the dishes"u8), DateOnly.FromDateTime(DateTime.Now)),
-		new(3, new(() => "Do the laundry"u8), DateOnly.FromDateTime(DateTime.Now.AddDays(1))),
-		new(4, new(() => "Clean the bathroom"u8)),
-		new(5, new(() => "Clean the car"u8), DateOnly.FromDateTime(DateTime.Now.AddDays(2))),
+		new(1, Resources.Get(1)), new(2, Resources.Get(2), DateOnly.FromDateTime(DateTime.Now)),
+		new(3, Resources.Get(3), DateOnly.FromDateTime(DateTime.Now.AddDays(1))),
+		new(4, Resources.Get(4)),
+		new(5, Resources.Get(5), DateOnly.FromDateTime(DateTime.Now.AddDays(2))),
 	];
 	public static readonly CStringSequence Fruits = CStringSequence.Parse(SampleCollections.fruitsData);
+
+	private readonly struct Resources : IUtf8LiteralSource<Byte>
+	{
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static CString Get(Byte literal) => CString.Create<Resources, Byte>(literal);
+
+		static ReadOnlySpan<Byte> IUtf8LiteralSource<Byte>.GetLiteral(Byte identifier)
+			=> identifier switch
+			{
+				1 => "Walk the dog"u8,
+				2 => "Do the dishes"u8,
+				3 => "Do the laundry"u8,
+				4 => "Clean the bathroom"u8,
+				5 => "Clean the car"u8,
+				_ => [],
+			};
+	}
 }
 #pragma warning restore CA1050

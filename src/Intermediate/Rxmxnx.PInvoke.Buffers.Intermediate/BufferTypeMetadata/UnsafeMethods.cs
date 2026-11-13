@@ -1,6 +1,4 @@
 #if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
-using MemoryMarshalCompat = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
-
 namespace Rxmxnx.PInvoke;
 
 #if !PACKAGE

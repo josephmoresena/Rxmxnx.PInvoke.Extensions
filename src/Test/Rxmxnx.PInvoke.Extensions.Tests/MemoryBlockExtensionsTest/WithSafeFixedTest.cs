@@ -43,7 +43,7 @@ public sealed class WithSafeFixedTest
 	public void UInt64Test() => this.Test<UInt64>();
 #pragma warning restore CS0612
 
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 #endif
 	private void Test<T>() where T : unmanaged
@@ -53,7 +53,7 @@ public sealed class WithSafeFixedTest
 		ReadOnlySpan<T> readOnlySpan = span;
 
 		this._array = values;
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 		span.WithSafeFixed(this.ActionTest);
 		span.WithSafeFixed(this.ActionReadOnlyTest);
 		readOnlySpan.WithSafeFixed(this.ReadOnlyActionReadOnlyTest);
@@ -80,8 +80,18 @@ public sealed class WithSafeFixedTest
 
 		PInvokeAssert.Equal(sResult, srResult);
 		PInvokeAssert.Equal(rResult, srResult);
+
+		// Reference-type callbacks force NonGenericFixedContext* wrappers.
+		span.WithSafeFixed(new ClassFixedAction<T>(this._array));
+		span.WithSafeFixed(new ClassReadOnlyFixedAction<T>(this._array));
+		readOnlySpan.WithSafeFixed(new ClassReadOnlyFixedAction<T>(this._array));
+		span.WithSafeFixed(new ClassFixedFunction<T>(this._array), out sResult);
+		span.WithSafeFixed(new ClassReadOnlyFixedFunction<T>(this._array), out srResult);
+		readOnlySpan.WithSafeFixed(new ClassReadOnlyFixedFunction<T>(this._array), out rResult);
+		PInvokeAssert.Equal(sResult, srResult);
+		PInvokeAssert.Equal(rResult, srResult);
 	}
-#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
+#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 	private void ActionTest<T>(in IFixedContext<T> ctx) where T : unmanaged
 	{
@@ -274,6 +284,7 @@ public sealed class WithSafeFixedTest
 		where T : unmanaged
 		=> test.ReadOnlyFuncReadOnlyTest(ctx);
 #endif
+
 	private readonly struct ReadOnlyFixedAction<T>(Array array) : IReadOnlyFixedContextAction<T>
 	{
 		public void Accept(scoped ReadOnlyFixedContextValue<T> ctx)
@@ -302,5 +313,25 @@ public sealed class WithSafeFixedTest
 	private readonly struct FixedFunction<T>(Array array) : IFixedContextFunction<T, Int32>
 	{
 		public Int32 Apply(scoped FixedContextValue<T> ctx) => new ReadOnlyFixedFunction<T>(array).Apply(ctx);
+	}
+
+	private sealed class ClassReadOnlyFixedAction<T>(Array array) : IReadOnlyFixedContextAction<T>
+	{
+		public void Accept(scoped ReadOnlyFixedContextValue<T> ctx) => new ReadOnlyFixedAction<T>(array).Accept(ctx);
+	}
+
+	private sealed class ClassReadOnlyFixedFunction<T>(Array array) : IReadOnlyFixedContextFunction<T, Int32>
+	{
+		public Int32 Apply(scoped ReadOnlyFixedContextValue<T> ctx) => new ReadOnlyFixedFunction<T>(array).Apply(ctx);
+	}
+
+	private sealed class ClassFixedAction<T>(Array array) : IFixedContextAction<T>
+	{
+		public void Accept(scoped FixedContextValue<T> ctx) => new FixedAction<T>(array).Accept(ctx);
+	}
+
+	private sealed class ClassFixedFunction<T>(Array array) : IFixedContextFunction<T, Int32>
+	{
+		public Int32 Apply(scoped FixedContextValue<T> ctx) => new FixedFunction<T>(array).Apply(ctx);
 	}
 }

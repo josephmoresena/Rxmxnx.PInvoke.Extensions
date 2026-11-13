@@ -18,6 +18,9 @@ namespace System.Collections.Immutable { }
 #endif
 #if !NET5_0_OR_GREATER
 namespace System.Runtime.Intrinsics.Arm { }
+#if PACKAGE
+namespace System.Net.Http.Json { }
+#endif
 #endif
 #if !NET7_0_OR_GREATER
 namespace System.Runtime.InteropServices.Marshalling { }

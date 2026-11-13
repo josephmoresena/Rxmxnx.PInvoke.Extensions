@@ -16,6 +16,19 @@ internal partial class MemoryInspector
 		private static unsafe class Kernel32
 		{
 			/// <summary>
+			/// <see cref="LocateImage"/> flag. The address is a pointer inside a loaded module.
+			/// </summary>
+			private const UInt32 FromAddress = 0x4;
+			/// <summary>
+			/// <see cref="LocateImage"/> flag. Do not increment the module reference count.
+			/// </summary>
+			private const UInt32 UnchangedRefCount = 0x2;
+			/// <summary>
+			/// Flags for <see cref="LocateImage"/>.
+			/// </summary>
+			public const UInt32 AddressFlags = Kernel32.FromAddress | Kernel32.UnchangedRefCount;
+
+			/// <summary>
 			/// Validates <paramref name="result"/> value.
 			/// </summary>
 			/// <param name="result">Resulting value.</param>
@@ -30,6 +43,11 @@ internal partial class MemoryInspector
 #pragma warning disable SYSLIB1054
 			[DllImport("kernel32.dll")]
 			public static extern UIntPtr VirtualQuery(void* lpAddress, out MemoryInfo memInfo, UIntPtr dwLength);
+			[DllImport("kernel32.dll", EntryPoint = "GetModuleHandleExW", SetLastError = false)]
+#if NETFRAMEWORK || NETSTANDARD2_0
+			[SuppressUnmanagedCodeSecurity]
+#endif
+			public static extern Int32 LocateImage(UInt32 flags, void* address, out IntPtr module);
 
 			[DllImport("kernel32.dll")]
 #if NETFRAMEWORK || NETSTANDARD2_0

@@ -27,12 +27,7 @@ public struct Composite<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAcc
 	/// Internal metadata.
 	/// </summary>
 	internal static readonly BufferTypeMetadata<T> TypeMetadata =
-#if NET7_0_OR_GREATER
-		new BufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>(
-			BuffersHelper.GetCapacity(TBufferA.TypeMetadata, TBufferB.TypeMetadata, out Boolean isBinary), isBinary);
-#else
 		Composite<TBufferA, TBufferB, T>.CreateBufferMetadata();
-#endif
 
 	/// <summary>
 	/// Low buffer.
@@ -53,39 +48,42 @@ public struct Composite<[DynamicallyAccessedMembers(BuffersHelper.DynamicallyAcc
 	BufferTypeMetadata<T> IManagedBuffer<T>.GetStaticTypeMetadata() => Composite<TBufferA, TBufferB, T>.TypeMetadata;
 
 #if NET7_0_OR_GREATER
+	static Boolean IManagedBinaryBuffer<Composite<TBufferA, TBufferB, T>, T>.IsStaticBinary
+	{
+		get
+		{
+			if (!TBufferA.IsStaticBinary || !TBufferB.IsStaticBinary) return false;
+			return BuffersHelper.CanComposeBinary<TBufferA, TBufferB, T>();
+		}
+	}
 	static BufferTypeMetadata<T> IManagedBuffer<T>.TypeMetadata => Composite<TBufferA, TBufferB, T>.TypeMetadata;
-	static BufferTypeMetadata<T>[] IManagedBuffer<T>.Components => [TBufferA.TypeMetadata, TBufferB.TypeMetadata,];
 
 	static void IManagedBuffer<T>.AppendComponent(IMetadataStorage storage)
 	{
 		IManagedBuffer<T>.AppendComponent<TBufferA>(storage);
 		IManagedBuffer<T>.AppendComponent<TBufferB>(storage);
 	}
-#else
+#endif
+
 	/// <summary>
 	/// Creates the <see cref="BufferTypeMetadata{T}"/> instance for the current type.
 	/// </summary>
 	/// <returns>A <see cref="BufferTypeMetadata{T}"/> instance.</returns>
 	private static BufferTypeMetadata<T> CreateBufferMetadata()
 	{
-		BufferTypeMetadata<T>[] components = BuffersHelper.GetComponents<T, TBufferA, TBufferB>();
-		Int32 capacity = BuffersHelper.GetCapacity(components[0], components[1], out Boolean isBinary);
-		return new BufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>(
-			capacity, components, isBinary, Composite<TBufferA, TBufferB, T>.AppendComponent);
-	}
-	/// <summary>
-	/// Appends all components from the current type.
-	/// </summary>
-	/// <param name="storage">A <see cref="IMetadataStorage"/> instance.</param>
-#if NETFRAMEWORK || NETSTANDARD2_0
-	[SecuritySafeCritical]
+		UInt16 size = BuffersHelper.CompositeSize<TBufferA, TBufferB, T>();
+#if !NET7_0_OR_GREATER
+		BufferTypeMetadata<T> low = BuffersHelper.GetMetadata<T, TBufferA>();
+		BufferTypeMetadata<T> high = BuffersHelper.GetMetadata<T, TBufferB>();
+		if (low.IsBinary && high.IsBinary && BuffersHelper.CanComposeBinary<TBufferA, TBufferB, T>())
+			return new BinaryCompositeBufferTypeMetadata<TBufferA, TBufferB, T>(size);
+		return new BinaryCompositeBufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>(size, low, high, false);
+#else
+		if (TBufferA.IsStaticBinary && TBufferB.IsStaticBinary &&
+		    BuffersHelper.CanComposeBinary<TBufferA, TBufferB, T>())
+			return new BinaryCompositeBufferTypeMetadata<TBufferA, TBufferB, T>(size);
+		return new BinaryCompositeBufferTypeMetadata<Composite<TBufferA, TBufferB, T>, T>(
+			size, TBufferA.TypeMetadata, TBufferB.TypeMetadata, false);
 #endif
-	private static void AppendComponent(IMetadataStorage storage)
-	{
-		BufferTypeMetadata<T> currentMetadata = Composite<TBufferA, TBufferB, T>.TypeMetadata;
-		if (!currentMetadata.IsBinary) return;
-		foreach (BufferTypeMetadata<T> component in currentMetadata.Components.Span)
-			ManagedBuffer<T>.AppendComponent(component, storage);
 	}
-#endif
 }

@@ -1,4 +1,5 @@
 // ReSharper disable MemberCanBePrivate.Global
+
 namespace Rxmxnx.PInvoke;
 
 public sealed partial class CStringBuilder

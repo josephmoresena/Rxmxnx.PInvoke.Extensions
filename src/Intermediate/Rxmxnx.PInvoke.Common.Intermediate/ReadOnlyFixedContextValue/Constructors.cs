@@ -14,7 +14,7 @@ public unsafe ref partial struct ReadOnlyFixedContextValue<T>
 	/// Internal constructor.
 	/// </summary>
 	/// <param name="ptr">Unmanaged fixed pointer.</param>
-	/// <param name="count">Count of <typeparamref name="T"/> items in the fixed memory block.</param>
+	/// <param name="count">The number of <typeparamref name="T"/> items in the fixed memory block.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
@@ -37,7 +37,7 @@ public unsafe ref partial struct ReadOnlyFixedContextValue<T>
 	/// Internal constructor.
 	/// </summary>
 	/// <param name="handle">A <see cref="MemoryHandle"/> instance.</param>
-	/// <param name="count">Count of <typeparamref name="T"/> items in the fixed memory block.</param>
+	/// <param name="count">The number of <typeparamref name="T"/> items in the fixed memory block.</param>
 	/// <param name="isReadOnly">Indicates whether the memory block is read-only.</param>
 	/// <param name="disposable">Output. Disposable instance to release memory fixing.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -71,7 +71,7 @@ public unsafe ref partial struct ReadOnlyFixedContextValue<T>
 	/// Internal constructor.
 	/// </summary>
 	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> instance.</param>
-	/// <param name="count">Count of <typeparamref name="T"/> items in the fixed memory block.</param>
+	/// <param name="count">The number of <typeparamref name="T"/> items in the fixed memory block.</param>
 	/// <param name="disposable">Output. Disposable instance to release memory fixing.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
@@ -127,7 +127,7 @@ public unsafe ref partial struct ReadOnlyFixedContextValue<T>
 	/// Private constructor.
 	/// </summary>
 	/// <param name="valPtr">A <see cref="ReadOnlyValPtr{T}"/> instance.</param>
-	/// <param name="count">Count of <typeparamref name="T"/> items in the fixed memory block.</param>
+	/// <param name="count">The number of <typeparamref name="T"/> items in the fixed memory block.</param>
 	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]

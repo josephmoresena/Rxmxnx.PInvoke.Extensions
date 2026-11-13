@@ -114,7 +114,16 @@ public partial class TestCompiler
 			AppendArgs = CompileNetArgs.Append,
 			Notifier = ConsoleNotifier.Notifier,
 		};
-		await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
+		try
+		{
+			await Utilities.Execute(state, ConsoleNotifier.CancellationToken);
+		}
+		finally
+		{
+			// Each NativeAOT/R2R variant uses a different AssemblyName suffix; ILC .o files stay in obj
+			// until cleaned. Free the project intermediates between publishes (keep project references).
+			TestCompiler.NetCleanUp(args.RestoreArgs, false);
+		}
 		if (Utilities.ShowDiagnostics)
 			ConsoleNotifier.ShowDiskUsage();
 	}
@@ -139,13 +148,42 @@ public partial class TestCompiler
 			_ => !OperatingSystem.IsFreeBSD(),
 		};
 	}
-	private static void NetCleanUp(RestoreNetArgs restoreArgs)
+	private static void NetCleanUp(RestoreNetArgs restoreArgs, Boolean cleanProjectReferences = true)
 	{
 		try
 		{
 			DirectoryInfo projectDirectory = new FileInfo(restoreArgs.ProjectFile).Directory!;
-			projectDirectory.GetDirectories("bin", SearchOption.TopDirectoryOnly).FirstOrDefault()?.Delete();
-			projectDirectory.GetDirectories("obj", SearchOption.TopDirectoryOnly).FirstOrDefault()?.Delete();
+			TestCompiler.DeleteDirectory(projectDirectory.GetDirectories("bin", SearchOption.TopDirectoryOnly)
+			                                             .FirstOrDefault());
+			TestCompiler.DeleteDirectory(projectDirectory.GetDirectories("obj", SearchOption.TopDirectoryOnly)
+			                                             .FirstOrDefault());
+
+			if (!cleanProjectReferences) return;
+
+			// Project references (e.g. VNextTest) also accumulate publish intermediates.
+			DirectoryInfo? applicationTestRoot = projectDirectory.Parent;
+			if (applicationTestRoot is null) return;
+			foreach (DirectoryInfo sibling in applicationTestRoot.GetDirectories())
+			{
+				if (sibling.FullName.Equals(projectDirectory.FullName, StringComparison.OrdinalIgnoreCase))
+					continue;
+				TestCompiler.DeleteDirectory(sibling.GetDirectories("bin", SearchOption.TopDirectoryOnly)
+				                                    .FirstOrDefault());
+				TestCompiler.DeleteDirectory(sibling.GetDirectories("obj", SearchOption.TopDirectoryOnly)
+				                                    .FirstOrDefault());
+			}
+		}
+		catch (Exception)
+		{
+			// Ignore
+		}
+	}
+	private static void DeleteDirectory(DirectoryInfo? directory)
+	{
+		if (directory is not { Exists: true, }) return;
+		try
+		{
+			directory.Delete(true);
 		}
 		catch (Exception)
 		{

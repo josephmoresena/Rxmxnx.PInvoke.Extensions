@@ -153,7 +153,7 @@ internal abstract partial class Utf8Comparator<TChar> : Utf8Comparator where TCh
 			Rune? runeA = Utf8Comparator.DecodeRuneFromUtf8(ref textA);
 			Rune? runeB = this.DecodeRune(ref textB);
 
-			//If the runes are not comparable to each other a full text comparison will be needed.
+			// If the runes are not comparable, a full text comparison is required.
 			if (!runeA.HasValue || !runeB.HasValue)
 				return this.Compare(textA0, textB0, this._ignoreCase, this.GetSubStringB(textB, stringB)) == 0;
 			if (!this.RuneEqual(runeA.Value, runeB.Value)) return false;

@@ -235,7 +235,7 @@ public static unsafe class FixedUtf8Extensions
 	/// </summary>
 	/// <typeparam name="TAction">Type of <see cref="IFixedPointerListAction"/>.</typeparam>
 	/// <param name="seq">Current <see cref="CStringSequence"/> instance.</param>
-	/// <param name="action">A <see cref="IFixedPointerListAction"/> instance.</param>
+	/// <param name="action">An <see cref="IFixedPointerListAction"/> instance.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
@@ -275,7 +275,7 @@ public static unsafe class FixedUtf8Extensions
 	/// </summary>
 	/// <typeparam name="TAction">Type of <see cref="IFixedPointerListAction"/>.</typeparam>
 	/// <param name="seq">Current <see cref="CStringSequence"/> instance.</param>
-	/// <param name="action">A <see cref="IFixedPointerListAction"/> instance.</param>
+	/// <param name="action">An <see cref="IFixedPointerListAction"/> instance.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
@@ -318,7 +318,7 @@ public static unsafe class FixedUtf8Extensions
 	/// <typeparam name="TFunction">Type of <see cref="IFixedPointerListFunction{TResult}"/>.</typeparam>
 	/// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
 	/// <param name="seq">Current <see cref="CStringSequence"/> instance.</param>
-	/// <param name="func">A <see cref="IFixedPointerListFunction{TResult}"/> instance.</param>
+	/// <param name="func">An <see cref="IFixedPointerListFunction{TResult}"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
@@ -364,7 +364,7 @@ public static unsafe class FixedUtf8Extensions
 	/// <typeparam name="TFunction">Type of <see cref="IFixedPointerListFunction{TResult}"/>.</typeparam>
 	/// <typeparam name="TResult">The type of the return value of <paramref name="func"/>.</typeparam>
 	/// <param name="seq">Current <see cref="CStringSequence"/> instance.</param>
-	/// <param name="func">A <see cref="IFixedPointerListFunction{TResult}"/> instance.</param>
+	/// <param name="func">An <see cref="IFixedPointerListFunction{TResult}"/> instance.</param>
 	/// <param name="result">Output. Function result.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]

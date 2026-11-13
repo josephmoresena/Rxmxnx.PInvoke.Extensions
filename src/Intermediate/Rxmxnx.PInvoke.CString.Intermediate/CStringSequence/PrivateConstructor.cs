@@ -11,7 +11,8 @@ public partial class CStringSequence
 	/// </summary>
 	private CStringSequence()
 	{
-		this._lengths = [];
+		// ReSharper disable once UseCollectionExpression
+		this._lengths = Array.Empty<Int32>();
 		this._value = String.Empty;
 		this._cache = Array.Empty<CString?>();
 	}

@@ -1,17 +1,17 @@
 # Unit Testing Overview
 
 To ensure the correct functionality of all components, dedicated test projects were created using **xUnit** and
-**AutoFixture**, targeting each of the intermediary libraries individually. This allows for isolated testing of the
+**AutoFixture**, targeting each of the intermediate libraries individually. This allows isolated testing of the
 components integrated into the `Rxmxnx.PInvoke.Extensions` package. However, some alternate execution paths—such as
 Native AOT or reflection-free mode—cannot be fully covered by these test projects.
 
 ## Test Projects
 
-* **`Common.Tests`**: Contains test cases for all components in the `Common` intermediary library, focusing primarily on
-  elements that are not reused by other intermediary components. Tests in this project are considered low-level and
+* **`Common.Tests`**: Contains test cases for all components in the `Common` intermediate library, focusing primarily on
+  elements that are not reused by other intermediate components. Tests in this project are considered low-level and
   foundational compared to those in the other test suites.
 * **`Buffers.Tests`**: Validates buffer allocation (binary and non-binary) across various data types. These tests are
-  more advanced as they extensively utilize reflection to avoid undesired behavior during validation. This is necessary
+  more advanced as they extensively use reflection to avoid undesired behavior during validation. This is necessary
   because the library statically caches metadata used for runtime buffer generation.
 * **`CString.Tests`**: Tests UTF-8 text handling and UTF-8 string sequences, covering different internal representations
   through `CString` and `CStringSequence` instances. Powered by the `CString.Tests.SourceGenerator` project, it includes

@@ -14,11 +14,11 @@ public partial class CString
 	/// <param name="length">The number of <see cref="Byte"/> units within the pointed array to be used.</param>
 	internal CString(IntPtr ptr, Int32 length) : this(ptr, length, false) { }
 	/// <summary>
-	/// Initializes a new instance of the <see cref="CString"/> class which lives inside
-	/// <paramref name="sequence"/> with <paramref name="index"/> as index element.
+	/// Initializes a new instance of the <see cref="CString"/> class that is the element at
+	/// <paramref name="index"/> in <paramref name="sequence"/>.
 	/// </summary>
-	/// <param name="sequence">The <see cref="CStringSequence"/> containing current UTF-8 text.</param>
-	/// <param name="index">Index element of current UTF-8 text into <paramref name="sequence"/>.</param>
+	/// <param name="sequence">The <see cref="CStringSequence"/> that contains the current UTF-8 text.</param>
+	/// <param name="index">The zero-based index of the current UTF-8 text in <paramref name="sequence"/>.</param>
 	/// <param name="length">Current UTF-8 text length.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]

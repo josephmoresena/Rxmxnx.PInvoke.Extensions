@@ -49,7 +49,7 @@ public readonly ref partial struct FixedPointerValue
 	/// <summary>
 	/// Tries to create a <see cref="FixedPointerValue"/> from <paramref name="instance"/>
 	/// </summary>
-	/// <param name="instance">A <see cref="IFixedPointer"/> instance.</param>
+	/// <param name="instance">An <see cref="IFixedPointer"/> instance.</param>
 	/// <param name="value">Output. A <see cref="FixedPointerValue"/> instance.</param>
 	/// <returns>
 	/// <see langword="true"/> if <paramref name="instance"/> was successfully converted to
@@ -125,5 +125,13 @@ public readonly ref partial struct FixedPointerValue
 	internal static IFixedContext<Byte> AsBinaryContext<T, TFixedContext>(TFixedContext ctx)
 		where TFixedContext : IFixedMemory<T>, allows ref struct
 		=> ctx.AsBinaryContext();
+	/// <inheritdoc cref="IFixedReference{T}.Transformation{TDestination}(out IFixedMemory)"/>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	internal static IFixedReference<TDestination>
+		TransformationReference<T, TFixedReference, TDestination>(TFixedReference reference, out IFixedMemory residual)
+		where TFixedReference : IFixedReference<T>, allows ref struct where T : allows ref struct
+		=> reference.Transformation<TDestination>(out residual);
 #endif
 }

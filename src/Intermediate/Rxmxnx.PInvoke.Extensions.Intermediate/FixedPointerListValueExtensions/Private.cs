@@ -50,7 +50,9 @@ public static unsafe partial class FixedPointerListValueExtensions
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#pragma warning disable CA1517
 	private static FixedPointerInfo CreateFixedPointerInfo<T>(this Span<T> span, void* ptr, out Type typeRef)
+#pragma warning restore CA1517
 	{
 		typeRef = typeof(T);
 		return new()
@@ -92,11 +94,63 @@ public static unsafe partial class FixedPointerListValueExtensions
 	/// <param name="ptr">Fixed unmanaged pointer.</param>
 	/// <returns>A <see cref="FixedPointerInfo"/> instance.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#pragma warning disable CA1517
 	private static FixedPointerInfo CreateFixedPointerInfo<T>(this Span<T> span, void* ptr)
+#pragma warning restore CA1517
 		=> new()
 		{
 			Pointer = ptr,
 			Count = span.Length,
+			SizeOf = sizeof(T),
+			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
+			ConstructorOrFunctionPointer = default,
+			TypeOrFunctionPointer = FixedPointerInfo.ToUnmanaged(&NativeUtilities.GetType<T>),
+		};
+#endif
+
+#if !NET5_0_OR_GREATER
+	/// <summary>
+	/// Retrieves the <see cref="FixedPointerInfo"/> instance for a pinned address.
+	/// </summary>
+	/// <typeparam name="T">Type of the referenced value.</typeparam>
+	/// <param name="ptr">Pinned address.</param>
+	/// <param name="typeRef">Output. Current type.</param>
+	/// <returns>A <see cref="FixedPointerInfo"/> instance.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static FixedPointerInfo CreateFixedPointerInfo<T>(void* ptr, out Type typeRef)
+	{
+		typeRef = typeof(T);
+		return new()
+		{
+			Pointer = ptr,
+			Count = 1,
+			SizeOf = sizeof(T),
+			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+			ConstructorOrFunctionPointer = default,
+#endif
+			TypeOrFunctionPointer = Unsafe.AsPointer(ref typeRef),
+		};
+	}
+#else
+	/// <summary>
+	/// Retrieves the <see cref="FixedPointerInfo"/> instance for a pinned address.
+	/// </summary>
+	/// <typeparam name="T">Type of the referenced value.</typeparam>
+	/// <param name="ptr">Pinned address.</param>
+	/// <returns>A <see cref="FixedPointerInfo"/> instance.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static FixedPointerInfo CreateFixedPointerInfo<T>(void* ptr)
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
+		=> new()
+		{
+			Pointer = ptr,
+			Count = 1,
 			SizeOf = sizeof(T),
 			IsUnmanaged = !RuntimeHelpers.IsReferenceOrContainsReferences<T>(),
 			ConstructorOrFunctionPointer = default,

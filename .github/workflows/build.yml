@@ -14,12 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up JDK 21
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: 21
           distribution: 'zulu'
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: |
             2.0.x
@@ -32,9 +32,10 @@ jobs:
             8.0.x
             9.0.x
             10.0.x
+            11.0.x
       - name: Setup Tree .NET Core Pre-requisites
         run: |
-          sudo apt-get install tree unzip --assume-yes
+          sudo apt-get install tree unzip gdb lldb libc6-dbg --assume-yes
           
           wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
           sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
@@ -43,18 +44,23 @@ jobs:
           wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
           sudo dpkg -i libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
           rm libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
-      - uses: actions/checkout@v5
+
+          # .NET Core 2.1 only probes ICU through version 70. Ubuntu 26.04 ships a newer libicu.
+          wget https://archive.ubuntu.com/ubuntu/pool/main/i/icu/libicu70_70.1-2_amd64.deb
+          sudo dpkg -i libicu70_70.1-2_amd64.deb
+          rm libicu70_70.1-2_amd64.deb
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Cache SonarCloud packages
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Cache SonarCloud scanner
         id: cache-sonar-scanner
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ./.sonar/scanner
           key: ${{ runner.os }}-sonar-scanner
@@ -73,20 +79,7 @@ jobs:
           rm -rf src/LegacyAppTest
       - name: Install Mono Framework
         run: |
-          sudo apt install ca-certificates gnupg --assume-yes
-          sudo gpg --homedir /tmp --no-default-keyring --keyring /usr/share/keyrings/mono-official-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-          echo "deb [signed-by=/usr/share/keyrings/mono-official-archive-keyring.gpg] https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
-          sudo apt update
-
-          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          sudo dpkg -i libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-          rm libssl1.1_1.1.0g-2ubuntu4_amd64.deb
-
-          wget https://archive.ubuntu.com/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
-          sudo dpkg -i libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
-          rm libssl1.0.0_1.0.2n-1ubuntu5.13_amd64.deb
-
-          sudo apt install mono-complete mono-vbnc mono-dbg gdb libssl3
+          bash ./Install-Mono.sh
           mv ./ApplicationTest src/ApplicationTest
       - name: Clean test results
         run: |
@@ -99,102 +92,116 @@ jobs:
         shell: pwsh
         run: |
           $sonarStarted = $false
+          $failure = $null
 
-          # ----------------------------------------
-          # SonarQube - Begin
-          # ----------------------------------------
-          Write-Host "Starting SonarScanner..."
+          try {
+            # ----------------------------------------
+            # SonarQube - Begin
+            # ----------------------------------------
+            Write-Host "Starting SonarScanner..."
 
-          if ([string]::IsNullOrWhiteSpace($env:SONAR_TOKEN)) {
-            Write-Warning "SONAR_TOKEN is not available. SonarQube analysis will be skipped."
-          }
-          else {
-            ./.sonar/scanner/dotnet-sonarscanner begin `
-              /k:"josephmoresena_PInvoke.Extensions" `
-              /o:"josephmoresena" `
-              /d:sonar.token="$env:SONAR_TOKEN" `
-              /d:sonar.host.url="https://sonarcloud.io" `
-              /d:sonar.scanner.scanAll=false `
-              /d:sonar.coverage.exclusions="**Test.cs,**Tests.cs,**test.cs,**tests.cs,**.SourceGenerator/*.cs" `
-              /d:sonar.cs.vstest.reportsPaths="TestResults/*.trx" `
-              /d:sonar.cs.opencover.reportsPaths="TestResults/*/coverage.opencover.xml" `
-              /d:sonar.cpd.exclusions="**/NativeUtilities/**FixedAction.cs,**/NativeUtilities/**FixedFunc.cs,**/IManagedBinaryBuffer/StaticCompose.cs,**Test/**Tests**/**.cs,**/Localization/**MessageResource.cs,**/FrameworkCompat/MarvinCompat.cs,**/Fixed*ValueExtensions.cs,**/BootstrapTypes.cs,**/FixedCStringSequence.cs"
-
-            if ($LASTEXITCODE -eq 0 -and (Test-Path ".sonarqube/conf/SonarQubeAnalysisConfig.xml")) {
-              $sonarStarted = $true
-              Write-Host "SonarScanner started successfully."
+            if ([string]::IsNullOrWhiteSpace($env:SONAR_TOKEN)) {
+              Write-Warning "SONAR_TOKEN is not available. SonarQube analysis will be skipped."
             }
             else {
-              Write-Warning "SonarScanner begin failed. Continuing with build and tests."
+              ./.sonar/scanner/dotnet-sonarscanner begin `
+                /k:"josephmoresena_PInvoke.Extensions" `
+                /o:"josephmoresena" `
+                /d:sonar.token="$env:SONAR_TOKEN" `
+                /d:sonar.host.url="https://sonarcloud.io" `
+                /d:sonar.scanner.scanAll=false `
+                /d:sonar.coverage.exclusions="**Test.cs,**Tests.cs,**test.cs,**tests.cs,**.SourceGenerator/*.cs" `
+                /d:sonar.cs.vstest.reportsPaths="TestResults/*.trx" `
+                /d:sonar.cs.opencover.reportsPaths="TestResults/*/coverage.opencover.xml" `
+                /d:sonar.cpd.exclusions="**/NativeUtilities/**FixedAction.cs,**/NativeUtilities/**FixedFunc.cs,**/IManagedBinaryBuffer/StaticCompose.cs,**Test/**Tests**/**.cs,**/Localization/**MessageResource.cs,**/FrameworkCompat/MarvinCompat.cs,**/Fixed*ValueExtensions.cs,**/BootstrapTypes.cs,**/FixedCStringSequence.cs,**/FixedPointerListValueExtensions/*.cs"
+
+              if ($LASTEXITCODE -eq 0 -and (Test-Path ".sonarqube/conf/SonarQubeAnalysisConfig.xml")) {
+                $sonarStarted = $true
+                Write-Host "SonarScanner started successfully."
+              }
+              else {
+                Write-Warning "SonarScanner begin failed. Continuing with build and tests."
+              }
             }
-          }
 
-          # ----------------------------------------
-          # Restore
-          # ----------------------------------------
-          Write-Host "Restoring..."
+            # ----------------------------------------
+            # Restore
+            # ----------------------------------------
+            Write-Host "Restoring..."
 
-          dotnet restore src
-
-          if ($LASTEXITCODE -ne 0) {
-            throw "dotnet restore failed with exit code $LASTEXITCODE"
-          }
-
-          # ----------------------------------------
-          # Build
-          # ----------------------------------------
-          Write-Host "Building..."
-
-          dotnet build src `
-            /p:MultipleFrameworkTest=true `
-            --configuration Release `
-            --disable-build-servers `
-            /nr:false `
-            /maxcpucount:1
-
-          if ($LASTEXITCODE -ne 0) {
-            throw "dotnet build failed with exit code $LASTEXITCODE"
-          }
-
-          # ----------------------------------------
-          # Tests
-          # ----------------------------------------
-          Write-Host "Testing..."
-
-          dotnet test src `
-            /p:MultipleFrameworkTest=true `
-            /p:CollectXPlatCoverage=true `
-            --verbosity normal `
-            --results-directory TestResults/ `
-            --logger "trx;verbosity=detailed" `
-            --no-build `
-            --no-restore `
-            --configuration Release `
-            -- `
-            DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
-
-          if ($LASTEXITCODE -ne 0) {
-            throw "dotnet test failed with exit code $LASTEXITCODE"
-          }
-
-          # ----------------------------------------
-          # SonarQube - End
-          # ----------------------------------------
-          if ($sonarStarted) {
-            Write-Host "Finishing SonarScanner..."
-
-            ./.sonar/scanner/dotnet-sonarscanner end `
-              /d:sonar.token="$env:SONAR_TOKEN"
+            dotnet restore src
 
             if ($LASTEXITCODE -ne 0) {
-              Write-Warning "SonarScanner end failed. Build and tests completed successfully."
+              throw "dotnet restore failed with exit code $LASTEXITCODE"
             }
-            else {
-              Write-Host "SonarQube analysis completed successfully."
+
+            # ----------------------------------------
+            # Build
+            # ----------------------------------------
+            Write-Host "Building..."
+
+            dotnet build src `
+              /p:MultipleFrameworkTest=true `
+              --configuration Release `
+              --disable-build-servers `
+              /nr:false `
+              /maxcpucount:1
+
+            if ($LASTEXITCODE -ne 0) {
+              throw "dotnet build failed with exit code $LASTEXITCODE"
+            }
+
+            # ----------------------------------------
+            # Tests
+            # ----------------------------------------
+            Write-Host "Testing..."
+
+            dotnet test src `
+              /p:MultipleFrameworkTest=true `
+              /p:CollectXPlatCoverage=true `
+              --verbosity normal `
+              --results-directory TestResults/ `
+              --logger "trx;verbosity=detailed" `
+              --no-build `
+              --no-restore `
+              --configuration Release `
+              -- `
+              DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+
+            if ($LASTEXITCODE -ne 0) {
+              throw "dotnet test failed with exit code $LASTEXITCODE"
             }
           }
-          else {
-            Write-Warning "SonarQube analysis was skipped."
+          catch {
+            $failure = $_
+          }
+          finally {
+            # ----------------------------------------
+            # SonarQube - End
+            # ----------------------------------------
+            if ($sonarStarted) {
+              Write-Host "Finishing SonarScanner..."
+
+              ./.sonar/scanner/dotnet-sonarscanner end `
+                /d:sonar.token="$env:SONAR_TOKEN"
+
+              if ($LASTEXITCODE -ne 0) {
+                Write-Warning "SonarScanner end failed."
+              }
+              elseif ($null -eq $failure) {
+                Write-Host "SonarQube analysis completed successfully."
+              }
+              else {
+                Write-Warning "SonarScanner finished after a build or test failure."
+              }
+            }
+            elseif ($null -eq $failure) {
+              Write-Warning "SonarQube analysis was skipped."
+            }
+          }
+
+          if ($null -ne $failure) {
+            throw $failure
           }
       - name: Pack assembly
         working-directory: ./package/Rxmxnx.PInvoke.Extensions
@@ -224,13 +231,13 @@ jobs:
             /p:OutDir=../../../artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest.Legacy
           rm -rf ./obj
       - name: Cache NuGet Packages
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: ./package/Nuget
           key: internal-nuget-${{ github.run_id }}
           enableCrossOsArchive: true
       - name: Cache Compiled ApplicationTest (Mono-Build)
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: |
             ./artifacts/Mono/Rxmxnx.PInvoke.ApplicationTest
@@ -238,7 +245,7 @@ jobs:
           key: internal-monoapp-bin-${{ github.run_id }}
           enableCrossOsArchive: true
       - name: Cache Compiled Tests
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: |
             ./src/Test/**/bin/Release/netstandard2.0

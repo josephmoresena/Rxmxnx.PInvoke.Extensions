@@ -22,21 +22,20 @@ public static partial class AotInfo
 #endif
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 	/// <summary>
-	/// Indicates whether the function pointer of <paramref name="methodHandle"/> references to an R/RX memory section.
+	/// Indicates whether the function pointer of <paramref name="methodHandle"/> references a native linked image.
 	/// </summary>
 	/// <param name="methodHandle">A <see langword="RuntimeMethodHandle"/> value.</param>
 	/// <returns>
-	/// <see langword="true"/> if the function pointer references to an R/RX memory section; otherwise,
+	/// <see langword="true"/> if the function pointer references a native linked image; otherwise,
 	/// <see langword="false"/>.
 	/// </returns>
 #if !PACKAGE
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 	[ExcludeFromCodeCoverage]
 #endif
-	internal static unsafe Boolean IsImageMethodUnsafe(RuntimeMethodHandle methodHandle)
+	internal static Boolean IsImageMethodUnsafe(RuntimeMethodHandle methodHandle)
 	{
 		RuntimeHelpers.PrepareMethod(methodHandle);
-		return MemoryInspector.Instance.IsReadOnlyAddress(methodHandle.GetFunctionPointer().ToPointer());
+		return MemoryInspector.Instance.IsImageMethod(methodHandle);
 	}
 #endif
 }

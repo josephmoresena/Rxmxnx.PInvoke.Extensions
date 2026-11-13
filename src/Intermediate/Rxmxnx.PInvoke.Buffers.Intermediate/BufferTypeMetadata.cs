@@ -38,11 +38,18 @@ public abstract partial class BufferTypeMetadata
 	/// the count of the components.
 	/// </exception>
 	/// <returns>The component at the specified index within the buffer metadata.</returns>
+	[IndexerName("Item")]
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
-	[IndexerName("Item")]
-	public abstract BufferTypeMetadata this[Int32 index] { get; }
+	public virtual BufferTypeMetadata this[Int32 index]
+	{
+		get
+		{
+			ValidationUtilities.ThrowIfInvalidSequenceIndex(index, 0);
+			return this;
+		}
+	}
 }
 
 /// <summary>
@@ -52,21 +59,7 @@ public abstract partial class BufferTypeMetadata
 public abstract partial class BufferTypeMetadata<T> : BufferTypeMetadata
 {
 	/// <inheritdoc/>
-	public sealed override BufferTypeMetadata this[Int32 index]
-	{
-#if NETFRAMEWORK || NETSTANDARD2_0
-		[SecuritySafeCritical]
-#endif
-		get => this.Components.Span[index];
-	}
-	/// <inheritdoc/>
-	public sealed override Int32 ComponentCount
-	{
-#if NETFRAMEWORK || NETSTANDARD2_0
-		[SecuritySafeCritical]
-#endif
-		get => this.Components.Length;
-	}
+	public override Int32 ComponentCount => 0;
 	/// <summary>
 	/// Size of a single element.
 	/// </summary>
@@ -74,7 +67,7 @@ public abstract partial class BufferTypeMetadata<T> : BufferTypeMetadata
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 #pragma warning disable CS8500
-	public override unsafe Int32 SizeOfElement => sizeof(T);
+	public sealed override unsafe Int32 SizeOfElement => sizeof(T);
 #pragma warning restore CS8500
 
 	/// <summary>

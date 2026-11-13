@@ -44,6 +44,16 @@ internal partial class MemoryInspector
 				return true;
 			return (info.Protection & Protection.Write) == Protection.None;
 		}
+		/// <inheritdoc/>
+#if NETFRAMEWORK || NETSTANDARD2_0
+		[SecurityCritical]
+#endif
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public override Boolean IsImageMethod(RuntimeMethodHandle methodHandle)
+		{
+			Byte* image = stackalloc Byte[4 * IntPtr.Size];
+			return SystemB.LocateImage(methodHandle.GetFunctionPointer().ToPointer(), image) != 0;
+		}
 	}
 }
 #endif

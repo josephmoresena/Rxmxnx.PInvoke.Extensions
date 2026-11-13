@@ -21,7 +21,7 @@ public interface IReadOnlyFixedContext<T> : IReadOnlyFixedMemory<T>
 
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
-	/// Interface representing a disposable <see cref="IReadOnlyFixedReference{T}"/> object for a context
+	/// Interface representing a disposable <see cref="IReadOnlyFixedContext{T}"/> object for a context
 	/// of a read-only fixed memory block with a specific type.
 	/// This interface is used for managing fixed memory blocks that require explicit resource cleanup.
 	/// </summary>

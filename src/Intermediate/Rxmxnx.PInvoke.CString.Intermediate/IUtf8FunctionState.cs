@@ -13,6 +13,10 @@ public interface IUtf8FunctionState<TSelf> where TSelf : struct, IUtf8FunctionSt
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
+	[Obsolete("Implement TryAlloc method instead.")]
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS1133)]
+#endif
 	static virtual Func<TSelf, GCHandleType, GCHandle>? Alloc => default;
 
 	/// <summary>
@@ -35,5 +39,29 @@ public interface IUtf8FunctionState<TSelf> where TSelf : struct, IUtf8FunctionSt
 	[ExcludeFromCodeCoverage]
 #endif
 	static virtual Int32 GetLength(in TSelf state) => TSelf.GetSpan(state).Length;
+
+	/// <summary>
+	/// Tries to create a new <see cref="GCHandle"/> from <paramref name="state"/>.
+	/// </summary>
+	/// <param name="state">Current item sequence state.</param>
+	/// <param name="type">The type of <see cref="GCHandle"/> to create.</param>
+	/// <param name="handle">Output. Created <see cref="GCHandle"/> that protects the value region.</param>
+	/// <returns>
+	/// <see langword="true"/> if a <paramref name="handle"/> was successfully created; otherwise, <see langword="false"/>.
+	/// </returns>
+	/// <remarks>The current implementation forwards <paramref name="type"/> to <see cref="Alloc"/>.</remarks>
+	static virtual Boolean TryAlloc(TSelf state, GCHandleType type, out GCHandle handle)
+	{
+#pragma warning disable CS0618
+		if (TSelf.Alloc is null)
+		{
+			handle = default;
+			return false;
+		}
+
+		handle = TSelf.Alloc(state, type);
+#pragma warning restore CS0618
+		return handle.IsAllocated;
+	}
 }
 #endif

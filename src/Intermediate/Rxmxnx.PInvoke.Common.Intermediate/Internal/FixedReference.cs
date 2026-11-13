@@ -35,6 +35,18 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 	/// </summary>
 	/// <param name="ptr">Pointer to the fixed memory reference.</param>
 	public FixedReference(void* ptr) : base(ptr, sizeof(T)) { }
+#if NET9_0_OR_GREATER
+	/// <summary>
+	/// Constructor that takes a pointer to a fixed memory reference, its size, and a validity handle.
+	/// </summary>
+	/// <param name="ptr">Pointer to the fixed memory reference.</param>
+	/// <param name="binaryLength">Memory block size in bytes.</param>
+	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	public FixedReference(void* ptr, Int32 binaryLength, FixedValueHandle handle) : base(ptr, binaryLength, handle) { }
+#endif
 
 	/// <summary>
 	/// Constructor that takes a <see cref="FixedMemory"/> instance.

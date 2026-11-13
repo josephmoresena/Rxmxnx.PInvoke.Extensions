@@ -34,7 +34,7 @@ internal abstract partial class MetadataStorage
 
 #if NET8_0_OR_GREATER
 	/// <summary>
-	/// Initialize bootstrap object storage.
+	/// Initializes the bootstrap object storage.
 	/// </summary>
 	/// <param name="span">A <see cref="BufferTypeMetadata{Object}"/> span.</param>
 	/// <param name="bufferTypeMetadata">Initial <see cref="BufferTypeMetadata{Object}"/> instance.</param>
@@ -48,8 +48,8 @@ internal abstract partial class MetadataStorage
 		if (refComponent is not null) return;
 
 		refComponent = bufferTypeMetadata;
-		foreach (BufferTypeMetadata<Object> metadataComponent in bufferTypeMetadata.Components.Span)
-			MetadataStorage.Initialize(span, metadataComponent);
+		for (Int32 index = 0; index < bufferTypeMetadata.ComponentCount; index++)
+			MetadataStorage.Initialize(span, (BufferTypeMetadata<Object>)bufferTypeMetadata[index]);
 	}
 #endif
 }

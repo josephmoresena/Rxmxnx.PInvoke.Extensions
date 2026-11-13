@@ -39,7 +39,7 @@ internal partial class MemoryInspector
 				void* maps = Procstat.GetMaps(Procstat.procstat, Util.KernelInfo, out UInt32 count);
 				try
 				{
-					VmMap.AppendMaps(maps, count, bsd);
+					BsdInspector.AppendMaps<FreeBsdVmMap>(maps, count, bsd);
 				}
 				finally
 				{

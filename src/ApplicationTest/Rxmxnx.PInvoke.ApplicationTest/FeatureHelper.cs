@@ -5,11 +5,6 @@ using System.IO;
 using System.Collections.Generic;
 #endif
 
-#if !NETCOREAPP2_1_OR_GREATER && !NET46_OR_GREATER && !WINDOWS_UWP
-using System.Text;
-
-#endif
-
 namespace Rxmxnx.PInvoke.ApplicationTest
 {
 	public static class FeatureHelper
@@ -145,7 +140,9 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					writer.WriteLine(ex);
 				}
 				else
+				{
 					writer.WriteLine($"**Unable to perform conversion: {ex.Message}**");
+				}
 			}
 			writer.WriteLine("=== Enumerable sequences ===");
 			foreach (CString value in sequence)
@@ -301,7 +298,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 		private readonly struct PrintAction<T> : IFixedContextAction<T>
 		{
 			private readonly TextWriter _writer;
-			public PrintAction(TextWriter writer) { this._writer = writer; }
+			public PrintAction(TextWriter writer) => this._writer = writer;
 			public void Accept(FixedContextValue<T> ctx) => FeatureHelper.Print(ctx, this._writer);
 		}
 
