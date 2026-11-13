@@ -19,7 +19,7 @@ internal partial class MemoryInspector
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 		public override unsafe Boolean IsImageMethod(RuntimeMethodHandle methodHandle)
-			=> this.IsReadOnlyAddress(methodHandle.Value.ToPointer());
+			=> this.IsReadOnlyAddress(methodHandle.GetFunctionPointer().ToPointer());
 	}
 }
 #endif
