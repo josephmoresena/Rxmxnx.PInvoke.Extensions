@@ -22,7 +22,7 @@ internal partial class MemoryInspector
 				void* maps = Util.GetMaps(StandardC.ProcessId, out UIntPtr count);
 				try
 				{
-					VmMap.AppendMaps(maps, (UInt32)count, bsd);
+					BsdInspector.AppendMaps<VmMap>(maps, (UInt32)count, bsd);
 				}
 				finally
 				{
