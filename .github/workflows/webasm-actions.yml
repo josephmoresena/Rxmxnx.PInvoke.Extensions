@@ -32,8 +32,7 @@ jobs:
       - name: Install WebAssembly Workload
         shell: bash
         run: |
-          dotnet workload install wasm-tools
-          dotnet workload install wasm-tools-net9
+          dotnet workload install wasm-tools, wasm-tools-net10, wasm-tools-net9
           dotnet workload update
       - name: Install Escripten
         shell: bash

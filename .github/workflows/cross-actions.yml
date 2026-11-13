@@ -222,10 +222,10 @@ jobs:
         if: inputs.run_tests == true && runner.os == 'Windows'
         shell: pwsh
         run: |
+          # Only the x86 runtime of the latest .NET version is removed, since the x64 runtime was installed as 
+          # part of the SDK package.
           $versions = 6..11
-          $latestVersion = ($versions | Measure-Object -Maximum).Maximum
           foreach ($v in $versions) {
-            if ($v -eq $latestVersion -and $a -eq "x64") { continue }
             winget uninstall "Microsoft.DotNet.Runtime.$v" `
                 --force `
                 --purge `
