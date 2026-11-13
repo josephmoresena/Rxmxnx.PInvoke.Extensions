@@ -67,6 +67,9 @@ public partial class NullableAttributePatchTask
 	/// <returns>
 	/// <see langword="true"/> when a flag is 2, or when the argument cannot be read and the attribute must stay.
 	/// </returns>
+#if !PACKAGE
+	[SuppressMessage("csharpsquid", "S3267")]
+#endif
 	private static Boolean HasAnnotatedFlag(CustomAttribute attribute)
 	{
 		if (attribute.ConstructorArguments.Count == 0) return true;
