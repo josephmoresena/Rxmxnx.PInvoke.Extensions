@@ -11,7 +11,7 @@ public sealed class StringJoinEmptyTest
 	public void LocalEmptyTest(Boolean emptyData)
 	{
 		String? separator = !emptyData ? String.Empty : default;
-		String?[] values = !emptyData ? Enumerable.Repeat(String.Empty, 3).ToArray() : [];
+		String?[] values = !emptyData ? [.. Enumerable.Repeat(String.Empty, 3),] : [];
 		StringJoinEmptyTest.Test(separator, values);
 		StringJoinEmptyTest.Test(separator, values.ToList());
 	}
@@ -22,7 +22,7 @@ public sealed class StringJoinEmptyTest
 	public void NullEmptyTest(Boolean emptyData)
 	{
 		String? separator = !emptyData ? String.Empty : default;
-		String?[] values = !emptyData ? Enumerable.Repeat<String?>(default, 3).ToArray() : [];
+		String?[] values = !emptyData ? [.. Enumerable.Repeat<String?>(default, 3),] : [];
 		StringJoinEmptyTest.Test(separator, values);
 		StringJoinEmptyTest.Test(separator, values.ToList());
 	}
@@ -34,7 +34,7 @@ public sealed class StringJoinEmptyTest
 	public async Task LocalEmptyTestAsync(Boolean emptyData)
 	{
 		String? separator = !emptyData ? String.Empty : default;
-		String?[] values = !emptyData ? Enumerable.Repeat(String.Empty, 3).ToArray() : [];
+		String?[] values = !emptyData ? [.. Enumerable.Repeat(String.Empty, 3),] : [];
 		await StringJoinEmptyTest.TestAsync(separator, values);
 		await StringJoinEmptyTest.TestAsync(separator, values.ToList());
 	}
@@ -45,7 +45,7 @@ public sealed class StringJoinEmptyTest
 	public async Task NullEmptyTestAsync(Boolean emptyData)
 	{
 		String? separator = !emptyData ? String.Empty : default;
-		String?[] values = !emptyData ? Enumerable.Repeat<String?>(default, 3).ToArray() : [];
+		String?[] values = !emptyData ? [.. Enumerable.Repeat<String?>(default, 3),] : [];
 		await StringJoinEmptyTest.TestAsync(separator, values);
 		await StringJoinEmptyTest.TestAsync(separator, values.ToList());
 	}

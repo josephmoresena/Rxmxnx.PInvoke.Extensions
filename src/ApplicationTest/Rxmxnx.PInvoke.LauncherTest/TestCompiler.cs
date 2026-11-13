@@ -12,9 +12,11 @@ public static partial class TestCompiler
 					[RuntimeInformation.OSArchitecture,];
 
 		NetVersion maxNetVersion = netVersions.Max();
-		String[] appProjectFiles = projectDirectory.GetDirectories("*.*ApplicationTest", SearchOption.AllDirectories)
-		                                           .SelectMany(d => d.GetFiles("*.*proj")).Select(f => f.FullName)
-		                                           .ToArray();
+		String[] appProjectFiles =
+		[
+			.. projectDirectory.GetDirectories("*.*ApplicationTest", SearchOption.AllDirectories)
+			                   .SelectMany(d => d.GetFiles("*.*proj")).Select(f => f.FullName),
+		];
 		String? webProjectFile = projectDirectory.GetDirectories("*.*WebApiTest", SearchOption.AllDirectories)
 		                                         .SelectMany(d => d.GetFiles("*.*proj")).Select(f => f.FullName)
 		                                         .FirstOrDefault();
@@ -23,7 +25,7 @@ public static partial class TestCompiler
 		{
 			if (!TestCompiler.ArchSupported(arch)) continue;
 
-			String rid = $"{os}-{Enum.GetName(arch)!.ToLower()}";
+			String rid = $"{os}-{Enum.GetName(arch)!.ToLowerInvariant()}";
 			foreach (NetVersion netVersion in netVersions)
 			{
 				foreach (String appProjectFile in appProjectFiles)
@@ -78,9 +80,11 @@ public static partial class TestCompiler
 	[SupportedOSPlatform("WINDOWS")]
 	public static async Task CompileAppx(String msbuildPath, DirectoryInfo projectDirectory, String outputPath)
 	{
-		String[] appProjectFiles = projectDirectory
-		                           .GetDirectories("*.*ApplicationTest.Windows", SearchOption.AllDirectories)
-		                           .SelectMany(d => d.GetFiles("*.*proj")).Select(f => f.FullName).ToArray();
+		String[] appProjectFiles =
+		[
+			.. projectDirectory.GetDirectories("*.*ApplicationTest.Windows", SearchOption.AllDirectories)
+			                   .SelectMany(d => d.GetFiles("*.*proj")).Select(f => f.FullName),
+		];
 		Int32 bundleCount = 0;
 		foreach (String appProjectFile in appProjectFiles)
 		{
@@ -111,9 +115,11 @@ public static partial class TestCompiler
 	[SupportedOSPlatform("WINDOWS")]
 	public static async Task<String[]> CompileFramework(DirectoryInfo projectDirectory)
 	{
-		FileInfo[] appProjectFiles = projectDirectory
-		                             .GetDirectories("*.ApplicationTest.Legacy", SearchOption.AllDirectories)
-		                             .SelectMany(static d => d.GetFiles("*.*proj")).ToArray();
+		FileInfo[] appProjectFiles =
+		[
+			.. projectDirectory.GetDirectories("*.ApplicationTest.Legacy", SearchOption.AllDirectories)
+			                   .SelectMany(static d => d.GetFiles("*.*proj")),
+		];
 		foreach (FileInfo appProjectFile in appProjectFiles)
 		{
 			String appDirectory = appProjectFile.DirectoryName ?? String.Empty;

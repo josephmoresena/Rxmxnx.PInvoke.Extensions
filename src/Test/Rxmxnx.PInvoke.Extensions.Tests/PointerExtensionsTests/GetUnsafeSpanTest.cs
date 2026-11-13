@@ -48,7 +48,7 @@ public sealed class GetUnsafeSpanTest
 		GetUnsafeSpanTest.EmptyTest<T>(0);
 		GetUnsafeSpanTest.EmptyTest<T>(1);
 
-		T[] input = GetUnsafeSpanTest.fixture.CreateMany<T>(10).ToArray();
+		T[] input = [.. GetUnsafeSpanTest.fixture.CreateMany<T>(10),];
 
 		MemoryHandle handle = input.AsMemory().Pin();
 		fixed (void* p = &MemoryMarshal.GetReference(input.AsSpan()))

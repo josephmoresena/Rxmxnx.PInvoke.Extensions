@@ -269,8 +269,8 @@ public sealed class ValueTests : CStringBuilderTestsBase
 
 	private void AppendTest<T>(Int32 length, Helper<T> helper) where T : unmanaged
 	{
-		T[] values = this._fixture.CreateMany<T>(length).ToArray();
-		T?[] valuesNull = this._fixture.CreateMany<T?>(length).ToArray();
+		T[] values = [.. this._fixture.CreateMany<T>(length),];
+		T?[] valuesNull = [.. this._fixture.CreateMany<T?>(length),];
 		StringBuilder strBuild = new();
 		CStringBuilder cstrBuild = new();
 		foreach (T value in values.AsSpan())
@@ -288,8 +288,8 @@ public sealed class ValueTests : CStringBuilderTestsBase
 	}
 	private void InsertTest<T>(Int32 length, Helper<T> helper) where T : unmanaged
 	{
-		T[] values = this._fixture.CreateMany<T>(length).ToArray();
-		T?[] valuesNull = this._fixture.CreateMany<T?>(length).ToArray();
+		T[] values = [.. this._fixture.CreateMany<T>(length),];
+		T?[] valuesNull = [.. this._fixture.CreateMany<T?>(length),];
 		String? seed = TestSet.GetString(TestSet.GetIndices(1).FirstOrDefault(), true);
 		StringBuilder strBuild = new(seed);
 		CStringBuilder cstrBuild = new(seed);

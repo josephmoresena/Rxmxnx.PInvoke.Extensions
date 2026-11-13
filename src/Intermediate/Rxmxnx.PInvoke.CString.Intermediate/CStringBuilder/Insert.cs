@@ -489,7 +489,7 @@ public sealed partial class CStringBuilder
 		where T : ISpanFormattable
 	{
 		Span<Char> span = stackalloc Char[StackAllocationHelper.StackallocByteThreshold];
-		return value.TryFormat(span, out Int32 count, default, default) ?
+		return value.TryFormat(span, out Int32 count, default, CultureInfo.InvariantCulture) ?
 			builder.Insert(index, span[..count]) :
 			default;
 	}

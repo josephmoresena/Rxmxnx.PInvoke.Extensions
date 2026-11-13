@@ -22,12 +22,15 @@ public sealed class SystemInfoTest
 			RuntimeInformation.IsOSPlatform(OSPlatform.Create("ILLUMOS")) ||
 			RuntimeInformation.IsOSPlatform(OSPlatform.Create("SUNOS")), SystemInfo.IsSolaris);
 		OSPlatform[] platforms = [OSPlatform.Windows, OSPlatform.Linux, OSPlatform.OSX,];
-		String?[] platformNames = platforms.Select(p =>
-		{
-			String result = p.ToString();
-			PInvokeAssert.Equal(RuntimeInformation.IsOSPlatform(p), SystemInfo.IsOsPlatform(result));
-			return result;
-		}).ToArray();
+		String?[] platformNames =
+		[
+			.. platforms.Select(p =>
+			{
+				String result = p.ToString();
+				PInvokeAssert.Equal(RuntimeInformation.IsOSPlatform(p), SystemInfo.IsOsPlatform(result));
+				return result;
+			}),
+		];
 		PInvokeAssert.Equal(platforms.Any(RuntimeInformation.IsOSPlatform), SystemInfo.IsOsPlatform(platformNames));
 		PInvokeAssert.Equal(platforms.Any(RuntimeInformation.IsOSPlatform),
 		                    SystemInfo.IsOsPlatform(platformNames.AsSpan()));

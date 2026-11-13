@@ -1,6 +1,7 @@
 namespace Rxmxnx.PInvoke.Extensions.IlPatcher;
 
 // ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable once UnusedType.Global
 public partial class NullableAttributePatchTask
 {
 	/// <summary>

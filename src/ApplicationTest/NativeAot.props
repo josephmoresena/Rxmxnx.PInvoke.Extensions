@@ -30,8 +30,11 @@
         <IsLtsFramework Condition="'$(TargetFramework)' == 'net6.0'">true</IsLtsFramework>
         <IsLtsFramework Condition="'$(TargetFramework)' == 'net8.0'">true</IsLtsFramework>
         <IsLtsFramework Condition="'$(TargetFramework)' == 'net10.0'">true</IsLtsFramework>
+        <HostArchitecture>$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLowerInvariant())</HostArchitecture>
+        <TargetArchitecture>$(RuntimeIdentifier.Substring($([MSBuild]::Add($(RuntimeIdentifier.LastIndexOf('-')), 1))))</TargetArchitecture>
+        <IsNativeArchitecture Condition="'$(RuntimeIdentifier)' != '' And '$(HostArchitecture)' == '$(TargetArchitecture)'">true</IsNativeArchitecture>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(IsLtsFramework)' == 'true' Or '$(TargetFramework)' == '$(DefaultFramework)'">
+    <PropertyGroup Condition="'$(IsNativeArchitecture)' == 'true' And ('$(IsLtsFramework)' == 'true' Or '$(TargetFramework)' == '$(DefaultFramework)')">
         <IlcGenerateMetadataLog>true</IlcGenerateMetadataLog>
         <IlcGenerateMstatFile>true</IlcGenerateMstatFile>
         <IlcGenerateDgmlFile>true</IlcGenerateDgmlFile>

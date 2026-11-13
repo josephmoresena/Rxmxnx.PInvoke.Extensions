@@ -411,6 +411,7 @@ public sealed class FixedReferenceListTest
 	{
 		public void Accept(scoped FixedPointerValueList list)
 		{
+			// ReSharper disable once ForCanBeConvertedToForeach
 			for (Int32 index = 0; index < list.Count; index++)
 			{
 				PInvokeAssert.False(list[index].IsReadOnly);
@@ -435,6 +436,7 @@ public sealed class FixedReferenceListTest
 	{
 		public void Accept(scoped FixedPointerValueList list)
 		{
+			// ReSharper disable once ForCanBeConvertedToForeach
 			for (Int32 index = 0; index < list.Count; index++)
 			{
 				PInvokeAssert.True(list[index].IsReadOnly);
@@ -461,6 +463,7 @@ public sealed class FixedReferenceListTest
 		public void Accept(scoped FixedPointerValueList list)
 		{
 			this.Count = list.Count;
+			// ReSharper disable once ForCanBeConvertedToForeach
 			for (Int32 index = 0; index < list.Count; index++)
 			{
 				PInvokeAssert.False(list[index].IsReadOnly);
@@ -487,6 +490,7 @@ public sealed class FixedReferenceListTest
 		public void Accept(scoped FixedPointerValueList list)
 		{
 			this.Count = list.Count;
+			// ReSharper disable once ForCanBeConvertedToForeach
 			for (Int32 index = 0; index < list.Count; index++)
 			{
 				PInvokeAssert.True(list[index].IsReadOnly);
@@ -537,8 +541,8 @@ public sealed class FixedReferenceListTest
 	{
 		PInvokeAssert.True(RuntimeHelpers.IsReferenceOrContainsReferences<Span<Byte>>());
 
-		Span<Byte> left = stackalloc Byte[] { 1, 2, };
-		Span<Byte> right = stackalloc Byte[] { 3, 4, };
+		Span<Byte> left = [1, 2,];
+		Span<Byte> right = [3, 4,];
 		SpanPairAction action = new();
 		action.WithSafeFixed(ref left, ref right);
 
@@ -558,8 +562,8 @@ public sealed class FixedReferenceListTest
 	{
 		PInvokeAssert.True(RuntimeHelpers.IsReferenceOrContainsReferences<ReadOnlySpan<Int32>>());
 
-		ReadOnlySpan<Int32> left = stackalloc Int32[] { 7, 8, };
-		ReadOnlySpan<Int32> right = stackalloc Int32[] { 9, 10, };
+		ReadOnlySpan<Int32> left = [7, 8,];
+		ReadOnlySpan<Int32> right = [9, 10,];
 		ReadOnlySpanPairAction action = new();
 		action.WithSafeReadOnlyFixed(in left, in right);
 

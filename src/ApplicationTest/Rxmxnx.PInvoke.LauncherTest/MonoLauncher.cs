@@ -12,5 +12,6 @@ public sealed record MonoLauncher
 	public String NativeRuntimePath { get; init; } = default!;
 	public String IncludeRuntimePath { get; init; } = default!;
 	public String StaticRuntimePath { get; init; } = default!;
+	// ReSharper disable once UnusedAutoPropertyAccessor.Global
 	public String? PkgConfigPath { get; init; }
 }

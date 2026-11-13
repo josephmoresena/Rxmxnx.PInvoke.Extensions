@@ -159,7 +159,9 @@ public partial class NativeUtilities
 	/// <param name="span">A read-only <typeparamref name="T"/> span.</param>
 	/// <returns>A <see cref="FixedPointerInfo"/> instance.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#pragma warning disable CA1517
 	private static FixedPointerInfo CreateFixedPointerInfo<T>(void* ptr, Span<T> span)
+#pragma warning restore CA1517
 		=> new()
 		{
 			Pointer = ptr,

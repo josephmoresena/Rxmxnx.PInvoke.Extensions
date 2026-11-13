@@ -1,3 +1,5 @@
+// ReSharper disable InvocationIsCultureSensitive
+
 #if NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke;
 

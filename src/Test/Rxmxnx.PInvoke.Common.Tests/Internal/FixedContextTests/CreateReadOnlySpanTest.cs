@@ -48,7 +48,7 @@ public sealed class CreateReadOnlySpanTest : FixedContextTestsBase
 
 	private static void Test<T>()
 	{
-		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>().ToArray();
+		T[] values = [.. FixedMemoryTestsBase.Fixture.CreateMany<T>(),];
 		FixedContextTestsBase.WithFixed(values, CreateReadOnlySpanTest.Test);
 		FixedContextTestsBase.WithFixed(values, CreateReadOnlySpanTest.ReadOnlyTest);
 	}

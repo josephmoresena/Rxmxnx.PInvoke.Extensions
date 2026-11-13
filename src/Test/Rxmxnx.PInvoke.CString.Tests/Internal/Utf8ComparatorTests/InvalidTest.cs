@@ -39,7 +39,7 @@ public sealed class InvalidTest
 
 	private static CString GetInvalidCstr(CString cstr)
 	{
-		Byte[] utf8Byte = cstr.ToArray();
+		Byte[] utf8Byte = [.. cstr,];
 		for (Int32 i = 0; i < utf8Byte.Length; i++)
 			utf8Byte[i] = PInvokeRandom.Shared.Next(0, 2) == 0 ? utf8Byte[i] : InvalidTest.GetInvalidByte();
 		return utf8Byte;

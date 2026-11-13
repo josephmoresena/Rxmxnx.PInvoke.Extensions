@@ -55,8 +55,8 @@ public sealed class GetFixedContextTest
 
 	private static void ArrayTest<T>() where T : unmanaged
 	{
-		T[] arr = GetFixedContextTest.fixture.CreateMany<T>(10).ToArray();
-		T[] arr2 = GetFixedContextTest.fixture.CreateMany<T>(arr.Length).ToArray();
+		T[] arr = [.. GetFixedContextTest.fixture.CreateMany<T>(10),];
+		T[] arr2 = [.. GetFixedContextTest.fixture.CreateMany<T>(arr.Length),];
 		GetFixedContextTest.ReadOnlyValueTest<T>(arr.AsMemory());
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 #pragma warning disable CS0612
@@ -64,7 +64,7 @@ public sealed class GetFixedContextTest
 		GetFixedContextTest.Test(arr.AsMemory(), arr2);
 #pragma warning restore CS0612
 		PInvokeAssert.Equal(arr, arr2);
-		arr = GetFixedContextTest.fixture.CreateMany<T>(10).ToArray();
+		arr = [.. GetFixedContextTest.fixture.CreateMany<T>(10),];
 #endif
 		GetFixedContextTest.ValueTest(arr.AsMemory(), arr2);
 	}

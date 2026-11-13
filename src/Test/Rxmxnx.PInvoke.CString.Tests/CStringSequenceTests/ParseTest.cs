@@ -48,7 +48,7 @@ public sealed class ParseTest
 		IReadOnlyList<Int32> indices = TestSet.GetIndices(length);
 		CString?[] values = TestSet.GetValues(indices, handle);
 		CStringSequence seq = new(values);
-		CString[] nonEmpty = values.Where(c => !CString.IsNullOrEmpty(c) && c.All(b => b != 0x0)).ToArray()!;
+		CString[] nonEmpty = [.. values.Where(c => !CString.IsNullOrEmpty(c) && c.All(b => b != 0x0))!,]!;
 		ParseTest.ExactParseTest(nonEmpty, seq.ToString());
 		ParseTest.RandomParseTest(nonEmpty);
 	}

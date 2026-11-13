@@ -10,37 +10,37 @@ public sealed class CreateValueTest : FixedContextTestsBase
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 #endif
 	public void ByteTest() => CreateValueTest.Test<Byte>();
 	[Fact]
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 #endif
 	public void Int16Test() => CreateValueTest.Test<Int16>();
 	[Fact]
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 #endif
 	public void Int32Test() => CreateValueTest.Test<Int32>();
 	[Fact]
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 #endif
 	public void Int64Test() => CreateValueTest.Test<Int64>();
 	[Fact]
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 #endif
 	public void GuidTest() => CreateValueTest.Test<Guid>();
 
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 #endif
 	private static void Test<T>() where T : unmanaged
 	{
-		T[] values = CreateValueTest.fixture.CreateMany<T>(8).ToArray();
+		T[] values = [.. CreateValueTest.fixture.CreateMany<T>(8),];
 		FixedContextTestsBase.WithFixed(values, CreateValueTest.AssertFromFixedContext);
 		FixedContextTestsBase.WithFixed(values, CreateValueTest.AssertFromReadOnlyFixedContext);
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
@@ -48,7 +48,7 @@ public sealed class CreateValueTest : FixedContextTestsBase
 #endif
 	}
 
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 #endif
 	private static void AssertFromFixedContext<T>(FixedContext<T> ctx, T[] values) where T : unmanaged
@@ -62,7 +62,7 @@ public sealed class CreateValueTest : FixedContextTestsBase
 		CreateValueTest.AssertContext(fromDisposable, (ctx as IFixedPointer).Pointer, values);
 #endif
 	}
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 #endif
 	private static void AssertFromReadOnlyFixedContext<T>(ReadOnlyFixedContext<T> ctx, T[] values) where T : unmanaged
@@ -77,7 +77,7 @@ public sealed class CreateValueTest : FixedContextTestsBase
 #endif
 	}
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 #endif
 	private static void AssertEmpty()

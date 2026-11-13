@@ -58,7 +58,7 @@ public sealed class ReadOnlyValPtrTests
 
 	private static unsafe void Test<T>()
 	{
-		T[] arr = ReadOnlyValPtrTests.fixture.CreateMany<T>(10).ToArray();
+		T[] arr = [.. ReadOnlyValPtrTests.fixture.CreateMany<T>(10),];
 #if NETCOREAPP
 		try
 		{

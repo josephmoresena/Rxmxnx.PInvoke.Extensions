@@ -26,6 +26,7 @@ internal sealed record WrittenCString
 		Byte[] result = strm.ToArray();
 		Int32 offset = 0;
 
+		// ReSharper disable once ForCanBeConvertedToForeach
 		for (Int32 i = 0; i < values.Count; i++)
 		{
 			PInvokeAssert.Equal(values[i].Value.Skip(values[i].Start).Take(values[i].Count),

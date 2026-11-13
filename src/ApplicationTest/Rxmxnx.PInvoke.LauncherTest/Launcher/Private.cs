@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.ApplicationTest;
 
+// ReSharper disable once ClassCannotBeInstantiated
 public partial class Launcher
 {
 	private Launcher(DirectoryInfo outputDirectory, Boolean useMono)
@@ -27,11 +28,14 @@ public partial class Launcher
 	}
 
 	private static FileInfo[] GetMonoExecutables(DirectoryInfo monoOutputDirectory)
-		=> monoOutputDirectory.GetDirectories()
-		                      .Where(static d => d.Name.EndsWith("ApplicationTest") ||
-			                             d.Name.EndsWith("ApplicationTest.Legacy"))
-		                      .SelectMany(static d => d.GetFiles("*ApplicationTest.*mono.exe",
-		                                                         SearchOption.TopDirectoryOnly)).ToArray();
+		=>
+		[
+			.. monoOutputDirectory.GetDirectories()
+			                      .Where(static d => d.Name.EndsWith("ApplicationTest") ||
+				                             d.Name.EndsWith("ApplicationTest.Legacy"))
+			                      .SelectMany(static d => d.GetFiles("*ApplicationTest.*mono.exe",
+			                                                         SearchOption.TopDirectoryOnly)),
+		];
 	private static async Task CompileMonoAot(MonoLauncher monoLauncher, String outputDirectory, FileInfo assemblyFile)
 	{
 		String logPath = Path.Combine(outputDirectory, $"{assemblyFile.Name}.{monoLauncher.Architecture}.Mono.AOT.log");

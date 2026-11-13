@@ -7,6 +7,7 @@ public partial class TestCompiler
 	{
 		public String ProjectFile { get; init; }
 		public String OutputPath { get; init; }
+		// ReSharper disable once UnusedAutoPropertyAccessor.Local
 		public String? FrameworkPath { get; init; }
 
 		public static void Append(CompileMonoArgs compileArgs, Collection<String> args)

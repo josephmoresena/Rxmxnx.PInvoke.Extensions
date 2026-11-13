@@ -46,7 +46,7 @@ internal sealed class CStringSequenceDebugView
 #if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 	[Obsolete]
 #endif
-	public CStringSequenceDebugView(FixedCStringSequence fseq) => this._values = fseq.Values.ToArray();
+	public CStringSequenceDebugView(FixedCStringSequence fseq) => this._values = [.. fseq.Values,];
 #endif
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringSequenceDebugView"/> class with the

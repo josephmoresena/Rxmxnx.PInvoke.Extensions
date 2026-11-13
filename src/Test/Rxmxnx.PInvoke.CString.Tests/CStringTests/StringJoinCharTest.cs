@@ -15,7 +15,7 @@ public sealed class StringJoinCharTest
 	public void Test()
 	{
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
-		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
+		String?[] strings = [.. indices.Select(i => TestSet.GetString(i)),];
 		StringJoinCharTest.ArrayTest(this.GetByteSeparator(), strings);
 		StringJoinCharTest.ArrayRangeTest(this.GetByteSeparator(), strings);
 		StringJoinCharTest.EnumerableTest(this.GetByteSeparator(), strings);

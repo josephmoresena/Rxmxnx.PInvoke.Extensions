@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.ApplicationTest;
 
+// ReSharper disable once ClassCannotBeInstantiated
 public partial class Launcher
 {
 	public static async Task<Launcher> Create(DirectoryInfo outputDirectory, Boolean useMono)

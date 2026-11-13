@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.ApplicationTest;
 
+// ReSharper disable once ClassCannotBeInstantiated
 public partial class Launcher
 {
 	public abstract class UnixCppCompiler : ICppCompiler
@@ -74,7 +75,7 @@ public partial class Launcher
 				start += end;
 			}
 			result.AddArg(value.AsSpan()[start..].ToString());
-			return result.ToArray();
+			return [.. result,];
 		}
 
 		private readonly struct PkgConfigState

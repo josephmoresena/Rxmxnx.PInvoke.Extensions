@@ -14,7 +14,7 @@ public sealed class JoinByteTest
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
-		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
+		String?[] strings = [.. indices.Select(i => TestSet.GetString(i)),];
 		CString?[] values = TestSet.GetValues(indices, handle);
 
 		JoinByteTest.ArrayTest(JoinByteTest.GetByteSeparator(), strings, values);

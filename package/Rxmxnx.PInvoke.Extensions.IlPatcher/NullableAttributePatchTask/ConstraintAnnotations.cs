@@ -2,6 +2,7 @@
 
 namespace Rxmxnx.PInvoke.Extensions.IlPatcher;
 
+// ReSharper disable once UnusedType.Global
 public partial class NullableAttributePatchTask
 {
 	/// <summary>
@@ -77,7 +78,7 @@ public partial class NullableAttributePatchTask
 				return Array.Exists(flags, static item => item == NullableAttributePatchTask.AnnotatedFlag);
 			case CustomAttributeArgument[] arguments:
 				foreach (CustomAttributeArgument argument in arguments)
-					if (argument.Value is Byte value && value == NullableAttributePatchTask.AnnotatedFlag)
+					if (argument.Value is NullableAttributePatchTask.AnnotatedFlag)
 						return true;
 				return false;
 			default:

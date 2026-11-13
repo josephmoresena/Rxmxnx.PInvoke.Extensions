@@ -131,6 +131,7 @@ public sealed class SegmentTests
 #if NET5_0_OR_GREATER
 		return CollectionsMarshal.AsSpan(result);
 #else
+		// ReSharper disable once UseCollectionExpression
 		return result.ToArray().AsSpan();
 #endif
 	}
@@ -150,6 +151,7 @@ public sealed class SegmentTests
 #if NET5_0_OR_GREATER
 		return CollectionsMarshal.AsSpan(result);
 #else
+		// ReSharper disable once UseCollectionExpression
 		return result.ToArray().AsSpan();
 #endif
 	}

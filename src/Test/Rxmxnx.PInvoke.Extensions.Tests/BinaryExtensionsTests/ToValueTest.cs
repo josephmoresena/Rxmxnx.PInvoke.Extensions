@@ -42,7 +42,7 @@ public sealed class ToValueTest
 
 	private static unsafe void Test<T>() where T : unmanaged
 	{
-		Byte[] bytes = ToValueTest.fixture.CreateMany<Byte>(sizeof(T)).ToArray();
+		Byte[] bytes = [.. ToValueTest.fixture.CreateMany<Byte>(sizeof(T)),];
 		Span<Byte> byteSpan = bytes;
 		ReadOnlySpan<Byte> readOnlyBytes = bytes;
 		T expected = ToValueTest.GetValue<T>(bytes);
@@ -51,7 +51,7 @@ public sealed class ToValueTest
 		PInvokeAssert.Equal(expected, byteSpan.ToValue<T>());
 		PInvokeAssert.Equal(expected, readOnlyBytes.ToValue<T>());
 
-		bytes = ToValueTest.fixture.CreateMany<Byte>(sizeof(T) + 1).ToArray();
+		bytes = [.. ToValueTest.fixture.CreateMany<Byte>(sizeof(T) + 1),];
 		byteSpan = bytes;
 		readOnlyBytes = bytes;
 		expected = ToValueTest.GetValue<T>(bytes);
@@ -60,7 +60,7 @@ public sealed class ToValueTest
 		PInvokeAssert.Equal(expected, byteSpan.ToValue<T>());
 		PInvokeAssert.Equal(expected, readOnlyBytes.ToValue<T>());
 
-		bytes = ToValueTest.fixture.CreateMany<Byte>(sizeof(T) - 1).ToArray();
+		bytes = [.. ToValueTest.fixture.CreateMany<Byte>(sizeof(T) - 1),];
 		byteSpan = bytes;
 		readOnlyBytes = bytes;
 		expected = ToValueTest.GetValue<T>(bytes);

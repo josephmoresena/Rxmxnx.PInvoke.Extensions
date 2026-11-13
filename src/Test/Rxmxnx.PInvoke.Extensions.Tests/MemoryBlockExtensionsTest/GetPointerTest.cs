@@ -42,7 +42,7 @@ public sealed class GetPointerTest
 
 	private static unsafe void Test<T>() where T : unmanaged
 	{
-		T[] values = GetPointerTest.fixture.CreateMany<T>(10).ToArray();
+		T[] values = [.. GetPointerTest.fixture.CreateMany<T>(10),];
 		Span<T> span = values;
 		ReadOnlySpan<T> readOnlySpan = span;
 

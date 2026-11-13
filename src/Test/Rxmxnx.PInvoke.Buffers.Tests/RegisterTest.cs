@@ -110,7 +110,7 @@ public sealed class RegisterTest
 	}
 	private static Type GetCompositeType(Type componentType, Type itemType)
 		=> RegisterTest.compositeType.MakeGenericType(componentType, componentType, itemType);
-	private static Type GetCompositeType(Span<Type> components, Type itemType)
+	private static Type GetCompositeType(ReadOnlySpan<Type> components, Type itemType)
 	{
 		Type? initial = default;
 		foreach (Type component in components)

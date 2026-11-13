@@ -229,10 +229,10 @@ public sealed class BasicTests
 	[Fact]
 	public unsafe void TryPinTest()
 	{
-		CString[] encodingArray = TestSet.Utf16Text.Select(s => (CString)s).ToArray();
-		CString[] literalArray = TestSet.Utf8Text.Select(f => new CString(f)).ToArray();
-		CString[] bytesArray = TestSet.Utf8Bytes.Select(a => (CString)a).ToArray();
-		CString[] bytesNullArray = TestSet.Utf8NullTerminatedBytes.Select(a => (CString)a).ToArray();
+		CString[] encodingArray = [.. TestSet.Utf16Text.Select(s => (CString)s),];
+		CString[] literalArray = [.. TestSet.Utf8Text.Select(f => new CString(f)),];
+		CString[] bytesArray = [.. TestSet.Utf8Bytes.Select(a => (CString)a),];
+		CString[] bytesNullArray = [.. TestSet.Utf8NullTerminatedBytes.Select(a => (CString)a),];
 
 		PInvokeAssert.All(encodingArray, c =>
 		{

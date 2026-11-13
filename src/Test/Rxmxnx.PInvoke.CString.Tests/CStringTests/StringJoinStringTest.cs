@@ -9,7 +9,7 @@ public sealed class StringJoinStringTest
 	public void Test()
 	{
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
-		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
+		String?[] strings = [.. indices.Select(i => TestSet.GetString(i)),];
 		StringJoinStringTest.ArrayTest(StringJoinStringTest.GetCStringSeparator(), strings);
 		StringJoinStringTest.ArrayRangeTest(StringJoinStringTest.GetCStringSeparator(), strings);
 		StringJoinStringTest.EnumerableTest(StringJoinStringTest.GetCStringSeparator(), strings);
@@ -29,8 +29,7 @@ public sealed class StringJoinStringTest
 
 	private static void ArrayTest(String? separator, String?[] strings)
 	{
-		String? strSeparator = separator;
-		String expectedCString = String.Join(strSeparator, strings);
+		String expectedCString = String.Join(separator, strings);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		CString resultCString = CString.Join(separator, strings);
@@ -46,9 +45,8 @@ public sealed class StringJoinStringTest
 	}
 	private static void EnumerableTest(String? separator, IEnumerable<String?> strings)
 	{
-		String? strSeparator = separator;
 		// ReSharper disable once PossibleMultipleEnumeration
-		String expectedCString = String.Join(strSeparator, strings);
+		String expectedCString = String.Join(separator, strings);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		// ReSharper disable once PossibleMultipleEnumeration
@@ -67,8 +65,7 @@ public sealed class StringJoinStringTest
 	{
 		Int32 startIndex = PInvokeRandom.Shared.Next(0, strings.Length);
 		Int32 count = PInvokeRandom.Shared.Next(startIndex, strings.Length) - startIndex;
-		String? strSeparator = separator;
-		String expectedCString = String.Join(strSeparator, strings, startIndex, count);
+		String expectedCString = String.Join(separator, strings, startIndex, count);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
 		CString resultCString = CString.Join(separator, strings, startIndex, count);

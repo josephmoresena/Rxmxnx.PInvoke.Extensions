@@ -107,10 +107,7 @@ public readonly unsafe ref partial struct FixedReferenceValue<T> : IFixedPointer
 	[ExcludeFromCodeCoverage]
 #endif
 	IFixedReference<TDestination> IFixedReference<T>.Transformation<TDestination>()
-	{
-		Unsafe.SkipInit(out IFixedMemory residual);
-		return FixedPointerValue.TransformationReference<T, FixedReferenceValue<T>, TDestination>(this, out residual);
-	}
+		=> FixedPointerValue.TransformationReference<T, FixedReferenceValue<T>, TDestination>(this, out IFixedMemory _);
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif
@@ -147,10 +144,7 @@ public readonly unsafe ref partial struct FixedReferenceValue<T> : IFixedPointer
 	[ExcludeFromCodeCoverage]
 #endif
 	IReadOnlyFixedReference<TDestination> IReadOnlyFixedReference<T>.Transformation<TDestination>()
-	{
-		Unsafe.SkipInit(out IFixedMemory residual);
-		return FixedPointerValue.TransformationReference<T, FixedReferenceValue<T>, TDestination>(this, out residual);
-	}
+		=> FixedPointerValue.TransformationReference<T, FixedReferenceValue<T>, TDestination>(this, out IFixedMemory _);
 #if !PACKAGE
 	[ExcludeFromCodeCoverage]
 #endif

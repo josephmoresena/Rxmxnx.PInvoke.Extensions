@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Rxmxnx.PInvoke.ApplicationTest;
 
 public partial class TestCompiler
@@ -10,7 +12,7 @@ public partial class TestCompiler
 		public static void Append(CompileAppxArgs appxArgs, Collection<String> args)
 		{
 			DateTime dt = DateTime.Now;
-			String appxVersion = $"{dt:yyyy.M.d}.{Int16.Parse(dt.ToString("Hmm"))}";
+			String appxVersion = $"{dt:yyyy.M.d}.{Int16.Parse(dt.ToString("Hmm", CultureInfo.InvariantCulture))}";
 			String packageDir =
 				appxArgs.OutputPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) +
 				Path.DirectorySeparatorChar;

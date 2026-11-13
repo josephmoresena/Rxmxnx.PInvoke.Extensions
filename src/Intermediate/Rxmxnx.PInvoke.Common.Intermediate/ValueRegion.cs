@@ -36,6 +36,7 @@ public abstract partial class ValueRegion<T>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
+	// ReSharper disable once UseCollectionExpression
 	public virtual T[] ToArray() => this.AsSpan().ToArray();
 	/// <summary>
 	/// Tries to create a new <see cref="GCHandle"/> for current value region.

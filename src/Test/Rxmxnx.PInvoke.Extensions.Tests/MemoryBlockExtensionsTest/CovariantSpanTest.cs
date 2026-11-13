@@ -25,12 +25,12 @@ public sealed class CovariantSpanTest
 	public void UInt64Test() => CovariantSpanTest.UnmanagedTest<UInt64>();
 	[Fact]
 	public void StringTest()
-		=> CovariantSpanTest.Test<String, Object>(CovariantSpanTest.fixture.CreateMany<String>(10).ToArray());
+		=> CovariantSpanTest.Test<String, Object>([.. CovariantSpanTest.fixture.CreateMany<String>(10),]);
 
 	private static void UnmanagedTest<T>() where T : unmanaged
 	{
 		Type typeofT = typeof(T);
-		T[] array = CovariantSpanTest.fixture.CreateMany<T>(10).ToArray();
+		T[] array = [.. CovariantSpanTest.fixture.CreateMany<T>(10),];
 		switch (Unsafe.SizeOf<T>())
 		{
 			case 1:

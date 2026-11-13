@@ -129,7 +129,7 @@ public partial class CStringBuilder
 		/// <returns>The chunk into which the final portion of <paramref name="value"/> was written.</returns>
 		public Chunk AppendUtf8<T>(T value) where T : IUtf8SpanFormattable, ISpanFormattable
 		{
-			if (!value.TryFormat(this.GetAvailable(), out Int32 count, default, default))
+			if (!value.TryFormat(this.GetAvailable(), out Int32 count, default, CultureInfo.InvariantCulture))
 				return (this._buffer.Length - this._count) switch
 				{
 					< StackAllocationHelper.StackallocByteThreshold when Chunk.AppendUtf8(this, value) is { } chunk =>

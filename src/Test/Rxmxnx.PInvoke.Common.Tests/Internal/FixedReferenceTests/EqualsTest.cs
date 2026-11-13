@@ -129,7 +129,9 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 		PInvokeAssert.Equal(equal, fref2.Equals((Object)fref));
 		PInvokeAssert.Equal(equal, fref2.Equals(fref as FixedReference<TInt>));
 		PInvokeAssert.False(fref2.Equals(null));
+#pragma warning disable CS8602
 		PInvokeAssert.False(fref2.Equals(new Object()));
+#pragma warning restore CS8602
 		PInvokeAssert.False(fref2.IsFunction);
 	}
 	private static void Test<T, TInt>(ReadOnlyFixedReference<TInt> fref2, ReadOnlyFixedReference<T> fref)
@@ -140,7 +142,9 @@ public sealed class EqualsTest : FixedReferenceTestsBase
 		PInvokeAssert.Equal(equal, fref2.Equals((Object)fref));
 		PInvokeAssert.Equal(equal, fref2.Equals(fref as ReadOnlyFixedReference<TInt>));
 		PInvokeAssert.False(fref2.Equals(null));
+#pragma warning disable CS8602
 		PInvokeAssert.False(fref2.Equals(new Object()));
+#pragma warning restore CS8602
 		PInvokeAssert.False(fref2.IsFunction);
 	}
 }

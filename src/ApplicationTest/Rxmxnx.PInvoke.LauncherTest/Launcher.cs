@@ -2,6 +2,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest;
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
+// ReSharper disable once ClassCannotBeInstantiated
 public abstract partial class Launcher
 {
 	public DirectoryInfo OutputDirectory { get; }
@@ -25,7 +26,7 @@ public abstract partial class Launcher
 		{
 			foreach (Architecture arch in this.Architectures)
 			foreach (FileInfo appFile in this.OutputDirectory.GetFiles(
-				         $"*ApplicationTest.*{this.RuntimeIdentifierPrefix}-{Enum.GetName(arch)!.ToLower()}.*"))
+				         $"*ApplicationTest.*{this.RuntimeIdentifierPrefix}-{Enum.GetName(arch)!.ToLowerInvariant()}.*"))
 			{
 				String executionName = $"{Path.GetRelativePath(this.OutputDirectory.FullName, appFile.FullName)}";
 				results.Add(executionName, await this.RunAppFile(appFile, arch, executionName));

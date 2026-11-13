@@ -86,7 +86,7 @@ public sealed class SerializationTest
 	{
 		Serializable<String?[], String> valueS = new()
 		{
-			Values = TestSet.GetIndices().Select(i => TestSet.GetString(i, true)).ToArray(),
+			Values = [.. TestSet.GetIndices().Select(i => TestSet.GetString(i, true)),],
 		};
 		Serializable<CStringSequence, CString> valueC = new() { Values = new(valueS.Values), };
 

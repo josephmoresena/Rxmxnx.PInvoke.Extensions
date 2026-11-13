@@ -44,15 +44,16 @@ public sealed class AsBytesTest
 
 	private static void Test<T>() where T : unmanaged
 	{
-		T[] values = AsBytesTest.fixture.CreateMany<T>(10).ToArray();
+		T[] values = [.. AsBytesTest.fixture.CreateMany<T>(10),];
 		Span<T> span = values;
 		ReadOnlySpan<T> readOnlySpan = span;
 
 		Span<Byte> spanBytes = MemoryMarshal.AsBytes(span);
+		// ReSharper disable once UseCollectionExpression
 		Byte[] bytes = spanBytes.ToArray();
 
-		PInvokeAssert.Equal(bytes, span.AsBytes().ToArray());
-		PInvokeAssert.Equal(bytes, readOnlySpan.AsBytes().ToArray());
+		PInvokeAssert.Equal(bytes, span.AsBytes());
+		PInvokeAssert.Equal(bytes, readOnlySpan.AsBytes());
 		PInvokeAssert.True(Unsafe.AreSame(ref spanBytes[0], ref MemoryMarshal.GetReference(span.AsBytes())));
 		PInvokeAssert.True(Unsafe.AreSame(ref spanBytes[0], ref MemoryMarshal.GetReference(readOnlySpan.AsBytes())));
 	}

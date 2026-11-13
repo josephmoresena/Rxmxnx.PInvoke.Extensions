@@ -10,7 +10,7 @@ public sealed class ConcatTest
 	[InlineData(false)]
 	public void LocalEmptyTest(Boolean emptyData)
 	{
-		CString?[] values = !emptyData ? Enumerable.Repeat(CString.Empty, 3).ToArray() : [];
+		CString?[] values = !emptyData ? [.. Enumerable.Repeat(CString.Empty, 3),] : [];
 		ConcatTest.EmptyTest(values);
 	}
 
@@ -19,7 +19,7 @@ public sealed class ConcatTest
 	[InlineData(false)]
 	public void ReferenceEmptyTest(Boolean emptyData)
 	{
-		CString?[] values = !emptyData ? Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3).ToArray() : [];
+		CString?[] values = !emptyData ? [.. Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3),] : [];
 		ConcatTest.EmptyTest(values);
 	}
 
@@ -28,7 +28,7 @@ public sealed class ConcatTest
 	[InlineData(false)]
 	public void NullEmptyTest(Boolean emptyData)
 	{
-		CString?[] values = !emptyData ? Enumerable.Repeat<CString?>(default, 3).ToArray() : [];
+		CString?[] values = !emptyData ? [.. Enumerable.Repeat<CString?>(default, 3),] : [];
 		ConcatTest.EmptyTest(values);
 	}
 
@@ -37,7 +37,7 @@ public sealed class ConcatTest
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
-		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
+		String?[] strings = [.. indices.Select(i => TestSet.GetString(i)),];
 		CString?[] values = TestSet.GetValues(indices, handle);
 
 		ConcatTest.NormalTest(strings, values);
@@ -48,8 +48,9 @@ public sealed class ConcatTest
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
-		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
-		Byte[]?[] values = indices.Select(i => TestSet.GetCString(i, handle)?.ToArray()).ToArray();
+		String?[] strings = [.. indices.Select(i => TestSet.GetString(i)),];
+		// ReSharper disable once AccessToDisposedClosure
+		Byte[]?[] values = [.. indices.Select(i => TestSet.GetCString(i, handle)?.ToArray()),];
 
 		ConcatTest.NormalTest(strings, values);
 	}
@@ -58,7 +59,7 @@ public sealed class ConcatTest
 	public void SpanTest()
 	{
 		List<Int32> indices = TestSet.GetIndices(8);
-		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
+		String?[] strings = [.. indices.Select(i => TestSet.GetString(i)),];
 
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(String.Concat(strings[..2]),

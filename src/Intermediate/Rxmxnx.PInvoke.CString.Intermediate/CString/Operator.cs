@@ -1,4 +1,6 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿// ReSharper disable InvocationIsCultureSensitive
+
+namespace Rxmxnx.PInvoke;
 
 public partial class CString
 {

@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.ApplicationTest;
 
+// ReSharper disable once ClassCannotBeInstantiated
 public partial class Launcher
 {
 	private sealed class Mac : Launcher, ILauncher<Mac>
@@ -14,8 +15,10 @@ public partial class Launcher
 		private Mac(DirectoryInfo outputDirectory, Boolean useMono, out Task initialize) : base(
 			outputDirectory, useMono)
 		{
-			this.Architectures = Enum.GetValues<Architecture>()
-			                         .Where(a => a == this.CurrentArch || a is Architecture.X64).ToArray();
+			this.Architectures =
+			[
+				.. Enum.GetValues<Architecture>().Where(a => a == this.CurrentArch || a is Architecture.X64),
+			];
 			initialize = Task.CompletedTask;
 			// Intel keeps only Mono.framework (x64). Homebrew is the arm64 runtime.
 			Mac.AppendMonoLauncher("/Library/Frameworks/Mono.framework/Versions/Current", Architecture.X64,

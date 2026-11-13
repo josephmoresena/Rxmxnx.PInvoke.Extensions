@@ -1,4 +1,6 @@
-﻿namespace Rxmxnx.PInvoke.Tests.UnmanagedValueExtensionsTest;
+﻿// ReSharper disable MemberCanBeMadeStatic.Local
+
+namespace Rxmxnx.PInvoke.Tests.UnmanagedValueExtensionsTest;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
@@ -43,15 +45,15 @@ public sealed class WithSafeFixedTest
 	public void UInt64Test() => this.Test<UInt64>();
 #pragma warning restore CS0612
 
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 #endif
 	private void Test<T>() where T : unmanaged
 	{
-		T[]? values = WithSafeFixedTest.fixture.CreateMany<T>(10).ToArray();
+		T[]? values = [.. WithSafeFixedTest.fixture.CreateMany<T>(10),];
 
 		this._array = values;
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		values.WithSafeFixed(this.ActionTest);
 		values.WithSafeFixed(this.ActionReadOnlyTest);
 
@@ -75,12 +77,13 @@ public sealed class WithSafeFixedTest
 		WithSafeFixedTest.ClassCallbackTest(values, this._array);
 
 #if !NETFRAMEWORK || NET46_OR_GREATER
+		// ReSharper disable once UseCollectionExpression
 		values = Array.Empty<T>();
 #else
 		values = ArrayCompat.Empty<T>();
 #endif
 		this._array = values;
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		values.WithSafeFixed(this.ActionTest);
 		values.WithSafeFixed(this.ActionReadOnlyTest);
 
@@ -102,7 +105,7 @@ public sealed class WithSafeFixedTest
 		WithSafeFixedTest.ClassCallbackTest(values, this._array);
 		values = default;
 		this._array = values;
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		values.WithSafeFixed(this.NullActionTest);
 		values.WithSafeFixed(this.NullActionReadOnlyTest);
 
@@ -129,7 +132,7 @@ public sealed class WithSafeFixedTest
 		values.WithSafeFixed(new ClassReadOnlyFixedFunction<T>(array), out result);
 		PInvokeAssert.Equal(values, result);
 	}
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 	private void ActionTest<T>(in IFixedContext<T> ctx) where T : unmanaged
 	{
@@ -214,12 +217,14 @@ public sealed class WithSafeFixedTest
 	private T[] FuncTest<T>(in IFixedContext<T> ctx) where T : unmanaged
 	{
 		this.ActionTest(ctx);
+		// ReSharper disable once UseCollectionExpression
 		return ctx.Values.ToArray();
 	}
 	[Obsolete]
 	private T[] FuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
 	{
 		this.ActionReadOnlyTest(ctx);
+		// ReSharper disable once UseCollectionExpression
 		return ctx.Values.ToArray();
 	}
 
@@ -436,6 +441,7 @@ public sealed class WithSafeFixedTest
 		public T[]? Apply(scoped FixedContextValue<T> ctx)
 		{
 			new FixedAction<T>(array).Accept(ctx);
+			// ReSharper disable once UseCollectionExpression
 			return array is not null ? ctx.Values.ToArray() : default;
 		}
 	}
@@ -446,6 +452,7 @@ public sealed class WithSafeFixedTest
 		public T[]? Apply(scoped ReadOnlyFixedContextValue<T> ctx)
 		{
 			new ReadOnlyFixedAction<T>(array).Accept(ctx);
+			// ReSharper disable once UseCollectionExpression
 			return array is not null ? ctx.Values.ToArray() : default;
 		}
 	}

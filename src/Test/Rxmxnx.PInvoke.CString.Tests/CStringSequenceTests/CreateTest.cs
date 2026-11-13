@@ -16,12 +16,14 @@ public sealed class CreateTest
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices(length);
 		CString?[] values = TestSet.GetValues(indices, handle);
-		CStringSequence seq = CStringSequence.Create(values, CreateTest.CreationMethod, values.Select(x =>
-		{
-			if (x is null || x.IsZero)
-				return default(Int32?);
-			return x.Length;
-		}).ToArray());
+		CStringSequence seq = CStringSequence.Create(values, CreateTest.CreationMethod, [
+			.. values.Select(x =>
+			{
+				if (x is null || x.IsZero)
+					return default(Int32?);
+				return x.Length;
+			}),
+		]);
 		CreateTest.AssertSequence(seq, values);
 		PInvokeAssert.Equal(seq, values.Select(c => c ?? CString.Zero));
 		GC.Collect();
@@ -34,8 +36,8 @@ public sealed class CreateTest
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices(8);
-		CString[] values = TestSet.GetValues(indices, handle).Select(c => !CString.IsNullOrEmpty(c) ? c : CString.Empty)
-		                          .ToArray();
+		CString[] values =
+			[.. TestSet.GetValues(indices, handle).Select(c => !CString.IsNullOrEmpty(c) ? c : CString.Empty),];
 
 		if (useFirstEmpty) values[0] = CString.Empty;
 
