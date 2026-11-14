@@ -11,7 +11,7 @@ public sealed class JoinEmptyTest
 	public void LocalEmptySpanTest(Boolean emptyData)
 	{
 		ReadOnlySpan<Byte> separator = default;
-		CString?[] values = !emptyData ? Enumerable.Repeat(CString.Empty, 3).ToArray() : [];
+		CString?[] values = !emptyData ? [.. Enumerable.Repeat(CString.Empty, 3),] : [];
 		JoinEmptyTest.Test(separator, values);
 		JoinEmptyTest.Test(separator, values.ToList());
 	}
@@ -22,7 +22,7 @@ public sealed class JoinEmptyTest
 	public void ReferenceEmptySpanTest(Boolean emptyData)
 	{
 		ReadOnlySpan<Byte> separator = default;
-		CString?[] values = !emptyData ? Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3).ToArray() : [];
+		CString?[] values = !emptyData ? [.. Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3),] : [];
 		JoinEmptyTest.Test(separator, values);
 		JoinEmptyTest.Test(separator, values.ToList());
 	}
@@ -33,7 +33,7 @@ public sealed class JoinEmptyTest
 	public void NullEmptySpanTest(Boolean emptyData)
 	{
 		ReadOnlySpan<Byte> separator = default;
-		CString?[] values = !emptyData ? Enumerable.Repeat<CString?>(default, 3).ToArray() : [];
+		CString?[] values = !emptyData ? [.. Enumerable.Repeat<CString?>(default, 3),] : [];
 		JoinEmptyTest.Test(separator, values);
 		JoinEmptyTest.Test(separator, values.ToList());
 	}
@@ -44,7 +44,7 @@ public sealed class JoinEmptyTest
 	public void LocalEmptyTest(Boolean emptyData)
 	{
 		CString? separator = !emptyData ? CString.Empty : default;
-		CString?[] values = !emptyData ? Enumerable.Repeat(CString.Empty, 3).ToArray() : [];
+		CString?[] values = !emptyData ? [.. Enumerable.Repeat(CString.Empty, 3),] : [];
 		JoinEmptyTest.Test(separator, values);
 		JoinEmptyTest.Test(separator, values.ToList());
 	}
@@ -55,7 +55,7 @@ public sealed class JoinEmptyTest
 	public void ReferenceEmptyTest(Boolean emptyData)
 	{
 		CString? separator = !emptyData ? CString.Empty : default;
-		CString?[] values = !emptyData ? Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3).ToArray() : [];
+		CString?[] values = !emptyData ? [.. Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3),] : [];
 		JoinEmptyTest.Test(separator, values);
 		JoinEmptyTest.Test(separator, values.ToList());
 	}
@@ -66,7 +66,7 @@ public sealed class JoinEmptyTest
 	public void NullEmptyTest(Boolean emptyData)
 	{
 		CString? separator = !emptyData ? CString.Empty : default;
-		CString?[] values = !emptyData ? Enumerable.Repeat<CString?>(default, 3).ToArray() : [];
+		CString?[] values = !emptyData ? [.. Enumerable.Repeat<CString?>(default, 3),] : [];
 		JoinEmptyTest.Test(separator, values);
 		JoinEmptyTest.Test(separator, values.ToList());
 	}
@@ -78,7 +78,7 @@ public sealed class JoinEmptyTest
 	public async Task LocalEmptyTestAsync(Boolean emptyData)
 	{
 		CString? separator = !emptyData ? CString.Empty : default;
-		CString?[] values = !emptyData ? Enumerable.Repeat(CString.Empty, 3).ToArray() : [];
+		CString?[] values = !emptyData ? [.. Enumerable.Repeat(CString.Empty, 3),] : [];
 		await JoinEmptyTest.TestAsync(separator, values);
 		await JoinEmptyTest.TestAsync(separator, values.ToList());
 	}
@@ -89,7 +89,7 @@ public sealed class JoinEmptyTest
 	public async Task ReferenceEmptyTestAsync(Boolean emptyData)
 	{
 		CString? separator = !emptyData ? CString.Empty : default;
-		CString?[] values = !emptyData ? Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3).ToArray() : [];
+		CString?[] values = !emptyData ? [.. Enumerable.Repeat<CString>(new(IntPtr.Zero, default), 3),] : [];
 		await JoinEmptyTest.TestAsync(separator, values);
 		await JoinEmptyTest.TestAsync(separator, values.ToList());
 	}
@@ -100,7 +100,7 @@ public sealed class JoinEmptyTest
 	public async Task NullEmptyTestAsync(Boolean emptyData)
 	{
 		CString? separator = !emptyData ? CString.Empty : default;
-		CString?[] values = !emptyData ? Enumerable.Repeat<CString?>(default, 3).ToArray() : [];
+		CString?[] values = !emptyData ? [.. Enumerable.Repeat<CString?>(default, 3),] : [];
 		await JoinEmptyTest.TestAsync(separator, values);
 		await JoinEmptyTest.TestAsync(separator, values.ToList());
 	}

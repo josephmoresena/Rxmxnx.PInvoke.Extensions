@@ -10,7 +10,7 @@ public sealed class StringConcatTest
 	[InlineData(false)]
 	public void LocalEmptyTest(Boolean emptyData)
 	{
-		String?[] values = !emptyData ? Enumerable.Repeat(String.Empty, 3).ToArray() : [];
+		String?[] values = !emptyData ? [.. Enumerable.Repeat(String.Empty, 3),] : [];
 		StringConcatTest.EmptyTest(values);
 	}
 
@@ -19,7 +19,7 @@ public sealed class StringConcatTest
 	[InlineData(false)]
 	public void NullEmptyTest(Boolean emptyData)
 	{
-		String?[] values = !emptyData ? Enumerable.Repeat<String?>(default, 3).ToArray() : [];
+		String?[] values = !emptyData ? [.. Enumerable.Repeat<String?>(default, 3),] : [];
 		StringConcatTest.EmptyTest(values);
 	}
 
@@ -27,7 +27,7 @@ public sealed class StringConcatTest
 	public void Test()
 	{
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
-		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
+		String?[] strings = [.. indices.Select(i => TestSet.GetString(i)),];
 		StringConcatTest.NormalTest(strings);
 	}
 
@@ -37,7 +37,7 @@ public sealed class StringConcatTest
 	[InlineData(false)]
 	public async Task LocalEmptyTestAsync(Boolean emptyData)
 	{
-		String?[] values = !emptyData ? Enumerable.Repeat(String.Empty, 3).ToArray() : [];
+		String?[] values = !emptyData ? [.. Enumerable.Repeat(String.Empty, 3),] : [];
 		await StringConcatTest.EmptyTestAsync(values);
 	}
 
@@ -46,7 +46,7 @@ public sealed class StringConcatTest
 	[InlineData(false)]
 	public async Task NullEmptyTestAsync(Boolean emptyData)
 	{
-		String?[] values = !emptyData ? Enumerable.Repeat<String?>(default, 3).ToArray() : [];
+		String?[] values = !emptyData ? [.. Enumerable.Repeat<String?>(default, 3),] : [];
 		await StringConcatTest.EmptyTestAsync(values);
 	}
 
@@ -54,7 +54,7 @@ public sealed class StringConcatTest
 	public async Task TestAsync()
 	{
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
-		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
+		String?[] strings = [.. indices.Select(i => TestSet.GetString(i)),];
 		await StringConcatTest.NormalTestAsync(strings);
 	}
 

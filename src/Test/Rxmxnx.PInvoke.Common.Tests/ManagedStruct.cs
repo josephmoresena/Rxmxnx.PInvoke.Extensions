@@ -1,3 +1,4 @@
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace Rxmxnx.PInvoke.Tests;
 
 [ExcludeFromCodeCoverage]

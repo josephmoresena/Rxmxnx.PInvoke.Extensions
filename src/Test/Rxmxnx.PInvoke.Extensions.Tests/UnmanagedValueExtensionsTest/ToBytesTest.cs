@@ -49,8 +49,9 @@ public sealed class ToBytesTest
 	private static void Test<T>() where T : unmanaged
 	{
 		T value = ToBytesTest.fixture.Create<T>();
-		T[] values = ToBytesTest.fixture.CreateMany<T>(10).ToArray();
+		T[] values = [.. ToBytesTest.fixture.CreateMany<T>(10),];
 		Byte[] bytes = ToBytesTest.GetBytes(ref value);
+		// ReSharper disable once UseCollectionExpression
 		Byte[] bytesValues = MemoryMarshal.AsBytes(values.AsSpan()).ToArray();
 
 		PInvokeAssert.Equal(bytes, value.ToBytes());

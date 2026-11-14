@@ -46,7 +46,7 @@ public sealed class ToValuesTest
 
 	private static void Test<T>() where T : unmanaged
 	{
-		T[] values = ToValuesTest.fixture.CreateMany<T>(10).ToArray();
+		T[] values = [.. ToValuesTest.fixture.CreateMany<T>(10),];
 		ToValuesTest.Test<T, Byte>(values);
 		ToValuesTest.Test<T, Char>(values);
 		ToValuesTest.Test<T, DateTime>(values);
@@ -72,15 +72,17 @@ public sealed class ToValuesTest
 		ReadOnlySpan<T2> spanT2 = MemoryMarshal.Cast<Byte, T2>(byteSpan);
 		ReadOnlySpan<Byte> spanResidual = byteSpan[(spanT2.Length * sizeof(T2))..];
 
+		// ReSharper disable once UseCollectionExpression
 		T2[] valuesT2 = spanT2.ToArray();
+		// ReSharper disable once UseCollectionExpression
 		Byte[] resiudalBytes = spanResidual.ToArray();
 
 		PInvokeAssert.Equal(valuesT2, values.ToValues<T, T2>());
 		PInvokeAssert.Equal(valuesT2, values.ToValues<T, T2>(out Byte[] residual));
 		PInvokeAssert.Equal(resiudalBytes, residual);
 
-		PInvokeAssert.Equal([], Array.Empty<T>().ToValues<T, T2>());
-		PInvokeAssert.Equal([], Array.Empty<T>().ToValues<T, T2>(out Byte[] residualEmpty));
+		PInvokeAssert.Equal(Array.Empty<T2>(), Array.Empty<T>().ToValues<T, T2>());
+		PInvokeAssert.Equal(Array.Empty<T2>(), Array.Empty<T>().ToValues<T, T2>(out Byte[] residualEmpty));
 		PInvokeAssert.Equal(Array.Empty<Byte>(), residualEmpty);
 
 		T[]? nullValues = default;

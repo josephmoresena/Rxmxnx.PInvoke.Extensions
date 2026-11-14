@@ -269,8 +269,16 @@ public sealed class ValueTests : CStringBuilderTestsBase
 
 	private void AppendTest<T>(Int32 length, Helper<T> helper) where T : unmanaged
 	{
-		T[] values = this._fixture.CreateMany<T>(length).ToArray();
-		T?[] valuesNull = this._fixture.CreateMany<T?>(length).ToArray();
+		T[] values = [.. this._fixture.CreateMany<T>(length),];
+		IEnumerable<T?> nullableValues =
+		[
+			.. this._fixture.CreateMany<T?>(values.Length / 2),
+			.. Enumerable.Repeat(default(T?), values.Length - values.Length / 2),
+		];
+		T?[] valuesNull =
+		[
+			.. nullableValues.OrderBy(i => new Guid()),
+		];
 		StringBuilder strBuild = new();
 		CStringBuilder cstrBuild = new();
 		foreach (T value in values.AsSpan())
@@ -288,8 +296,16 @@ public sealed class ValueTests : CStringBuilderTestsBase
 	}
 	private void InsertTest<T>(Int32 length, Helper<T> helper) where T : unmanaged
 	{
-		T[] values = this._fixture.CreateMany<T>(length).ToArray();
-		T?[] valuesNull = this._fixture.CreateMany<T?>(length).ToArray();
+		T[] values = [.. this._fixture.CreateMany<T>(length),];
+		IEnumerable<T?> nullableValues =
+		[
+			.. this._fixture.CreateMany<T?>(values.Length / 2),
+			.. Enumerable.Repeat(default(T?), values.Length - values.Length / 2),
+		];
+		T?[] valuesNull =
+		[
+			.. nullableValues.OrderBy(i => new Guid()),
+		];
 		String? seed = TestSet.GetString(TestSet.GetIndices(1).FirstOrDefault(), true);
 		StringBuilder strBuild = new(seed);
 		CStringBuilder cstrBuild = new(seed);

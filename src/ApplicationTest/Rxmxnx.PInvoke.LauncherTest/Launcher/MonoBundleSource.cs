@@ -1,5 +1,6 @@
 namespace Rxmxnx.PInvoke.ApplicationTest;
 
+// ReSharper disable once ClassCannotBeInstantiated
 public partial class Launcher
 {
 	private sealed class MonoBundleSource(
@@ -43,8 +44,11 @@ public partial class Launcher
 			=> MonoBundleSource.DeleteAotFiles(MonoBundleSource.GetAotFiles(bundlePath));
 
 		private static FileInfo[] GetAotFiles(String bundlePath)
-			=> new DirectoryInfo(Path.Combine(bundlePath))
-			   .EnumerateFiles("*.aot_out", MonoBundleSource.SafeEnumerationOptions).ToArray();
+			=>
+			[
+				.. new DirectoryInfo(Path.Combine(bundlePath)).EnumerateFiles(
+					"*.aot_out", MonoBundleSource.SafeEnumerationOptions),
+			];
 		private static void DeleteAotFiles(ReadOnlySpan<FileInfo> aotFiles)
 		{
 			foreach (FileInfo aotFile in aotFiles)

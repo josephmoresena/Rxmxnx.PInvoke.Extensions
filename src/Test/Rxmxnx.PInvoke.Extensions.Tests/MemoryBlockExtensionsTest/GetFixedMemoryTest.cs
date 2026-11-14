@@ -91,7 +91,7 @@ public sealed class GetFixedMemoryTest
 	[Obsolete]
 	private static void Test<T>()
 	{
-		T[] array = GetFixedMemoryTest.fixture.CreateMany<T>().ToArray();
+		T[] array = [.. GetFixedMemoryTest.fixture.CreateMany<T>(),];
 		Memory<T> mem = array.AsMemory();
 		ReadOnlyMemory<T> rMem = mem;
 		Memory<T> eMemory = default;

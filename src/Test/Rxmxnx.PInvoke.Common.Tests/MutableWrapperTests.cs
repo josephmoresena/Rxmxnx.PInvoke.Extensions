@@ -130,8 +130,8 @@ public sealed class MutableWrapperTests
 
 	private static void ObjectTest<T>() where T : unmanaged
 	{
-		T[] array = MutableWrapperTests.fixture.CreateMany<T>().ToArray();
-		T[] array2 = MutableWrapperTests.fixture.CreateMany<T>().ToArray();
+		T[] array = [.. MutableWrapperTests.fixture.CreateMany<T>(),];
+		T[] array2 = [.. MutableWrapperTests.fixture.CreateMany<T>(),];
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		IMutableWrapper<T[]> result = IMutableWrapper.CreateObject(array);
 #else

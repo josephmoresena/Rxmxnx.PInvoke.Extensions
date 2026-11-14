@@ -44,7 +44,7 @@ public sealed class BasicTests
 		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices(length);
 		if (endWithEmpty) indices.AddRange([-1, -2, -3,]);
-		String?[] strings = indices.Select(i => TestSet.GetString(i, true)).ToArray();
+		String?[] strings = [.. indices.Select(i => TestSet.GetString(i, true)),];
 		CStringSequence seqRef = new(strings);
 		CString?[] values = TestSet.GetValues(indices, handle);
 		CStringSequence seq = new(values);
@@ -116,8 +116,8 @@ public sealed class BasicTests
 
 		if (seq.NonEmptyCount == 0) return;
 
-		Byte[] sequenceData = MemoryMarshal.AsBytes(seq.ToString().AsSpan()).ToArray();
-		Byte[] invertedSequenceData = sequenceData.AsEnumerable().Reverse().ToArray();
+		Byte[] sequenceData = [.. MemoryMarshal.AsBytes(seq.ToString().AsSpan()),];
+		Byte[] invertedSequenceData = [.. sequenceData.AsEnumerable().Reverse(),];
 		Int32 firstIndex = Enumerable.Range(0, seq.Count).FirstOrDefault(i => !CString.IsNullOrEmpty(seq[i]));
 
 		Assert.False(seq.TryGetIndex(sequenceData, out Int32 index));

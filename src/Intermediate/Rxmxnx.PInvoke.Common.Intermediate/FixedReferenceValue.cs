@@ -124,7 +124,7 @@ public readonly unsafe ref partial struct FixedReferenceValue<T>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
-	internal FixedReferenceValue(FixedPointerValue value) => this._value = value;
+	private FixedReferenceValue(FixedPointerValue value) => this._value = value;
 
 	/// <summary>
 	/// Reinterprets the fixed reference as a <typeparamref name="TDestination"/> reference.

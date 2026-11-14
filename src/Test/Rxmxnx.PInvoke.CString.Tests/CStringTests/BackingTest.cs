@@ -12,9 +12,10 @@ public sealed class BackingTest
 	{
 		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices(length);
-		CString?[] values = indices.Select(i => TestSet.GetCString(i, handle)).ToArray();
+		// ReSharper disable once AccessToDisposedClosure
+		CString?[] values = [.. indices.Select(i => TestSet.GetCString(i, handle)),];
 		Byte[,] array2D = BackingTest.CreateFor(values);
-		CString[] backedValues = Backing2D.GetValues(array2D).ToArray();
+		CString[] backedValues = [.. Backing2D.GetValues(array2D),];
 
 		for (Int32 i = 0; i < values.Length; i++)
 		{

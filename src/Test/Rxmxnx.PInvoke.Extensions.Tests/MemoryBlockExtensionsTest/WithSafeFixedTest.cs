@@ -43,17 +43,17 @@ public sealed class WithSafeFixedTest
 	public void UInt64Test() => this.Test<UInt64>();
 #pragma warning restore CS0612
 
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 #endif
 	private void Test<T>() where T : unmanaged
 	{
-		T[] values = WithSafeFixedTest.fixture.CreateMany<T>(10).ToArray();
+		T[] values = [.. WithSafeFixedTest.fixture.CreateMany<T>(10),];
 		Span<T> span = values;
 		ReadOnlySpan<T> readOnlySpan = span;
 
 		this._array = values;
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		span.WithSafeFixed(this.ActionTest);
 		span.WithSafeFixed(this.ActionReadOnlyTest);
 		readOnlySpan.WithSafeFixed(this.ReadOnlyActionReadOnlyTest);
@@ -91,7 +91,7 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(sResult, srResult);
 		PInvokeAssert.Equal(rResult, srResult);
 	}
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 	private void ActionTest<T>(in IFixedContext<T> ctx) where T : unmanaged
 	{
@@ -215,18 +215,21 @@ public sealed class WithSafeFixedTest
 	private T[] FuncTest<T>(in IFixedContext<T> ctx) where T : unmanaged
 	{
 		this.ActionTest(ctx);
+		// ReSharper disable once UseCollectionExpression
 		return ctx.Values.ToArray();
 	}
 	[Obsolete]
 	private T[] FuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
 	{
 		this.ActionReadOnlyTest(ctx);
+		// ReSharper disable once UseCollectionExpression
 		return ctx.Values.ToArray();
 	}
 	[Obsolete]
 	private T[] ReadOnlyFuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
 	{
 		this.ReadOnlyActionReadOnlyTest(ctx);
+		// ReSharper disable once UseCollectionExpression
 		return ctx.Values.ToArray();
 	}
 

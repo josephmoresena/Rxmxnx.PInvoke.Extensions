@@ -43,17 +43,17 @@ public sealed class WithSafeFixedTest
 	public void UInt64Test() => this.Test<UInt64>();
 #pragma warning restore CS0612
 
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 #endif
 	private void Test<T>() where T : unmanaged
 	{
-		T[] values = WithSafeFixedTest.fixture.CreateMany<T>(10).ToArray();
+		T[] values = [.. WithSafeFixedTest.fixture.CreateMany<T>(10),];
 		Span<Byte> span = MemoryMarshal.AsBytes(values.AsSpan());
 		ReadOnlySpan<Byte> readOnlySpan = span;
 
 		this._array = values;
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		span.WithSafeFixed(this.ActionTest<T>);
 		span.WithSafeFixed(this.ActionReadOnlyTest<T>);
 		readOnlySpan.WithSafeFixed(this.ReadOnlyActionReadOnlyTest<T>);
@@ -92,7 +92,7 @@ public sealed class WithSafeFixedTest
 		readOnlySpan.WithSafeFixed(new ClassFixedFunction<T>(this._array, true), out result);
 		PInvokeAssert.True(readOnlySpan.SequenceEqual(result.AsSpan()));
 	}
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 	private void ActionTest<T>(in IFixedMemory mem) where T : unmanaged
 	{
@@ -193,16 +193,19 @@ public sealed class WithSafeFixedTest
 #pragma warning disable CS0612
 		this.ActionTest<T>(mem);
 #pragma warning restore CS0612
+		// ReSharper disable once UseCollectionExpression
 		return mem.Bytes.ToArray();
 	}
 	private Byte[] FuncReadOnlyTest<T>(in IReadOnlyFixedMemory mem) where T : unmanaged
 	{
 		this.ActionReadOnlyTest<T>(mem);
+		// ReSharper disable once UseCollectionExpression
 		return mem.Bytes.ToArray();
 	}
 	private Byte[] ReadOnlyFuncReadOnlyTest<T>(in IReadOnlyFixedMemory mem) where T : unmanaged
 	{
 		this.ReadOnlyActionReadOnlyTest<T>(mem);
+		// ReSharper disable once UseCollectionExpression
 		return mem.Bytes.ToArray();
 	}
 
@@ -376,6 +379,7 @@ public sealed class WithSafeFixedTest
 		{
 			new FixedAction<T>(array, isReadOnly).Accept(fptr);
 			fptr.TryGetReadOnlyBinaryContext(out ReadOnlyFixedContextValue<Byte> ctx);
+			// ReSharper disable once UseCollectionExpression
 			return ctx.Values.ToArray();
 		}
 	}

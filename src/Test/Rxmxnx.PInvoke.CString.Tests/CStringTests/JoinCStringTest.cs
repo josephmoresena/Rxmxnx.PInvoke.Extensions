@@ -10,7 +10,7 @@ public sealed class JoinCStringTest
 	{
 		using TestMemoryHandle handle = new();
 		IReadOnlyList<Int32> indices = TestSet.GetIndices();
-		String?[] strings = indices.Select(i => TestSet.GetString(i)).ToArray();
+		String?[] strings = [.. indices.Select(i => TestSet.GetString(i)),];
 		CString?[] values = TestSet.GetValues(indices, handle);
 
 		JoinCStringTest.ArrayTest(JoinCStringTest.GetCStringSeparator(handle), strings, values);

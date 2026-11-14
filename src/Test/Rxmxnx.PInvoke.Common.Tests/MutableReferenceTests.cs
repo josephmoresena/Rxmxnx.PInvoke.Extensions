@@ -145,9 +145,9 @@ public sealed class MutableReferenceTests
 	}
 	private static void ObjectTest<T>() where T : unmanaged
 	{
-		T[] array = MutableReferenceTests.fixture.CreateMany<T>().ToArray();
-		T[] array2 = MutableReferenceTests.fixture.CreateMany<T>().ToArray();
-		T[] array3 = MutableReferenceTests.fixture.CreateMany<T>().ToArray();
+		T[] array = [.. MutableReferenceTests.fixture.CreateMany<T>(),];
+		T[] array2 = [.. MutableReferenceTests.fixture.CreateMany<T>(),];
+		T[] array3 = [.. MutableReferenceTests.fixture.CreateMany<T>(),];
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		IMutableReference<T[]> result = IMutableReference.CreateObject(array);
 		IReferenceableWrapper<T[]> result2 = IReferenceableWrapper.CreateObject(array);

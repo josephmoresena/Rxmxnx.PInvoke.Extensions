@@ -3,6 +3,7 @@
 
 namespace Rxmxnx.PInvoke.Extensions.IlPatcher;
 
+// ReSharper disable once UnusedType.Global
 public partial class NullableAttributePatchTask
 {
 	/// <summary>

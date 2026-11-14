@@ -148,7 +148,7 @@ public sealed class FixedReferenceValueTest
 	{
 		PInvokeAssert.True(RuntimeHelpers.IsReferenceOrContainsReferences<Span<Byte>>());
 
-		Span<Byte> span = stackalloc Byte[] { 1, 2, 3, 4, };
+		Span<Byte> span = [1, 2, 3, 4,];
 		SpanReferenceAction action = new();
 		action.WithSafeFixed(ref span);
 
@@ -164,7 +164,7 @@ public sealed class FixedReferenceValueTest
 	{
 		PInvokeAssert.True(RuntimeHelpers.IsReferenceOrContainsReferences<ReadOnlySpan<Int32>>());
 
-		ReadOnlySpan<Int32> span = stackalloc Int32[] { 7, 8, 9, };
+		ReadOnlySpan<Int32> span = [7, 8, 9,];
 		ReadOnlySpanReferenceAction action = new();
 		action.WithSafeReadOnlyFixed(in span);
 

@@ -58,7 +58,7 @@ public sealed class ValPtrTests
 
 	private static unsafe void Test<T>()
 	{
-		T[] arr = ValPtrTests.fixture.CreateMany<T>(10).ToArray();
+		T[] arr = [.. ValPtrTests.fixture.CreateMany<T>(10),];
 #if NETCOREAPP
 		try
 		{
@@ -175,7 +175,7 @@ public sealed class ValPtrTests
 		ValPtrTests.MarshallerTest(valPtr);
 	}
 #pragma warning restore CS0612
-	private static unsafe void ContextValueTest<T>(ValPtr<T> valPtr, Span<T> span)
+	private static unsafe void ContextValueTest<T>(ValPtr<T> valPtr, ReadOnlySpan<T> span)
 	{
 		using IDisposable disposable = valPtr.GetUnsafeFixedContext(span.Length, out FixedContextValue<T> ctx);
 		PInvokeAssert.Equal(ctx.Values.Length, span.Length);
@@ -190,14 +190,19 @@ public sealed class ValPtrTests
 			else
 			{
 #if !NET10_0_OR_GREATER
-				Span<T>.Enumerator enumerator = span.GetEnumerator();
+				ReadOnlySpan<T>.Enumerator enumerator = span.GetEnumerator();
 #else
-				using Span<T>.Enumerator enumerator = span.GetEnumerator();
+				using ReadOnlySpan<T>.Enumerator enumerator = span.GetEnumerator();
 #endif
 				foreach (ref Object refObj in ctx.Objects)
 				{
 					if (!enumerator.MoveNext()) break;
+#if !NET8_1_OR_GREATER
+					PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in enumerator.Current),
+					                                  ref Unsafe.As<Object, T>(ref refObj)));
+#else
 					PInvokeAssert.True(Unsafe.AreSame(ref enumerator.Current, ref Unsafe.As<Object, T>(ref refObj)));
+#endif
 				}
 				PInvokeAssert.Equal(typeof(T).IsValueType || ctx.IsNullOrEmpty, ctx.Objects.IsEmpty);
 			}
@@ -211,7 +216,11 @@ public sealed class ValPtrTests
 
 		Span<T> span2 = ctx.Values;
 		for (Int32 i = 0; i < span.Length; i++)
+#if !NET8_1_OR_GREATER
+			PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in span[i]), ref span2[i]));
+#else
 			PInvokeAssert.True(Unsafe.AreSame(ref span[i], ref span2[i]));
+#endif
 
 		ValPtrTests.UnsafeValueContextTest(valPtr, span);
 	}
@@ -234,7 +243,7 @@ public sealed class ValPtrTests
 		Memory<Byte> value = new Byte[10];
 		using IDisposable disposable = valPtr.GetUnsafeFixedContext(1, value.Pin(), out _);
 	}
-	private static void UnsafeValueContextTest<T>(ValPtr<T> valPtr, Span<T> span)
+	private static void UnsafeValueContextTest<T>(ValPtr<T> valPtr, ReadOnlySpan<T> span)
 	{
 		using IDisposable disposable = ValPtr<T>.Zero.GetUnsafeFixedContext(0, out _);
 		PInvokeAssert.Same(disposable, FixedPointerValue.UnsafeDisposable);
@@ -242,7 +251,7 @@ public sealed class ValPtrTests
 	}
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
-	private static unsafe void ContextTest<T>(ValPtr<T> valPtr, Span<T> span)
+	private static unsafe void ContextTest<T>(ValPtr<T> valPtr, ReadOnlySpan<T> span)
 	{
 		using IFixedContext<T>.IDisposable ctx = valPtr.GetUnsafeFixedContext(span.Length);
 		PInvokeAssert.Equal(ctx.Values.Length, span.Length);
@@ -261,14 +270,19 @@ public sealed class ValPtrTests
 			else
 			{
 #if !NET10_0_OR_GREATER
-				Span<T>.Enumerator enumerator = span.GetEnumerator();
+				ReadOnlySpan<T>.Enumerator enumerator = span.GetEnumerator();
 #else
-				using Span<T>.Enumerator enumerator = span.GetEnumerator();
+				using ReadOnlySpan<T>.Enumerator enumerator = span.GetEnumerator();
 #endif
 				foreach (ref Object refObj in ctx.AsObjectContext().Values)
 				{
 					if (!enumerator.MoveNext()) break;
-					PInvokeAssert.True(Unsafe.AreSame(ref enumerator.Current, ref Unsafe.As<Object, T>(ref refObj)));
+#if NET8_0_OR_GREATER
+					PInvokeAssert.True(Unsafe.AreSame(in enumerator.Current, ref Unsafe.As<Object, T>(ref refObj)));
+#else
+					PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in enumerator.Current),
+					                                  ref Unsafe.As<Object, T>(ref refObj)));
+#endif
 				}
 				PInvokeAssert.Equal(typeof(T).IsValueType || ctx.IsNullOrEmpty, ctx.Objects.IsEmpty);
 			}
@@ -281,7 +295,11 @@ public sealed class ValPtrTests
 
 		Span<T> span2 = ctx.Values;
 		for (Int32 i = 0; i < span.Length; i++)
-			PInvokeAssert.True(Unsafe.AreSame(ref span[i], ref span2[i]));
+#if NET8_0_OR_GREATER
+			PInvokeAssert.True(Unsafe.AreSame(in span[i], ref span2[i]));
+#else
+			PInvokeAssert.True(Unsafe.AreSame(ref Unsafe.AsRef(in span[i]), ref span2[i]));
+#endif
 
 		ValPtrTests.ContextTransformTest<T, Byte>(ctx);
 		ValPtrTests.ContextTransformTest<T, Int16>(ctx);
@@ -338,6 +356,7 @@ public sealed class ValPtrTests
 	private static void FormatTest<T>(ValPtr<T> valPtr)
 	{
 		PInvokeAssert.Equal(valPtr.Pointer.GetHashCode(), valPtr.GetHashCode());
+		// ReSharper disable once InvocationIsCultureSensitive
 		PInvokeAssert.Equal(valPtr.Pointer.ToString(), valPtr.ToString());
 
 #if NET6_0_OR_GREATER
@@ -362,6 +381,7 @@ public sealed class ValPtrTests
 		foreach (String format in ValPtrTests.formats)
 		{
 			culture = ValPtrTests.allCultures[PInvokeRandom.Shared.Next(0, ValPtrTests.allCultures.Length)];
+			// ReSharper disable once InvocationIsCultureSensitive
 			Assert.Equal(valPtr.Pointer.ToString(format), valPtr.ToString(format));
 			Assert.Equal(valPtr.Pointer.ToString(format, culture), spanFormattable.ToString(format, culture));
 		}

@@ -130,7 +130,7 @@ namespace Rxmxnx.PInvoke.ApplicationTest
 					(matrix[row * n + col], row == col ? 1.0 : 0.0);
 			}
 		}
-		private static void CopyInverse(Span<Double> augmented, Int32 n, Span<Double> inverseAsSpan)
+		private static void CopyInverse(ReadOnlySpan<Double> augmented, Int32 n, Span<Double> inverseAsSpan)
 		{
 			for (Int32 i = 0; i < n; i++)
 			for (Int32 j = 0; j < n; j++)

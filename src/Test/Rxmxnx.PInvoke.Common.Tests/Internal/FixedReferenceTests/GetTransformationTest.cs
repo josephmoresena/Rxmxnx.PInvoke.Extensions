@@ -552,12 +552,10 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 			return;
 		}
 
-		PInvokeAssert.Equal(fref.CreateReadOnlyBinarySpan()[offset.BinaryOffset..].ToArray(),
-		                    offset.CreateReadOnlyBinarySpan().ToArray());
+		PInvokeAssert.Equal(fref.CreateReadOnlyBinarySpan()[offset.BinaryOffset..], offset.CreateReadOnlyBinarySpan());
 		PInvokeAssert.True(fref.CreateReadOnlyObjectSpan().IsEmpty);
 		PInvokeAssert.True(offset.CreateReadOnlyObjectSpan().IsEmpty);
-		PInvokeAssert.Equal(fref.CreateBinarySpan()[offset.BinaryOffset..].ToArray(),
-		                    offset.CreateBinarySpan().ToArray());
+		PInvokeAssert.Equal(fref.CreateBinarySpan()[offset.BinaryOffset..], offset.CreateBinarySpan());
 		PInvokeAssert.True(fref.CreateObjectSpan().IsEmpty);
 		PInvokeAssert.True(offset.CreateObjectSpan().IsEmpty);
 
@@ -676,8 +674,7 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 			PInvokeAssert.Equal(typeof(T).IsValueType || fref.IsNullOrEmpty, fref.CreateReadOnlyObjectSpan().IsEmpty);
 			return;
 		}
-		PInvokeAssert.Equal(fref.CreateReadOnlyBinarySpan()[offset.BinaryOffset..].ToArray(),
-		                    offset.CreateReadOnlyBinarySpan().ToArray());
+		PInvokeAssert.Equal(fref.CreateReadOnlyBinarySpan()[offset.BinaryOffset..], offset.CreateReadOnlyBinarySpan());
 		PInvokeAssert.True(fref.CreateReadOnlyObjectSpan().IsEmpty);
 
 		ReadOnlyFixedOffset offset2;
@@ -763,8 +760,7 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 		PInvokeAssert.Equal(equal, offset1.Equals((Object)offset2));
 		PInvokeAssert.False(offset2.IsFunction);
 		if (equal)
-			PInvokeAssert.Equal(offset1.CreateReadOnlyBinarySpan().ToArray(),
-			                    offset2.CreateReadOnlyBinarySpan().ToArray());
+			PInvokeAssert.Equal(offset1.CreateReadOnlyBinarySpan(), offset2.CreateReadOnlyBinarySpan());
 
 		Exception functionException = PInvokeAssert.Throws<InvalidOperationException>(offset2.CreateDelegate<Action>);
 		PInvokeAssert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);
@@ -776,8 +772,7 @@ public sealed unsafe class GetTransformationTest : FixedReferenceTestsBase
 		PInvokeAssert.Equal(equal, offset1.Equals((Object)offset2));
 		PInvokeAssert.False(offset2.IsFunction);
 		if (equal)
-			PInvokeAssert.Equal(offset1.CreateReadOnlyBinarySpan().ToArray(),
-			                    offset2.CreateReadOnlyBinarySpan().ToArray());
+			PInvokeAssert.Equal(offset1.CreateReadOnlyBinarySpan(), offset2.CreateReadOnlyBinarySpan());
 
 		Exception functionException = PInvokeAssert.Throws<InvalidOperationException>(offset2.CreateDelegate<Action>);
 		PInvokeAssert.Equal(FixedMemoryTestsBase.IsNotFunction, functionException.Message);

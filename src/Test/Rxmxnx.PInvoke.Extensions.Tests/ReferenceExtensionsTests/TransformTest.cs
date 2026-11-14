@@ -104,6 +104,7 @@ public sealed class TransformTest
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	private static void BinaryTest<T>(ref T refValue) where T : unmanaged
 	{
+		// ReSharper disable once UseCollectionExpression
 		Byte[] bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref refValue, 1)).ToArray();
 		Span<Byte> span = refValue.AsBytes();
 		Span<T> spanT = MemoryMarshal.Cast<Byte, T>(span);

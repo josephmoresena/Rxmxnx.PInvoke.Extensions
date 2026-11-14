@@ -57,6 +57,14 @@ public sealed class PInvokeAssert
 		=> Assert.AreEqual(expected, actual);
 #endif
 #if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
+	/// <inheritdoc cref="Assert.Equal{T}(IEnumerable{T}?,IEnumerable{T}?)"/>
+#else
+	/// <inheritdoc cref="Assert.AreEqual(Object?,Object?)"/>
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void Equal<T>(ReadOnlySpan<T> expected, ReadOnlySpan<T> actual)
+		=> PInvokeAssert.Equal(expected.ToArray(), actual.ToArray());
+#if NETCOREAPP || NETFRAMEWORK || WINDOWS_UWP
 	/// <inheritdoc cref="Assert.NotEqual{T}(T,T)"/>
 #else
 	/// <inheritdoc cref="Assert.AreNotEqual(Object?,Object?)"/>

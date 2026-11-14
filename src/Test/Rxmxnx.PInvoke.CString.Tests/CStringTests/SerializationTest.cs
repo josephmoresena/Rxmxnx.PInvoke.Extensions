@@ -50,6 +50,7 @@ public sealed class SerializationTest
 			ReadOnlySpanFunc<Byte> text = TestSet.Utf8Text[i];
 			Byte[] newtonsoftEncoded = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(TestSet.Utf16Text[i])[1..^1]);
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || WINDOWS_UWP
+			// ReSharper disable once UseCollectionExpression
 			Byte[] systemEncoded = JsonEncodedText.Encode(text()).EncodedUtf8Bytes.ToArray();
 			SerializationTest.EscapedSequenceAssert(text, systemEncoded);
 #endif

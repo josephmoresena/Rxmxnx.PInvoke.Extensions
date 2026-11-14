@@ -5,11 +5,13 @@ public partial class TestCompiler
 	private static String[] GetFrameworkPlatformTargets()
 		=> Environment.Is64BitOperatingSystem ? ["x86", "x64",] : ["x86",];
 	private static String[] GetFrameworkExecutables(DirectoryInfo projectDirectory)
-		=> projectDirectory.GetDirectories("*.ApplicationTest.Legacy", SearchOption.AllDirectories)
-		                   .SelectMany(static d => d.GetDirectories("bin", SearchOption.TopDirectoryOnly))
-		                   .SelectMany(static bin => bin.GetFiles("*.exe", SearchOption.AllDirectories))
-		                   .Where(static f => TestCompiler.IsFrameworkExecutable(f)).Select(static f => f.FullName)
-		                   .ToArray();
+		=>
+		[
+			.. projectDirectory.GetDirectories("*.ApplicationTest.Legacy", SearchOption.AllDirectories)
+			                   .SelectMany(static d => d.GetDirectories("bin", SearchOption.TopDirectoryOnly))
+			                   .SelectMany(static bin => bin.GetFiles("*.exe", SearchOption.AllDirectories))
+			                   .Where(static f => TestCompiler.IsFrameworkExecutable(f)).Select(static f => f.FullName),
+		];
 	private static Boolean IsFrameworkExecutable(FileInfo file)
 	{
 		if (!file.Name.Contains("ApplicationTest", StringComparison.OrdinalIgnoreCase) ||

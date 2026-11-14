@@ -42,7 +42,7 @@ public sealed class AsValuesTest
 
 	private static void Test<T>() where T : unmanaged
 	{
-		T[] values = AsValuesTest.fixture.CreateMany<T>(10).ToArray();
+		T[] values = [.. AsValuesTest.fixture.CreateMany<T>(10),];
 		AsValuesTest.Test<T, Byte>(values);
 		AsValuesTest.Test<T, Char>(values);
 		AsValuesTest.Test<T, DateTime>(values);
@@ -69,16 +69,18 @@ public sealed class AsValuesTest
 		Span<T2> spanT2 = MemoryMarshal.Cast<Byte, T2>(byteSpan);
 		Span<Byte> spanResidual = byteSpan[(spanT2.Length * sizeof(T2))..];
 
+		// ReSharper disable once UseCollectionExpression
 		T2[] valuesT2 = spanT2.ToArray();
+		// ReSharper disable once UseCollectionExpression
 		Byte[] resiudalBytes = spanResidual.ToArray();
 
-		PInvokeAssert.Equal(valuesT2, span.AsValues<T, T2>().ToArray());
-		PInvokeAssert.Equal(valuesT2, readOnlySpan.AsValues<T, T2>().ToArray());
-		PInvokeAssert.Equal(valuesT2, span.AsValues<T, T2>(out Span<Byte> residual).ToArray());
+		PInvokeAssert.Equal(valuesT2, span.AsValues<T, T2>());
+		PInvokeAssert.Equal(valuesT2, readOnlySpan.AsValues<T, T2>());
+		PInvokeAssert.Equal(valuesT2, span.AsValues<T, T2>(out Span<Byte> residual));
 		PInvokeAssert.Equal(resiudalBytes, residual.ToArray());
-		PInvokeAssert.Equal(valuesT2, span.AsValues<T, T2>(out ReadOnlySpan<Byte> residualRo).ToArray());
+		PInvokeAssert.Equal(valuesT2, span.AsValues<T, T2>(out ReadOnlySpan<Byte> residualRo));
 		PInvokeAssert.Equal(resiudalBytes, residualRo.ToArray());
-		PInvokeAssert.Equal(valuesT2, readOnlySpan.AsValues<T, T2>(out ReadOnlySpan<Byte> residualRo2).ToArray());
+		PInvokeAssert.Equal(valuesT2, readOnlySpan.AsValues<T, T2>(out ReadOnlySpan<Byte> residualRo2));
 		PInvokeAssert.Equal(resiudalBytes, residualRo2.ToArray());
 
 		PInvokeAssert.True(Unsafe.AreSame(ref MemoryMarshal.GetReference(spanResidual),

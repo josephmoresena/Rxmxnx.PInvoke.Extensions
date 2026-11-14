@@ -42,7 +42,7 @@ public sealed class AsValueTest
 
 	private static unsafe void Test<T>() where T : unmanaged
 	{
-		Span<Byte> bytes = AsValueTest.fixture.CreateMany<Byte>(sizeof(T)).ToArray();
+		Span<Byte> bytes = [.. AsValueTest.fixture.CreateMany<Byte>(sizeof(T)),];
 		ReadOnlySpan<Byte> readOnlyBytes = bytes;
 		T expected = AsValueTest.GetValue<T>(bytes);
 

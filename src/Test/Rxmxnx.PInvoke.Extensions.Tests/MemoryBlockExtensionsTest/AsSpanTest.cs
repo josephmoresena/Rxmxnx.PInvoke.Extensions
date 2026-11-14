@@ -166,7 +166,7 @@ public class AsSpanTest
 #else
 		if (IntPtr.Size == sizeof(Int32) && count > 15) return;
 #endif
-		Int32[] lengths = Enumerable.Range(0, count).Select(_ => PInvokeRandom.Shared.Next(1, 3)).ToArray();
+		Int32[] lengths = [.. Enumerable.Range(0, count).Select(_ => PInvokeRandom.Shared.Next(1, 3)),];
 
 		AsMemoryTest.CollectGarbage();
 
@@ -212,7 +212,7 @@ public class AsSpanTest
 		                                                  ref ArrayReferenceHelper.GetArrayDataReference<T>(arr),
 		                                                  arr.Length);
 #endif
-		T[] data = AsSpanTest.fixture.CreateMany<T>(arr.Length).ToArray();
+		T[] data = [.. AsSpanTest.fixture.CreateMany<T>(arr.Length),];
 		data.CopyTo(span);
 		return arr;
 	}

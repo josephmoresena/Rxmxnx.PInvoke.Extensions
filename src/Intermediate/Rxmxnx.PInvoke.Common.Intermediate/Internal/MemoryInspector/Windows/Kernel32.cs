@@ -18,15 +18,16 @@ internal partial class MemoryInspector
 			/// <summary>
 			/// <see cref="LocateImage"/> flag. The address is a pointer inside a loaded module.
 			/// </summary>
-			private const UInt32 FromAddress = 0x4;
+			private const UInt32 fromAddress = 0x4;
 			/// <summary>
 			/// <see cref="LocateImage"/> flag. Do not increment the module reference count.
 			/// </summary>
-			private const UInt32 UnchangedRefCount = 0x2;
+			private const UInt32 unchangedRefCount = 0x2;
+
 			/// <summary>
 			/// Flags for <see cref="LocateImage"/>.
 			/// </summary>
-			public const UInt32 AddressFlags = Kernel32.FromAddress | Kernel32.UnchangedRefCount;
+			public const UInt32 AddressFlags = Kernel32.fromAddress | Kernel32.unchangedRefCount;
 
 			/// <summary>
 			/// Validates <paramref name="result"/> value.

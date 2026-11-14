@@ -272,7 +272,9 @@ public partial class CStringBuilder
 		private static Chunk? AppendUtf16<T>(Chunk chunk, T value) where T : ISpanFormattable
 		{
 			Span<Char> span = stackalloc Char[StackAllocationHelper.StackallocByteThreshold];
-			return value.TryFormat(span, out Int32 count, default, default) ? chunk.Append(span[..count]) : default;
+			return value.TryFormat(span, out Int32 count, default, CultureInfo.CurrentCulture) ?
+				chunk.Append(span[..count]) :
+				default;
 		}
 #endif
 	}

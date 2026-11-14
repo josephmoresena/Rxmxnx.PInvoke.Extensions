@@ -86,8 +86,8 @@ public sealed class WrapperTests
 	}
 	private static void ObjectTest<T>() where T : unmanaged
 	{
-		T[] array = WrapperTests.fixture.CreateMany<T>().ToArray();
-		T[] array2 = WrapperTests.fixture.CreateMany<T>().ToArray();
+		T[] array = [.. WrapperTests.fixture.CreateMany<T>(),];
+		T[] array2 = [.. WrapperTests.fixture.CreateMany<T>(),];
 #if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		IWrapper<T[]> result = IWrapper.CreateObject(array);
 #else

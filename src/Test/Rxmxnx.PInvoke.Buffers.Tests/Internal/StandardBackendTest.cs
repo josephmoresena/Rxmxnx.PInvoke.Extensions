@@ -3,6 +3,7 @@ using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
 #endif
 
 using Rxmxnx.PInvoke.Buffers.Storage;
+// ReSharper disable UnusedMember.Local
 
 namespace Rxmxnx.PInvoke.Tests.Internal;
 

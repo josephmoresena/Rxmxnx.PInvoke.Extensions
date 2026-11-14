@@ -7,7 +7,7 @@ public sealed class WithSafeFixedTest
 	private static readonly IFixture fixture = new Fixture();
 
 	[Theory]
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 #pragma warning disable CA1041
 	[Obsolete]
 #endif
@@ -16,7 +16,7 @@ public sealed class WithSafeFixedTest
 	public void EmptyTest(Boolean nullInput)
 	{
 		String? value = !nullInput ? String.Empty : default;
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		value.WithSafeFixed(WithSafeFixedTest.EmptyActionTest);
 		value.WithSafeFixed(value, WithSafeFixedTest.EmptyActionTest);
 
@@ -34,14 +34,14 @@ public sealed class WithSafeFixedTest
 	}
 
 	[Fact]
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 #pragma warning disable CA1041
 	[Obsolete]
 #endif
 	public void NormalTest()
 	{
 		String value = WithSafeFixedTest.fixture.Create<String>();
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 		value.WithSafeFixed(value, WithSafeFixedTest.ActionTest);
 		PInvokeAssert.Equal(value, value.WithSafeFixed(WithSafeFixedTest.FuncTest));
 #endif
@@ -54,7 +54,7 @@ public sealed class WithSafeFixedTest
 		PInvokeAssert.Equal(value, result);
 	}
 
-#if (NETSTANDARD2_1 && !LEGACY) || NETCOREAPP3_0_OR_GREATER
+#if NETSTANDARD2_1 && !LEGACY || NETCOREAPP3_0_OR_GREATER
 	[Obsolete]
 	private static unsafe void EmptyActionTest(in IReadOnlyFixedContext<Char> ctx)
 	{
@@ -114,7 +114,9 @@ public sealed class WithSafeFixedTest
 						PInvokeAssert.Equal(new(ptr), ctx.Pointer);
 				return;
 			}
-			PInvokeAssert.Equal(value!.Length, ctx.Values.Length);
+#pragma warning disable CS8602
+			PInvokeAssert.Equal(value.Length, ctx.Values.Length);
+#pragma warning restore CS8602
 			PInvokeAssert.Equal(value.Length * sizeof(Char), ctx.Bytes.Length);
 			PInvokeAssert.Equal(value, ctx.Values.ToString());
 		}

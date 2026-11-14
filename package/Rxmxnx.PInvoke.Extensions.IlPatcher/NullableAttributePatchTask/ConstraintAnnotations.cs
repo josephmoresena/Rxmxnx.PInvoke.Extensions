@@ -2,6 +2,7 @@
 
 namespace Rxmxnx.PInvoke.Extensions.IlPatcher;
 
+// ReSharper disable once UnusedType.Global
 public partial class NullableAttributePatchTask
 {
 	/// <summary>
@@ -66,6 +67,9 @@ public partial class NullableAttributePatchTask
 	/// <returns>
 	/// <see langword="true"/> when a flag is 2, or when the argument cannot be read and the attribute must stay.
 	/// </returns>
+#if !PACKAGE
+	[SuppressMessage("csharpsquid", "S3267")]
+#endif
 	private static Boolean HasAnnotatedFlag(CustomAttribute attribute)
 	{
 		if (attribute.ConstructorArguments.Count == 0) return true;
@@ -77,7 +81,7 @@ public partial class NullableAttributePatchTask
 				return Array.Exists(flags, static item => item == NullableAttributePatchTask.AnnotatedFlag);
 			case CustomAttributeArgument[] arguments:
 				foreach (CustomAttributeArgument argument in arguments)
-					if (argument.Value is Byte value && value == NullableAttributePatchTask.AnnotatedFlag)
+					if (argument.Value is NullableAttributePatchTask.AnnotatedFlag)
 						return true;
 				return false;
 			default:

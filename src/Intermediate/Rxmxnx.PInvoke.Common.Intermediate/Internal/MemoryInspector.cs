@@ -1,3 +1,5 @@
+// ReSharper disable MemberCanBeProtected.Global
+
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>

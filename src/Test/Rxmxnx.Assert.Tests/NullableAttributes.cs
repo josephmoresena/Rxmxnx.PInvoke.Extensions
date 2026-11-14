@@ -24,6 +24,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// ReSharper disable UnusedType.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 #if !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER && !WINDOWS_UWP
 namespace System.Diagnostics.CodeAnalysis;
 

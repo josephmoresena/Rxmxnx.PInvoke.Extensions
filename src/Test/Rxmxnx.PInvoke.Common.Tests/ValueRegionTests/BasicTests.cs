@@ -69,10 +69,10 @@ public sealed class BasicTests : ValueRegionTestBase
 	private static void Test<T>()
 	{
 		List<GCHandle> handles = [];
-		T[] values0 = ValueRegionTestBase.Fixture.CreateMany<T>(PInvokeRandom.Shared.Next(default, 100)).ToArray();
-		T[] values1 = ValueRegionTestBase.Fixture.CreateMany<T>(PInvokeRandom.Shared.Next(default, 100)).ToArray();
-		T[] values2 = ValueRegionTestBase.Fixture.CreateMany<T>(PInvokeRandom.Shared.Next(default, 100)).ToArray();
-		T[] values3 = ValueRegionTestBase.Fixture.CreateMany<T>(PInvokeRandom.Shared.Next(default, 100)).ToArray();
+		T[] values0 = [.. ValueRegionTestBase.Fixture.CreateMany<T>(PInvokeRandom.Shared.Next(default, 100)),];
+		T[] values1 = [.. ValueRegionTestBase.Fixture.CreateMany<T>(PInvokeRandom.Shared.Next(default, 100)),];
+		T[] values2 = [.. ValueRegionTestBase.Fixture.CreateMany<T>(PInvokeRandom.Shared.Next(default, 100)),];
+		T[] values3 = [.. ValueRegionTestBase.Fixture.CreateMany<T>(PInvokeRandom.Shared.Next(default, 100)),];
 
 		try
 		{

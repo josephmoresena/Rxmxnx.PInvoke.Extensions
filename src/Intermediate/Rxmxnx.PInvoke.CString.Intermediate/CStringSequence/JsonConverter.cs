@@ -45,6 +45,7 @@ public partial class CStringSequence
 
 			if (leadingNull)
 				strBuilder.Append('\0'); // Append a null character if the last string was not null-terminated.
+			// ReSharper disable once UseCollectionExpression
 			return lengths.Count == 0 ? CStringSequence.Empty : new(strBuilder.ToString(), lengths.ToArray());
 #endif
 		}

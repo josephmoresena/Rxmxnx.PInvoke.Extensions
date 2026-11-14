@@ -1,3 +1,4 @@
+// ReSharper disable ConvertIfStatementToReturnStatement
 namespace Rxmxnx.PInvoke.Extensions.IlPatcher;
 
 /// <summary>
@@ -77,6 +78,7 @@ public sealed partial class NullableAttributePatchTask : AssemblyPatchTask
 			if (nested is not (TypeAttributes.NestedPublic or TypeAttributes.NestedFamily or
 			    TypeAttributes.NestedFamORAssem))
 				return false;
+			// ReSharper disable once TailRecursiveCall
 			return NullableAttributePatchTask.IsExported(declaring);
 		}
 		return (type.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.Public;

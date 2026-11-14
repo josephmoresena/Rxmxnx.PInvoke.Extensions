@@ -12,7 +12,7 @@ public sealed class GetUnsafeStreamTest
 	{
 		const Int32 length = 10;
 		Span<Byte> bytes = stackalloc Byte[length];
-		Byte[] source = this._fixture.CreateMany<Byte>(length).ToArray();
+		Byte[] source = [.. this._fixture.CreateMany<Byte>(length),];
 		using (Stream strm = bytes.GetUnsafeIntPtr().GetUnsafeStream(length))
 			strm.Write(source, 0, source.Length);
 		PInvokeAssert.True(bytes.SequenceEqual(source));
@@ -22,7 +22,7 @@ public sealed class GetUnsafeStreamTest
 	{
 		const Int32 length = 10;
 		Span<Byte> bytes = stackalloc Byte[length];
-		Byte[] source = this._fixture.CreateMany<Byte>(length).ToArray();
+		Byte[] source = [.. this._fixture.CreateMany<Byte>(length),];
 		using (Stream strm = bytes.GetUnsafeUIntPtr().GetUnsafeStream(length))
 			strm.Write(source, 0, source.Length);
 		PInvokeAssert.True(bytes.SequenceEqual(source));

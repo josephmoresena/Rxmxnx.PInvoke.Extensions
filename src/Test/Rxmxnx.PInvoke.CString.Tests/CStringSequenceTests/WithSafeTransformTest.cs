@@ -336,7 +336,7 @@ public sealed class WithSafeTransformTest
 					break;
 			}
 		}
-		return result.ToArray();
+		return [.. result,];
 	}
 }
 #endif

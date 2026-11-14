@@ -122,8 +122,8 @@ public sealed class ReferenceableWrapperTests
 	}
 	private static void ObjectTest<T>() where T : unmanaged
 	{
-		T[] array = ReferenceableWrapperTests.fixture.CreateMany<T>().ToArray();
-		T[] array2 = ReferenceableWrapperTests.fixture.CreateMany<T>().ToArray();
+		T[] array = [.. ReferenceableWrapperTests.fixture.CreateMany<T>(),];
+		T[] array2 = [.. ReferenceableWrapperTests.fixture.CreateMany<T>(),];
 #if (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER) && !LEGACY
 		IReferenceableWrapper<T[]>? result = IReferenceableWrapper.CreateObject(array);
 		IReferenceableWrapper<T[]> result2 = IReferenceableWrapper.CreateObject(array);

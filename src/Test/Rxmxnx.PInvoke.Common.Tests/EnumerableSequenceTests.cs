@@ -92,7 +92,7 @@ public sealed class EnumerableSequenceTests
 
 	private static async Task TestAsync<T>()
 	{
-		T[] values = EnumerableSequenceTests.fixture.CreateMany<T>().ToArray();
+		T[] values = [.. EnumerableSequenceTests.fixture.CreateMany<T>(),];
 		IEnumerableSequence<T> sequence = new EnumerableSequence<T>(() => values);
 		Task enumerableTestTask = Task.Run(() => EnumerableSequenceTests.EnumerableTest(values, sequence));
 		Task enumerationTestTask = Task.Run(() => EnumerableSequenceTests.EnumeratorTest(values, sequence));

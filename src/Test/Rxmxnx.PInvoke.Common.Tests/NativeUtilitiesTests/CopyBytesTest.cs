@@ -32,7 +32,7 @@ public sealed class CopyBytesTest
 
 	private static unsafe void CopyTest<T>() where T : unmanaged
 	{
-		T[] values = CopyBytesTest.fixture.CreateMany<T>().ToArray();
+		T[] values = [.. CopyBytesTest.fixture.CreateMany<T>(),];
 		Span<Byte> span = stackalloc Byte[values.Length * sizeof(T)];
 		for (Int32 i = 0; i < values.Length; i++)
 			NativeUtilities.CopyBytes(values[i], span, i * sizeof(T));

@@ -95,7 +95,7 @@ public sealed class ConcurrentBuilderTest
 	public void AppendTest(Int32? length)
 	{
 		List<Int32> indices = TestSet.GetIndices(length);
-		String?[] strings = indices.Select(i => TestSet.GetString(i, true)).ToArray();
+		String?[] strings = [.. indices.Select(i => TestSet.GetString(i, true)),];
 		CStringSequence seqRef = new(strings);
 		CStringSequence.Builder builder = CStringSequence.CreateBuilder();
 
@@ -114,7 +114,7 @@ public sealed class ConcurrentBuilderTest
 	public void AppendStringTest(Int32? length)
 	{
 		List<Int32> indices = TestSet.GetIndices(length);
-		String?[] strings = indices.Select(i => TestSet.GetString(i, true)).ToArray();
+		String?[] strings = [.. indices.Select(i => TestSet.GetString(i, true)),];
 		CStringSequence seqRef = new(strings);
 		CStringSequence.Builder builder = CStringSequence.CreateBuilder();
 
@@ -174,7 +174,7 @@ public sealed class ConcurrentBuilderTest
 		foreach (String value in TestSet.Utf16Text)
 		{
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || WINDOWS_UWP
-			Byte[] encoded = JsonEncodedText.Encode(value).EncodedUtf8Bytes.ToArray();
+			Byte[] encoded = [.. JsonEncodedText.Encode(value).EncodedUtf8Bytes,];
 #else
 			Byte[] encoded = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(value)[1..^1]);
 #endif
@@ -192,10 +192,10 @@ public sealed class ConcurrentBuilderTest
 	public void InsertTest(Int32? length)
 	{
 		List<Int32> indices = TestSet.GetIndices(length);
-		String?[] strings = indices.Select(i => TestSet.GetString(i, true)).ToArray();
+		String?[] strings = [.. indices.Select(i => TestSet.GetString(i, true)),];
 		CStringSequence seqRef = new(strings);
 		CStringSequence.Builder builder = CStringSequence.CreateBuilder();
-		Int32[] oddIndexes = Enumerable.Range(0, strings.Length).Where(i => i % 2 != 0).ToArray();
+		Int32[] oddIndexes = [.. Enumerable.Range(0, strings.Length).Where(i => i % 2 != 0),];
 
 		foreach (CString value in seqRef)
 			builder.ConcurrentAppend(value);
@@ -221,10 +221,10 @@ public sealed class ConcurrentBuilderTest
 	public void InsertStringTest(Int32? length)
 	{
 		List<Int32> indices = TestSet.GetIndices(length);
-		String?[] strings = indices.Select(i => TestSet.GetString(i, true)).ToArray();
+		String?[] strings = [.. indices.Select(i => TestSet.GetString(i, true)),];
 		CStringSequence seqRef = new(strings);
 		CStringSequence.Builder builder = CStringSequence.CreateBuilder();
-		Int32[] oddIndexes = Enumerable.Range(0, strings.Length).Where(i => i % 2 != 0).ToArray();
+		Int32[] oddIndexes = [.. Enumerable.Range(0, strings.Length).Where(i => i % 2 != 0),];
 
 		foreach (String? value in strings)
 			builder.ConcurrentAppend(value);
@@ -243,10 +243,10 @@ public sealed class ConcurrentBuilderTest
 	[Fact]
 	public void ConcurrentMutationTest()
 	{
-		String[] strings = Enumerable.Range(0, 40).Select(i => new String('a', 64) + i).ToArray();
+		String[] strings = [.. Enumerable.Range(0, 40).Select(i => new String('a', 64) + i),];
 		CStringSequence seqRef = new(strings);
 		CStringSequence.Builder builder = CStringSequence.CreateBuilder();
-		Int32[] oddIndexes = Enumerable.Range(0, strings.Length).Where(i => i % 2 != 0).ToArray();
+		Int32[] oddIndexes = [.. Enumerable.Range(0, strings.Length).Where(i => i % 2 != 0),];
 
 		foreach (String value in strings)
 			builder.ConcurrentAppend(value);

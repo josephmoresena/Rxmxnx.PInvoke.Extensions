@@ -218,7 +218,7 @@ public sealed class BasicTests : CStringBuilderTestsBase
 	public void AppendJoinSequenceTest(Int32? length, String? separator = default)
 	{
 		List<Int32> indices = TestSet.GetIndices(length);
-		String?[] values = indices.Select(i => TestSet.GetString(i, true)).ToArray();
+		String?[] values = [.. indices.Select(i => TestSet.GetString(i, true)),];
 		CStringSequence seq = new(values);
 		StringBuilder strBuild = new();
 		CStringBuilder cstrBuild = new();
@@ -249,9 +249,9 @@ public sealed class BasicTests : CStringBuilderTestsBase
 	{
 		using TestMemoryHandle handle = new();
 		List<Int32> indices = TestSet.GetIndices(length);
-		String?[] values = indices.Select(i => TestSet.GetString(i, true)).ToArray();
+		String?[] values = [.. indices.Select(i => TestSet.GetString(i, true)),];
 		CString?[] cValues = // ReSharper disable once AccessToDisposedClosure
-			indices.Select(i => TestSet.GetCString(i, handle)).ToArray();
+			[.. indices.Select(i => TestSet.GetCString(i, handle)),];
 		StringBuilder strBuild = new();
 		CStringBuilder cstrBuild = new();
 		strBuild.AppendJoin(separator, values);

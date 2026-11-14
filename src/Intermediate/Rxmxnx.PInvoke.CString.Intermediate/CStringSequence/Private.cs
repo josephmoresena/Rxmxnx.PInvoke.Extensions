@@ -139,6 +139,7 @@ public partial class CStringSequence
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Int32[] CreateIntArray(Int32 length)
 	{
+		// ReSharper disable once UseCollectionExpression
 		if (length == 0) return Array.Empty<Int32>();
 #if NET5_0_OR_GREATER
 		Int32[] result = GC.AllocateUninitializedArray<Int32>(length);

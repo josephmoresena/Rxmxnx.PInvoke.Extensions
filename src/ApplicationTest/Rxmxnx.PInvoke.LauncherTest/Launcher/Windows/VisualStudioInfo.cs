@@ -1,3 +1,4 @@
+// ReSharper disable UnusedType.Local
 namespace Rxmxnx.PInvoke.ApplicationTest;
 
 // ReSharper disable once ClassCannotBeInstantiated
