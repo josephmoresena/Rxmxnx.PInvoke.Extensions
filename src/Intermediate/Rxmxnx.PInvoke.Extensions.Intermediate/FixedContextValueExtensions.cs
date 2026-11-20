@@ -71,7 +71,7 @@ public static unsafe class FixedContextValueExtensions
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IDisposable RentFixed<T>(this ArrayPool<T> arrayPool, Int32 count,
-		out FixedContextValue<T> fixedContext, Boolean clearArray = false) where T : unmanaged
+		out FixedContextValue<T> fixedContext, Boolean clearArray = false) where T : struct
 	{
 #if !NET6_0_OR_GREATER
 		ArgumentNullExceptionCompat.ThrowIfNull(arrayPool);
@@ -106,7 +106,7 @@ public static unsafe class FixedContextValueExtensions
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IDisposable RentFixed<T>(this ArrayPool<T> arrayPool, Int32 count,
-		out FixedContextValue<T> fixedContext, Boolean clearArray, out Int32 arrayLength) where T : unmanaged
+		out FixedContextValue<T> fixedContext, Boolean clearArray, out Int32 arrayLength) where T : struct
 	{
 #if !NET6_0_OR_GREATER
 		ArgumentNullExceptionCompat.ThrowIfNull(arrayPool);

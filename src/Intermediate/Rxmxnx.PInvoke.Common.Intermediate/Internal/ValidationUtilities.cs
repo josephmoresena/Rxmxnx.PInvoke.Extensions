@@ -312,6 +312,8 @@ internal static unsafe class ValidationUtilities
 	}
 #endif
 
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#pragma warning disable CS8500
 	/// <summary>
 	/// Validates if the binary span <paramref name="destination"/> is sufficient to contain the binary
 	/// information of <paramref name="valuePtr"/>.
@@ -334,14 +336,15 @@ internal static unsafe class ValidationUtilities
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidCopyType<TValue>(TValue* valuePtr, Span<Byte> destination, Int32 offset,
-		out ReadOnlySpan<Byte> bytes) where TValue : unmanaged
+		out ReadOnlySpan<Byte> bytes) where TValue : struct
 	{
+		Debug.Assert(ValPtr<TValue>.IsUnmanaged);
 		bytes = new(valuePtr, sizeof(TValue));
 		if (destination.Length - offset >= bytes.Length) return;
 		String message = MessageResource.GetInstance().InvalidCopyUnmanagedType(nameof(destination), nameof(valuePtr));
 		throw new InsufficientMemoryException(message);
 	}
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+#else
 	/// <summary>
 	/// Validates if the binary span <paramref name="destination"/> is sufficient to contain the binary
 	/// information of <paramref name="value"/>.
@@ -358,7 +361,7 @@ internal static unsafe class ValidationUtilities
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidCopyType<TValue>(in TValue value, Span<Byte> destination, Int32 offset,
-		out ReadOnlySpan<Byte> bytes) where TValue : unmanaged
+		out ReadOnlySpan<Byte> bytes) where TValue : struct
 	{
 		ref TValue refValue = ref Unsafe.AsRef(in value);
 		ReadOnlySpan<TValue> intermediateSpan = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
@@ -368,6 +371,7 @@ internal static unsafe class ValidationUtilities
 		throw new InsufficientMemoryException(message);
 	}
 #endif
+#pragma warning restore CS8500
 
 	/// <summary>
 	/// Validates the length or index value.
@@ -558,6 +562,25 @@ internal static unsafe class ValidationUtilities
 		String message = MessageResource.GetInstance().NotUnmanagedType(type);
 		throw new InvalidOperationException(message);
 	}
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+	/// <summary>
+	/// Throws an exception if <typeparamref name="T"/> is not unmanaged.
+	/// </summary>
+	/// <typeparam name="T">The value type to check.</typeparam>
+	/// <exception cref="InvalidOperationException">
+	/// Throws an exception if <typeparamref name="T"/> is not an unmanaged type.
+	/// </exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNotUnmanagedType<T>() where T : struct
+	{
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+#else
+		if (RuntimeHelpersCompat.IsReferenceOrContainsReferences<T>())
+#endif
+			MemoryMarshal.AsBytes(ReadOnlySpan<T>.Empty);
+	}
+#endif
 	/// <summary>
 	/// Throws an exception if <paramref name="type"/> is not a reference type.
 	/// </summary>

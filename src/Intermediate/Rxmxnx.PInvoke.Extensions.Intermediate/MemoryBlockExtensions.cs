@@ -1,4 +1,8 @@
-﻿// ReSharper disable ConvertToExtensionBlock
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER && !UAP10_0_16299
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
+// ReSharper disable ConvertToExtensionBlock
 
 namespace Rxmxnx.PInvoke;
 
@@ -269,12 +273,15 @@ public static unsafe partial class MemoryBlockExtensions
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static Span<Byte> AsBytes<TSource>(this Span<TSource> span) where TSource : unmanaged
+	public static Span<Byte> AsBytes<TSource>(this Span<TSource> span) where TSource : struct
+	{
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-		=> MemoryMarshal.AsBytes(span);
+		return MemoryMarshal.AsBytes(span);
 #else
-		=> MemoryMarshalCompat.Cast<TSource, Byte>(span);
+		ValidationUtilities.ThrowIfNotUnmanagedType<TSource>();
+		return MemoryMarshalCompat.Cast<TSource, Byte>(span);
 #endif
+	}
 	/// <summary>
 	/// Reinterprets the read-only span of <typeparamref name="TSource"/> as a read-only binary span.
 	/// </summary>
@@ -285,12 +292,16 @@ public static unsafe partial class MemoryBlockExtensions
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static ReadOnlySpan<Byte> AsBytes<TSource>(this ReadOnlySpan<TSource> span) where TSource : unmanaged
+	public static ReadOnlySpan<Byte> AsBytes<TSource>(this ReadOnlySpan<TSource> span) where TSource : struct
+	{
+		if (span.IsEmpty || RuntimeHelpers.IsReferenceOrContainsReferences<TSource>())
+			return default;
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-		=> MemoryMarshal.AsBytes(span);
+		return MemoryMarshal.AsBytes(span);
 #else
-		=> MemoryMarshalCompat.Cast<TSource, Byte>(span);
+		return MemoryMarshalCompat.Cast<TSource, Byte>(span);
 #endif
+	}
 
 	/// <summary>
 	/// Reinterprets the span of <typeparamref name="TSource"/> as a span of <typeparamref name="TDestination"/>.
@@ -304,12 +315,16 @@ public static unsafe partial class MemoryBlockExtensions
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span)
-		where TSource : unmanaged where TDestination : unmanaged
+		where TSource : struct where TDestination : struct
+	{
+		if (span.IsEmpty || RuntimeHelpers.IsReferenceOrContainsReferences<TSource>())
+			return default;
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-		=> MemoryMarshal.Cast<TSource, TDestination>(span);
+		return MemoryMarshal.Cast<TSource, TDestination>(span);
 #else
-		=> MemoryMarshalCompat.Cast<TSource, TDestination>(span);
+		return MemoryMarshalCompat.Cast<TSource, TDestination>(span);
 #endif
+	}
 	/// <summary>
 	/// Reinterprets the read-only span of <typeparamref name="TSource"/> as a read-only span of
 	/// <typeparamref name="TDestination"/>.
@@ -323,12 +338,17 @@ public static unsafe partial class MemoryBlockExtensions
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static ReadOnlySpan<TDestination> AsValues<TSource, TDestination>(this ReadOnlySpan<TSource> span)
-		where TSource : unmanaged where TDestination : unmanaged
+		where TSource : struct where TDestination : struct
+	{
+		if (span.IsEmpty || RuntimeHelpers.IsReferenceOrContainsReferences<TSource>() ||
+		    RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>())
+			return default;
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-		=> MemoryMarshal.Cast<TSource, TDestination>(span);
+		return MemoryMarshal.Cast<TSource, TDestination>(span);
 #else
-		=> MemoryMarshalCompat.Cast<TSource, TDestination>(span);
+		return MemoryMarshalCompat.Cast<TSource, TDestination>(span);
 #endif
+	}
 	/// <summary>
 	/// Reinterprets the span of <typeparamref name="TSource"/> as a span of <typeparamref name="TDestination"/>.
 	/// </summary>

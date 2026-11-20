@@ -1,4 +1,8 @@
-﻿// ReSharper disable ConvertToExtensionBlock
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER && !UAP10_0_16299
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
+// ReSharper disable ConvertToExtensionBlock
 
 #if !NETSTANDARD2_0_OR_GREATER && !NETCOREAPP && !NETFRAMEWORK && !UAP10_0_16299
 using InsufficientMemoryException = System.OutOfMemoryException;
@@ -37,7 +41,7 @@ public static unsafe class BinaryExtensions
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T ToValue<T>(this Byte[] array) where T : unmanaged => array.AsSpan().ToValue<T>();
+	public static T ToValue<T>(this Byte[] array) where T : struct => array.AsSpan().ToValue<T>();
 	/// <summary>
 	/// Retrieves a <typeparamref name="T"/> value from the given byte span.
 	/// </summary>
@@ -48,7 +52,7 @@ public static unsafe class BinaryExtensions
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T ToValue<T>(this Span<Byte> span) where T : unmanaged => ((ReadOnlySpan<Byte>)span).ToValue<T>();
+	public static T ToValue<T>(this Span<Byte> span) where T : struct => ((ReadOnlySpan<Byte>)span).ToValue<T>();
 	/// <summary>
 	/// Retrieves a <typeparamref name="T"/> value from the given read-only byte span.
 	/// </summary>
@@ -59,10 +63,11 @@ public static unsafe class BinaryExtensions
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T ToValue<T>(this ReadOnlySpan<Byte> span) where T : unmanaged
+	public static T ToValue<T>(this ReadOnlySpan<Byte> span) where T : struct
 	{
-		if (span.IsEmpty) return default;
+		if (span.IsEmpty || RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return default;
 		ref Byte refByte = ref MemoryMarshal.GetReference(span);
+#pragma warning disable CS8500
 		if (span.Length >= sizeof(T))
 			return Unsafe.ReadUnaligned<T>(ref refByte);
 
@@ -72,6 +77,7 @@ public static unsafe class BinaryExtensions
 #else
 		Span<Byte> resultBytes = new(&result, span.Length);
 #endif
+#pragma warning restore CS8500
 		span.CopyTo(resultBytes);
 		return result;
 	}

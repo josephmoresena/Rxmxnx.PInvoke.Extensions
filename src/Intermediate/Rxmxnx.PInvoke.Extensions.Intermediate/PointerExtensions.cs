@@ -2,6 +2,10 @@
 using MemoryMarshal = Rxmxnx.PInvoke.Internal.FrameworkCompat.MemoryMarshalCompat;
 #endif
 
+#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER && !UAP10_0_16299
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
 namespace Rxmxnx.PInvoke;
 
 /// <summary>
@@ -189,10 +193,12 @@ public static unsafe class PointerExtensions
 	/// The reliability of the obtained information depends on the lifetime and validity of the pointer at the time
 	/// of method invocation.
 	/// </remarks>
-	public static T[]? GetUnsafeArray<T>(this IntPtr ptr, Int32 length) where T : unmanaged
+	public static T[]? GetUnsafeArray<T>(this IntPtr ptr, Int32 length) where T : struct
 	{
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
-		return ptr.IsZero() ? default : [.. ptr.GetUnsafeReadOnlySpan<T>(length),];
+		return !RuntimeHelpers.IsReferenceOrContainsReferences<T>() && !ptr.IsZero() ?
+			[.. ptr.GetUnsafeReadOnlySpan<T>(length),] :
+			default;
 	}
 	/// <summary>
 	/// Generates a <typeparamref name="T"/> array by copying values from memory starting at the location referenced by a
@@ -205,10 +211,12 @@ public static unsafe class PointerExtensions
 	/// <param name="length">The number of <typeparamref name="T"/> values to include in the array.</param>
 	/// <returns>A new array of <typeparamref name="T"/>, or <see langword="null"/> if the pointer is zero.</returns>
 	/// <exception cref="ArgumentOutOfRangeException">Thrown if length is less than zero.</exception>
-	public static T[]? GetUnsafeArray<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
+	public static T[]? GetUnsafeArray<T>(this UIntPtr uptr, Int32 length) where T : struct
 	{
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
-		return uptr.IsZero() ? default : [.. uptr.GetUnsafeReadOnlySpan<T>(length),];
+		return !RuntimeHelpers.IsReferenceOrContainsReferences<T>() && !uptr.IsZero() ?
+			[.. uptr.GetUnsafeReadOnlySpan<T>(length),] :
+			default;
 	}
 	/// <summary>
 	/// Generates a <typeparamref name="T"/> array by copying values from memory starting at the location referenced by a
@@ -224,7 +232,7 @@ public static unsafe class PointerExtensions
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
-	public static T[]? GetUnsafeArray<T>(this MemoryHandle handle, Int32 length) where T : unmanaged
+	public static T[]? GetUnsafeArray<T>(this MemoryHandle handle, Int32 length) where T : struct
 	{
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		return handle.Pointer == default ? default : [.. handle.ToIntPtr().GetUnsafeReadOnlySpan<T>(length),];
@@ -250,10 +258,10 @@ public static unsafe class PointerExtensions
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static Span<T> GetUnsafeSpan<T>(this IntPtr ptr, Int32 length) where T : unmanaged
+	public static Span<T> GetUnsafeSpan<T>(this IntPtr ptr, Int32 length) where T : struct
 	{
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
-		if (ptr.IsZero())
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>() || ptr.IsZero())
 			return default;
 		return new(ptr.ToPointer(), length);
 	}
@@ -277,10 +285,10 @@ public static unsafe class PointerExtensions
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static Span<T> GetUnsafeSpan<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
+	public static Span<T> GetUnsafeSpan<T>(this UIntPtr uptr, Int32 length) where T : struct
 	{
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
-		if (uptr.IsZero())
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>() || uptr.IsZero())
 			return default;
 		return new(uptr.ToPointer(), length);
 	}
@@ -334,10 +342,10 @@ public static unsafe class PointerExtensions
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4144)]
 #endif
-	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this IntPtr ptr, Int32 length) where T : unmanaged
+	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this IntPtr ptr, Int32 length) where T : struct
 	{
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
-		if (ptr.IsZero())
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>() || ptr.IsZero())
 			return default;
 		return new(ptr.ToPointer(), length);
 	}
@@ -364,10 +372,10 @@ public static unsafe class PointerExtensions
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4144)]
 #endif
-	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this UIntPtr uptr, Int32 length) where T : unmanaged
+	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this UIntPtr uptr, Int32 length) where T : struct
 	{
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
-		if (uptr.IsZero())
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>() || uptr.IsZero())
 			return default;
 		return new(uptr.ToPointer(), length);
 	}
@@ -394,10 +402,10 @@ public static unsafe class PointerExtensions
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4144)]
 #endif
-	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this MemoryHandle handle, Int32 length) where T : unmanaged
+	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this MemoryHandle handle, Int32 length) where T : struct
 	{
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
-		if (handle.Pointer == default)
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>() || handle.Pointer == default)
 			return default;
 		return new(handle.Pointer, length);
 	}
@@ -526,8 +534,10 @@ public static unsafe class PointerExtensions
 	/// of method invocation.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T? GetUnsafeValue<T>(this IntPtr ptr) where T : unmanaged
-		=> ptr.IsZero() ? default(T?) : ptr.GetUnsafeReadOnlyReference<T>();
+	public static T? GetUnsafeValue<T>(this IntPtr ptr) where T : struct
+		=> !RuntimeHelpers.IsReferenceOrContainsReferences<T>() && !ptr.IsZero() ?
+			Unsafe.AsRef<T>(ptr.ToPointer()) :
+			default(T?);
 	/// <summary>
 	/// Generates an <see langword="unmanaged"/> value of type <typeparamref name="T"/> from a <see cref="UIntPtr"/> pointer.
 	/// </summary>
@@ -539,8 +549,10 @@ public static unsafe class PointerExtensions
 	/// of method invocation.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T? GetUnsafeValue<T>(this UIntPtr uptr) where T : unmanaged
-		=> uptr.IsZero() ? default(T?) : uptr.GetUnsafeReadOnlyReference<T>();
+	public static T? GetUnsafeValue<T>(this UIntPtr uptr) where T : struct
+		=> !RuntimeHelpers.IsReferenceOrContainsReferences<T>() && !uptr.IsZero() ?
+			Unsafe.AsRef<T>(uptr.ToPointer()) :
+			default(T?);
 
 	/// <summary>
 	/// Generates an <see cref="UnmanagedMemoryStream"/> instance from an <see cref="IntPtr"/>.

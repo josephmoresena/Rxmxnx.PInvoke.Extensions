@@ -29,7 +29,7 @@ public static unsafe partial class ReferenceExtensions
 	/// The pointer will point to the address in memory the reference had at the moment this method was called.
 	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static ValPtr<T> GetUnsafeValPtr<T>(ref this T refValue) where T : unmanaged
+	public static ValPtr<T> GetUnsafeValPtr<T>(ref this T refValue) where T : struct
 		=> NativeUtilities.GetUnsafeValPtrFromRef(ref refValue);
 
 	/// <summary>
@@ -50,7 +50,7 @@ public static unsafe partial class ReferenceExtensions
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static IntPtr GetUnsafeIntPtr<T>(ref this T refValue) where T : unmanaged
+	public static IntPtr GetUnsafeIntPtr<T>(ref this T refValue) where T : struct
 	{
 		void* ptr = Unsafe.AsPointer(ref refValue);
 		return (IntPtr)ptr;
@@ -74,7 +74,7 @@ public static unsafe partial class ReferenceExtensions
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static UIntPtr GetUnsafeUIntPtr<T>(ref this T refValue) where T : unmanaged
+	public static UIntPtr GetUnsafeUIntPtr<T>(ref this T refValue) where T : struct
 	{
 		void* ptr = Unsafe.AsPointer(ref refValue);
 		return (UIntPtr)ptr;
