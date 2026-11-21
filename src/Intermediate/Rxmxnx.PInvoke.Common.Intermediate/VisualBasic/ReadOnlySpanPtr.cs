@@ -23,7 +23,7 @@ public readonly unsafe struct ReadOnlySpanPtr<T>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public ReadOnlySpanPtr(ref ReadOnlySpan<T> refSpan)
 	{
-		fixed (void* ptr = refSpan)
+		fixed (void* ptr = &refSpan)
 			this._ptr = ptr;
 	}
 

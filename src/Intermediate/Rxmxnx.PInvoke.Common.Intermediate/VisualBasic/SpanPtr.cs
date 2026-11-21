@@ -20,7 +20,7 @@ public unsafe struct SpanPtr<T>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public SpanPtr(ref Span<T> refSpan)
 	{
-		fixed (void* ptr = refSpan)
+		fixed (void* ptr = &refSpan)
 			this._ptr = ptr;
 	}
 
