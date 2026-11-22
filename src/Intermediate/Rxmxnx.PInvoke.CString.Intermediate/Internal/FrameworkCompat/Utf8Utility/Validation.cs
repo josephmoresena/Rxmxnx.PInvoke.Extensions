@@ -45,6 +45,7 @@ using IntPtr = nint;
 #endif
 internal static unsafe partial class Utf8Utility
 {
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	// Returns &inputBuffer[inputLength] if the input buffer is valid.
 	/// <summary>
 	/// Given an input buffer <paramref name="pInputBuffer"/> of byte length <paramref name="inputLength"/>,
@@ -362,5 +363,6 @@ internal static unsafe partial class Utf8Utility
 		scalarCountAdjustment = tempScalarCountAdjustment;
 		return pInputBuffer;
 	}
+#endif
 }
 #endif

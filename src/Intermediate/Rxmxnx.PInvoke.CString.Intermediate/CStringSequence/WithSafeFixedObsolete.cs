@@ -3,37 +3,8 @@ namespace Rxmxnx.PInvoke;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-public unsafe partial class CStringSequence
+public partial class CStringSequence
 {
-	/// <summary>
-	/// Internal pointer to <c>typeof(System.Byte)</c> instance.
-	/// </summary>
-#if !NET5_0_OR_GREATER && (NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299)
-	internal static void* TypePointer
-	{
-#if NETFRAMEWORK || NETSTANDARD2_0
-		[SecuritySafeCritical]
-#endif
-		get => Unsafe.AsPointer(ref CStringSequence.bufferType);
-	}
-#else
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	internal static void* TypePointer => default;
-#endif
-	/// <summary>
-	/// Internal pointer to <c>ReadOnlyFixedContext&lt;Byte&gt;.CreateInstance</c> delegate instance.
-	/// </summary>
-#if !NET5_0_OR_GREATER && (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER)
-	internal static void* ConstructorPointer => Unsafe.AsPointer(ref CStringSequence.bufferConstructor);
-#else
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	internal static void* ConstructorPointer => default;
-#endif
-
 	/// <summary>
 	/// Creates a <see cref="MemoryHandle"/> instance by pinning the current instance.
 	/// </summary>

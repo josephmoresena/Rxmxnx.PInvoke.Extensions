@@ -17,10 +17,12 @@ internal abstract partial class BinaryConcatenator<T> : IDisposable
 	/// </summary>
 	protected CancellationToken CancellationToken { get; }
 
+#if !PACKAGE
 	/// <summary>
 	/// Gets the separator instance.
 	/// </summary>
 	public T? Separator => this._separator;
+#endif
 	/// <summary>
 	/// Constructs a new instance of the BinaryConcatenator class.
 	/// </summary>

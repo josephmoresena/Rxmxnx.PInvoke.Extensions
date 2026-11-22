@@ -40,7 +40,7 @@ namespace System.Text;
 /// This type's constructors and conversion operators validate the input, so consumers can call the APIs
 /// assuming that the underlying <see cref="System.Text.Rune"/> instance is well-formed.
 /// </remarks>
-#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
+#if (!PACKAGE || USE_COMPLETE_BLC_CODE) && (NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0)
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
 #endif
 #if !PACKAGE
@@ -53,7 +53,9 @@ namespace System.Text;
 internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 {
 	internal const Int32 MaxUtf16CharsPerRune = 2;
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	internal const Int32 MaxUtf8BytesPerRune = 4;
+#endif
 
 	private const Char highSurrogateStart = '\ud800';
 	private const Char lowSurrogateStart = '\udc00';
@@ -148,20 +150,22 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	public static Boolean operator !=(Rune left, Rune right) => left._value != right._value;
 
 	public static Boolean operator <(Rune left, Rune right) => left._value < right._value;
-
 	public static Boolean operator <=(Rune left, Rune right) => left._value <= right._value;
 
 	public static Boolean operator >(Rune left, Rune right) => left._value > right._value;
 
 	public static Boolean operator >=(Rune left, Rune right) => left._value >= right._value;
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
+
 	public static explicit operator Rune(Char ch) => new(ch);
 
 	public static explicit operator Rune(UInt32 value) => new(value);
 
 	public static explicit operator Rune(Int32 value) => new(value);
+#endif
 
-#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
+#if (!PACKAGE || USE_COMPLETE_BLC_CODE) && (NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0)
 	// Displayed as "'<char>' (U+XXXX)"; e.g., "'e' (U+0065)"
 	private String DebuggerDisplay
 		=> FormattableString.Invariant(
@@ -193,6 +197,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// </summary>
 	public static Rune ReplacementChar => Rune.UnsafeCreate(UnicodeUtility.ReplacementChar);
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Returns the length in code units (<see cref="char"/>) of the
 	/// UTF-16 sequence required to represent this scalar value.
@@ -208,7 +213,8 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 			return codeUnitCount;
 		}
 	}
-
+#endif
+#if !PACKAGE || USE_COMPLETE_BLC_CODE || NETCOREAPP
 	/// <summary>
 	/// Returns the length in code units of the
 	/// UTF-8 sequence required to represent this scalar value.
@@ -224,6 +230,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 			return codeUnitCount;
 		}
 	}
+#endif
 
 	/// <summary>
 	/// Returns the Unicode scalar value as an integer.
@@ -513,7 +520,6 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 		return OperationStatus.NeedMoreData;
 	}
 
-#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Decodes the <see cref="System.Text.Rune"/> at the end of the provided UTF-8 source buffer.
 	/// </summary>
@@ -573,8 +579,8 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 		return OperationStatus.NeedMoreData;
 	}
 #endif
-#endif
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Encodes this <see cref="System.Text.Rune"/> to a UTF-16 destination buffer.
 	/// </summary>
@@ -590,6 +596,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 		=> this.TryEncodeToUtf16(destination, out Int32 charsWritten) ?
 			charsWritten :
 			throw new ArgumentException("Destination is too short.", nameof(destination));
+#endif
 
 	/// <summary>
 	/// Encodes this <see cref="System.Text.Rune"/> to a UTF-8 destination buffer.
@@ -698,7 +705,6 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// Attempts to create a <see cref="System.Text.Rune"/> from the provided input value.
 	/// </summary>
 	public static Boolean TryCreate(Int32 value, out Rune result) => Rune.TryCreate((UInt32)value, out result);
-#endif
 
 	/// <summary>
 	/// Attempts to create a <see cref="System.Text.Rune"/> from the provided input value.
@@ -713,6 +719,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 		result = default;
 		return false;
 	}
+#endif
 
 	/// <summary>
 	/// Encodes this <see cref="System.Text.Rune"/> to a UTF-16 destination buffer.
@@ -724,7 +731,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// </param>
 	/// <returns>True if the value was written to the buffer; otherwise, false.</returns>
 	/// <remarks>
-	/// The <see cref="Utf16SequenceLength"/> property can be queried ahead of time to determine
+	/// The <c>Utf16SequenceLength</c> property can be queried ahead of time to determine
 	/// the required size of the <paramref name="destination"/> buffer.
 	/// </remarks>
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -769,7 +776,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// </param>
 	/// <returns>True if the value was written to the buffer; otherwise, false.</returns>
 	/// <remarks>
-	/// The <see cref="Utf8SequenceLength"/> property can be queried ahead of time to determine
+	/// The <c>Utf8SequenceLength</c> property can be queried ahead of time to determine
 	/// the required size of the <paramref name="destination"/> buffer.
 	/// </remarks>
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -837,17 +844,6 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	internal static Rune UnsafeCreate(UInt32 scalarValue) => new(scalarValue, false);
 
 #if !PACKAGE || USE_COMPLETE_BLC_CODE
-	public static Double GetNumericValue(Rune value)
-	{
-		if (!value.IsAscii)
-			return value.IsBmp ?
-				CharUnicodeInfo.GetNumericValue((Char)value._value) :
-				CharUnicodeInfo.GetNumericValue(value.ToString(), 0);
-		UInt32 baseNum = value._value - '0';
-		return baseNum <= 9 ? baseNum : -1;
-	}
-#endif
-
 	public static UnicodeCategory GetUnicodeCategory(Rune value)
 	{
 		if (value.IsAscii) return (UnicodeCategory)(Rune.AsciiCharInfo[value.Value] & Rune.unicodeCategoryMask);
@@ -868,7 +864,16 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	}
 #endif
 
-#if !PACKAGE || USE_COMPLETE_BLC_CODE
+	public static Double GetNumericValue(Rune value)
+	{
+		if (!value.IsAscii)
+			return value.IsBmp ?
+				CharUnicodeInfo.GetNumericValue((Char)value._value) :
+				CharUnicodeInfo.GetNumericValue(value.ToString(), 0);
+		UInt32 baseNum = value._value - '0';
+		return baseNum <= 9 ? baseNum : -1;
+	}
+
 	// Returns true iff this Unicode category represents a letter
 	private static Boolean IsCategoryLetter(UnicodeCategory category)
 		=> UnicodeUtility.IsInRangeInclusive((UInt32)category, (UInt32)UnicodeCategory.UppercaseLetter,
@@ -899,9 +904,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	private static Boolean IsCategorySymbol(UnicodeCategory category)
 		=> UnicodeUtility.IsInRangeInclusive((UInt32)category, (UInt32)UnicodeCategory.MathSymbol,
 		                                     (UInt32)UnicodeCategory.OtherSymbol);
-#endif
 
-#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	public static Boolean IsControl(Rune value) => ((value._value + 1) & ~0x80u) <= 0x20u;
 
 	public static Boolean IsDigit(Rune value)

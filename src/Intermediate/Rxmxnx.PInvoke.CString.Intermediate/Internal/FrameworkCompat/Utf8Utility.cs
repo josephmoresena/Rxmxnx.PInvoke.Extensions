@@ -42,6 +42,7 @@ namespace System.Text.Unicode;
 #endif
 internal static partial class Utf8Utility
 {
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// The maximum number of bytes that can result from UTF-8 transcoding
 	/// any Unicode scalar value.
@@ -184,5 +185,6 @@ internal static partial class Utf8Utility
 			2;
 		return (valueA | letterMaskA) == (valueB | letterMaskB);
 	}
+#endif
 }
 #endif

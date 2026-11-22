@@ -73,6 +73,7 @@ public static partial class SystemInfo
 	/// <returns>Number of interfaces implemented by <typeparamref name="T"/> type.</returns>
 	internal static Int32 CountInterfaces<[DynamicallyAccessedMembers(SystemInfo.InterfaceAccess)] T>()
 		=> typeof(T).GetInterfaces().Length;
+#if !PACKAGE || !NET7_0_OR_GREATER && !UAP
 	/// <summary>
 	/// Indicates whether <typeparamref name="T"/> implements <see cref="IEquatable{T}"/> interface.
 	/// </summary>
@@ -95,4 +96,5 @@ public static partial class SystemInfo
 		}
 		return false;
 	}
+#endif
 }

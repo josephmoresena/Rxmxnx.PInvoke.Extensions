@@ -45,6 +45,7 @@ internal static class Utf16Utility
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static Boolean AllCharsInUInt32AreAscii(UInt32 value) => (value & ~0x007F_007Fu) == 0;
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Returns true iff the UInt64 represents four ASCII UTF-16 characters in machine endianness.
 	/// </summary>
@@ -123,7 +124,6 @@ internal static class Utf16Utility
 		return (differentBits & indicator) == 0;
 	}
 
-#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Given a UInt32 that represents two ASCII UTF-16 characters, returns the invariant
 	/// lowercase representation of those characters. Requires the input value to contain
@@ -159,9 +159,7 @@ internal static class Utf16Utility
 		UInt32 mask = (combinedIndicator & 0x0080_0080u) >> 2;
 		return value ^ mask;
 	}
-#endif
 
-#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Given a UInt32 that represents two ASCII UTF-16 characters, returns true iff
 	/// the input contains one or more lowercase ASCII characters.

@@ -117,24 +117,6 @@ internal static class BuffersHelper
 #endif
 	}
 	/// <summary>
-	/// Retrieves the binary capacity for <paramref name="count"/>.
-	/// </summary>
-	/// <param name="count">Number of items in the binary space.</param>
-	/// <returns>The amount of the binary capacity.</returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	public static UInt16 GetCapacityFor(UInt16 count)
-	{
-		Debug.Assert(count > 0);
-		UInt32 value = count;
-		value |= value >> 1;
-		value |= value >> 2;
-		value |= value >> 4;
-		value |= value >> 8;
-		return (UInt16)value;
-	}
-	/// <summary>
 	/// Retrieves the component sizes for given <paramref name="count"/>.
 	/// </summary>
 	/// <param name="components">Components buffer.</param>
