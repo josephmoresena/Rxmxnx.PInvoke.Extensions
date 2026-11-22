@@ -55,9 +55,7 @@ public sealed class WithSafeFixedTest
 			WrapperFactory.CreateReadOnlyReferenceable(WithSafeFixedTest.fixture.Create<T>());
 #endif
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-		Byte[] bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref Unsafe.AsRef(in value.Reference), 1))
-		                            // ReSharper disable once UseCollectionExpression
-		                            .ToArray();
+		Byte[] bytes = [.. MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref Unsafe.AsRef(in value.Reference), 1)),];
 #else
 		Byte[] bytes = NativeUtilities.ToBytes(in value.Reference);
 #endif

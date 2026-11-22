@@ -1,4 +1,4 @@
-﻿#if NETCOREAPP && !NET5_0_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
+﻿#if !NETSTANDARD2_0_OR_GREATER && !NET5_0_OR_GREATER && (!NET46_OR_GREATER || NET461_OR_GREATER)
 using Enum = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
 #endif
 
@@ -330,9 +330,6 @@ internal static unsafe class ValidationUtilities
 	/// </exception>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
-#endif
-#if !PACKAGE && (NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER)
-	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidCopyType<TValue>(TValue* valuePtr, Span<Byte> destination, Int32 offset,

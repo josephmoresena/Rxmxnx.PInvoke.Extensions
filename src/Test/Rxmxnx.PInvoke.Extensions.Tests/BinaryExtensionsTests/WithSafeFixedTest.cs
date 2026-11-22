@@ -193,20 +193,17 @@ public sealed class WithSafeFixedTest
 #pragma warning disable CS0612
 		this.ActionTest<T>(mem);
 #pragma warning restore CS0612
-		// ReSharper disable once UseCollectionExpression
-		return mem.Bytes.ToArray();
+		return [.. mem.Bytes,];
 	}
 	private Byte[] FuncReadOnlyTest<T>(in IReadOnlyFixedMemory mem) where T : unmanaged
 	{
 		this.ActionReadOnlyTest<T>(mem);
-		// ReSharper disable once UseCollectionExpression
-		return mem.Bytes.ToArray();
+		return [.. mem.Bytes,];
 	}
 	private Byte[] ReadOnlyFuncReadOnlyTest<T>(in IReadOnlyFixedMemory mem) where T : unmanaged
 	{
 		this.ReadOnlyActionReadOnlyTest<T>(mem);
-		// ReSharper disable once UseCollectionExpression
-		return mem.Bytes.ToArray();
+		return [.. mem.Bytes,];
 	}
 
 	[Obsolete]

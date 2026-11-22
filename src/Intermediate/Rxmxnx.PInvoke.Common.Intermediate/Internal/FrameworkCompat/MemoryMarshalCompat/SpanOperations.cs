@@ -18,9 +18,6 @@ internal static unsafe partial class MemoryMarshalCompat
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
-#if !PACKAGE && (NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER)
-	[ExcludeFromCodeCoverage]
-#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Span<T> CreateUnsafeSpan<T>(void* ptr, Int32 length)
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER

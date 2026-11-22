@@ -1,4 +1,4 @@
-#if !PACKAGE || !NET6_0_OR_GREATER
+#if !NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal;
 
 internal partial class ArrayMemoryManager<T>

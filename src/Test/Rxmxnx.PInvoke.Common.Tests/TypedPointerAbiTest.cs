@@ -8,6 +8,7 @@ public sealed unsafe class TypedPointerAbiTest
 	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 	private delegate Int32 Compare(ReadOnlyValPtr<Int32> left, ReadOnlyValPtr<Int32> right);
 
+	// ReSharper disable once ConvertToConstant.Local
 	private static readonly Boolean canMarshalTypedPointers =
 #if NET5_0_OR_GREATER
 		true;

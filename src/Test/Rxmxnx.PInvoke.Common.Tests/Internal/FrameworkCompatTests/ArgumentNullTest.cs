@@ -9,7 +9,7 @@ public sealed class ArgumentNullTest
 	[Fact]
 	internal void Test()
 	{
-		String[] values = ArgumentNullTest.fixture.CreateMany<String>(10).ToArray();
+		String[] values = [.. ArgumentNullTest.fixture.CreateMany<String>(10),];
 		Object? nullValue = null;
 		ArgumentNullException ex1 =
 			Assert.Throws<ArgumentNullException>(() => ArgumentNullException.ThrowIfNull(nullValue));

@@ -7,7 +7,10 @@ namespace Rxmxnx.PInvoke.Tests.RefStruct;
 [ExcludeFromCodeCoverage]
 public sealed class FixedPointerValueListPtrTest
 {
+#if !NET5_0_OR_GREATER
 	private static Type int32Type = typeof(Int32);
+#endif
+
 	[Fact]
 	public void MutableTest() => FixedPointerValueListPtrTest.Exercise(false);
 	[Fact]
@@ -57,8 +60,7 @@ public sealed class FixedPointerValueListPtrTest
 			if (readOnly)
 			{
 				PInvokeAssert.Equal(0, pointer.GetSpan<Int32>(0).Length);
-				PInvokeAssert.Throws<NullReferenceException>(() => FixedPointerValueListPtrTest
-					                                             .RejectWrite(pointer));
+				PInvokeAssert.Throws<NullReferenceException>(() => FixedPointerValueListPtrTest.RejectWrite(pointer));
 				return;
 			}
 

@@ -9,8 +9,7 @@ public sealed class ToHexStringTest
 	[Fact]
 	internal void Test()
 	{
-		Byte[][] values = ToHexStringTest.fixture.CreateMany<String>(10).Select(s => Encoding.UTF8.GetBytes(s))
-		                                 .ToArray();
+		Byte[][] values = [.. ToHexStringTest.fixture.CreateMany<String>(10).Select(s => Encoding.UTF8.GetBytes(s)),];
 		foreach (Byte[] value in values)
 			Assert.Equal(Convert.ToHexString(value), ConvertCompat.ToHexString(value));
 	}

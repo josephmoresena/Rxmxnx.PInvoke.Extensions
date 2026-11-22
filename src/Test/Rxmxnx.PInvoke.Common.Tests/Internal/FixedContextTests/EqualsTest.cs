@@ -49,7 +49,7 @@ public sealed class EqualsTest : FixedContextTestsBase
 	public void StringTest() => EqualsTest.Test<String>();
 	private static unsafe void Test<T>()
 	{
-		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>(sizeof(Guid) * 3 / sizeof(T)).ToArray();
+		T[] values = [.. FixedMemoryTestsBase.Fixture.CreateMany<T>(sizeof(Guid) * 3 / sizeof(T)),];
 		Action<FixedContext<T>, T[]> action;
 		Action<ReadOnlyFixedContext<T>, T[]> readonlyAction;
 		try

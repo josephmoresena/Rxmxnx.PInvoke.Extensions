@@ -33,7 +33,12 @@ public static class UnmanagedValueExtensions
 	/// <paramref name="value"/>,
 	/// or <see langword="null"/> if no such constant is found.
 	/// </returns>
-	public static String? GetName<TEnum>(this TEnum value) where TEnum : struct, Enum => EnumCompat.GetName(value);
+	public static String? GetName<TEnum>(this TEnum value) where TEnum : struct, Enum
+#if !NET5_0_OR_GREATER
+		=> EnumCompat.GetName(value);
+#else
+		=> Enum.GetName(value);
+#endif
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Rents and pins an array of minimum <paramref name="count"/> elements from <paramref name="arrayPool"/>,

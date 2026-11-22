@@ -49,7 +49,7 @@ public sealed class GetHashCodeTest : FixedContextTestsBase
 	public void StringTest() => GetHashCodeTest.Test<String>();
 	private static unsafe void Test<T>()
 	{
-		T[] values = FixedMemoryTestsBase.Fixture.CreateMany<T>(sizeof(Guid) * 3 / sizeof(T)).ToArray();
+		T[] values = [.. FixedMemoryTestsBase.Fixture.CreateMany<T>(sizeof(Guid) * 3 / sizeof(T)),];
 		FixedContextTestsBase.WithFixed(values, GetHashCodeTest.Test);
 		FixedContextTestsBase.WithFixed(values, GetHashCodeTest.ReadOnlyTest);
 	}

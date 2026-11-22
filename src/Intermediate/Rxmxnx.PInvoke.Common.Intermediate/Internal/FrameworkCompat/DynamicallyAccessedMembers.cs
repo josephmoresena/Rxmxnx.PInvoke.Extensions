@@ -1,4 +1,3 @@
-#if !NET5_0_OR_GREATER
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
@@ -26,6 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#if !NET5_0_OR_GREATER
 namespace System.Diagnostics.CodeAnalysis;
 
 #if !PACKAGE

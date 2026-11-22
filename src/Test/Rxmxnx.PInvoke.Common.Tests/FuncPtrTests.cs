@@ -5,28 +5,8 @@ namespace Rxmxnx.PInvoke.Tests;
 [SuppressMessage("csharpsquid", "S2699")]
 public sealed class FuncPtrTests
 {
-#if NETCOREAPP
-	private static readonly CultureInfo[] allCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-	private static readonly String[] formats =
-	[
-		"",
-#if NET8_0_OR_GREATER
-		"b", "B",
-#endif
-		"D", "d", "E", "e", "G", "g", "X", "x",
-	];
-	private static readonly IFixture fixture = new Fixture();
-#endif
-
 	[Fact]
 	public void StringTest() => FuncPtrTests.TestDelegate<GetStringDelegate>(() => String.Empty);
-#if NETCOREAPP
-	[Fact]
-	public void SpanTest() => FuncPtrTests.TestDelegate<GetByteSpanDelegate>(a => a.AsSpan());
-	[Fact]
-	public void GuidTest()
-		=> FuncPtrTests.TestDelegate<GetGuidSpanDelegate>(() => FuncPtrTests.fixture.CreateMany<Guid>().ToArray());
-#endif
 	[Fact]
 	public void VoidTest() => FuncPtrTests.TestDelegate<VoidDelegate>(() => Console.WriteLine(String.Empty));
 	[Fact]
@@ -74,6 +54,7 @@ public sealed class FuncPtrTests
 	private static void FormatTest<TDelegate>(FuncPtr<TDelegate> funcPtr) where TDelegate : Delegate
 	{
 		PInvokeAssert.Equal(funcPtr.Pointer.GetHashCode(), funcPtr.GetHashCode());
+		// ReSharper disable once InvocationIsCultureSensitive
 		PInvokeAssert.Equal(funcPtr.Pointer.ToString(), funcPtr.ToString());
 #if NET6_0_OR_GREATER
 		if ((Object)funcPtr is not ISpanFormattable spanFormattable) return;
@@ -98,7 +79,7 @@ public sealed class FuncPtrTests
 		foreach (String format in FuncPtrTests.formats)
 		{
 			culture = FuncPtrTests.allCultures[Random.Shared.Next(0, FuncPtrTests.allCultures.Length)];
-			Assert.Equal(funcPtr.Pointer.ToString(format), funcPtr.ToString(format));
+			Assert.Equal(funcPtr.Pointer.ToString(format), funcPtr.ToString(format, CultureInfo.CurrentCulture));
 			Assert.Equal(funcPtr.Pointer.ToString(format, culture), spanFormattable.ToString(format, culture));
 		}
 #endif
@@ -111,4 +92,24 @@ public sealed class FuncPtrTests
 		PInvokeAssert.Equal(value, funcPtr.Pointer);
 		PInvokeAssert.Equal(funcPtr, ptr);
 	}
+#if NETCOREAPP
+	private static readonly CultureInfo[] allCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
+	private static readonly String[] formats =
+	[
+		"",
+#if NET8_0_OR_GREATER
+		"b", "B",
+#endif
+		"D", "d", "E", "e", "G", "g", "X", "x",
+	];
+	private static readonly IFixture fixture = new Fixture();
+#endif
+#if NETCOREAPP
+	[Fact]
+	public void SpanTest() => FuncPtrTests.TestDelegate<GetByteSpanDelegate>(a => a.AsSpan());
+	[Fact]
+	public void GuidTest()
+		// ReSharper disable once UseCollectionExpression
+		=> FuncPtrTests.TestDelegate<GetGuidSpanDelegate>(() => FuncPtrTests.fixture.CreateMany<Guid>().ToArray());
+#endif
 }

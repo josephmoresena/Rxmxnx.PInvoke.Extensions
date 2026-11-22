@@ -1,13 +1,6 @@
 namespace Rxmxnx.PInvoke;
 
-#if !PACKAGE
-[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
-#endif
-#if !PACKAGE || !NETSTANDARD2_1 && !NETCOREAPP3_0_OR_GREATER
-public unsafe partial class NativeUtilities
-#else
 public partial class NativeUtilities
-#endif
 {
 	/// <summary>
 	/// Retrieves the decimal value of <paramref name="hexCharacter"/>.
@@ -91,7 +84,8 @@ public partial class NativeUtilities
 		T? previous = Interlocked.CompareExchange(ref fieldReference, newObj, null);
 		return previous ?? newObj;
 	}
-#if !PACKAGE || !NET5_0_OR_GREATER
+#if !NET5_0_OR_GREATER
+#pragma warning disable CS8500
 	/// <summary>
 	/// Creates a <see cref="Type"/> span from <typeparamref name="TBuffer"/> reference.
 	/// </summary>
@@ -101,11 +95,11 @@ public partial class NativeUtilities
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
-#if !PACKAGE && NET5_0_OR_GREATER
-	[ExcludeFromCodeCoverage]
-#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static Span<Type> CreateTypeSpan<TBuffer>(ref TBuffer buffer)
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+	internal static unsafe Span<Type> CreateTypeSpan<TBuffer>(ref TBuffer buffer)
 #if !PACKAGE
 		where TBuffer : struct
 #else
@@ -113,9 +107,7 @@ public partial class NativeUtilities
 #endif
 	{
 #if !PACKAGE
-#pragma warning disable CS8500
 		Int32 length = sizeof(TBuffer) / IntPtr.Size;
-#pragma warning restore CS8500
 #else
 		Int32 length = buffer.Metadata.Size;
 #endif
@@ -126,8 +118,7 @@ public partial class NativeUtilities
 		return MemoryMarshalCompat.CreateUnsafeSpan<Type>(Unsafe.AsPointer(ref buffer), length);
 #endif
 	}
-#endif
-#if (NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER) && (!PACKAGE || !NET5_0_OR_GREATER)
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Creates a <see cref="Func{IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory}"/> span from
 	/// <typeparamref name="TBuffer"/> reference.
@@ -135,12 +126,12 @@ public partial class NativeUtilities
 	/// <typeparam name="TBuffer">A <see cref="ValueType"/> buffer type.</typeparam>
 	/// <param name="buffer">Managed reference to <typeparamref name="TBuffer"/> value.</param>
 	/// <returns>Created <see cref="Func{IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory}"/> span.</returns>
-#if !PACKAGE && NET5_0_OR_GREATER
-	[ExcludeFromCodeCoverage]
-#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>> CreateConstructorSpan<TBuffer>(
-		ref TBuffer buffer)
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+	internal static unsafe Span<Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>>
+		CreateConstructorSpan<TBuffer>(ref TBuffer buffer)
 #if !PACKAGE
 		where TBuffer : struct
 #else
@@ -148,9 +139,7 @@ public partial class NativeUtilities
 #endif
 	{
 #if !PACKAGE
-#pragma warning disable CS8500
 		Int32 length = sizeof(TBuffer) / IntPtr.Size;
-#pragma warning restore CS8500
 #else
 		Int32 length = buffer.Metadata.Size;
 #endif
@@ -158,8 +147,9 @@ public partial class NativeUtilities
 			ref Unsafe.As<TBuffer, Func<IntPtr, Int32, FixedValueHandle, ReadOnlyFixedMemory>>(ref buffer);
 		return MemoryMarshal.CreateSpan(ref r0, length);
 	}
+#pragma warning restore CS8500
 #endif
-#if NET5_0_OR_GREATER
+#else
 	/// <summary>
 	/// Generic <see langword="typeof"/> call.
 	/// </summary>

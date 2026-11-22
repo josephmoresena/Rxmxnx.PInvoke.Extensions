@@ -1,11 +1,9 @@
+#if !NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// Internal storage for array data offset.
 /// </summary>
-#if !PACKAGE && NET5_0_OR_GREATER
-[ExcludeFromCodeCoverage]
-#endif
 [StructLayout(LayoutKind.Sequential)]
 internal struct ArrayOffsets
 {
@@ -155,3 +153,4 @@ internal struct ArrayOffsets
 		=> new() { _array = new IntPtr?[4], };
 #endif
 }
+#endif

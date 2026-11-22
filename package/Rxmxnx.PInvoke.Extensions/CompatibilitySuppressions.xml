@@ -63,7 +63,19 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Rxmxnx.PInvoke.Internal.ArrayOffsets</Target>
+    <Left>lib/net5.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net6.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
     <Target>T:Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat</Target>
+    <Left>lib/net5.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net6.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Rxmxnx.PInvoke.Internal.FrameworkCompat.Pinnable`1</Target>
     <Left>lib/net5.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/net6.0/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
@@ -270,6 +282,18 @@
     <Target>T:System.Text.UnicodeUtility</Target>
     <Left>lib/netcoreapp2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Rxmxnx.PInvoke.Internal.FrameworkCompat.ConvertCompat</Target>
+    <Left>lib/netcoreapp3.1/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net5.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0001</DiagnosticId>
+    <Target>T:Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat</Target>
+    <Left>lib/netcoreapp3.1/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net5.0/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0001</DiagnosticId>
@@ -825,6 +849,12 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Rxmxnx.PInvoke.Internal.ManagedMemoryManager`1.GetMemoryReference(Rxmxnx.PInvoke.Internal.FrameworkCompat.Pinnable{`0}@)</Target>
+    <Left>lib/net5.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net6.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:Rxmxnx.PInvoke.Internal.Utf8Comparator.get_UsesBclOrdinalCompare</Target>
     <Left>lib/net6.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/net7.0/Rxmxnx.PInvoke.Extensions.dll</Right>
@@ -832,6 +862,12 @@
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:Rxmxnx.PInvoke.CStringBuilder.GetLock</Target>
+    <Left>lib/net8.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net9.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Rxmxnx.PInvoke.Internal.Input`1.SetInstance(System.Object,`0@)</Target>
     <Left>lib/net8.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/net9.0/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
@@ -852,6 +888,12 @@
     <Target>F:&lt;PrivateImplementationDetails&gt;.FC0ACF3278D1B4DEDD675E2A8D0F19B03C5D3D2B616855910929A781C4A24907</Target>
     <Left>lib/netcoreapp2.1/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netcoreapp3.0/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Rxmxnx.PInvoke.Internal.FixedContext`1.CreateInstance(System.IntPtr,System.Int32,Rxmxnx.PInvoke.FixedValueHandle)</Target>
+    <Left>lib/netcoreapp3.1/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net5.0/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
@@ -927,7 +969,19 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0005</DiagnosticId>
+    <Target>M:Rxmxnx.PInvoke.Internal.ManagedMemoryManager`1.GetMemoryReference</Target>
+    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/netcoreapp2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0005</DiagnosticId>
     <Target>M:Rxmxnx.PInvoke.Internal.BinaryConcatenator`1.WriteValueAsync(`0)</Target>
+    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0005</DiagnosticId>
+    <Target>M:Rxmxnx.PInvoke.Internal.ManagedMemoryManager`1.GetMemoryReference</Target>
     <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/netstandard2.1/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>
