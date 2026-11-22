@@ -692,6 +692,7 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = MessageResource.GetInstance();
 		throw new InvalidOperationException(resource.MissingBufferMetadataException(itemType, size));
 	}
+#if !UAP10_0
 	/// <summary>
 	/// Throws an exception if <see cref="MemoryInspector"/> is not supported on the current platform.
 	/// </summary>
@@ -709,6 +710,7 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = MessageResource.GetInstance();
 		throw new PlatformNotSupportedException(resource.MissingMemoryInspector);
 	}
+#endif
 #if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	/// <summary>
 	/// Throws an exception if the current token type is invalid for a string type.

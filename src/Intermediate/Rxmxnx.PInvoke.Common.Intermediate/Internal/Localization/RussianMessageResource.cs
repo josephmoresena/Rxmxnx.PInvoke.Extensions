@@ -40,7 +40,9 @@ internal sealed class RussianMessageResource : IMessageResource
 	String IMessageResource.LargerThanSequenceLength => "Не может быть больше длины последовательности.";
 	String IMessageResource.IndexOutOfSequence
 		=> "Индекс и длина должны указывать на местоположение внутри последовательности.";
+#if !PACKAGE || !UAP10_0
 	String IMessageResource.MissingMemoryInspector => "Проверка памяти не поддерживается на текущей платформе.";
+#endif
 	String IMessageResource.InvalidSpanLayout => "Не удалось определить закрепляемое поле в структуре Span<T>.";
 #if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.ReflectionDisabled => "Эта функция требует режима полной рефлексии.";

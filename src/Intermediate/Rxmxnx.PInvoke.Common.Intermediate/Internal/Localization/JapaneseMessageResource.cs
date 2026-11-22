@@ -38,7 +38,9 @@ internal sealed class JapaneseMessageResource : IMessageResource
 	String IMessageResource.IndexOutOfString => "インデックスと長さは文字列内の位置を参照する必要があります。";
 	String IMessageResource.LargerThanSequenceLength => "シーケンスの長さを超えることはできません。";
 	String IMessageResource.IndexOutOfSequence => "インデックスと長さはシーケンス内の位置を参照する必要があります。";
+#if !PACKAGE || !UAP10_0
 	String IMessageResource.MissingMemoryInspector => "現在のプラットフォームではメモリ検査はサポートされていません。";
+#endif
 	String IMessageResource.InvalidSpanLayout => "Span<T> のレイアウト内で固定可能なフィールドを特定できません。";
 #if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.ReflectionDisabled => "この機能を使用するにはフルリフレクションモードが必要です。";

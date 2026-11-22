@@ -39,11 +39,13 @@ namespace System.Text.Unicode;
 #endif
 internal static class Utf16Utility
 {
+#if !PACKAGE || !NET462_OR_GREATER || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Returns true iff the UInt32 represents two ASCII UTF-16 characters in machine endianness.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static Boolean AllCharsInUInt32AreAscii(UInt32 value) => (value & ~0x007F_007Fu) == 0;
+#endif
 
 #if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>

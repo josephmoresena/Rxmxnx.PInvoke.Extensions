@@ -73,10 +73,12 @@ internal interface IMessageResource
 	/// Message for index out of sequence exception.
 	/// </summary>
 	String IndexOutOfSequence { get; }
+#if !PACKAGE || !UAP10_0
 	/// <summary>
 	/// Message for missing memory inspector.
 	/// </summary>
 	String MissingMemoryInspector { get; }
+#endif
 	/// <summary>
 	/// Message for an invalid three-field span layout.
 	/// </summary>

@@ -42,8 +42,10 @@ internal sealed class ItalianMessageResource : IMessageResource
 	String IMessageResource.LargerThanSequenceLength => "Non può essere maggiore della lunghezza della sequenza.";
 	String IMessageResource.IndexOutOfSequence
 		=> "Indice e lunghezza devono fare riferimento a una posizione all'interno della sequenza.";
+#if !PACKAGE || !UAP10_0
 	String IMessageResource.MissingMemoryInspector
 		=> "L'ispezione della memoria non è supportata sulla piattaforma corrente.";
+#endif
 	String IMessageResource.InvalidSpanLayout => "Impossibile identificare il campo bloccabile nel layout di Span<T>.";
 #if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.ReflectionDisabled => "Questa funzionalità richiede la modalità reflection-full.";

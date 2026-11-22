@@ -38,7 +38,9 @@ internal sealed class ArabicMessageResource : IMessageResource
 	String IMessageResource.IndexOutOfString => "يجب أن يشير الفهرس والطول إلى موقع داخل النص.";
 	String IMessageResource.LargerThanSequenceLength => "لا يمكن أن يكون أكبر من طول التسلسل.";
 	String IMessageResource.IndexOutOfSequence => "يجب أن يشير الفهرس والطول إلى موقع داخل التسلسل.";
+#if !PACKAGE || !UAP10_0
 	String IMessageResource.MissingMemoryInspector => "لا يتم دعم فحص الذاكرة على النظام الأساسي الحالي.";
+#endif
 	String IMessageResource.InvalidSpanLayout => "تعذّر تحديد الحقل القابل للتثبيت في تخطيط Span<T>.";
 #if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.ReflectionDisabled => "تتطلب هذه الميزة وضع الانعكاس الكامل.";

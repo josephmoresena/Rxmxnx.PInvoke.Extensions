@@ -42,7 +42,9 @@ internal sealed class PortugueseMessageResource : IMessageResource
 	String IMessageResource.LargerThanSequenceLength => "Não pode ser maior que o comprimento da sequência.";
 	String IMessageResource.IndexOutOfSequence
 		=> "O índice e o comprimento devem se referir a uma posição dentro da sequência.";
+#if !PACKAGE || !UAP10_0
 	String IMessageResource.MissingMemoryInspector => "A inspeção de memória não é suportada na plataforma atual.";
+#endif
 	String IMessageResource.InvalidSpanLayout => "Não foi possível identificar o campo fixável no layout de Span<T>.";
 #if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.ReflectionDisabled => "Este recurso requer o modo de reflexão completa.";

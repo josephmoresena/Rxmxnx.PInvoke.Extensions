@@ -39,7 +39,9 @@ internal sealed class DefaultMessageResource : IMessageResource
 	String IMessageResource.IndexOutOfString => "Index and length must refer to a location within the string.";
 	String IMessageResource.LargerThanSequenceLength => "Cannot be larger than length of sequence.";
 	String IMessageResource.IndexOutOfSequence => "Index and length must refer to a location within the sequence.";
+#if !PACKAGE || !UAP10_0
 	String IMessageResource.MissingMemoryInspector => "Memory inspection is not supported on the current platform.";
+#endif
 	String IMessageResource.InvalidSpanLayout => "Unable to identify the pinnable field in the Span<T> layout.";
 #if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.ReflectionDisabled => "This feature requires reflection-full mode";

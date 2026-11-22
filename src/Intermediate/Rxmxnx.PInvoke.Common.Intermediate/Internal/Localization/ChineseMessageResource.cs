@@ -37,7 +37,9 @@ internal sealed class ChineseMessageResource : IMessageResource
 	String IMessageResource.IndexOutOfString => "索引和长度必须引用字符串内的位置。";
 	String IMessageResource.LargerThanSequenceLength => "不能大于序列的长度。";
 	String IMessageResource.IndexOutOfSequence => "索引和长度必须引用序列内的位置。";
+#if !PACKAGE || !UAP10_0
 	String IMessageResource.MissingMemoryInspector => "当前平台不支持内存检查。";
+#endif
 	String IMessageResource.InvalidSpanLayout => "无法识别 Span<T> 布局中的可固定字段。";
 #if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.ReflectionDisabled => "此功能需要启用完整反射模式。";

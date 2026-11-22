@@ -42,8 +42,10 @@ internal sealed class FrenchMessageResource : IMessageResource
 	String IMessageResource.LargerThanSequenceLength => "Ne peut pas être plus grand que la longueur de la séquence.";
 	String IMessageResource.IndexOutOfSequence
 		=> "L'index et la longueur doivent faire référence à un emplacement dans la séquence.";
+#if !PACKAGE || !UAP10_0
 	String IMessageResource.MissingMemoryInspector
 		=> "L'inspection de la mémoire n'est pas prise en charge sur la plateforme actuelle.";
+#endif
 	String IMessageResource.InvalidSpanLayout
 		=> "Impossible d'identifier le champ pouvant être épinglé dans la disposition de Span<T>.";
 #if !PACKAGE || NESTED_BUFFER_FEATURE

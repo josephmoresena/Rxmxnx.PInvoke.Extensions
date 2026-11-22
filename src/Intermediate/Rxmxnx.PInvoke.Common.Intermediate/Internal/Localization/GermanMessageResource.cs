@@ -41,8 +41,10 @@ internal sealed class GermanMessageResource : IMessageResource
 	String IMessageResource.LargerThanSequenceLength => "Darf nicht größer als die Länge der Sequenz sein.";
 	String IMessageResource.IndexOutOfSequence
 		=> "Index und Länge müssen sich auf eine Position innerhalb der Sequenz beziehen.";
+#if !PACKAGE || !UAP10_0
 	String IMessageResource.MissingMemoryInspector
 		=> "Die Speicherinspektion wird auf der aktuellen Plattform nicht unterstützt.";
+#endif
 	String IMessageResource.InvalidSpanLayout
 		=> "Das anheftbare Feld im Layout von Span<T> konnte nicht identifiziert werden.";
 #if !PACKAGE || NESTED_BUFFER_FEATURE

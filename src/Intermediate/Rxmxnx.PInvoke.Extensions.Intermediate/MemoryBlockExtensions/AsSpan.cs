@@ -28,7 +28,7 @@ public static partial class MemoryBlockExtensions
 #endif
 	public static Span<T> AsSpan<T>(this T[,,,]? arr) => ArrayMemoryManager<T>.GetSpan(arr);
 
-#if !UAP || UAP10_0_16299
+#if !UAP10_0 || UAP10_0_16299
 	/// <inheritdoc cref="MemoryExtensions.AsSpan{T}(T[])"/>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]

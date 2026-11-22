@@ -216,8 +216,6 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 			return codeUnitCount;
 		}
 	}
-#endif
-#if !PACKAGE || USE_COMPLETE_BLC_CODE || NETCOREAPP
 	/// <summary>
 	/// Returns the length in code units of the
 	/// UTF-8 sequence required to represent this scalar value.

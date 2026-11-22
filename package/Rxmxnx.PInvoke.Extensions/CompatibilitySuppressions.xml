@@ -495,6 +495,12 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:System.Text.Unicode.Utf16Utility.AllCharsInUInt32AreAscii(System.UInt32)</Target>
+    <Left>lib/net461/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/net462/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:Rxmxnx.PInvoke.Internal.ArrayMemoryManager`1.GetMemory(`0[0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:,0:])</Target>
     <Left>lib/net5.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/net6.0/Rxmxnx.PInvoke.Extensions.dll</Right>
@@ -1059,6 +1065,12 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Rxmxnx.PInvoke.Internal.Localization.IMessageResource.get_MissingMemoryInspector</Target>
+    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/uap10.0.16299/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:Rxmxnx.PInvoke.Internal.MemoryInspector.get_IsEmulated</Target>
     <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/uap10.0.16299/Rxmxnx.PInvoke.Extensions.dll</Right>
@@ -1096,6 +1108,18 @@
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:Rxmxnx.PInvoke.Internal.Utf8Comparator.OrdinalCompare(System.ReadOnlySpan{System.Char},System.ReadOnlySpan{System.Char})</Target>
+    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/uap10.0.16299/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Rxmxnx.PInvoke.Internal.ValidationUtilities.ThrowIfNotSupportedPlatform(Rxmxnx.PInvoke.Internal.MemoryInspector)</Target>
+    <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
+    <Right>lib/uap10.0.16299/Rxmxnx.PInvoke.Extensions.dll</Right>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:Rxmxnx.PInvoke.SystemInfo.CountInterfaces``1</Target>
     <Left>lib/netstandard2.0/Rxmxnx.PInvoke.Extensions.dll</Left>
     <Right>lib/uap10.0.16299/Rxmxnx.PInvoke.Extensions.dll</Right>
   </Suppression>

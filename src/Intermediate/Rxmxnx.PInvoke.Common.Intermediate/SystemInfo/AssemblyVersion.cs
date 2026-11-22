@@ -1,4 +1,5 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if !PACKAGE || TEMP_PACKAGE || !UAP10_0
+namespace Rxmxnx.PInvoke;
 
 public static partial class SystemInfo
 {
@@ -66,6 +67,7 @@ public static partial class SystemInfo
 #endif
 		;
 #endif
+#if !UAP10_0
 	/// <summary>
 	/// Retrieves the number of interfaces implemented by <typeparamref name="T"/> type.
 	/// </summary>
@@ -73,7 +75,7 @@ public static partial class SystemInfo
 	/// <returns>Number of interfaces implemented by <typeparamref name="T"/> type.</returns>
 	internal static Int32 CountInterfaces<[DynamicallyAccessedMembers(SystemInfo.InterfaceAccess)] T>()
 		=> typeof(T).GetInterfaces().Length;
-#if !PACKAGE || !NET7_0_OR_GREATER && !UAP
+#if !NET7_0_OR_GREATER
 	/// <summary>
 	/// Indicates whether <typeparamref name="T"/> implements <see cref="IEquatable{T}"/> interface.
 	/// </summary>
@@ -97,4 +99,6 @@ public static partial class SystemInfo
 		return false;
 	}
 #endif
+#endif
 }
+#endif
