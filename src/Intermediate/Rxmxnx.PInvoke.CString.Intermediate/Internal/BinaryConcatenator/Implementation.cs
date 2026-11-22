@@ -28,15 +28,6 @@ internal sealed class BinaryConcatenator : BinaryConcatenator<Byte?>
 #else
 	/// <summary>
 	/// Initializes a new instance of the <see cref="BinaryConcatenator"/> class
-	/// without a specified separator byte.
-	/// </summary>
-	/// <param name="cancellationToken">
-	/// The token to monitor for cancellation requests.
-	/// The default value is <see cref="CancellationToken.None"/>.
-	/// </param>
-	public BinaryConcatenator(CancellationToken cancellationToken) : base(default, cancellationToken) { }
-	/// <summary>
-	/// Initializes a new instance of the <see cref="BinaryConcatenator"/> class
 	/// with a specified separator byte.
 	/// </summary>
 	/// <param name="separator">

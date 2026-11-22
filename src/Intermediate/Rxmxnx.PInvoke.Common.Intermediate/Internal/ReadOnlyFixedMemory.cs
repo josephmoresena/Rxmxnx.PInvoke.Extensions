@@ -9,25 +9,6 @@
 internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer, IReadOnlyFixedMemory
 {
 	/// <summary>
-	/// Constructs a new <see cref="ReadOnlyFixedMemory"/> instance using a pointer to a memory block, its size, and
-	/// a read-only flag.
-	/// </summary>
-	/// <param name="ptr">Pointer to fixed memory block.</param>
-	/// <param name="binaryLength">Memory block size in bytes.</param>
-	/// <param name="isReadOnly">Indicates whether the memory block is read-only.</param>
-	protected ReadOnlyFixedMemory(void* ptr, Int32 binaryLength, Boolean isReadOnly) : base(
-		ptr, binaryLength, isReadOnly) { }
-	/// <summary>
-	/// Constructs a new <see cref="ReadOnlyFixedMemory"/> instance using a pointer to a memory block, its size,
-	/// a read-only flag, and a valid status.
-	/// </summary>
-	/// <param name="ptr">Pointer to fixed memory block.</param>
-	/// <param name="binaryLength">Memory block size in bytes.</param>
-	/// <param name="isReadOnly">Indicates whether the memory block is read-only.</param>
-	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
-	protected ReadOnlyFixedMemory(void* ptr, Int32 binaryLength, Boolean isReadOnly, FixedValueHandle handle) : base(
-		ptr, binaryLength, isReadOnly, handle) { }
-	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedMemory"/> instance using another instance as a template.
 	/// </summary>
 	/// <param name="mem">The <see cref="ReadOnlyFixedMemory"/> instance to copy data from.</param>
@@ -39,6 +20,27 @@ internal abstract unsafe partial class ReadOnlyFixedMemory : FixedPointer, IRead
 	/// <param name="mem">The <see cref="ReadOnlyFixedMemory"/> instance to copy data from.</param>
 	/// <param name="offset">The offset to be added to the pointer to the memory block.</param>
 	protected ReadOnlyFixedMemory(ReadOnlyFixedMemory mem, Int32 offset) : base(mem, offset) { }
+	/// <summary>
+	/// Constructs a new <see cref="ReadOnlyFixedMemory"/> instance using a pointer to a memory block, its size, and
+	/// a read-only flag.
+	/// </summary>
+	/// <param name="ptr">Pointer to fixed memory block.</param>
+	/// <param name="binaryLength">Memory block size in bytes.</param>
+	/// <param name="isReadOnly">Indicates whether the memory block is read-only.</param>
+	protected ReadOnlyFixedMemory(void* ptr, Int32 binaryLength, Boolean isReadOnly) : base(
+		ptr, binaryLength, isReadOnly) { }
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+	/// <summary>
+	/// Constructs a new <see cref="ReadOnlyFixedMemory"/> instance using a pointer to a memory block, its size,
+	/// a read-only flag, and a valid status.
+	/// </summary>
+	/// <param name="ptr">Pointer to fixed memory block.</param>
+	/// <param name="binaryLength">Memory block size in bytes.</param>
+	/// <param name="isReadOnly">Indicates whether the memory block is read-only.</param>
+	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
+	protected ReadOnlyFixedMemory(void* ptr, Int32 binaryLength, Boolean isReadOnly, FixedValueHandle handle) : base(
+		ptr, binaryLength, isReadOnly, handle) { }
+#endif
 
 	ReadOnlySpan<Byte> IReadOnlyFixedMemory.Bytes
 	{
