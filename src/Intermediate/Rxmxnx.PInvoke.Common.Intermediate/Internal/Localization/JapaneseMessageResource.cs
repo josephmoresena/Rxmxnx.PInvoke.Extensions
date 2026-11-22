@@ -65,8 +65,10 @@ internal sealed class JapaneseMessageResource : IMessageResource
 	String IMessageResource.MissingBufferMetadataException(Type bufferType) => $"{bufferType} バッファーのメタデータを取得できません。";
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"{itemType} の {size} アイテム用のバッファを作成できません。";
+#if !PACKAGE || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"予期しないトークンの種類: {currentToken}。期待されるトークンの種類: {expectedToken}。";
+#endif
 	String IMessageResource.NotObjectType(Type type) => $"{type} は ref struct です。オブジェクトのボックス化は許可されていません。";
 #if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type)

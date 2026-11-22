@@ -59,8 +59,10 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	private const Char lowSurrogateStart = '\udc00';
 	private const Int32 highSurrogateRange = 0x3FF;
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	private const Byte isWhiteSpaceFlag = 0x80;
 	private const Byte isLetterOrDigitFlag = 0x40;
+#endif
 	private const Byte unicodeCategoryMask = 0x1F;
 
 	private static ReadOnlySpan<Byte> AsciiCharInfo
@@ -228,6 +230,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// </summary>
 	public Int32 Value => (Int32)this._value;
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
@@ -249,6 +252,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 			Rune.UnsafeCreate(modified[0]) :
 			Rune.UnsafeCreate(UnicodeUtility.GetScalarFromUtf16SurrogatePair(modified[0], modified[1]));
 	}
+#endif
 
 	public Int32 CompareTo(Rune other) => this.Value - other.Value;
 
@@ -509,6 +513,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 		return OperationStatus.NeedMoreData;
 	}
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Decodes the <see cref="System.Text.Rune"/> at the end of the provided UTF-8 source buffer.
 	/// </summary>
@@ -567,6 +572,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 		bytesConsumed = 0;
 		return OperationStatus.NeedMoreData;
 	}
+#endif
 #endif
 
 	/// <summary>
@@ -862,6 +868,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	}
 #endif
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	// Returns true iff this Unicode category represents a letter
 	private static Boolean IsCategoryLetter(UnicodeCategory category)
 		=> UnicodeUtility.IsInRangeInclusive((UInt32)category, (UInt32)UnicodeCategory.UppercaseLetter,
@@ -892,6 +899,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	private static Boolean IsCategorySymbol(UnicodeCategory category)
 		=> UnicodeUtility.IsInRangeInclusive((UInt32)category, (UInt32)UnicodeCategory.MathSymbol,
 		                                     (UInt32)UnicodeCategory.OtherSymbol);
+#endif
 
 #if !PACKAGE || USE_COMPLETE_BLC_CODE
 	public static Boolean IsControl(Rune value) => ((value._value + 1) & ~0x80u) <= 0x20u;

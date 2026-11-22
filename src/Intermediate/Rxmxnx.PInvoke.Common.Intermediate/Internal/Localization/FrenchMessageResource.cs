@@ -74,8 +74,10 @@ internal sealed class FrenchMessageResource : IMessageResource
 		=> $"Impossible de récupérer les métadonnées pour le tampon {bufferType}.";
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Impossible de créer un tampon pour {itemType} comportant {size} éléments.";
+#if !PACKAGE || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Type de jeton inattendu : {currentToken}. Type de jeton attendu : {expectedToken}.";
+#endif
 	String IMessageResource.NotObjectType(Type type)
 		=> $"{type} est une ref struct ; la boxing d'objet n'est pas autorisée.";
 #if !PACKAGE || NESTED_BUFFER_FEATURE

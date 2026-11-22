@@ -68,8 +68,10 @@ internal sealed class DefaultMessageResource : IMessageResource
 		=> $"Unable to retrieve metadata for {bufferType} buffer.";
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Unable to create buffer for {itemType} {size} items.";
+#if !PACKAGE || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Unexpected token type: {currentToken}. Expected token type: {expectedToken}.";
+#endif
 	String IMessageResource.NotObjectType(Type type) => $"{type} is a ref struct; object boxing is not allowed.";
 #if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type)

@@ -63,8 +63,10 @@ internal sealed class ChineseMessageResource : IMessageResource
 	String IMessageResource.MissingBufferMetadataException(Type bufferType) => $"无法获取 {bufferType} 缓冲区的元数据。";
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"无法为 {itemType} 创建包含 {size} 项的缓冲区。";
+#if !PACKAGE || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"意外的标记类型：{currentToken}。预期的标记类型：{expectedToken}。";
+#endif
 	String IMessageResource.NotObjectType(Type type) => $"{type} 是 ref struct；不允许进行对象装箱。";
 #if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type) => $"无法将 {bufferType} 缓冲区转换为 {type} 缓冲区。";

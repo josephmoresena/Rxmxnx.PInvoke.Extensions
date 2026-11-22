@@ -1,4 +1,4 @@
-﻿#if !NETSTANDARD2_0_OR_GREATER && !NET5_0_OR_GREATER && (!NET46_OR_GREATER || NET461_OR_GREATER)
+﻿#if !NETSTANDARD2_0_OR_GREATER && !NET5_0_OR_GREATER && (!NETFRAMEWORK || NET461_OR_GREATER)
 using Enum = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
 #endif
 

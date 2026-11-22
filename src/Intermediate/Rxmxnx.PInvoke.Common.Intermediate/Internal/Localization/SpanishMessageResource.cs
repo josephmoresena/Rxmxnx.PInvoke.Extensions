@@ -72,8 +72,10 @@ internal sealed class SpanishMessageResource : IMessageResource
 		=> $"No se pudieron obtener los metadatos para el búfer {bufferType}.";
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"No se puede crear un búfer para {itemType} con {size} elementos.";
+#if !PACKAGE || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Tipo de token inesperado: {currentToken}. Se esperaba el tipo de token: {expectedToken}.";
+#endif
 	String IMessageResource.NotObjectType(Type type)
 		=> $"{type} es una ref struct; no se permite el *boxing* de objetos.";
 #if !PACKAGE || NESTED_BUFFER_FEATURE

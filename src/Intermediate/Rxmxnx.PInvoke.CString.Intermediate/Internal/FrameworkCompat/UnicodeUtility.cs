@@ -44,10 +44,12 @@ internal static class UnicodeUtility
 	/// </summary>
 	public const UInt32 ReplacementChar = 0xFFFD;
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Returns the Unicode plane (0 through 16, inclusive) which contains this code point.
 	/// </summary>
 	public static Int32 GetPlane(UInt32 codePoint) => (Int32)(codePoint >> 16);
+#endif
 
 	/// <summary>
 	/// Returns a Unicode scalar value from two code points representing a UTF-16 surrogate pair.
@@ -107,6 +109,7 @@ internal static class UnicodeUtility
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Boolean IsBmpCodePoint(UInt32 value) => value <= 0xFFFFu;
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Returns <see langword="true"/> iff <paramref name="value"/> is a UTF-16 high surrogate code point,
 	/// i.e., is in [ U+D800..U+DBFF ], inclusive.
@@ -114,6 +117,7 @@ internal static class UnicodeUtility
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Boolean IsHighSurrogateCodePoint(UInt32 value)
 		=> UnicodeUtility.IsInRangeInclusive(value, 0xD800U, 0xDBFFU);
+#endif
 
 	/// <summary>
 	/// Returns <see langword="true"/> iff <paramref name="value"/> is between
@@ -123,6 +127,7 @@ internal static class UnicodeUtility
 	public static Boolean IsInRangeInclusive(UInt32 value, UInt32 lowerBound, UInt32 upperBound)
 		=> value - lowerBound <= upperBound - lowerBound;
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Returns <see langword="true"/> iff <paramref name="value"/> is a UTF-16 low surrogate code point,
 	/// i.e., is in [ U+DC00..U+DFFF ], inclusive.
@@ -130,6 +135,7 @@ internal static class UnicodeUtility
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Boolean IsLowSurrogateCodePoint(UInt32 value)
 		=> UnicodeUtility.IsInRangeInclusive(value, 0xDC00U, 0xDFFFU);
+#endif
 
 	/// <summary>
 	/// Returns <see langword="true"/> iff <paramref name="value"/> is a UTF-16 surrogate code point,

@@ -73,8 +73,10 @@ internal sealed class ItalianMessageResource : IMessageResource
 		=> $"Impossibile recuperare i metadati per il buffer {bufferType}.";
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Impossibile creare un buffer per {itemType} con {size} elementi.";
+#if !PACKAGE || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Tipo di token imprevisto: {currentToken}. Tipo di token previsto: {expectedToken}.";
+#endif
 	String IMessageResource.NotObjectType(Type type)
 		=> $"{type} è una ref struct; il boxing dell'oggetto non è consentito.";
 #if !PACKAGE || NESTED_BUFFER_FEATURE

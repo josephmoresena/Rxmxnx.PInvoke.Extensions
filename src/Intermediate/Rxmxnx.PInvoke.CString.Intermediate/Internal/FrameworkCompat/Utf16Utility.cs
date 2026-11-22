@@ -52,42 +52,6 @@ internal static class Utf16Utility
 	internal static Boolean AllCharsInUInt64AreAscii(UInt64 value) => (value & ~0x007F_007F_007F_007Ful) == 0;
 
 	/// <summary>
-	/// Given a UInt32 that represents two ASCII UTF-16 characters, returns the invariant
-	/// lowercase representation of those characters. Requires the input value to contain
-	/// two ASCII UTF-16 characters in machine endianness.
-	/// </summary>
-	/// <remarks>
-	/// This is a branchless implementation.
-	/// </remarks>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static UInt32 ConvertAllAsciiCharsInUInt32ToLowercase(UInt32 value)
-	{
-		UInt32 lowerIndicator = value + 0x0080_0080u - 0x0041_0041u;
-		UInt32 upperIndicator = value + 0x0080_0080u - 0x005B_005Bu;
-		UInt32 combinedIndicator = lowerIndicator ^ upperIndicator;
-		UInt32 mask = (combinedIndicator & 0x0080_0080u) >> 2;
-		return value ^ mask;
-	}
-
-	/// <summary>
-	/// Given a UInt32 that represents two ASCII UTF-16 characters, returns the invariant
-	/// uppercase representation of those characters. Requires the input value to contain
-	/// two ASCII UTF-16 characters in machine endianness.
-	/// </summary>
-	/// <remarks>
-	/// This is a branchless implementation.
-	/// </remarks>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static UInt32 ConvertAllAsciiCharsInUInt32ToUppercase(UInt32 value)
-	{
-		UInt32 lowerIndicator = value + 0x0080_0080u - 0x0061_0061u;
-		UInt32 upperIndicator = value + 0x0080_0080u - 0x007B_007Bu;
-		UInt32 combinedIndicator = lowerIndicator ^ upperIndicator;
-		UInt32 mask = (combinedIndicator & 0x0080_0080u) >> 2;
-		return value ^ mask;
-	}
-
-	/// <summary>
 	/// Given a UInt64 that represents four ASCII UTF-16 characters, returns the invariant
 	/// uppercase representation of those characters. Requires the input value to contain
 	/// four ASCII UTF-16 characters in machine endianness.
@@ -122,40 +86,6 @@ internal static class Utf16Utility
 		UInt64 mask = (combinedIndicator & 0x0080_0080_0080_0080ul) >> 2;
 		return value ^ mask;
 	}
-
-#if !PACKAGE || USE_COMPLETE_BLC_CODE
-	/// <summary>
-	/// Given a UInt32 that represents two ASCII UTF-16 characters, returns true iff
-	/// the input contains one or more lowercase ASCII characters.
-	/// </summary>
-	/// <remarks>
-	/// This is a branchless implementation.
-	/// </remarks>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static Boolean UInt32ContainsAnyLowercaseAsciiChar(UInt32 value)
-	{
-		UInt32 lowerIndicator = value + 0x0080_0080u - 0x0061_0061u;
-		UInt32 upperIndicator = value + 0x0080_0080u - 0x007B_007Bu;
-		UInt32 combinedIndicator = lowerIndicator ^ upperIndicator;
-		return (combinedIndicator & 0x0080_0080u) != 0;
-	}
-
-	/// <summary>
-	/// Given a UInt32 that represents two ASCII UTF-16 characters, returns true iff
-	/// the input contains one or more uppercase ASCII characters.
-	/// </summary>
-	/// <remarks>
-	/// This is a branchless implementation.
-	/// </remarks>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static Boolean UInt32ContainsAnyUppercaseAsciiChar(UInt32 value)
-	{
-		UInt32 lowerIndicator = value + 0x0080_0080u - 0x0041_0041u;
-		UInt32 upperIndicator = value + 0x0080_0080u - 0x005B_005Bu;
-		UInt32 combinedIndicator = lowerIndicator ^ upperIndicator;
-		return (combinedIndicator & 0x0080_0080u) != 0;
-	}
-#endif
 
 	/// <summary>
 	/// Given two UInt32s that represent two ASCII UTF-16 characters each, returns true iff
@@ -192,5 +122,77 @@ internal static class Utf16Utility
 		indicator |= 0xFF7F_FF7F_FF7F_FF7Ful;
 		return (differentBits & indicator) == 0;
 	}
+
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
+	/// <summary>
+	/// Given a UInt32 that represents two ASCII UTF-16 characters, returns the invariant
+	/// lowercase representation of those characters. Requires the input value to contain
+	/// two ASCII UTF-16 characters in machine endianness.
+	/// </summary>
+	/// <remarks>
+	/// This is a branchless implementation.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static UInt32 ConvertAllAsciiCharsInUInt32ToLowercase(UInt32 value)
+	{
+		UInt32 lowerIndicator = value + 0x0080_0080u - 0x0041_0041u;
+		UInt32 upperIndicator = value + 0x0080_0080u - 0x005B_005Bu;
+		UInt32 combinedIndicator = lowerIndicator ^ upperIndicator;
+		UInt32 mask = (combinedIndicator & 0x0080_0080u) >> 2;
+		return value ^ mask;
+	}
+
+	/// <summary>
+	/// Given a UInt32 that represents two ASCII UTF-16 characters, returns the invariant
+	/// uppercase representation of those characters. Requires the input value to contain
+	/// two ASCII UTF-16 characters in machine endianness.
+	/// </summary>
+	/// <remarks>
+	/// This is a branchless implementation.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static UInt32 ConvertAllAsciiCharsInUInt32ToUppercase(UInt32 value)
+	{
+		UInt32 lowerIndicator = value + 0x0080_0080u - 0x0061_0061u;
+		UInt32 upperIndicator = value + 0x0080_0080u - 0x007B_007Bu;
+		UInt32 combinedIndicator = lowerIndicator ^ upperIndicator;
+		UInt32 mask = (combinedIndicator & 0x0080_0080u) >> 2;
+		return value ^ mask;
+	}
+#endif
+
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
+	/// <summary>
+	/// Given a UInt32 that represents two ASCII UTF-16 characters, returns true iff
+	/// the input contains one or more lowercase ASCII characters.
+	/// </summary>
+	/// <remarks>
+	/// This is a branchless implementation.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static Boolean UInt32ContainsAnyLowercaseAsciiChar(UInt32 value)
+	{
+		UInt32 lowerIndicator = value + 0x0080_0080u - 0x0061_0061u;
+		UInt32 upperIndicator = value + 0x0080_0080u - 0x007B_007Bu;
+		UInt32 combinedIndicator = lowerIndicator ^ upperIndicator;
+		return (combinedIndicator & 0x0080_0080u) != 0;
+	}
+
+	/// <summary>
+	/// Given a UInt32 that represents two ASCII UTF-16 characters, returns true iff
+	/// the input contains one or more uppercase ASCII characters.
+	/// </summary>
+	/// <remarks>
+	/// This is a branchless implementation.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static Boolean UInt32ContainsAnyUppercaseAsciiChar(UInt32 value)
+	{
+		UInt32 lowerIndicator = value + 0x0080_0080u - 0x0041_0041u;
+		UInt32 upperIndicator = value + 0x0080_0080u - 0x005B_005Bu;
+		UInt32 combinedIndicator = lowerIndicator ^ upperIndicator;
+		return (combinedIndicator & 0x0080_0080u) != 0;
+	}
+#endif
 }
 #endif
