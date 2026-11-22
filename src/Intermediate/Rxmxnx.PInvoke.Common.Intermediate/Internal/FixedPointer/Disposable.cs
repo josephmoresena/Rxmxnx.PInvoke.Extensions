@@ -44,7 +44,7 @@ internal partial class FixedPointer
 			get => this.Value is IFixedPointer ptr ? ptr.Pointer : default;
 		}
 
-#if !NETSTANDARD2_1 && !NETCOREAPP
+#if !PACKAGE && !NETSTANDARD2_1 && !NETCOREAPP
 		/// <inheritdoc cref="IEquatable{TFixed}.Equals(TFixed)"/>
 		public Boolean Equals(TFixed? other) => other is not null && other.Equals(other);
 #endif
@@ -63,12 +63,14 @@ internal partial class FixedPointer
 		/// <typeparam name="TValue">An <see cref="IFixedPointer"/> type.</typeparam>
 		/// <returns>A <typeparamref name="TValue"/> instance.</returns>
 		protected TValue? GetValue<TValue>() where TValue : class, IFixedPointer => this.Value as TValue;
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		/// <summary>
 		/// Retrieves the <see cref="IDisposable"/> parent object.
 		/// </summary>
 		/// <returns>An <see cref="IDisposable"/> instance.</returns>
 		protected IDisposable GetDisposableParent()
 			=> this._disposable is IFixedPointer.IDisposable ? this._disposable : this;
+#endif
 
 		/// <inheritdoc cref="IDisposable.Dispose()"/>
 		/// <param name="disposing">Indicates whether current call is from <see cref="IDisposable.Dispose()"/>.</param>

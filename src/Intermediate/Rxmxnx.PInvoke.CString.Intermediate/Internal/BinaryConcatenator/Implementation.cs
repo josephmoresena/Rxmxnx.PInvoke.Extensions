@@ -15,11 +15,26 @@ internal sealed class BinaryConcatenator : BinaryConcatenator<Byte?>
 	/// Initializes a new instance of the <see cref="BinaryConcatenator"/> class
 	/// without a specified separator byte.
 	/// </summary>
+	public BinaryConcatenator() { }
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+	/// <summary>
+	/// Initializes a new instance of the <see cref="BinaryConcatenator"/> class
+	/// with a specified separator byte.
+	/// </summary>
+	/// <param name="separator">
+	/// The byte value to use as a separator in the concatenation.
+	/// </param>
+	public BinaryConcatenator(Byte separator) : base(separator) => this._ignoreEmpty = true;
+#else
+	/// <summary>
+	/// Initializes a new instance of the <see cref="BinaryConcatenator"/> class
+	/// without a specified separator byte.
+	/// </summary>
 	/// <param name="cancellationToken">
 	/// The token to monitor for cancellation requests.
 	/// The default value is <see cref="CancellationToken.None"/>.
 	/// </param>
-	public BinaryConcatenator(CancellationToken cancellationToken = default) : base(default, cancellationToken) { }
+	public BinaryConcatenator(CancellationToken cancellationToken) : base(default, cancellationToken) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="BinaryConcatenator"/> class
 	/// with a specified separator byte.
@@ -34,6 +49,7 @@ internal sealed class BinaryConcatenator : BinaryConcatenator<Byte?>
 	public BinaryConcatenator(Byte separator, CancellationToken cancellationToken = default) :
 		base(separator, cancellationToken)
 		=> this._ignoreEmpty = true;
+#endif
 
 	/// <inheritdoc/>
 	protected override void WriteValue(Byte? value)
