@@ -262,14 +262,23 @@ foreach (String sourceCodeFile in new DirectoryInfo(args[0]).GetFiles("*.cpp").S
 
 ## Visual Basic .NET support
 
-The package is written for C#, but it still tries to remain usable from Visual Basic .NET. VB cannot express most
-`ref` / `Span<T>` APIs, so that support is **the smallest practical surface**, not a second language port:
+The package is written for C#, but it still tries to remain usable from Visual Basic .NET and from C# compilers
+older than 7.0. Those compilers can call a method that takes a span or a `ValPtr<T>`. They cannot write `ref`
+returns, store a `ref struct`, or use the syntax that arrived with C# 7.0
+([version history](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-version-history)). The helpers
+below perform that work inside the library and hand back an ordinary value:
 
-- `Rxmxnx.PInvoke.VisualBasic` redeclares buffer delegates (`VbScopedBufferAction<T>`, `VbScopedBufferFunc<…>`).
+- `Rxmxnx.PInvoke.VisualBasic.ByRefExtensions` reads and writes a pointer or a span, and copies between them
+  (`UnsafeCopyTo`, `UnsafeCopyFrom`). See [Extensions](api/extensions.md#older-compilers-byrefextensions).
+- `Rxmxnx.PInvoke.RefStruct` holds `SpanPtr<T>`, `ReadOnlySpanPtr<T>`, and `FixedPointerValueListPtr`. A caller that
+  can store the ref struct creates the pointer; the other caller stores the ordinary struct. See
+  [Pointers to ref structs](api/pointers.md#pointers-to-ref-structs).
+- `Rxmxnx.PInvoke.VisualBasic` also redeclares buffer delegates (`VbScopedBufferAction<T>`, `VbScopedBufferFunc<…>`).
 - `BufferManager.VisualBasic` exposes `Alloc` methods that wrap those delegates. They add a small overhead and are
   intended for VB only.
 
-Prefer C# for new interop code. Use the VB helpers only where the language cannot call the C# surface.
+Prefer a current C# compiler for new interop code. Use these helpers where the language cannot call the rest of the
+surface.
 
 ## Feature switches (.NET 8.0+)
 

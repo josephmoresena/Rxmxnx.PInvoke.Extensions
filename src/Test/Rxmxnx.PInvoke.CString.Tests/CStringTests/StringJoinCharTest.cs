@@ -35,7 +35,7 @@ public sealed class StringJoinCharTest
 
 	private static void ArrayTest(Char separator, String?[] strings)
 	{
-		String strSeparator = new(new[] { separator, });
+		String strSeparator = new([separator,]);
 		String expectedCString = String.Join(strSeparator, strings);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
@@ -53,7 +53,7 @@ public sealed class StringJoinCharTest
 	}
 	private static void EnumerableTest(Char separator, IEnumerable<String?> strings)
 	{
-		String strSeparator = new(new[] { separator, });
+		String strSeparator = new([separator,]);
 		// ReSharper disable once PossibleMultipleEnumeration
 		String expectedCString = String.Join(strSeparator, strings);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
@@ -75,7 +75,7 @@ public sealed class StringJoinCharTest
 	{
 		Int32 startIndex = PInvokeRandom.Shared.Next(0, strings.Length);
 		Int32 count = PInvokeRandom.Shared.Next(startIndex, strings.Length) - startIndex;
-		String strSeparator = new(new[] { separator, });
+		String strSeparator = new([separator,]);
 		String expectedCString = String.Join(strSeparator, strings, startIndex, count);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 

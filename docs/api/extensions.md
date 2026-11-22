@@ -87,6 +87,27 @@ Functional-interface overloads that pin **two to eight** spans **or** references
 On .NET 9.0+, the reference overloads accept `ref struct` element types. Cast each list entry’s `.Value` to
 `FixedReferenceValue<T>` (or the read-only counterpart) when you need `Reference`.
 
+## Older compilers (`ByRefExtensions`)
+
+`Rxmxnx.PInvoke.VisualBasic.ByRefExtensions` is the call surface for **Visual Basic .NET** and for **C# before 7.0**.
+Those compilers can pass a span or a `ValPtr<T>` into a method. They cannot write the operations that return `ref`,
+store a `ref struct`, or use the syntax added in C# 7.0 and later
+([version history](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-version-history)). The library
+performs the operation and returns an ordinary value.
+
+| Method                                                           | Result                                                                     |
+|------------------------------------------------------------------|----------------------------------------------------------------------------|
+| `GetUnsafe` / `SetUnsafe` on `ValPtr<T>` and `ReadOnlyValPtr<T>` | Read or write the single value at the pointer.                             |
+| `GetUnsafe` / `SetUnsafe` on `Span<T>` and `ReadOnlySpan<T>`     | The span indexer, callable without storing a span in Visual Basic.         |
+| `GetUnsafe` / `SetUnsafe` on `FixedPointerValueList.ItemValue`   | The first value of the block, when the transformation is valid.            |
+| `GetReadOnlySpan<T>` / `GetSpan<T>` on `ItemValue`               | A span over the block, or empty when the transformation is not allowed.    |
+| `UnsafeCopyTo`                                                   | Copies a span into the memory at a `ValPtr<T>`.                            |
+| `UnsafeCopyFrom`                                                 | Copies the memory at a `ReadOnlyValPtr<T>` (or a `ValPtr<T>`) into a span. |
+
+`UnsafeCopyTo` and `UnsafeCopyFrom` do not check that the pointer is large enough or still alive. The pointer is an
+ordinary struct, so the caller can store it. A caller that can keep a `Span<T>` or a `FixedPointerValueList` in a
+variable builds a [span pointer or list pointer](pointers.md#pointers-to-ref-structs) and passes that struct instead.
+
 ## Pointers (`PointerExtensions` / `ValuePointerExtensions`)
 
 Turn `IntPtr`, `UIntPtr`, `ValPtr<T>`, or `ReadOnlyValPtr<T>` into managed views.

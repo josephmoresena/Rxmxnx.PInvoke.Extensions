@@ -30,7 +30,7 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		this.Values = MemoryMarshal.CreateSpan(ref Unsafe.AsRef<T>(ptr), count);
 #else
-		this.Values = typeof(T).IsPrimitive ? new(ptr, count) : MemoryMarshalCompat.CreateUnsafeSpan<T>(ptr, count);
+		this.Values = MemoryMarshalCompat.CreateUnsafeSpan<T>(ptr, count);
 #endif
 	}
 	/// <summary>
@@ -61,9 +61,7 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		this.Values = MemoryMarshal.CreateSpan(ref Unsafe.AsRef<T>(handle.Pointer), count);
 #else
-		this.Values = typeof(T).IsPrimitive ?
-			new(handle.Pointer, count) :
-			MemoryMarshalCompat.CreateUnsafeSpan<T>(handle.Pointer, count);
+		this.Values = MemoryMarshalCompat.CreateUnsafeSpan<T>(handle.Pointer, count);
 #endif
 	}
 	/// <summary>
@@ -94,9 +92,7 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		this.Values = MemoryMarshal.CreateSpan(ref valPtr.Reference, count);
 #else
-		this.Values = typeof(T).IsPrimitive ?
-			new(valPtr.Pointer.ToPointer(), count) :
-			MemoryMarshalCompat.CreateUnsafeSpan<T>(valPtr.Pointer.ToPointer(), count);
+		this.Values = MemoryMarshalCompat.CreateUnsafeSpan<T>(valPtr.Pointer.ToPointer(), count);
 #endif
 	}
 	/// <summary>
@@ -114,9 +110,7 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 		ref T refT = ref Unsafe.AsRef<T>(value.Pointer.ToPointer());
 		this.Values = MemoryMarshal.CreateSpan(ref refT, count);
 #else
-		this.Values = typeof(T).IsPrimitive ?
-			new(value.Pointer.ToPointer(), count) :
-			MemoryMarshalCompat.CreateUnsafeSpan<T>(value.Pointer.ToPointer(), count);
+		this.Values = MemoryMarshalCompat.CreateUnsafeSpan<T>(value.Pointer.ToPointer(), count);
 #endif
 	}
 
@@ -141,9 +135,7 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		this.Values = MemoryMarshal.CreateSpan(ref valPtr.Reference, count);
 #else
-		this.Values = typeof(T).IsPrimitive ?
-			new(valPtr.Pointer.ToPointer(), count) :
-			MemoryMarshalCompat.CreateUnsafeSpan<T>(valPtr.Pointer.ToPointer(), count);
+		this.Values = MemoryMarshalCompat.CreateUnsafeSpan<T>(valPtr.Pointer.ToPointer(), count);
 #endif
 	}
 #pragma warning restore CS8500

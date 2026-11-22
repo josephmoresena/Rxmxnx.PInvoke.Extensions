@@ -19,6 +19,7 @@ public partial class NativeUtilities
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	// ReSharper disable once UseCollectionExpression
+	// ReSharper disable once MemberCanBePrivate.Global
 	public static T[] ArrayEmpty<T>() => Array.Empty<T>();
 
 #pragma warning disable CS8500

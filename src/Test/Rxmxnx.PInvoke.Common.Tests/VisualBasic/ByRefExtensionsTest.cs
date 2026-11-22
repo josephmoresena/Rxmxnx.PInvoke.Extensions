@@ -74,6 +74,45 @@ public sealed class ByRefExtensionsTest
 		PInvokeAssert.Equal("c", destination[2]);
 	}
 	[Fact]
+	public void UnsafeCopyFromTest()
+	{
+		Int32[] source = [1, 2, 3,];
+		IDisposable disposable = NativeUtilities.UnsafeHeapAlloc(source.Length, out ValPtr<Int32> valPtr);
+		try
+		{
+			source.AsSpan().UnsafeCopyTo(valPtr);
+			Int32[] destination = new Int32[source.Length];
+			destination.AsSpan().UnsafeCopyFrom(valPtr);
+			PInvokeAssert.Equal(source, destination);
+
+			Int32[] head = new Int32[2];
+			head.AsSpan().UnsafeCopyFrom(valPtr);
+			PInvokeAssert.Equal(1, head[0]);
+			PInvokeAssert.Equal(2, head[1]);
+		}
+		finally
+		{
+			disposable.Dispose();
+		}
+	}
+	[Fact]
+	public void ReferenceUnsafeCopyFromTest()
+	{
+		String[] source = ["a", "b", "c",];
+		ValPtr<String> valPtr = NativeUtilities.GetUnsafeValPtrFromRef(ref source[0]);
+		String[] destination = new String[source.Length];
+		destination.AsSpan().UnsafeCopyFrom(valPtr);
+		PInvokeAssert.Equal("a", destination[0]);
+		PInvokeAssert.Equal("b", destination[1]);
+		PInvokeAssert.Equal("c", destination[2]);
+	}
+	[Fact]
+	public void EmptyUnsafeCopyFromTest()
+	{
+		Span<Int32> empty = [];
+		empty.UnsafeCopyFrom(default);
+	}
+	[Fact]
 	public void EmptyUnsafeCopyToTest()
 	{
 		ReadOnlySpan<Int32> empty = default;

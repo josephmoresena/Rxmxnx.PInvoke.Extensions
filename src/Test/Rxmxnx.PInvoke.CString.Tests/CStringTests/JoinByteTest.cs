@@ -39,7 +39,7 @@ public sealed class JoinByteTest
 
 	private static void ArrayTest(Byte separator, String?[] strings, CString?[] values)
 	{
-		String strSeparator = Encoding.UTF8.GetString(new[] { separator, });
+		String strSeparator = Encoding.UTF8.GetString([separator,]);
 		String expectedCString = String.Join(strSeparator, strings);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
@@ -57,7 +57,7 @@ public sealed class JoinByteTest
 	}
 	private static void EnumerableTest(Byte separator, String?[] strings, IEnumerable<CString?> values)
 	{
-		String strSeparator = Encoding.UTF8.GetString(new[] { separator, });
+		String strSeparator = Encoding.UTF8.GetString([separator,]);
 		String expectedCString = String.Join(strSeparator, strings);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
@@ -77,7 +77,7 @@ public sealed class JoinByteTest
 	{
 		Int32 startIndex = PInvokeRandom.Shared.Next(0, strings.Length);
 		Int32 count = PInvokeRandom.Shared.Next(startIndex, strings.Length) - startIndex;
-		String strSeparator = Encoding.UTF8.GetString(new[] { separator, });
+		String strSeparator = Encoding.UTF8.GetString([separator,]);
 		String expectedCString = String.Join(strSeparator, strings, startIndex, count);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 

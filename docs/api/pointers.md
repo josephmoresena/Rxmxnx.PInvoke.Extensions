@@ -68,6 +68,28 @@ Int32 result = query.Invoke(hProcess, 0, pathPtr, lengthPtr);
 
 On .NET 7.0+, this type also participates in source-generated marshalling.
 
+## Pointers to ref structs
+
+`Span<T>`, `ReadOnlySpan<T>`, and `FixedPointerValueList` are ref structs. Visual Basic cannot store one in a
+variable, and neither can C# before 7.2. A caller that can store the ref struct takes its address and passes an
+ordinary struct. These types live in `Rxmxnx.PInvoke.RefStruct`. There is no public constructor: use
+`CreateUnsafePtr`. The variable must stay alive while the pointer is used. A zero pointer returns the default value.
+
+On .NET 9.0 and later, `ValPtr<Span<T>>` and `ReadOnlyValPtr<ReadOnlySpan<T>>` replace the span pointers.
+`SpanPtr<T>` and `ReadOnlySpanPtr<T>` stay in the assembly and are hidden from editors. Convert forward with the
+implicit operator and back with the explicit operator. `FixedPointerValueListPtr` stays available on every TFM.
+
+| Type                       | Points at                          | What you call                                                                                                  |
+|----------------------------|------------------------------------|----------------------------------------------------------------------------------------------------------------|
+| `SpanPtr<T>`               | A `Span<T>` variable               | `GetSpan`                                                                                                      |
+| `ReadOnlySpanPtr<T>`       | A `ReadOnlySpan<T>` variable       | `GetSpan`                                                                                                      |
+| `FixedPointerValueListPtr` | A `FixedPointerValueList` variable | `Count`, `IsEmpty`, `IsReadOnly`, the indexer (`ItemValue`), `GetValue<T>`, `GetReadOnlySpan<T>`, `GetSpan<T>` |
+
+`ItemValue` is the block at that index. It is still a ref struct, so a caller that cannot store it uses
+`GetReadOnlySpan<T>` and `GetSpan<T>` on the list pointer. Those methods rebuild the list and apply the same
+transformation rules as a value context. Any write on a read-only block returns an empty span from
+`ByRefExtensions.GetSpan<T>`.
+
 ## Creating pointers
 
 | Helper                                                 | When to use                                                               |

@@ -263,7 +263,8 @@ public static unsafe class PointerExtensions
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>() || ptr.IsZero())
 			return default;
-		return new(ptr.ToPointer(), length);
+		// ReSharper disable once UseSymbolAlias
+		return MemoryMarshalCompat.CreateUnsafeSpan<T>(ptr.ToPointer(), length);
 	}
 	/// <summary>
 	/// Generates a <see cref="Span{T}"/> instance from a <see cref="UIntPtr"/>, interpreting the memory at the specified
@@ -290,7 +291,8 @@ public static unsafe class PointerExtensions
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>() || uptr.IsZero())
 			return default;
-		return new(uptr.ToPointer(), length);
+		// ReSharper disable once UseSymbolAlias
+		return MemoryMarshalCompat.CreateUnsafeSpan<T>(uptr.ToPointer(), length);
 	}
 	/// <summary>
 	/// Generates a <see cref="Span{T}"/> instance from a <see cref="MemoryHandle"/>, interpreting the memory at the specified
@@ -315,9 +317,11 @@ public static unsafe class PointerExtensions
 	public static Span<T> GetUnsafeSpan<T>(this MemoryHandle handle, Int32 length)
 	{
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
+		// ReSharper disable once ConvertIfStatementToReturnStatement
 		if (handle.Pointer == default)
 			return default;
-		return new(handle.Pointer, length);
+		// ReSharper disable once UseSymbolAlias
+		return MemoryMarshalCompat.CreateUnsafeSpan<T>(handle.Pointer, length);
 	}
 	/// <summary>
 	/// Generates a <see cref="ReadOnlySpan{T}"/> instance from an <see cref="IntPtr"/>, interpreting the memory at the
@@ -347,7 +351,8 @@ public static unsafe class PointerExtensions
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>() || ptr.IsZero())
 			return default;
-		return new(ptr.ToPointer(), length);
+		// ReSharper disable once UseSymbolAlias
+		return MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(ptr.ToPointer(), length);
 	}
 	/// <summary>
 	/// Generates a <see cref="ReadOnlySpan{T}"/> instance from a <see cref="UIntPtr"/>, interpreting the memory at the
@@ -377,7 +382,8 @@ public static unsafe class PointerExtensions
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>() || uptr.IsZero())
 			return default;
-		return new(uptr.ToPointer(), length);
+		// ReSharper disable once UseSymbolAlias
+		return MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(uptr.ToPointer(), length);
 	}
 	/// <summary>
 	/// Generates a <see cref="ReadOnlySpan{T}"/> instance from a <see cref="MemoryHandle"/>, interpreting the memory at the
@@ -405,9 +411,11 @@ public static unsafe class PointerExtensions
 	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this MemoryHandle handle, Int32 length)
 	{
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
+		// ReSharper disable once ConvertIfStatementToReturnStatement
 		if (handle.Pointer == default)
 			return default;
-		return new(handle.Pointer, length);
+		// ReSharper disable once UseSymbolAlias
+		return MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(handle.Pointer, length);
 	}
 
 	/// <summary>

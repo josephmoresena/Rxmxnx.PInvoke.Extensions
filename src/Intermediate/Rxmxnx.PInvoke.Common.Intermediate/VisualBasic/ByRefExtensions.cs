@@ -178,6 +178,30 @@ public static unsafe class ByRefExtensions
 	public static void UnsafeCopyTo<T>(this Span<T> source, ValPtr<T> destination)
 		=> ((ReadOnlySpan<T>)source).UnsafeCopyTo(destination);
 	/// <summary>
+	/// Copies the memory pointed by <paramref name="source"/> into <paramref name="destination"/>.
+	/// </summary>
+	/// <typeparam name="T">The type of the elements.</typeparam>
+	/// <param name="destination">The destination span.</param>
+	/// <param name="source">The source pointer.</param>
+	/// <remarks>
+	/// Unsafe because <paramref name="source"/> is not validated for size or availability.
+	/// </remarks>
+	/// <exception cref="NullReferenceException">
+	/// Thrown when <paramref name="source"/> is <see langword="null"/> and <paramref name="destination"/> is not empty.
+	/// </exception>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void UnsafeCopyFrom<T>(this Span<T> destination, ReadOnlyValPtr<T> source)
+	{
+		if (destination.IsEmpty) return;
+#pragma warning disable CS8500
+		fixed (void* ptr = &source.Reference)
+			MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(ptr, destination.Length).CopyTo(destination);
+#pragma warning restore CS8500
+	}
+	/// <summary>
 	/// Returns a read-only span over the memory described by <paramref name="item"/>.
 	/// </summary>
 	/// <typeparam name="T">Type of the span elements.</typeparam>
