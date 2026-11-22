@@ -179,10 +179,12 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// </summary>
 	public Boolean IsBmp => UnicodeUtility.IsBmpCodePoint(this._value);
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Returns the Unicode plane (0 to 16, inclusive) which contains this scalar.
 	/// </summary>
 	public Int32 Plane => UnicodeUtility.GetPlane(this._value);
+#endif
 
 	/// <summary>
 	/// A <see cref="System.Text.Rune"/> instance that represents the Unicode replacement character U+FFFD.
@@ -454,6 +456,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 		return OperationStatus.InvalidData;
 	}
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Decodes the <see cref="System.Text.Rune"/> at the end of the provided UTF-16 source buffer.
 	/// </summary>
@@ -564,6 +567,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 		bytesConsumed = 0;
 		return OperationStatus.NeedMoreData;
 	}
+#endif
 
 	/// <summary>
 	/// Encodes this <see cref="System.Text.Rune"/> to a UTF-16 destination buffer.
@@ -603,11 +607,13 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 
 	public override Int32 GetHashCode() => this.Value;
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Returns <see langword="true"/> iff <paramref name="value"/> is a valid Unicode scalar
 	/// value, i.e., is in [ U+0000..U+D7FF ], inclusive; or [ U+E000..U+10FFFF ], inclusive.
 	/// </summary>
 	public static Boolean IsValid(Int32 value) => Rune.IsValid((UInt32)value);
+#endif
 
 	/// <summary>
 	/// Returns <see langword="true"/> iff <paramref name="value"/> is a valid Unicode scalar
@@ -681,10 +687,12 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 		return false;
 	}
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Attempts to create a <see cref="System.Text.Rune"/> from the provided input value.
 	/// </summary>
 	public static Boolean TryCreate(Int32 value, out Rune result) => Rune.TryCreate((UInt32)value, out result);
+#endif
 
 	/// <summary>
 	/// Attempts to create a <see cref="System.Text.Rune"/> from the provided input value.
@@ -822,6 +830,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static Rune UnsafeCreate(UInt32 scalarValue) => new(scalarValue, false);
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	public static Double GetNumericValue(Rune value)
 	{
 		if (!value.IsAscii)
@@ -831,6 +840,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 		UInt32 baseNum = value._value - '0';
 		return baseNum <= 9 ? baseNum : -1;
 	}
+#endif
 
 	public static UnicodeCategory GetUnicodeCategory(Rune value)
 	{
@@ -883,6 +893,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 		=> UnicodeUtility.IsInRangeInclusive((UInt32)category, (UInt32)UnicodeCategory.MathSymbol,
 		                                     (UInt32)UnicodeCategory.OtherSymbol);
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	public static Boolean IsControl(Rune value) => ((value._value + 1) & ~0x80u) <= 0x20u;
 
 	public static Boolean IsDigit(Rune value)
@@ -953,6 +964,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 		=> value.IsAscii ?
 			Rune.UnsafeCreate(Utf16Utility.ConvertAllAsciiCharsInUInt32ToUppercase(value._value)) :
 			Rune.ChangeCaseCultureAware(value, CultureInfo.InvariantCulture, true);
+#endif
 
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3928)]
