@@ -1,0 +1,270 @@
+#if !UAP10_0
+#if NET462_OR_GREATER || NETSTANDARD2_0
+using Utf8 = Rxmxnx.PInvoke.Internal.FrameworkCompat.Utf8Compat;
+#endif
+
+namespace Rxmxnx.PInvoke.Internal;
+
+#if !PACKAGE
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+internal abstract unsafe partial class Utf8Comparator
+{
+#if !NETFRAMEWORK
+	/// <summary>
+	/// Cache for <see cref="UsesOrdinalTail"/>.
+	/// </summary>
+	private static Boolean? usesOrdinalTail;
+#endif
+#if !NET7_0_OR_GREATER
+	/// <summary>
+	/// Cache for <see cref="UsesBclOrdinalCompare"/>.
+	/// </summary>
+	private static Boolean? usesBclOrdinalCompare;
+#endif
+
+#if !NETFRAMEWORK
+	/// <summary>
+	/// <see langword="true"/> when <c>System.Text.Rune</c> implements at least nine interfaces.
+	/// </summary>
+	/// <remarks>Read the first time an ordinal tail needs it. .NET 11 is the first runtime with nine.</remarks>
+	private static Boolean UsesOrdinalTail
+		=> Utf8Comparator.usesOrdinalTail ??=
+#if NETCOREAPP3_0_OR_GREATER
+			SystemInfo.CountInterfaces<Rune>() >= 9;
+#else
+			TrimInfo.SafeGetType(typeof(String), "System.Text.Rune") is { } runeType &&
+			runeType.GetInterfaces().Length >= 9;
+#endif
+#endif
+#if !NET7_0_OR_GREATER
+	/// <summary>
+	/// <see langword="true"/> when ordinal comparison must be delegated to <c>String.CompareOrdinal</c>.
+	/// </summary>
+	/// <remarks>
+	/// .NET Core 2.0 and .NET Framework use the package-provided <c>System.Memory</c> assembly.
+	/// In .NET Framework and Mono, <see cref="AppDomain"/> implements <c>System._AppDomain</c>.
+	/// Starting with .NET 7.0, <see cref="GCHandle"/> implements <see cref="IEquatable{GCHandle}"/>.
+	/// </remarks>
+	protected static Boolean UsesBclOrdinalCompare
+		=> Utf8Comparator.usesBclOrdinalCompare ??= !SystemInfo.UsesNativeSpan ||
+			(SystemInfo.CountInterfaces<AppDomain>() == 0 && !SystemInfo.IsSelfEquatable<GCHandle>());
+#endif
+	/// <summary>
+	/// Performs an ordinal comparison between two UTF-16 character spans.
+	/// </summary>
+	/// <param name="spanA">The first UTF-16 span to compare.</param>
+	/// <param name="spanB">The second UTF-16 span to compare.</param>
+	/// <returns>
+	/// A signed 32-bit integer that indicates the lexical relationship between <paramref name="spanA"/> and
+	/// <paramref name="spanB"/>.
+	/// </returns>
+	/// <remarks>
+	/// Comparison is performed using the numeric values of UTF-16 code units and is independent of culture or
+	/// normalization. The first two code units still follow the historic <c>CompareOrdinalHelper</c> rule and may
+	/// observe the implicit null terminator. On .NET 11 and later the remainder matches
+	/// <c>SpanHelpers.SequenceCompareTo</c>: a string that is a prefix compares by length. Earlier runtimes
+	/// zero-extend a one-unit remainder and return that next code unit.
+	/// </remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
+#if !PACKAGE && NETCOREAPP && !NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	protected static Int32 OrdinalCompare(ReadOnlySpan<Char> spanA, ReadOnlySpan<Char> spanB)
+	{
+		Int32 lengthA = spanA.Length;
+		Int32 lengthB = spanB.Length;
+
+		if (Utf8Comparator.OrdinalCompareFirst(ref spanA, ref spanB, out Int32 result))
+			return result;
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+		Int32 minLength = Environment.Is64BitProcess ? 12 : 10;
+#else
+		Int32 minLength = sizeof(IntPtr) == 8 ? 12 : 10;
+#endif
+		while (Math.Min(spanA.Length, spanB.Length) >= minLength)
+		{
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+			switch (Environment.Is64BitProcess)
+#else
+			switch (sizeof(IntPtr) == 8)
+#endif
+			{
+				case true when Utf8Comparator.OrdinalCompare64Bit(ref spanA, ref spanB, out result):
+				case false when Utf8Comparator.OrdinalCompare32Bit(ref spanA, ref spanB, out result):
+					return result;
+			}
+		}
+		while (Math.Min(spanA.Length, spanB.Length) > 0)
+		{
+#if !NETFRAMEWORK && !UAP10_0
+			// .NET 11 routes this tail through SequenceCompareTo. Do not invent U+0000 past the shorter span.
+			if ((spanA.Length == 1 || spanB.Length == 1) && Utf8Comparator.UsesOrdinalTail)
+			{
+				result = Utf8Comparator.Read<Char>(ref spanA) - Utf8Comparator.Read<Char>(ref spanB);
+				if (result != 0) return result;
+				break;
+			}
+#endif
+			CharSpanChunk chunkA = Utf8Comparator.Read<CharSpanChunk>(ref spanA);
+			CharSpanChunk chunkB = Utf8Comparator.Read<CharSpanChunk>(ref spanB);
+			result = CharSpanChunk.Compare(chunkA, chunkB);
+			if (result != 0) return result;
+		}
+		return lengthA - lengthB;
+	}
+
+	/// <summary>
+	/// Compares the first two UTF-16 characters of each span.
+	/// </summary>
+	/// <param name="spanA">Reference to the first span.</param>
+	/// <param name="spanB">Reference to the second span.</param>
+	/// <param name="result">Receives the comparison result.</param>
+	/// <returns> <see langword="true"/> if a difference was detected; otherwise <see langword="false"/>.</returns>
+	/// <remarks>Advances both spans by the number of characters read.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
+#if !PACKAGE && NETCOREAPP && !NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static Boolean OrdinalCompareFirst(ref ReadOnlySpan<Char> spanA, ref ReadOnlySpan<Char> spanB,
+		out Int32 result)
+	{
+		Char charA = Utf8Comparator.Read<Char>(ref spanA);
+		Char charB = Utf8Comparator.Read<Char>(ref spanB);
+		result = charA - charB;
+		if (result != 0) return true;
+
+		charA = Utf8Comparator.Read<Char>(ref spanA);
+		charB = Utf8Comparator.Read<Char>(ref spanB);
+		result = charA - charB;
+		return result != 0;
+	}
+
+	/// <summary>
+	/// Reads a value of type <typeparamref name="T"/> from the given location.
+	/// </summary>
+	/// <typeparam name="T">The type of the value to read.</typeparam>
+	/// <param name="source">The Unicode char span source.</param>
+	/// <returns>A value of type <typeparamref name="T"/>  read from the given span.</returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
+#if !PACKAGE && NETCOREAPP && !NET7_0_OR_GREATER
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static T Read<T>(ref ReadOnlySpan<Char> source) where T : unmanaged
+	{
+		if (source.IsEmpty) return default;
+
+		ref Char refChar = ref MemoryMarshal.GetReference(source);
+		if (sizeof(T) == sizeof(Char))
+		{
+			source = source.Length > 0 ? source[1..] : default;
+			return Unsafe.As<Char, T>(ref refChar);
+		}
+
+		Int32 sizeOnBytes = Math.Min(sizeof(T), source.Length * sizeof(Char));
+		if (sizeof(T) == sizeOnBytes)
+		{
+			Int32 sizeInChars = sizeof(T) / sizeof(Char);
+			source = source.Length > 0 ? source[sizeInChars..] : default;
+			return Unsafe.As<Char, T>(ref refChar);
+		}
+
+		T result = default;
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+		ref Byte refByte = ref Unsafe.As<Char, Byte>(ref refChar);
+		ReadOnlySpan<Byte> bytes = MemoryMarshal.CreateReadOnlySpan(ref refByte, sizeOnBytes);
+		Span<Byte> resultBytes = MemoryMarshal.CreateSpan(ref Unsafe.As<T, Byte>(ref result), bytes.Length);
+		bytes.CopyTo(resultBytes);
+#else
+		fixed (void* charPtr = &refChar)
+		{
+			ReadOnlySpan<Byte> bytes = new(charPtr, sizeOnBytes);
+			Span<Byte> resultBytes = new(Unsafe.AsPointer(ref result), bytes.Length);
+			bytes.CopyTo(resultBytes);
+		}
+#endif
+		source = default;
+		return result;
+	}
+	/// <summary>
+	/// Compares the first 24 UTF-16 characters of each span.
+	/// </summary>
+	/// <param name="spanA">Reference to the first span.</param>
+	/// <param name="spanB">Reference to the second span.</param>
+	/// <param name="result">Receives the comparison result.</param>
+	/// <returns> <see langword="true"/> if a difference was detected; otherwise <see langword="false"/>.</returns>
+	/// <remarks>Advances both spans by the number of characters read.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static Boolean OrdinalCompare64Bit(ref ReadOnlySpan<Char> spanA, ref ReadOnlySpan<Char> spanB,
+		out Int32 result)
+	{
+		DoubleCharSpanChunk doubleA = Utf8Comparator.Read<DoubleCharSpanChunk>(ref spanA);
+		DoubleCharSpanChunk doubleB = Utf8Comparator.Read<DoubleCharSpanChunk>(ref spanB);
+		result = DoubleCharSpanChunk.Compare(doubleA, doubleB);
+		if (result != 0) return true;
+		doubleA = Utf8Comparator.Read<DoubleCharSpanChunk>(ref spanA);
+		doubleB = Utf8Comparator.Read<DoubleCharSpanChunk>(ref spanB);
+		result = DoubleCharSpanChunk.Compare(doubleA, doubleB);
+		if (result != 0) return true;
+		doubleA = Utf8Comparator.Read<DoubleCharSpanChunk>(ref spanA);
+		doubleB = Utf8Comparator.Read<DoubleCharSpanChunk>(ref spanB);
+		result = DoubleCharSpanChunk.Compare(doubleA, doubleB);
+		return result != 0;
+	}
+	/// <summary>
+	/// Compares the first 20 UTF-16 characters of each span.
+	/// </summary>
+	/// <param name="spanA">Reference to the first span.</param>
+	/// <param name="spanB">Reference to the second span.</param>
+	/// <param name="result">Receives the comparison result.</param>
+	/// <returns> <see langword="true"/> if a difference was detected; otherwise <see langword="false"/>.</returns>
+	/// <remarks>Advances both spans by the number of characters read.</remarks>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	private static Boolean OrdinalCompare32Bit(ref ReadOnlySpan<Char> spanA, ref ReadOnlySpan<Char> spanB,
+		out Int32 result)
+	{
+		CharSpanChunk chunkA = Utf8Comparator.Read<CharSpanChunk>(ref spanA);
+		CharSpanChunk chunkB = Utf8Comparator.Read<CharSpanChunk>(ref spanB);
+
+		result = CharSpanChunk.Compare(chunkA, chunkB);
+		if (result != 0) return true;
+		chunkA = Utf8Comparator.Read<CharSpanChunk>(ref spanA);
+		chunkB = Utf8Comparator.Read<CharSpanChunk>(ref spanB);
+		result = CharSpanChunk.Compare(chunkA, chunkB);
+		if (result != 0) return true;
+		chunkA = Utf8Comparator.Read<CharSpanChunk>(ref spanA);
+		chunkB = Utf8Comparator.Read<CharSpanChunk>(ref spanB);
+		result = CharSpanChunk.Compare(chunkA, chunkB);
+		if (result != 0) return true;
+		chunkA = Utf8Comparator.Read<CharSpanChunk>(ref spanA);
+		chunkB = Utf8Comparator.Read<CharSpanChunk>(ref spanB);
+		result = CharSpanChunk.Compare(chunkA, chunkB);
+		if (result != 0) return true;
+		chunkA = Utf8Comparator.Read<CharSpanChunk>(ref spanA);
+		chunkB = Utf8Comparator.Read<CharSpanChunk>(ref spanB);
+		result = CharSpanChunk.Compare(chunkA, chunkB);
+		return result != 0;
+	}
+}
+#endif

@@ -67,6 +67,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 #endif
 	private const Byte unicodeCategoryMask = 0x1F;
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	private static ReadOnlySpan<Byte> AsciiCharInfo
 	{
 #if NETFRAMEWORK || NETSTANDARD2_0
@@ -93,6 +94,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 				0x0E,
 			];
 	}
+#endif
 
 	private readonly UInt32 _value;
 
@@ -121,6 +123,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	public Rune(Char highSurrogate, Char lowSurrogate) : this((UInt32)Char.ConvertToUtf32(highSurrogate, lowSurrogate),
 	                                                          false) { }
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Creates a <see cref="System.Text.Rune"/> from the provided Unicode scalar value.
 	/// </summary>
@@ -128,6 +131,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// If <paramref name="value"/> does not represent a value Unicode scalar value.
 	/// </exception>
 	public Rune(Int32 value) : this((UInt32)value) { }
+#endif
 
 	/// <summary>
 	/// Creates a <see cref="System.Text.Rune"/> from the provided Unicode scalar value.
@@ -157,7 +161,6 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	public static Boolean operator >=(Rune left, Rune right) => left._value >= right._value;
 
 #if !PACKAGE || USE_COMPLETE_BLC_CODE
-
 	public static explicit operator Rune(Char ch) => new(ch);
 
 	public static explicit operator Rune(UInt32 value) => new(value);
@@ -721,6 +724,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	}
 #endif
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Encodes this <see cref="System.Text.Rune"/> to a UTF-16 destination buffer.
 	/// </summary>
@@ -765,6 +769,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 		charsWritten = default;
 		return false;
 	}
+#endif
 
 	/// <summary>
 	/// Encodes this <see cref="System.Text.Rune"/> to a destination buffer as UTF-8 bytes.

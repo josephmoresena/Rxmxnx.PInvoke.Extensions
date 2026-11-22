@@ -2,6 +2,7 @@
 
 public static partial class AotInfo
 {
+#if !UAP10_0
 	/// <summary>
 	/// Indicates whether <paramref name="methodBase"/> is dynamic.
 	/// </summary>
@@ -14,13 +15,9 @@ public static partial class AotInfo
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static Boolean IsDynamicCode(MethodBase methodBase)
-#if !UAP10_0
-		=> EmitInfo.IsDynamicMethod(methodBase);
-#else
-		=> false;
+	internal static Boolean IsDynamicCode(MethodBase methodBase) => EmitInfo.IsDynamicMethod(methodBase);
 #endif
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
+#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK
 	/// <summary>
 	/// Indicates whether the function pointer of <paramref name="methodHandle"/> references a native linked image.
 	/// </summary>

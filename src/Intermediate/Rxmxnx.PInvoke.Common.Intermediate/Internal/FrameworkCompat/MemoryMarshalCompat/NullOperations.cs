@@ -50,7 +50,7 @@ internal static unsafe partial class MemoryMarshalCompat
 		Int32 length = MemoryMarshalCompat.IndexOfNull(ref ref0);
 		return length >= 0 ? new(value, length) : throw new ArgumentException(null, nameof(value));
 	}
-#if !PACKAGE || !NET6_0_OR_GREATER
+#if !PACKAGE || !NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Retrieves the index of the first null occurrence in the buffer represented by <paramref name="buffer"/>.
 	/// </summary>

@@ -352,7 +352,7 @@ public partial class CStringBuilder
 #if NET8_0_OR_GREATER
 				builder._chunk = builder._chunk.AppendUtf8(value);
 #elif NET6_0_OR_GREATER
-			builder._chunk = builder._chunk.AppendUtf16(value);
+				builder._chunk = builder._chunk.AppendUtf16(value);
 #else
 				builder._chunk = builder._chunk.Append(value.ToString(CultureInfo.CurrentCulture));
 #endif
@@ -415,7 +415,7 @@ public partial class CStringBuilder
 #endif
 			return builder;
 		}
-#if NETCOREAPP
+#if NETCOREAPP3_0_OR_GREATER
 		/// <summary>
 		/// Appends the UTF-8 representation of the specified rune to this instance.
 		/// </summary>

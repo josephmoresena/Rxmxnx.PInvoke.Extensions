@@ -1,3 +1,4 @@
+#if !UAP10_0
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
@@ -39,3 +40,4 @@ internal ref struct FileState
 	/// <param name="buffer">Read buffer.</param>
 	public FileState(Span<Byte> buffer) => this.Buffer = buffer;
 }
+#endif

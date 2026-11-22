@@ -60,7 +60,7 @@ internal partial class ArrayMemoryManager<T>
 		ArrayMemoryManager<T> memoryManager = new(array);
 		return memoryManager.Memory;
 	}
-#if !UAP || UAP10_0_16299
+#if !UAP10_0 || UAP10_0_16299
 	/// <inheritdoc cref="MemoryManager{T}.Memory"/>
 	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if !PACKAGE && NET6_0_OR_GREATER

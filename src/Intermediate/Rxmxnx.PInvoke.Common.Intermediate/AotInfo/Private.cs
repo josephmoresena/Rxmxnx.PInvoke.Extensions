@@ -1,4 +1,4 @@
-﻿#if !UAP
+﻿#if !UAP10_0
 #if NETFRAMEWORK && !NET46_OR_GREATER
 using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
 #endif

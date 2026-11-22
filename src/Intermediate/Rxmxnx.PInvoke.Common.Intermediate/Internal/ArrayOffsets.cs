@@ -147,7 +147,7 @@ internal struct ArrayOffsets
 	public static ArrayOffsets Create()
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		=> new();
-#elif !UAP
+#elif !UAP10_0
 		=> new() { _array = new IntPtr?[31], };
 #else
 		=> new() { _array = new IntPtr?[4], };

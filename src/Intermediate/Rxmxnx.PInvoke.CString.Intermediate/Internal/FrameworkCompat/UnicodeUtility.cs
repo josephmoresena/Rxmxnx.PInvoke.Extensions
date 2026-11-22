@@ -79,6 +79,7 @@ internal static class UnicodeUtility
 		lowSurrogateCodePoint = (Char)((value & 0x3FFu) + 0xDC00u);
 	}
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE || NETCOREAPP
 	/// <summary>
 	/// Given a Unicode scalar value, gets the number of UTF-8 code units required to represent this value.
 	/// </summary>
@@ -91,6 +92,7 @@ internal static class UnicodeUtility
 		value >>= 24;
 		return (Int32)value + a * 2;
 	}
+#endif
 
 	/// <summary>
 	/// Returns <see langword="true"/> iff <paramref name="value"/> is an ASCII
