@@ -25,7 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Blc.Memory 10.0.8
+// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Bcl.Memory 10.0.8
 // (System.text.Unicode.Utf16Utility)
 
 #if !NETCOREAPP3_0_OR_GREATER
@@ -123,6 +123,7 @@ internal static class Utf16Utility
 		return value ^ mask;
 	}
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Given a UInt32 that represents two ASCII UTF-16 characters, returns true iff
 	/// the input contains one or more lowercase ASCII characters.
@@ -154,6 +155,7 @@ internal static class Utf16Utility
 		UInt32 combinedIndicator = lowerIndicator ^ upperIndicator;
 		return (combinedIndicator & 0x0080_0080u) != 0;
 	}
+#endif
 
 	/// <summary>
 	/// Given two UInt32s that represent two ASCII UTF-16 characters each, returns true iff

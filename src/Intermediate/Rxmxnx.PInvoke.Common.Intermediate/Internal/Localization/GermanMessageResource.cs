@@ -43,9 +43,11 @@ internal sealed class GermanMessageResource : IMessageResource
 		=> "Index und Länge müssen sich auf eine Position innerhalb der Sequenz beziehen.";
 	String IMessageResource.MissingMemoryInspector
 		=> "Die Speicherinspektion wird auf der aktuellen Plattform nicht unterstützt.";
-	String IMessageResource.ReflectionDisabled => "Diese Funktion erfordert den vollständigen Reflexionsmodus.";
 	String IMessageResource.InvalidSpanLayout
 		=> "Das anheftbare Feld im Layout von Span<T> konnte nicht identifiziert werden.";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
+	String IMessageResource.ReflectionDisabled => "Diese Funktion erfordert den vollständigen Reflexionsmodus.";
+#endif
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"Das Objekt muss vom Typ {requiredTypeName} sein.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)
@@ -74,6 +76,8 @@ internal sealed class GermanMessageResource : IMessageResource
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Unerwarteter Token-Typ: {currentToken}. Erwarteter Token-Typ: {expectedToken}.";
 	String IMessageResource.NotObjectType(Type type) => $"{type} ist eine ref struct; Objekt-Boxing ist nicht erlaubt.";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type)
 		=> $"Ein {bufferType}-Puffer kann nicht in einen {type}-Puffer konvertiert werden.";
+#endif
 }

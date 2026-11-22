@@ -44,8 +44,10 @@ internal sealed class SpanishMessageResource : IMessageResource
 		=> "El índice y la longitud deben hacer referencia a una ubicación dentro de la secuencia.";
 	String IMessageResource.MissingMemoryInspector
 		=> "La inspección de memoria no es compatible con la plataforma actual.";
-	String IMessageResource.ReflectionDisabled => "Esta función requiere el modo de reflexión completa.";
 	String IMessageResource.InvalidSpanLayout => "No se pudo identificar el campo fijable en la estructura de Span<T>.";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
+	String IMessageResource.ReflectionDisabled => "Esta función requiere el modo de reflexión completa.";
+#endif
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"El objeto debe ser del tipo {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)
@@ -74,6 +76,8 @@ internal sealed class SpanishMessageResource : IMessageResource
 		=> $"Tipo de token inesperado: {currentToken}. Se esperaba el tipo de token: {expectedToken}.";
 	String IMessageResource.NotObjectType(Type type)
 		=> $"{type} es una ref struct; no se permite el *boxing* de objetos.";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type)
 		=> $"Un búfer de tipo {bufferType} no se puede convertir en un búfer de tipo {type}.";
+#endif
 }

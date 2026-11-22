@@ -25,7 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Blc.Memory 10.0.8
+// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Bcl.Memory 10.0.8
 // (System.Text.Rune)
 
 // ReSharper disable ConvertGotoToBreakOrContinue
@@ -615,6 +615,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// </summary>
 	public static Boolean IsValid(UInt32 value) => UnicodeUtility.IsValidUnicodeScalar(value);
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
@@ -631,6 +632,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 		returnValue = UnicodeUtility.GetScalarFromUtf16SurrogatePair(returnValue, potentialLowSurrogate);
 		return (Int32)returnValue;
 	}
+#endif
 
 	/// <summary>
 	/// Returns a <see cref="string"/> representation of this <see cref="System.Text.Rune"/> instance.

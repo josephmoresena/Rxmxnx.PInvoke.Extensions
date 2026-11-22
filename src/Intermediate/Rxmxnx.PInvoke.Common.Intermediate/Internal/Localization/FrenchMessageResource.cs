@@ -44,9 +44,11 @@ internal sealed class FrenchMessageResource : IMessageResource
 		=> "L'index et la longueur doivent faire référence à un emplacement dans la séquence.";
 	String IMessageResource.MissingMemoryInspector
 		=> "L'inspection de la mémoire n'est pas prise en charge sur la plateforme actuelle.";
-	String IMessageResource.ReflectionDisabled => "Cette fonctionnalité nécessite le mode réflexion complète.";
 	String IMessageResource.InvalidSpanLayout
 		=> "Impossible d'identifier le champ pouvant être épinglé dans la disposition de Span<T>.";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
+	String IMessageResource.ReflectionDisabled => "Cette fonctionnalité nécessite le mode réflexion complète.";
+#endif
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"L'objet doit être de type {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)
@@ -76,6 +78,8 @@ internal sealed class FrenchMessageResource : IMessageResource
 		=> $"Type de jeton inattendu : {currentToken}. Type de jeton attendu : {expectedToken}.";
 	String IMessageResource.NotObjectType(Type type)
 		=> $"{type} est une ref struct ; la boxing d'objet n'est pas autorisée.";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type)
 		=> $"Un tampon de type {bufferType} ne peut pas être converti en tampon de type {type}.";
+#endif
 }

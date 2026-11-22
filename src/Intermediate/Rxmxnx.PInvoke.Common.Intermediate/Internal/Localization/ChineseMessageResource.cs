@@ -38,8 +38,10 @@ internal sealed class ChineseMessageResource : IMessageResource
 	String IMessageResource.LargerThanSequenceLength => "不能大于序列的长度。";
 	String IMessageResource.IndexOutOfSequence => "索引和长度必须引用序列内的位置。";
 	String IMessageResource.MissingMemoryInspector => "当前平台不支持内存检查。";
-	String IMessageResource.ReflectionDisabled => "此功能需要启用完整反射模式。";
 	String IMessageResource.InvalidSpanLayout => "无法识别 Span<T> 布局中的可固定字段。";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
+	String IMessageResource.ReflectionDisabled => "此功能需要启用完整反射模式。";
+#endif
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"对象必须是 {requiredTypeName} 类型。";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf) => $"当前实例不足以包含 {typeOf} 类型的值。";
@@ -64,5 +66,7 @@ internal sealed class ChineseMessageResource : IMessageResource
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"意外的标记类型：{currentToken}。预期的标记类型：{expectedToken}。";
 	String IMessageResource.NotObjectType(Type type) => $"{type} 是 ref struct；不允许进行对象装箱。";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type) => $"无法将 {bufferType} 缓冲区转换为 {type} 缓冲区。";
+#endif
 }

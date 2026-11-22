@@ -41,8 +41,10 @@ internal sealed class RussianMessageResource : IMessageResource
 	String IMessageResource.IndexOutOfSequence
 		=> "Индекс и длина должны указывать на местоположение внутри последовательности.";
 	String IMessageResource.MissingMemoryInspector => "Проверка памяти не поддерживается на текущей платформе.";
-	String IMessageResource.ReflectionDisabled => "Эта функция требует режима полной рефлексии.";
 	String IMessageResource.InvalidSpanLayout => "Не удалось определить закрепляемое поле в структуре Span<T>.";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
+	String IMessageResource.ReflectionDisabled => "Эта функция требует режима полной рефлексии.";
+#endif
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"Объект должен быть типа {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)
@@ -71,6 +73,8 @@ internal sealed class RussianMessageResource : IMessageResource
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Неожиданный тип токена: {currentToken}. Ожидаемый тип токена: {expectedToken}.";
 	String IMessageResource.NotObjectType(Type type) => $"{type} — это ref struct; упаковка объекта не допускается.";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type)
 		=> $"Буфер типа {bufferType} не может быть преобразован в буфер типа {type}.";
+#endif
 }

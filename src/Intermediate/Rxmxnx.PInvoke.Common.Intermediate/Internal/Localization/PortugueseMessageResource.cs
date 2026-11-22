@@ -43,8 +43,10 @@ internal sealed class PortugueseMessageResource : IMessageResource
 	String IMessageResource.IndexOutOfSequence
 		=> "O índice e o comprimento devem se referir a uma posição dentro da sequência.";
 	String IMessageResource.MissingMemoryInspector => "A inspeção de memória não é suportada na plataforma atual.";
-	String IMessageResource.ReflectionDisabled => "Este recurso requer o modo de reflexão completa.";
 	String IMessageResource.InvalidSpanLayout => "Não foi possível identificar o campo fixável no layout de Span<T>.";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
+	String IMessageResource.ReflectionDisabled => "Este recurso requer o modo de reflexão completa.";
+#endif
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"O objeto deve ser do tipo {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)
@@ -72,6 +74,8 @@ internal sealed class PortugueseMessageResource : IMessageResource
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Tipo de token inesperado: {currentToken}. Tipo de token esperado: {expectedToken}.";
 	String IMessageResource.NotObjectType(Type type) => $"{type} é uma ref struct; o boxing de objeto não é permitido.";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type)
 		=> $"Um buffer de {bufferType} não pode ser convertido em um buffer de {type}.";
+#endif
 }

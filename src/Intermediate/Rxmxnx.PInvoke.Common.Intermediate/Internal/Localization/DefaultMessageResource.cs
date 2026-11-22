@@ -40,8 +40,10 @@ internal sealed class DefaultMessageResource : IMessageResource
 	String IMessageResource.LargerThanSequenceLength => "Cannot be larger than length of sequence.";
 	String IMessageResource.IndexOutOfSequence => "Index and length must refer to a location within the sequence.";
 	String IMessageResource.MissingMemoryInspector => "Memory inspection is not supported on the current platform.";
-	String IMessageResource.ReflectionDisabled => "This feature requires reflection-full mode";
 	String IMessageResource.InvalidSpanLayout => "Unable to identify the pinnable field in the Span<T> layout.";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
+	String IMessageResource.ReflectionDisabled => "This feature requires reflection-full mode";
+#endif
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"Object must be of type {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)
@@ -69,6 +71,8 @@ internal sealed class DefaultMessageResource : IMessageResource
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Unexpected token type: {currentToken}. Expected token type: {expectedToken}.";
 	String IMessageResource.NotObjectType(Type type) => $"{type} is a ref struct; object boxing is not allowed.";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type)
 		=> $"A {bufferType} buffer of cannot be casted to a {type} buffer.";
+#endif
 }

@@ -25,7 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Blc.Memory 10.0.8
+// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Bcl.Memory 10.0.8
 // (System.text.Ascii)
 
 #if !NETCOREAPP3_0_OR_GREATER && !NET462_OR_GREATER
@@ -140,6 +140,7 @@ internal static unsafe class Ascii
 		goto Finish;
 	}
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Returns the index in <paramref name="pBuffer"/> where the first non-ASCII char is found.
 	/// Returns <paramref name="bufferLength"/> if the buffer is empty or all-ASCII.
@@ -148,6 +149,7 @@ internal static unsafe class Ascii
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static UIntPtr GetIndexOfFirstNonAsciiChar(Char* pBuffer, UIntPtr bufferLength)
 		=> Ascii.GetIndexOfFirstNonAsciiChar_Vector(pBuffer, bufferLength);
+#endif
 
 	private static UIntPtr GetIndexOfFirstNonAsciiChar_Vector(Char* pBuffer, UIntPtr bufferLength)
 	{

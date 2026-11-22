@@ -707,39 +707,6 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = MessageResource.GetInstance();
 		throw new PlatformNotSupportedException(resource.MissingMemoryInspector);
 	}
-	/// <summary>
-	/// Throws an exception if the current runtime does not support reflection.
-	/// </summary>
-	/// <exception cref="PlatformNotSupportedException">
-	/// Throws an exception if the current runtime does not support reflection.
-	/// </exception>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void ThrowIfNoReflection()
-	{
-		if (!AotInfo.IsReflectionDisabled) return;
-		IMessageResource resource = MessageResource.GetInstance();
-		throw new PlatformNotSupportedException(resource.ReflectionDisabled);
-	}
-	/// <summary>
-	/// Throws an exception a sequence of buffer instance cannot be treated as a nested buffer of the specified type.
-	/// </summary>
-	/// <param name="bufferType">Type of the managed buffer.</param>
-	/// <param name="type">Type of the element.</param>
-	/// <param name="size">Size of the buffer.</param>
-	/// <param name="sizeOfBuffer">Size of the Buffer type.</param>
-	/// <param name="sizeOf">Size of the type.</param>
-	/// <exception cref="ArgumentException">
-	/// Throws an exception a sequence of buffer instance cannot be treated as a nested buffer of the specified type.
-	/// </exception>
-	public static void ThrowIfNotNestedBuffer(Type bufferType, Type type, UInt16 size, Int32 sizeOfBuffer, Int32 sizeOf)
-	{
-		if (sizeOfBuffer / sizeOf == size) return;
-		IMessageResource resource = MessageResource.GetInstance();
-		throw new ArgumentException(resource.InvalidNestedBuffer(bufferType, type));
-	}
 #if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	/// <summary>
 	/// Throws an exception if the current token type is invalid for a string type.
@@ -800,6 +767,45 @@ internal static unsafe class ValidationUtilities
 		String tokenTypeName = Enum.GetName(tokenType) ?? $"{tokenType}";
 		String message = resource.InvalidToken(tokenTypeName, expectedToken);
 		throw new JsonException(message);
+	}
+#endif
+#if !PACKAGE || NESTED_BUFFER_FEATURE
+	/// <summary>
+	/// Throws an exception if the current runtime does not support reflection.
+	/// </summary>
+	/// <exception cref="PlatformNotSupportedException">
+	/// Throws an exception if the current runtime does not support reflection.
+	/// </exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNoReflection()
+	{
+		if (!AotInfo.IsReflectionDisabled) return;
+		IMessageResource resource = MessageResource.GetInstance();
+		throw new PlatformNotSupportedException(resource.ReflectionDisabled);
+	}
+	/// <summary>
+	/// Throws an exception a sequence of buffer instance cannot be treated as a nested buffer of the specified type.
+	/// </summary>
+	/// <param name="bufferType">Type of the managed buffer.</param>
+	/// <param name="type">Type of the element.</param>
+	/// <param name="size">Size of the buffer.</param>
+	/// <param name="sizeOfBuffer">Size of the Buffer type.</param>
+	/// <param name="sizeOf">Size of the type.</param>
+	/// <exception cref="ArgumentException">
+	/// Throws an exception a sequence of buffer instance cannot be treated as a nested buffer of the specified type.
+	/// </exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNotNestedBuffer(Type bufferType, Type type, UInt16 size, Int32 sizeOfBuffer, Int32 sizeOf)
+	{
+		if (sizeOfBuffer / sizeOf == size) return;
+		IMessageResource resource = MessageResource.GetInstance();
+		throw new ArgumentException(resource.InvalidNestedBuffer(bufferType, type));
 	}
 #endif
 }

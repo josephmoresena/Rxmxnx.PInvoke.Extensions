@@ -78,13 +78,15 @@ internal interface IMessageResource
 	/// </summary>
 	String MissingMemoryInspector { get; }
 	/// <summary>
-	/// Message for reflection disabled.
-	/// </summary>
-	String ReflectionDisabled { get; }
-	/// <summary>
 	/// Message for an invalid three-field span layout.
 	/// </summary>
 	String InvalidSpanLayout { get; }
+#if !PACKAGE || NESTED_BUFFER_FEATURE
+	/// <summary>
+	/// Message for reflection disabled.
+	/// </summary>
+	String ReflectionDisabled { get; }
+#endif
 
 	/// <summary>
 	/// Message for an invalid pointer value exception.
@@ -150,8 +152,10 @@ internal interface IMessageResource
 	/// Message for a not object type.
 	/// </summary>
 	String NotObjectType(Type type);
+#if !PACKAGE || NESTED_BUFFER_FEATURE
 	/// <summary>
 	/// Message for an invalid nested buffer type operation.
 	/// </summary>
 	String InvalidNestedBuffer(Type bufferType, Type type);
+#endif
 }
