@@ -311,7 +311,8 @@ public static unsafe partial class MemoryBlockExtensions
 	public static Span<TDestination> AsValues<TSource, TDestination>(this Span<TSource> span)
 		where TSource : struct where TDestination : struct
 	{
-		if (span.IsEmpty || RuntimeHelpers.IsReferenceOrContainsReferences<TSource>())
+		if (span.IsEmpty || RuntimeHelpers.IsReferenceOrContainsReferences<TSource>() ||
+		    RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>())
 			return default;
 		return MemoryMarshalCompat.Cast<TSource, TDestination>(span);
 	}

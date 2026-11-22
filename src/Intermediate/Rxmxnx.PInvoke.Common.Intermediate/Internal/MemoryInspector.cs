@@ -58,7 +58,7 @@ internal abstract unsafe partial class MemoryInspector
 			if (MemoryInspector.instance is not null)
 				return !MemoryInspector.instance.IsLiteral(span);
 #else
-			return MemoryInspector.Instance.IsLiteral(span);
+			return !MemoryInspector.Instance.IsLiteral(span);
 #endif
 		}
 		catch (Exception)

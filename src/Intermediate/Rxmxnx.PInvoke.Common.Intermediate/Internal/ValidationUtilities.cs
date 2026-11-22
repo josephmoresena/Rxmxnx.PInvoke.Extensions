@@ -603,6 +603,9 @@ internal static unsafe class ValidationUtilities
 	/// <paramref name="destinationType"/> is not allowed.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
+#endif
 	public static void ThrowIfInvalidTransformation(Type? sourceType, Boolean unmanagedSource, Type destinationType,
 		Boolean unmanagedDestination, Boolean isReadOnlyOperation)
 	{

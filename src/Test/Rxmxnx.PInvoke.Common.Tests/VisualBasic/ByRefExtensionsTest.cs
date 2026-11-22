@@ -109,16 +109,26 @@ public sealed class ByRefExtensionsTest
 	[Fact]
 	public void EmptyUnsafeCopyFromTest()
 	{
+		Int32 initialValue = PInvokeRandom.Shared.Next();
 		Span<Int32> empty = [];
+		Int32 value = initialValue;
 		empty.UnsafeCopyFrom(default);
+		empty.UnsafeCopyTo(NativeUtilities.GetUnsafeValPtrFromRef(ref value));
+		PInvokeAssert.Equal(initialValue, value);
 	}
 	[Fact]
 	public void EmptyUnsafeCopyToTest()
 	{
+		Int32 initialValue = PInvokeRandom.Shared.Next();
 		ReadOnlySpan<Int32> empty = default;
-		empty.UnsafeCopyTo(default);
 		Span<Int32> mutable = [];
+		Int32 value = initialValue;
+		empty.UnsafeCopyTo(default);
+		empty.UnsafeCopyTo(NativeUtilities.GetUnsafeValPtrFromRef(ref MemoryMarshal.GetReference(mutable)));
 		mutable.UnsafeCopyTo(default);
+		empty.UnsafeCopyTo(NativeUtilities.GetUnsafeValPtrFromRef(ref value));
+		mutable.UnsafeCopyTo(NativeUtilities.GetUnsafeValPtrFromRef(ref value));
+		PInvokeAssert.Equal(initialValue, value);
 	}
 
 	private static void ExerciseSpan()
