@@ -205,7 +205,7 @@ public class AsSpanTest
 #if NET6_0_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref Unsafe.As<Byte, T>(ref MemoryMarshal.GetArrayDataReference(arr)),
 		                                        arr.Length);
-#elif NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+#elif NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		Span<T> span = MemoryMarshal.CreateSpan(ref ArrayReferenceHelper.GetArrayDataReference<T>(arr), arr.Length);
 #else
 		Span<T> span = MemoryMarshalCompat.CreateSafeSpan(Unsafe.As<Array, Pinnable<T>>(ref arr),
