@@ -79,7 +79,7 @@ internal static class UnicodeUtility
 		lowSurrogateCodePoint = (Char)((value & 0x3FFu) + 0xDC00u);
 	}
 
-#if !PACKAGE || USE_COMPLETE_BLC_CODE || NETCOREAPP
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Given a Unicode scalar value, gets the number of UTF-8 code units required to represent this value.
 	/// </summary>

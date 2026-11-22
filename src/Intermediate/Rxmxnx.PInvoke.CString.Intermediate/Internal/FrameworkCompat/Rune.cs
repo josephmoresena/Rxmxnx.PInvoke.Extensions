@@ -131,7 +131,6 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	/// If <paramref name="value"/> does not represent a value Unicode scalar value.
 	/// </exception>
 	public Rune(Int32 value) : this((UInt32)value) { }
-#endif
 
 	/// <summary>
 	/// Creates a <see cref="System.Text.Rune"/> from the provided Unicode scalar value.
@@ -145,6 +144,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 			throw new ArgumentOutOfRangeException(nameof(value));
 		this._value = value;
 	}
+#endif
 
 	// ReSharper disable once UnusedParameter.Local
 	private Rune(UInt32 scalarValue, Boolean _) => this._value = scalarValue;
