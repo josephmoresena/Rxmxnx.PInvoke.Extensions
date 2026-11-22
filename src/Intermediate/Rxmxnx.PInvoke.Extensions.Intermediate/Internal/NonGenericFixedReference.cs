@@ -5,7 +5,9 @@ namespace Rxmxnx.PInvoke.Internal;
 /// Used only when the action is a reference type.
 /// </summary>
 /// <typeparam name="T">Type of the fixed reference.</typeparam>
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 internal readonly struct NonGenericFixedReferenceAction<T> : IFixedReferenceAction<T>
 #if NET9_0_OR_GREATER
 	where T : allows ref struct
@@ -54,7 +56,9 @@ internal readonly struct NonGenericFixedReferenceAction<T> : IFixedReferenceActi
 /// Used only when the action is a reference type.
 /// </summary>
 /// <typeparam name="T">Type of the fixed reference.</typeparam>
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 internal readonly struct NonGenericReadOnlyFixedReferenceAction<T> : IReadOnlyFixedReferenceAction<T>
 #if NET9_0_OR_GREATER
 	where T : allows ref struct
@@ -104,7 +108,9 @@ internal readonly struct NonGenericReadOnlyFixedReferenceAction<T> : IReadOnlyFi
 /// </summary>
 /// <typeparam name="T">Type of the fixed reference.</typeparam>
 /// <typeparam name="TResult">The type of the value returned by the function.</typeparam>
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 #endif
@@ -157,7 +163,9 @@ internal readonly struct NonGenericFixedReferenceFunction<T, TResult> : IFixedRe
 /// </summary>
 /// <typeparam name="T">Type of the fixed reference.</typeparam>
 /// <typeparam name="TResult">The type of the value returned by the function.</typeparam>
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 #endif

@@ -8,7 +8,9 @@ public partial class CStringSequence
 	/// <summary>
 	/// Internal <see cref="CString"/> list.
 	/// </summary>
+#if !NET5_0_OR_GREATER
 	[Preserve(AllMembers = true, Conditional = true)]
+#endif
 	private abstract class CStringCacheBase : IList<CString?>
 	{
 		/// <inheritdoc/>

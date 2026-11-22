@@ -3,7 +3,9 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <summary>
 /// Interface representing a UTF-8 read-only memory buffer.
 /// </summary>
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 internal interface IUtf8Buffer
 {
 	/// <summary>

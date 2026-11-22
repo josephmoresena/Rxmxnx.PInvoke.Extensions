@@ -8,7 +8,9 @@ namespace Rxmxnx.PInvoke;
 /// Ref-struct representing a context from a read-only block of fixed memory.
 /// </summary>
 /// <typeparam name="T">Type of objects in the read-only fixed memory block.</typeparam>
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif

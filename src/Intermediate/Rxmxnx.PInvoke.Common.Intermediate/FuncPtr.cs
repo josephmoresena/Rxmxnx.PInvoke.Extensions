@@ -7,17 +7,11 @@ namespace Rxmxnx.PInvoke;
 #if NET7_0_OR_GREATER
 [NativeMarshalling(typeof(FuncPtr<>.Marshaller))]
 #endif
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
-[Serializable]
-#endif
 [StructLayout(LayoutKind.Sequential)]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
 public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEquatable<FuncPtr<TDelegate>>
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
-	, ISerializable
-#endif
 	where TDelegate : Delegate
 {
 	/// <summary>
@@ -75,22 +69,6 @@ public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEq
 	[SecuritySafeCritical]
 #endif
 	private FuncPtr(void* value) => this._value = value;
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
-	/// <summary>
-	/// Serialization constructor.
-	/// </summary>
-	/// <param name="info">A <see cref="SerializationInfo"/> instance.</param>
-	/// <param name="context">A <see cref="StreamingContext"/> instance.</param>
-	/// <exception cref="ArgumentException">If invalid pointer value.</exception>
-#if NETFRAMEWORK || NETSTANDARD2_0
-	[SecurityCritical]
-#endif
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	private FuncPtr(SerializationInfo info, StreamingContext context)
-		=> this._value = ValidationUtilities.ThrowIfInvalidPointer(info);
-#endif
 
 	IntPtr IWrapper<IntPtr>.Value => this.Pointer;
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
@@ -98,17 +76,6 @@ public readonly unsafe partial struct FuncPtr<TDelegate> : IWrapper<IntPtr>, IEq
 	[ExcludeFromCodeCoverage]
 #endif
 	IntPtr IWrapper.IBase<IntPtr>.Value => this.Pointer;
-#endif
-
-#if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
-#if NETFRAMEWORK || NETSTANDARD2_0
-	[SecurityCritical]
-#endif
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-		=> ValidationUtilities.ThrowIfInvalidSerialization(info, this._value);
 #endif
 
 	/// <inheritdoc/>

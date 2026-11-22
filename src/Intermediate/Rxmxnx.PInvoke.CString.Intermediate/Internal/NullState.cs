@@ -3,7 +3,9 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <summary>
 /// Sequence null state.
 /// </summary>
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 internal ref struct NullState
 {
 	/// <summary>

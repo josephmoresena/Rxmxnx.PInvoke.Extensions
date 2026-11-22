@@ -5,7 +5,9 @@ public partial class CString
 	/// <summary>
 	/// State value for buffer item.
 	/// </summary>
+#if !NET5_0_OR_GREATER
 	[Preserve(AllMembers = true, Conditional = true)]
+#endif
 	private readonly struct BufferItemState<TBuffer> where TBuffer : class, IUtf8Buffer
 	{
 		/// <summary>

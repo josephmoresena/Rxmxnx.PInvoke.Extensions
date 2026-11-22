@@ -5,11 +5,13 @@ internal partial class MemoryInspector
 {
 	private sealed partial class Solaris
 	{
+		[StructLayout(LayoutKind.Sequential)]
+#if !NET5_0_OR_GREATER
+		[Preserve(AllMembers = true, Conditional = true)]
+#endif
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4487)]
 #endif
-		[StructLayout(LayoutKind.Sequential)]
-		[Preserve(AllMembers = true, Conditional = true)]
 		private readonly struct ProcessMap
 		{
 			public readonly UIntPtr Address;

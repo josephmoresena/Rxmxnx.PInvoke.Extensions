@@ -3,7 +3,9 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <summary>
 /// Helper struct for span/sequence reading.
 /// </summary>
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 internal readonly ref struct UtfReadHelper
 {
 	/// <summary>

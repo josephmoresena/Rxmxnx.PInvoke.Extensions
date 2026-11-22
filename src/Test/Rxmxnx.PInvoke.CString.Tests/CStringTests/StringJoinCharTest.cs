@@ -109,9 +109,11 @@ public sealed class StringJoinCharTest
 	private static async Task EnumerableTestAsync(Char separator, IEnumerable<String?> strings)
 	{
 		String strSeparator = new(new[] { separator, });
+		// ReSharper disable once PossibleMultipleEnumeration
 		String expectedCString = String.Join(strSeparator, strings);
 		Byte[] expectedResultCString = Encoding.UTF8.GetBytes(expectedCString);
 
+		// ReSharper disable once PossibleMultipleEnumeration
 		CString resultCString = await CString.JoinAsync(separator, strings);
 		String resultCStringCString = Encoding.UTF8.GetString(CString.GetBytes(resultCString)[..^1]);
 

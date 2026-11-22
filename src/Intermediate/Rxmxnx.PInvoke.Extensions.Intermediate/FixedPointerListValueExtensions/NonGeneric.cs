@@ -5,7 +5,9 @@ public static partial class FixedPointerListValueExtensions
 	/// <summary>
 	/// Represents a non-generic wrapper around an <see cref="IFixedPointerListAction"/> implementation.
 	/// </summary>
+#if !NET5_0_OR_GREATER
 	[Preserve(AllMembers = true)]
+#endif
 	private readonly struct NonGenericAction : IFixedPointerListAction
 	{
 		/// <summary>
@@ -49,7 +51,9 @@ public static partial class FixedPointerListValueExtensions
 	/// Represents a non-generic wrapper around an <see cref="IFixedPointerListFunction{TResult}"/> implementation.
 	/// </summary>
 	/// <typeparam name="TResult">The type of the value returned by the function.</typeparam>
+#if !NET5_0_OR_GREATER
 	[Preserve(AllMembers = true)]
+#endif
 	private readonly struct NonGenericFunction<TResult> : IFixedPointerListFunction<TResult>
 	{
 		/// <summary>

@@ -5,7 +5,9 @@ public partial class CStringSequence
 	/// <summary>
 	/// Dynamic <see cref="CString"/> cache.
 	/// </summary>
+#if !NET5_0_OR_GREATER
 	[Preserve(AllMembers = true, Conditional = true)]
+#endif
 	private abstract class FixedCache : CStringCacheBase
 	{
 		/// <summary>
@@ -58,7 +60,9 @@ public partial class CStringSequence
 		/// <summary>
 		/// A <see cref="CString"/> cache.
 		/// </summary>
+#if !NET5_0_OR_GREATER
 		[Preserve(AllMembers = true, Conditional = true)]
+#endif
 		private sealed class CStringCache : FixedCache
 		{
 			/// <summary>
@@ -101,7 +105,9 @@ public partial class CStringSequence
 		/// <summary>
 		/// A <see cref="WeakReference{CString}"/> cache.
 		/// </summary>
+#if !NET5_0_OR_GREATER
 		[Preserve(AllMembers = true, Conditional = true)]
+#endif
 		private sealed class WeakCache : FixedCache
 		{
 			/// <summary>

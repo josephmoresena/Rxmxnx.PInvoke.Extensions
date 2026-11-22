@@ -5,7 +5,9 @@ public static partial class BufferManager<T>
 	/// <summary>
 	/// Represents a non-generic wrapper around an <see cref="IScopedBufferAction{T}"/> implementation.
 	/// </summary>
+#if !NET5_0_OR_GREATER
 	[Preserve(AllMembers = true)]
+#endif
 	internal readonly struct NonGenericAction : IScopedBufferAction<T>
 	{
 		/// <summary>
@@ -52,7 +54,9 @@ public static partial class BufferManager<T>
 	/// Represents a non-generic wrapper around an <see cref="IScopedBufferFunction{T, TResult}"/> implementation.
 	/// </summary>
 	/// <typeparam name="TResult">The type of the result returned by the function.</typeparam>
+#if !NET5_0_OR_GREATER
 	[Preserve(AllMembers = true)]
+#endif
 	internal readonly struct NonGenericFunction<TResult> : IScopedBufferFunction<T, TResult>
 	{
 		/// <summary>

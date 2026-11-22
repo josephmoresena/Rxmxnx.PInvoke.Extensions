@@ -6,7 +6,9 @@ namespace Rxmxnx.PInvoke;
 /// Provides a safe representation of scoped buffer of type <typeparamref name="T"/>.
 /// </summary>
 /// <typeparam name="T">The type of items in the buffer.</typeparam>
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 public readonly ref struct ScopedBuffer<T>
 {
 	/// <summary>

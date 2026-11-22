@@ -7,7 +7,9 @@ namespace Rxmxnx.PInvoke;
 /// <summary>
 /// Ref-struct representing a pointer to a fixed block of memory.
 /// </summary>
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 public readonly ref partial struct FixedPointerValue
 {
 	/// <summary>

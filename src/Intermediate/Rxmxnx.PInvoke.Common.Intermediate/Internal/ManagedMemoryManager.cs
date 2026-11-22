@@ -7,7 +7,9 @@ namespace Rxmxnx.PInvoke.Internal;
 #if NETFRAMEWORK || NETSTANDARD2_0
 [SecurityCritical]
 #endif
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif

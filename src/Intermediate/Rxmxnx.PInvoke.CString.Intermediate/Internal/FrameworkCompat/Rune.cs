@@ -40,7 +40,7 @@ namespace System.Text;
 /// This type's constructors and conversion operators validate the input, so consumers can call the APIs
 /// assuming that the underlying <see cref="System.Text.Rune"/> instance is well-formed.
 /// </remarks>
-#if (!PACKAGE || USE_COMPLETE_BLC_CODE) && (NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0)
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
 [DebuggerDisplay("{DebuggerDisplay,nq}")]
 #endif
 #if !PACKAGE
@@ -165,7 +165,7 @@ internal readonly struct Rune : IComparable, IComparable<Rune>, IEquatable<Rune>
 	public static explicit operator Rune(Int32 value) => new(value);
 #endif
 
-#if (!PACKAGE || USE_COMPLETE_BLC_CODE) && (NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0)
+#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
 	// Displayed as "'<char>' (U+XXXX)"; e.g., "'e' (U+0065)"
 	private String DebuggerDisplay
 		=> FormattableString.Invariant(

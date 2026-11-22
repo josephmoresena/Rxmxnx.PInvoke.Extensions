@@ -9,6 +9,13 @@ namespace Rxmxnx.PInvoke.RefStruct;
 /// A caller that can store the list creates the pointer and passes it to a callee that cannot store a ref struct.
 /// Each call rebuilds the list value. Span results use the same transformation checks as a value context.
 /// </remarks>
+#if NET9_0_OR_GREATER
+[Browsable(false)]
+[EditorBrowsable(EditorBrowsableState.Never)]
+#endif
+#if !NET5_0_OR_GREATER
+[Preserve(AllMembers = true)]
+#endif
 [StructLayout(LayoutKind.Sequential)]
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]

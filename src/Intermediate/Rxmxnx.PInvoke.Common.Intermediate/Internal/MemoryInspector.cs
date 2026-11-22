@@ -58,43 +58,6 @@ internal abstract unsafe partial class MemoryInspector
 			MemoryInspector.instance = new NetBsd();
 #endif
 	}
-
-	/// <summary>
-	/// Indicates whether given span represents a literal or hardcoded memory region.
-	/// </summary>
-	/// <typeparam name="T">Type of items in <paramref name="span"/>.</typeparam>
-	/// <param name="span">A read-only span of <typeparamref name="T"/> items.</param>
-	/// <returns>
-	/// <see langword="true"/> if the given span represents a literal o hardcoded memory region;
-	/// otherwise, <see langword="false"/>.
-	/// </returns>
-#if NETFRAMEWORK || NETSTANDARD2_0
-	[SecuritySafeCritical]
-#endif
-	public Boolean IsLiteral<T>(ReadOnlySpan<T> span)
-	{
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-		ref T refT = ref MemoryMarshal.GetReference(span);
-		ReadOnlySpan<Byte> byteSpan = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.As<T, Byte>(ref refT), 1);
-		return this.IsLiteral(byteSpan);
-	}
-	/// <summary>
-	/// Indicates whether a given span represents a literal or hardcoded memory region.
-	/// </summary>
-	/// <param name="span">A read-only span of bytes.</param>
-	/// <returns>
-	/// <see langword="true"/> if the given span represents a literal o hardcoded memory region;
-	/// otherwise, <see langword="false"/>.
-	/// </returns>
-	public Boolean IsLiteral(ReadOnlySpan<Byte> span)
-	{
-#else
-#pragma warning disable CS8500
-#endif
-		fixed (void* ptr = &MemoryMarshal.GetReference(span))
-#pragma warning restore CS8500
-			return this.IsReadOnlyAddress(ptr);
-	}
 	/// <summary>
 	/// Indicates whether a given pointer references a read-only memory section.
 	/// </summary>

@@ -8,7 +8,9 @@ internal partial class MemoryInspector
 		/// <summary>
 		/// Memory boundary struct.
 		/// </summary>
+#if !NET5_0_OR_GREATER
 		[Preserve(AllMembers = true, Conditional = true)]
+#endif
 		private protected readonly unsafe struct MemoryBoundary : IEquatable<MemoryBoundary>,
 			IComparable<MemoryBoundary>, IWrapper<UIntPtr>
 #if !NETSTANDARD2_1 && !NETCOREAPP

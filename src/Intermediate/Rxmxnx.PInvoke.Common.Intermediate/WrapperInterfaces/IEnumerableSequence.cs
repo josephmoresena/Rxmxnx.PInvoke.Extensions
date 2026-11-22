@@ -9,7 +9,9 @@
 /// <see cref="IEnumerableSequence{T}"/>.
 /// </remarks>
 [Browsable(false)]
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 [EditorBrowsable(EditorBrowsableState.Never)]
 public interface IEnumerableSequence
 {
