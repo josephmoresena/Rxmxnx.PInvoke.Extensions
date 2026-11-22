@@ -1,3 +1,5 @@
+// ReSharper disable ConvertToExtensionBlock
+
 namespace Rxmxnx.PInvoke.VisualBasic;
 
 /// <summary>
@@ -5,8 +7,9 @@ namespace Rxmxnx.PInvoke.VisualBasic;
 /// </summary>
 #if !PACKAGE
 [ExcludeFromCodeCoverage]
+[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-public static class ByRefExtensions
+public static unsafe class ByRefExtensions
 {
 	/// <summary>
 	/// Returns the value pointed by the read-only value pointer.
@@ -16,7 +19,7 @@ public static class ByRefExtensions
 	/// <returns>The value pointed by the read-only value pointer.</returns>
 	/// <exception cref="NullReferenceException">Thrown when the pointer is <see langword="null"/>.</exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T Get<T>(this ReadOnlyValPtr<T> valPtr)
+	public static T GetUnsafe<T>(this ReadOnlyValPtr<T> valPtr)
 #if NET9_0_OR_GREATER
 		where T : allows ref struct
 #endif
@@ -29,11 +32,31 @@ public static class ByRefExtensions
 	/// <returns>The value pointed by the value pointer.</returns>
 	/// <exception cref="NullReferenceException">Thrown when the pointer is <see langword="null"/>.</exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T Get<T>(this ValPtr<T> valPtr)
+	public static T GetUnsafe<T>(this ValPtr<T> valPtr)
 #if NET9_0_OR_GREATER
 		where T : allows ref struct
 #endif
 		=> valPtr.Reference;
+	/// <summary>
+	/// Returns the first <typeparamref name="T"/> value in <paramref name="item"/>.
+	/// </summary>
+	/// <typeparam name="T">Type of the value to read.</typeparam>
+	/// <param name="item">The fixed memory block.</param>
+	/// <returns>The first <typeparamref name="T"/> value in the block.</returns>
+	/// <exception cref="InvalidOperationException">
+	/// Thrown when <paramref name="item"/> cannot be read as <typeparamref name="T"/>.
+	/// </exception>
+	/// <exception cref="NullReferenceException">
+	/// Thrown when <paramref name="item"/> cannot be read as <typeparamref name="T"/>.
+	/// </exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static T GetUnsafe<T>(this FixedPointerValueList.ItemValue item)
+	{
+		ref readonly T result = ref Unsafe.NullRef<T>();
+		if (item.Value.IsValidTransformation<T>())
+			result = ref ((ReadOnlyFixedReferenceValue<T>)item.Value).Reference;
+		return result;
+	}
 	/// <summary>
 	/// Returns the specified element of the read-only span.
 	/// </summary>
@@ -48,7 +71,7 @@ public static class ByRefExtensions
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T Get<T>(this ReadOnlySpan<T> span, Int32 index) => span[index];
+	public static T GetUnsafe<T>(this ReadOnlySpan<T> span, Int32 index) => span[index];
 	/// <summary>
 	/// Returns the specified element of the span.
 	/// </summary>
@@ -63,7 +86,7 @@ public static class ByRefExtensions
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T Get<T>(this Span<T> span, Int32 index) => span[index];
+	public static T GetUnsafe<T>(this Span<T> span, Int32 index) => span[index];
 	/// <summary>
 	/// Sets <paramref name="value"/> as the value pointed by the value pointer.
 	/// </summary>
@@ -72,11 +95,30 @@ public static class ByRefExtensions
 	/// <param name="value">The value to set to.</param>
 	/// <exception cref="NullReferenceException">Thrown when the pointer is <see langword="null"/>.</exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T Set<T>(this ValPtr<T> valPtr, T value)
+	public static T SetUnsafe<T>(this ValPtr<T> valPtr, T value)
 #if NET9_0_OR_GREATER
 		where T : allows ref struct
 #endif
 		=> valPtr.Reference = value;
+	/// <summary>
+	/// Sets <paramref name="value"/> as the first <typeparamref name="T"/> value in <paramref name="item"/>.
+	/// </summary>
+	/// <typeparam name="T">Type of the value to write.</typeparam>
+	/// <param name="item">The fixed memory block.</param>
+	/// <param name="value">The value to set to.</param>
+	/// <returns>The value written.</returns>
+	/// <exception cref="InvalidOperationException">Thrown when the block is read-only.</exception>
+	/// <exception cref="NullReferenceException">
+	/// Thrown when <paramref name="item"/> cannot be written as <typeparamref name="T"/>.
+	/// </exception>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static T SetUnsafe<T>(this FixedPointerValueList.ItemValue item, T value)
+	{
+		ref T result = ref Unsafe.NullRef<T>();
+		if (item.Value.IsValidTransformation<T>(false))
+			result = ref ((FixedReferenceValue<T>)item.Value).Reference;
+		return result = value;
+	}
 	/// <summary>
 	/// Sets <paramref name="value"/> as the value of the specified element of the span.
 	/// </summary>
@@ -92,39 +134,75 @@ public static class ByRefExtensions
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static T Set<T>(this Span<T> span, Int32 index, T value) => span[index] = value;
-
+	public static T SetUnsafe<T>(this Span<T> span, Int32 index, T value) => span[index] = value;
 	/// <summary>
-	/// Obtains an unsafe pointer of type <see cref="ReadOnlySpanPtr{T}"/> from a reference to an
-	/// <see cref="ReadOnlySpan{T}"/> value.
+	/// Copies <paramref name="source"/> into the memory pointed by <paramref name="destination"/>.
 	/// </summary>
-	/// <typeparam name="T">The type of items in the <see cref="ReadOnlySpan{T}"/>.</typeparam>
-	/// <param name="refSpan">The reference to the value from which to retrieve the pointer.</param>
-	/// <returns>An unsafe pointer of type <see cref="ReadOnlySpanPtr{T}"/> pointing to the referenced value.</returns>
+	/// <typeparam name="T">The type of the elements.</typeparam>
+	/// <param name="source">The source read-only span.</param>
+	/// <param name="destination">The destination pointer.</param>
 	/// <remarks>
-	/// The obtained pointer is "unsafe" because it does not guarantee that the referenced value will remain in memory or
-	/// unaffected by garbage collection.
-	/// The pointer will point to the address in memory the reference had at the moment this method was called.
+	/// Unsafe because <paramref name="destination"/> is not validated for size or availability.
 	/// </remarks>
+	/// <exception cref="NullReferenceException">
+	/// Thrown when <paramref name="destination"/> is <see langword="null"/> and <paramref name="source"/> is not empty.
+	/// </exception>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static ReadOnlySpanPtr<T> GetUnsafeSpanPtr<T>(this ref ReadOnlySpan<T> refSpan) => new(ref refSpan);
+	public static void UnsafeCopyTo<T>(this ReadOnlySpan<T> source, ValPtr<T> destination)
+	{
+		if (source.IsEmpty) return;
+#pragma warning disable CS8500
+		fixed (void* ptr = &destination.Reference)
+			source.CopyTo(MemoryMarshalCompat.CreateUnsafeSpan<T>(ptr, source.Length));
+#pragma warning restore CS8500
+	}
 	/// <summary>
-	/// Obtains an unsafe pointer of type <see cref="SpanPtr{T}"/> from a reference to an <see cref="Span{T}"/> value.
+	/// Copies <paramref name="source"/> into the memory pointed by <paramref name="destination"/>.
 	/// </summary>
-	/// <typeparam name="T">The type of items in the <see cref="Span{T}"/>.</typeparam>
-	/// <param name="refSpan">The reference to the value from which to retrieve the pointer.</param>
-	/// <returns>An unsafe pointer of type <see cref="SpanPtr{T}"/> pointing to the referenced value.</returns>
+	/// <typeparam name="T">The type of the elements.</typeparam>
+	/// <param name="source">The source span.</param>
+	/// <param name="destination">The destination pointer.</param>
 	/// <remarks>
-	/// The obtained pointer is "unsafe" because it does not guarantee that the referenced value will remain in memory or
-	/// unaffected by garbage collection.
-	/// The pointer will point to the address in memory the reference had at the moment this method was called.
+	/// Unsafe because <paramref name="destination"/> is not validated for size or availability.
 	/// </remarks>
+	/// <exception cref="NullReferenceException">
+	/// Thrown when <paramref name="destination"/> is <see langword="null"/> and <paramref name="source"/> is not empty.
+	/// </exception>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static SpanPtr<T> GetUnsafeSpanPtr<T>(this ref Span<T> refSpan) => new(ref refSpan);
+	public static void UnsafeCopyTo<T>(this Span<T> source, ValPtr<T> destination)
+		=> ((ReadOnlySpan<T>)source).UnsafeCopyTo(destination);
+	/// <summary>
+	/// Returns a read-only span over the memory described by <paramref name="item"/>.
+	/// </summary>
+	/// <typeparam name="T">Type of the span elements.</typeparam>
+	/// <param name="item">The fixed memory block.</param>
+	/// <returns>
+	/// A read-only span over the memory described by <paramref name="item"/>, or empty if the operation is not allowed.
+	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static ReadOnlySpan<T> GetReadOnlySpan<T>(this FixedPointerValueList.ItemValue item)
+		=> item.Value.IsValidTransformation<T>() ? ((ReadOnlyFixedContextValue<T>)item.Value).Values : default;
+	/// <summary>
+	/// Returns a span over the memory described by <paramref name="item"/>.
+	/// </summary>
+	/// <typeparam name="T">Type of the span elements.</typeparam>
+	/// <param name="item">The fixed memory block.</param>
+	/// <returns>
+	/// A span over the memory described by <paramref name="item"/>, or empty if the operation is not allowed.
+	/// </returns>
+#if NETFRAMEWORK || NETSTANDARD2_0
+	[SecuritySafeCritical]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Span<T> GetSpan<T>(this FixedPointerValueList.ItemValue item)
+		=> item.Value.IsValidTransformation<T>(false) ? ((FixedContextValue<T>)item.Value).Values : default;
 }

@@ -81,7 +81,7 @@ public readonly unsafe ref partial struct FixedReferenceValue<T> : IFixedPointer
 	IFixedContext<Object> IFixedMemory.AsObjectContext()
 	{
 		this._value.ValidateOperation();
-		this._value.ValidateTransformation(typeof(Object), false);
+		this._value.ValidateTransformation(typeof(Object), false, false);
 		if (this.IsNullOrEmpty) return FixedContext<Object>.Empty;
 		FixedValueHandle handle = FixedPointerValue.GetValidationObject(this);
 		Int32 count = this._value.Size / IntPtr.Size;
@@ -115,7 +115,7 @@ public readonly unsafe ref partial struct FixedReferenceValue<T> : IFixedPointer
 	{
 		this._value.ValidateOperation();
 		this._value.ValidateTransformation(typeof(TDestination),
-		                                   !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>());
+		                                   !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>(), false);
 		Int32 sizeOf = sizeof(TDestination);
 		this._value.ValidateReferenceSize(typeof(TDestination), sizeOf);
 		if (this.IsNullOrEmpty)

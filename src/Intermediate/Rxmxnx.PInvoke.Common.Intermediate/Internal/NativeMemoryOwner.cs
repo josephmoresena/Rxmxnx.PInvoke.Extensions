@@ -19,7 +19,7 @@ internal sealed unsafe class NativeMemoryOwner : FixedValueHandle
 	/// <param name="count">Number of elements.</param>
 	/// <param name="sizeOf">Size of the element type.</param>
 	/// <param name="pointer">Output. Current memory pointer.</param>
-	public NativeMemoryOwner(Int32 count, Int32 sizeOf, out IntPtr pointer) : this(count * sizeOf)
+	public NativeMemoryOwner(Int32 count, Int32 sizeOf, out IntPtr pointer) : this(checked(count * sizeOf))
 		=> pointer = this._pointer;
 
 	/// <summary>

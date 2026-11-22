@@ -97,10 +97,10 @@ public static unsafe partial class NativeUtilities
 
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="IntPtr"/> pointer from a read-only reference to a
-	/// <typeparamref name="T"/> <see langword="unmanaged"/> value.
+	/// <typeparamref name="T"/> value.
 	/// </summary>
-	/// <typeparam name="T"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> value.</typeparam>
-	/// <param name="value">A read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</param>
+	/// <typeparam name="T">The type of the managed reference.</typeparam>
+	/// <param name="value">A read-only reference to a <typeparamref name="T"/> value.</param>
 	/// <returns><see cref="IntPtr"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
@@ -112,16 +112,19 @@ public static unsafe partial class NativeUtilities
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static IntPtr GetUnsafeIntPtr<T>(in T value)
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
 	{
 		ref T refValue = ref Unsafe.AsRef(in value);
 		return (IntPtr)Unsafe.AsPointer(ref refValue);
 	}
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="UIntPtr"/> pointer from a read-only reference to a
-	/// <typeparamref name="T"/> <see langword="unmanaged"/> value.
+	/// <typeparamref name="T"/> value.
 	/// </summary>
-	/// <typeparam name="T"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> value.</typeparam>
-	/// <param name="value">Read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</param>
+	/// <typeparam name="T">The type of the managed reference.</typeparam>
+	/// <param name="value">A read-only reference to a <typeparamref name="T"/> value.</param>
 	/// <returns><see cref="UIntPtr"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
@@ -133,6 +136,9 @@ public static unsafe partial class NativeUtilities
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static UIntPtr GetUnsafeUIntPtr<T>(in T value)
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
 	{
 		ref T refValue = ref Unsafe.AsRef(in value);
 		return (UIntPtr)Unsafe.AsPointer(ref refValue);
@@ -381,8 +387,9 @@ public static unsafe partial class NativeUtilities
 	/// Thrown when the requested allocation size exceeds <see cref="Int32.MaxValue"/>.
 	/// </exception>
 	/// <remarks>
-	/// The native memory is released when the returning object is disposed. The pointer obtained is "unsafe" due it
-	/// will point to the allocated memory at the moment this method was called.
+	/// The native memory is released when the returning object is disposed. The pointer is unsafe because it
+	/// addresses the allocated memory only at the moment this method was called.
+	/// <see cref="ValPtr{T}"/> is not a ref struct, so it can be stored where the language does not allow one.
 	/// </remarks>
 	public static IDisposable UnsafeHeapAlloc<T>(Int32 count, out ValPtr<T> valPtr) where T : struct
 	{

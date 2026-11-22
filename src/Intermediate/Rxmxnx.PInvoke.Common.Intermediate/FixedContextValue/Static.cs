@@ -29,7 +29,7 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 	public static explicit operator FixedContextValue<T>(FixedPointerValue value)
 	{
 		value.ValidateOperation();
-		value.ValidateTransformation(typeof(T), !RuntimeHelpers.IsReferenceOrContainsReferences<T>());
+		value.ValidateTransformation(typeof(T), !RuntimeHelpers.IsReferenceOrContainsReferences<T>(), false);
 		return new(value);
 	}
 

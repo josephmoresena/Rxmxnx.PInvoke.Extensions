@@ -1,3 +1,5 @@
+using Rxmxnx.PInvoke.VisualBasic;
+
 namespace Rxmxnx.PInvoke.Tests.NativeUtilitiesTests;
 
 [TestFixture]
@@ -81,20 +83,51 @@ public sealed class UnsafeHeapAlloc
 	[Fact]
 	public void Int16Test()
 	{
-		UnsafeHeapAlloc.EmptyTest<UInt16>();
-		UnsafeHeapAlloc.BasicTest(static i => i);
+		UnsafeHeapAlloc.EmptyTest<Int16>();
+		UnsafeHeapAlloc.BasicTest(static i => (Int16)i);
 	}
 	[Fact]
 	public void Int32Test()
 	{
-		UnsafeHeapAlloc.EmptyTest<UInt16>();
+		UnsafeHeapAlloc.EmptyTest<Int32>();
 		UnsafeHeapAlloc.BasicTest(static i => -i);
 	}
 	[Fact]
 	public void Int64Test()
 	{
-		UnsafeHeapAlloc.EmptyTest<UInt16>();
-		UnsafeHeapAlloc.BasicTest(static i => i ^ 0x7);
+		UnsafeHeapAlloc.EmptyTest<Int64>();
+		UnsafeHeapAlloc.BasicTest(static i => (Int64)i ^ 0x7);
 	}
+	[Fact]
+	public void ManagedTest()
+	{
+		IDisposable disposable = NativeUtilities.UnsafeHeapAlloc(4, out ValPtr<KeyValuePair<Int32, String>> valPtr);
+		PInvokeAssert.Same(FixedPointerValue.UnsafeDisposable, disposable);
+		PInvokeAssert.True(valPtr.IsZero);
+	}
+	[Fact]
+	public unsafe void CopyTest()
+	{
+		Double[] source = [1d, 2d, 3d, 4d,];
+		IDisposable disposable = NativeUtilities.UnsafeHeapAlloc(source.Length, out ValPtr<Double> valPtr);
+		try
+		{
+			PInvokeAssert.False(valPtr.IsZero);
+			source.AsSpan().UnsafeCopyTo(valPtr);
+			PInvokeAssert.Equal(1d, valPtr.GetUnsafe());
+			PInvokeAssert.Equal(1d, ((ReadOnlyValPtr<Double>)valPtr).GetUnsafe());
+			Span<Double> written = new(valPtr.Pointer.ToPointer(), source.Length);
+			PInvokeAssert.Equal(4d, written[3]);
+		}
+		finally
+		{
+			disposable.Dispose();
+		}
+	}
+	[Fact]
+	public void OverflowTest()
+		=> PInvokeAssert.Throws<OverflowException>(() => NativeUtilities.UnsafeHeapAlloc(
+			                                           Int32.MaxValue, out ValPtr<Int64> _));
+
 #pragma warning restore CS0612
 }

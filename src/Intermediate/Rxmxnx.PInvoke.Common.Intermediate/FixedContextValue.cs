@@ -109,7 +109,7 @@ public readonly unsafe ref partial struct FixedContextValue<T>
 	{
 		this._value.ValidateOperation();
 		this._value.ValidateTransformation(typeof(TDestination),
-		                                   !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>());
+		                                   !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>(), false);
 		Int32 sizeOf = sizeof(TDestination);
 		Int32 count = this._value.Size / sizeOf;
 		Int32 offset = count * sizeOf;

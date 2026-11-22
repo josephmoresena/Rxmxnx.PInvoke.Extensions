@@ -564,20 +564,17 @@ internal static unsafe class ValidationUtilities
 	}
 #if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
 	/// <summary>
-	/// Throws an exception if <typeparamref name="T"/> is not unmanaged.
+	/// Throws the <c>System.Memory></c> exception when <typeparamref name="T"/> contains references.
 	/// </summary>
 	/// <typeparam name="T">The value type to check.</typeparam>
-	/// <exception cref="InvalidOperationException">
-	/// Throws an exception if <typeparamref name="T"/> is not an unmanaged type.
-	/// </exception>
+	/// <remarks>
+	/// <see cref="ValPtr{T}.IsUnmanaged"/> is checked first. Pointer types are unmanaged, and
+	/// <c>MemoryMarshal.AsBytes</c> rejects them.
+	/// </remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfNotUnmanagedType<T>() where T : struct
 	{
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
-#else
-		if (RuntimeHelpersCompat.IsReferenceOrContainsReferences<T>())
-#endif
+		if (!ValPtr<T>.IsUnmanaged)
 			MemoryMarshal.AsBytes(ReadOnlySpan<T>.Empty);
 	}
 #endif
@@ -603,19 +600,26 @@ internal static unsafe class ValidationUtilities
 	/// <param name="unmanagedSource">Indicates whether <paramref name="sourceType"/> is unmanaged.</param>
 	/// <param name="destinationType">Destination type.</param>
 	/// <param name="unmanagedDestination">Indicates whether <paramref name="destinationType"/> is unmanaged.</param>
+	/// <param name="isReadOnlyOperation">Indicates whether the current transformation operation is read-only.</param>
 	/// <exception cref="InvalidOperationException">
 	/// Throws an exception if transformation from <paramref name="sourceType"/> to
 	/// <paramref name="destinationType"/> is not allowed.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidTransformation(Type? sourceType, Boolean unmanagedSource, Type destinationType,
-		Boolean unmanagedDestination)
+		Boolean unmanagedDestination, Boolean isReadOnlyOperation)
 	{
 		IMessageResource resource = MessageResource.GetInstance();
 		if (!destinationType.IsValueType)
 		{
 			if (sourceType is null || sourceType.IsValueType)
 				throw new InvalidOperationException(resource.NotValueType(destinationType));
+			if (sourceType == typeof(Object) || destinationType == typeof(Object))
+				// For System.Object, any transformation is allowed.
+				return;
+			if ((isReadOnlyOperation && !destinationType.IsAssignableFrom(sourceType)) ||
+			    (!isReadOnlyOperation && !sourceType.IsAssignableFrom(destinationType)))
+				throw new InvalidOperationException(resource.NotType(sourceType, destinationType));
 		}
 		else if (!unmanagedSource)
 		{

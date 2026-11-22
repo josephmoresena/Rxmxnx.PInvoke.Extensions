@@ -402,10 +402,10 @@ public static unsafe class PointerExtensions
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4144)]
 #endif
-	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this MemoryHandle handle, Int32 length) where T : struct
+	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this MemoryHandle handle, Int32 length)
 	{
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
-		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>() || handle.Pointer == default)
+		if (handle.Pointer == default)
 			return default;
 		return new(handle.Pointer, length);
 	}

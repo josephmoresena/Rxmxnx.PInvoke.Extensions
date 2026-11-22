@@ -368,11 +368,13 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// </summary>
 	/// <param name="type">Destination type.</param>
 	/// <param name="unmanagedType">Indicates whether <paramref name="type"/> is unmanaged.</param>
+	/// <param name="isReadOnlyOperation">Indicates whether the current transformation operation is read-only.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected void ValidateTransformation(Type type, Boolean unmanagedType)
+	protected void ValidateTransformation(Type type, Boolean unmanagedType, Boolean isReadOnlyOperation = true)
 	{
 		if (type == this.Type) return;
-		ValidationUtilities.ThrowIfInvalidTransformation(this.Type, this.IsUnmanaged, type, unmanagedType);
+		ValidationUtilities.ThrowIfInvalidTransformation(this.Type, this.IsUnmanaged, type, unmanagedType,
+		                                                 isReadOnlyOperation);
 	}
 	/// <summary>
 	/// Retrieves the number of <paramref name="sizeOf"/> items that can be

@@ -139,7 +139,7 @@ public readonly unsafe ref partial struct FixedReferenceValue<T>
 	{
 		this._value.ValidateOperation();
 		this._value.ValidateTransformation(typeof(TDestination),
-		                                   !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>());
+		                                   !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>(), false);
 		Int32 sizeOf = sizeof(TDestination);
 		this._value.ValidateReferenceSize(typeof(TDestination), sizeOf);
 		residual = this._value.CreateOffset(sizeOf);
@@ -166,7 +166,7 @@ public readonly unsafe ref partial struct FixedReferenceValue<T>
 	public static explicit operator FixedReferenceValue<T>(FixedPointerValue value)
 	{
 		value.ValidateOperation();
-		value.ValidateTransformation(typeof(T), !RuntimeHelpers.IsReferenceOrContainsReferences<T>());
+		value.ValidateTransformation(typeof(T), !RuntimeHelpers.IsReferenceOrContainsReferences<T>(), false);
 		value.ValidateReferenceSize(typeof(T), sizeof(T));
 		return new(value);
 	}
