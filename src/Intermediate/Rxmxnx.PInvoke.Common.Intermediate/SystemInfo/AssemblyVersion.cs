@@ -1,4 +1,3 @@
-﻿#if !PACKAGE || TEMP_PACKAGE || !UAP10_0
 namespace Rxmxnx.PInvoke;
 
 public static partial class SystemInfo
@@ -7,7 +6,7 @@ public static partial class SystemInfo
 	/// Specifies all interfaces implemented by a type.
 	/// </summary>
 	// ReSharper disable once MemberCanBePrivate.Global
-#if NET5_0
+#if !NET5_0_OR_GREATER
 	internal const DynamicallyAccessedMemberTypes InterfaceAccess = (DynamicallyAccessedMemberTypes)0x2000;
 #else
 	internal const DynamicallyAccessedMemberTypes InterfaceAccess = DynamicallyAccessedMemberTypes.Interfaces;
@@ -101,4 +100,3 @@ public static partial class SystemInfo
 #endif
 #endif
 }
-#endif
