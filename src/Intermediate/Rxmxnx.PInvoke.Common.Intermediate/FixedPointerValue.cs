@@ -154,9 +154,6 @@ public readonly ref partial struct FixedPointerValue
 	/// <see cref="Object"/> is allowed in either direction. A read also allows a destination that accepts the
 	/// current type. A write of a reference type allows only the same type or <see cref="Object"/>.
 	/// </remarks>
-#if !PACKAGE
-	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
-#endif
 	internal Boolean IsValidTransformation<T>(Boolean isReadOnlyOperation = true)
 	{
 		if (!isReadOnlyOperation && this.IsReadOnly) return false;
@@ -185,6 +182,9 @@ public readonly ref partial struct FixedPointerValue
 	/// direction. A read also allows a destination that accepts the current type. A write of a reference type allows
 	/// only the same type or <see cref="Object"/>.
 	/// </remarks>
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
 #pragma warning disable CS8500
 	internal unsafe Boolean IsValidValueTransformation<T>(Boolean isReadOnlyOperation = true)
 		=> this.IsValidTransformation<T>(isReadOnlyOperation) && this.Size >= sizeof(T);
