@@ -6,7 +6,7 @@ public static partial class SystemInfo
 	/// Specifies all interfaces implemented by a type.
 	/// </summary>
 	// ReSharper disable once MemberCanBePrivate.Global
-#if !NET5_0_OR_GREATER
+#if NET5_0
 	internal const DynamicallyAccessedMemberTypes InterfaceAccess = (DynamicallyAccessedMemberTypes)0x2000;
 #else
 	internal const DynamicallyAccessedMemberTypes InterfaceAccess = DynamicallyAccessedMemberTypes.Interfaces;
