@@ -314,11 +314,11 @@ public static unsafe class PointerExtensions
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static Span<T> GetUnsafeSpan<T>(this MemoryHandle handle, Int32 length)
+	public static Span<T> GetUnsafeSpan<T>(this MemoryHandle handle, Int32 length) where T : struct
 	{
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		// ReSharper disable once ConvertIfStatementToReturnStatement
-		if (handle.Pointer == default)
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>() || handle.Pointer == default)
 			return default;
 		// ReSharper disable once UseSymbolAlias
 		return MemoryMarshalCompat.CreateUnsafeSpan<T>(handle.Pointer, length);
@@ -408,11 +408,11 @@ public static unsafe class PointerExtensions
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4144)]
 #endif
-	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this MemoryHandle handle, Int32 length)
+	public static ReadOnlySpan<T> GetUnsafeReadOnlySpan<T>(this MemoryHandle handle, Int32 length) where T : struct
 	{
 		ValidationUtilities.ThrowIfNegativeLengthOrIndex(length);
 		// ReSharper disable once ConvertIfStatementToReturnStatement
-		if (handle.Pointer == default)
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>() || handle.Pointer == default)
 			return default;
 		// ReSharper disable once UseSymbolAlias
 		return MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(handle.Pointer, length);
