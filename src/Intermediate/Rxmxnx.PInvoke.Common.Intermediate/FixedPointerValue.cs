@@ -154,12 +154,17 @@ public readonly ref partial struct FixedPointerValue
 	/// only when both types are reference types. A read requires the destination to accept the current type.
 	/// Any write requires the current type to accept the destination.
 	/// </remarks>
-	internal Boolean IsValidTransformation<T>(Boolean isReadOnlyOperation = true)
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
+#endif
+	internal unsafe Boolean IsValidTransformation<T>(Boolean isReadOnlyOperation = true)
 	{
 		if (!isReadOnlyOperation && this.IsReadOnly) return false;
 		Type destinationType = typeof(T);
 		if (this.Type == destinationType) return true;
-		if (this.IsUnmanaged && !RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return true;
+#pragma warning disable CS8500
+		if (this.IsUnmanaged && !RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return this.Size >= sizeof(T);
+#pragma warning restore CS8500
 		if (this.Type is not { IsValueType: false, } || destinationType.IsValueType) return false;
 		if (this.Type == typeof(Object) || destinationType == typeof(Object)) return true;
 		return isReadOnlyOperation ?
