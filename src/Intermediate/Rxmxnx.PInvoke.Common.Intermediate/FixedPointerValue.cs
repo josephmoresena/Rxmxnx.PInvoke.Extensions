@@ -139,7 +139,7 @@ public readonly ref partial struct FixedPointerValue
 	internal void ValidateReferenceSize(Type typeOf, Int32 sizeOf)
 		=> ValidationUtilities.ThrowIfInvalidRefTypePointer(this.Size, typeOf, sizeOf);
 	/// <summary>
-	/// Indicates whether the current memory block can be transformed into a <typeparamref name="T"/> value.
+	/// Indicates whether the current memory block can be transformed into a <typeparamref name="T"/> buffer.
 	/// </summary>
 	/// <typeparam name="T">Destination type.</typeparam>
 	/// <param name="isReadOnlyOperation">
@@ -150,25 +150,43 @@ public readonly ref partial struct FixedPointerValue
 	/// <see langword="true"/> if the block can be viewed as <typeparamref name="T"/>.
 	/// </returns>
 	/// <remarks>
-	/// Unmanaged types can be transformed into each other. <see cref="Object"/> is allowed in either direction
-	/// only when both types are reference types. A read requires the destination to accept the current type.
-	/// Any write requires the current type to accept the destination.
+	/// Unmanaged types can be transformed into each other. When both types are reference types,
+	/// <see cref="Object"/> is allowed in either direction. A read also allows a destination that accepts the
+	/// current type. A write of a reference type allows only the same type or <see cref="Object"/>.
 	/// </remarks>
 #if !PACKAGE
 	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-	internal unsafe Boolean IsValidTransformation<T>(Boolean isReadOnlyOperation = true)
+	internal Boolean IsValidTransformation<T>(Boolean isReadOnlyOperation = true)
 	{
 		if (!isReadOnlyOperation && this.IsReadOnly) return false;
 		Type destinationType = typeof(T);
 		if (this.Type == destinationType) return true;
-#pragma warning disable CS8500
-		if (this.IsUnmanaged && !RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return this.Size >= sizeof(T);
-#pragma warning restore CS8500
+		if (this.IsUnmanaged && !RuntimeHelpers.IsReferenceOrContainsReferences<T>()) return true;
 		if (this.Type is not { IsValueType: false, } || destinationType.IsValueType) return false;
 		if (this.Type == typeof(Object) || destinationType == typeof(Object)) return true;
-		return isReadOnlyOperation ?
-			destinationType.IsAssignableFrom(this.Type) :
-			this.Type.IsAssignableFrom(destinationType);
+		return isReadOnlyOperation && destinationType.IsAssignableFrom(this.Type);
 	}
+	/// <summary>
+	/// Indicates whether the current memory block can be transformed into a <typeparamref name="T"/> value.
+	/// </summary>
+	/// <typeparam name="T">Destination type.</typeparam>
+	/// <param name="isReadOnlyOperation">
+	/// Indicates whether the transformation is read-only. The default value is <see langword="true"/>.
+	/// </param>
+	/// <returns>
+	/// <see langword="false"/> when the transformation writes a read-only block or the block is smaller than
+	/// <typeparamref name="T"/>. Otherwise, <see langword="true"/> if the block can be viewed as one
+	/// <typeparamref name="T"/> value.
+	/// </returns>
+	/// <remarks>
+	/// Requires <see cref="FixedPointerValue.Size"/> to be at least <c>sizeof(T)</c>. Unmanaged types can be
+	/// transformed into each other. When both types are reference types, <see cref="Object"/> is allowed in either
+	/// direction. A read also allows a destination that accepts the current type. A write of a reference type allows
+	/// only the same type or <see cref="Object"/>.
+	/// </remarks>
+#pragma warning disable CS8500
+	internal unsafe Boolean IsValidValueTransformation<T>(Boolean isReadOnlyOperation = true)
+		=> this.IsValidTransformation<T>(isReadOnlyOperation) && this.Size >= sizeof(T);
+#pragma warning restore CS8500
 }

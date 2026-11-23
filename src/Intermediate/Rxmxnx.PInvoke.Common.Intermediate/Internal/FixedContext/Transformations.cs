@@ -35,7 +35,7 @@ internal sealed unsafe partial class FixedContext<T>
 	{
 		this.ValidateOperation(isReadOnly);
 		this.ValidateTransformation(typeof(TDestination),
-		                            !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>());
+		                            !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>(), isReadOnly);
 		Int32 sizeOf = sizeof(TDestination);
 		Int32 count = this.GetCount(sizeOf);
 		Int32 offset = count * sizeOf;

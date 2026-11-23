@@ -106,7 +106,9 @@ performs the operation and returns an ordinary value.
 
 `UnsafeCopyTo` and `UnsafeCopyFrom` do not check that the pointer is large enough or still alive. The pointer is an
 ordinary struct, so the caller can store it. A caller that can keep a `Span<T>` or a `FixedPointerValueList` in a
-variable builds a [span pointer or list pointer](pointers.md#pointers-to-ref-structs) and passes that struct instead.
+variable builds a [span pointer or list pointer](pointers.md#pointers-to-ref-structs) in `Rxmxnx.PInvoke.VisualBasic`
+and passes that struct instead. A write through `SetUnsafe` or `GetSpan<T>` accepts a reference type only when it is
+the block’s type or `System.Object`.
 
 ## Pointers (`PointerExtensions` / `ValuePointerExtensions`)
 

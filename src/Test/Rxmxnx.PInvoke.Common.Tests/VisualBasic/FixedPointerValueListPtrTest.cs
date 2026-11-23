@@ -1,4 +1,3 @@
-using Rxmxnx.PInvoke.RefStruct;
 using Rxmxnx.PInvoke.VisualBasic;
 
 namespace Rxmxnx.PInvoke.Tests.RefStruct;

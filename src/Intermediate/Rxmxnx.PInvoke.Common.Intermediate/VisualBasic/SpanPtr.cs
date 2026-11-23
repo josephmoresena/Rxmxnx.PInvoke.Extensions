@@ -1,4 +1,4 @@
-namespace Rxmxnx.PInvoke.RefStruct;
+namespace Rxmxnx.PInvoke.VisualBasic;
 
 /// <summary>
 /// Ordinary struct holding the address of a <see cref="Span{T}"/> variable.
@@ -35,7 +35,7 @@ public readonly unsafe struct SpanPtr<T>
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private SpanPtr(ref Span<T> refSpan)
+	private SpanPtr(scoped ref Span<T> refSpan)
 	{
 		// &refSpan is the address of the span value. Without '&', fixed pins the span's buffer.
 #pragma warning disable CS8500
@@ -60,7 +60,7 @@ public readonly unsafe struct SpanPtr<T>
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static SpanPtr<T> CreateUnsafePtr(ref Span<T> refSpan) => new(ref refSpan);
+	public static SpanPtr<T> CreateUnsafePtr(scoped ref Span<T> refSpan) => new(ref refSpan);
 
 	/// <summary>
 	/// Returns the span pointed by the current pointer.

@@ -165,7 +165,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	{
 		this.ValidateOperation();
 		this.ValidateReferenceSize(typeof(T), sizeof(T));
-		this.ValidateTransformation(typeof(T), !RuntimeHelpers.IsReferenceOrContainsReferences<T>());
+		this.ValidateTransformation(typeof(T), !RuntimeHelpers.IsReferenceOrContainsReferences<T>(), false);
 		return ref Unsafe.AsRef<T>(this._ptr);
 	}
 	/// <summary>

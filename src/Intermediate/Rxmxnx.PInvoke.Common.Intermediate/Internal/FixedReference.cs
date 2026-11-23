@@ -128,7 +128,7 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 	{
 		this.ValidateOperation(isReadOnly);
 		this.ValidateTransformation(typeof(TDestination),
-		                            !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>());
+		                            !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>(), isReadOnly);
 		Int32 sizeOf = sizeof(TDestination);
 		this.ValidateReferenceSize(typeof(TDestination), sizeOf);
 		fixedOffset = new(this, sizeOf);
@@ -152,7 +152,7 @@ internal sealed unsafe partial class FixedReference<T> : FixedMemory, IFixedRefe
 	{
 		this.ValidateOperation(isReadOnly);
 		this.ValidateTransformation(typeof(TDestination),
-		                            !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>());
+		                            !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>(), isReadOnly);
 		Int32 sizeOf = sizeof(TDestination);
 		this.ValidateReferenceSize(typeof(TDestination), sizeOf);
 		return new(this);

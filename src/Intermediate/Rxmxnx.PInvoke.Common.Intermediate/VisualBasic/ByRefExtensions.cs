@@ -53,7 +53,7 @@ public static unsafe class ByRefExtensions
 	public static T GetUnsafe<T>(this FixedPointerValueList.ItemValue item)
 	{
 		ref readonly T result = ref Unsafe.NullRef<T>();
-		if (item.Value.IsValidTransformation<T>())
+		if (item.Value.IsValidValueTransformation<T>())
 			result = ref ((ReadOnlyFixedReferenceValue<T>)item.Value).Reference;
 		return result;
 	}
@@ -115,7 +115,7 @@ public static unsafe class ByRefExtensions
 	public static T SetUnsafe<T>(this FixedPointerValueList.ItemValue item, T value)
 	{
 		ref T result = ref Unsafe.NullRef<T>();
-		if (item.Value.IsValidTransformation<T>(false))
+		if (item.Value.IsValidValueTransformation<T>(false))
 			result = ref ((FixedReferenceValue<T>)item.Value).Reference;
 		return result = value;
 	}

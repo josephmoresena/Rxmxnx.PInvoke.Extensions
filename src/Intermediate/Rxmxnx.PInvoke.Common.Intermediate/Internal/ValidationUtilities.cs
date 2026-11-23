@@ -617,8 +617,7 @@ internal static unsafe class ValidationUtilities
 			if (sourceType == typeof(Object) || destinationType == typeof(Object))
 				// For System.Object, any transformation is allowed.
 				return;
-			if ((isReadOnlyOperation && !destinationType.IsAssignableFrom(sourceType)) ||
-			    (!isReadOnlyOperation && !sourceType.IsAssignableFrom(destinationType)))
+			if (!isReadOnlyOperation || (isReadOnlyOperation && !destinationType.IsAssignableFrom(sourceType)))
 				throw new InvalidOperationException(resource.NotType(sourceType, destinationType));
 		}
 		else if (!unmanagedSource)

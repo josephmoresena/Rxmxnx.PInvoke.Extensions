@@ -1,6 +1,4 @@
-using Rxmxnx.PInvoke.VisualBasic;
-
-namespace Rxmxnx.PInvoke.RefStruct;
+namespace Rxmxnx.PInvoke.VisualBasic;
 
 /// <summary>
 /// Ordinary struct holding the address of a <see cref="FixedPointerValueList"/> variable.
@@ -35,7 +33,7 @@ public readonly unsafe struct FixedPointerValueListPtr
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private FixedPointerValueListPtr(ref FixedPointerValueList refList)
+	private FixedPointerValueListPtr(scoped ref FixedPointerValueList refList)
 	{
 #pragma warning disable CS8500
 		fixed (void* ptr = &refList)
@@ -66,7 +64,8 @@ public readonly unsafe struct FixedPointerValueListPtr
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static FixedPointerValueListPtr CreateUnsafePtr(ref FixedPointerValueList refList) => new(ref refList);
+	public static FixedPointerValueListPtr CreateUnsafePtr(scoped ref FixedPointerValueList refList)
+		=> new(ref refList);
 
 	/// <summary>
 	/// Gets the <see cref="FixedPointerValueList.ItemValue"/> at the specified index.
@@ -103,7 +102,7 @@ public readonly unsafe struct FixedPointerValueListPtr
 			return default;
 		ReadOnlyFixedReferenceValue<T> result = default;
 		FixedPointerValueList.ItemValue item = this[index];
-		if (item.Value.IsValidTransformation<T>())
+		if (item.Value.IsValidValueTransformation<T>())
 			result = (ReadOnlyFixedReferenceValue<T>)item.Value;
 		return result.ValuePointer;
 	}
@@ -120,7 +119,7 @@ public readonly unsafe struct FixedPointerValueListPtr
 			return default;
 		FixedReferenceValue<T> result = default;
 		FixedPointerValueList.ItemValue item = this[index];
-		if (item.Value.IsValidTransformation<T>(false))
+		if (item.Value.IsValidValueTransformation<T>(false))
 			result = (FixedReferenceValue<T>)item.Value;
 		return result.ValuePointer;
 	}

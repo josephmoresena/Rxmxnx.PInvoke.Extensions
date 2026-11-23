@@ -270,8 +270,8 @@ below perform that work inside the library and hand back an ordinary value:
 
 - `Rxmxnx.PInvoke.VisualBasic.ByRefExtensions` reads and writes a pointer or a span, and copies between them
   (`UnsafeCopyTo`, `UnsafeCopyFrom`). See [Extensions](api/extensions.md#older-compilers-byrefextensions).
-- `Rxmxnx.PInvoke.RefStruct` holds `SpanPtr<T>`, `ReadOnlySpanPtr<T>`, and `FixedPointerValueListPtr`. A caller that
-  can store the ref struct creates the pointer; the other caller stores the ordinary struct. See
+- `Rxmxnx.PInvoke.VisualBasic` also holds `SpanPtr<T>`, `ReadOnlySpanPtr<T>`, and `FixedPointerValueListPtr`. A caller
+  that can store the ref struct creates the pointer; the other caller stores the ordinary struct. See
   [Pointers to ref structs](api/pointers.md#pointers-to-ref-structs).
 - `Rxmxnx.PInvoke.VisualBasic` also redeclares buffer delegates (`VbScopedBufferAction<T>`, `VbScopedBufferFunc<…>`).
 - `BufferManager.VisualBasic` exposes `Alloc` methods that wrap those delegates. They add a small overhead and are
