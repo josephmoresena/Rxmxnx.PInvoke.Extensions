@@ -1,8 +1,4 @@
 #if !UAP10_0
-#if NET462_OR_GREATER || NETSTANDARD2_0
-using Utf8 = Rxmxnx.PInvoke.Internal.FrameworkCompat.Utf8Compat;
-#endif
-
 namespace Rxmxnx.PInvoke.Internal;
 
 #if !PACKAGE

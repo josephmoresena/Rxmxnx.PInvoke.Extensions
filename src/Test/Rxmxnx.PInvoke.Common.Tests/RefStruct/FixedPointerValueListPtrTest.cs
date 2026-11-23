@@ -24,7 +24,8 @@ public sealed class FixedPointerValueListPtrTest
 		PInvokeAssert.False(pointer.IsReadOnly);
 		PInvokeAssert.Equal(0, pointer.GetReadOnlySpan<Int32>(0).Length);
 		PInvokeAssert.Equal(0, pointer.GetSpan<Int32>(0).Length);
-		PInvokeAssert.Equal(default, pointer.GetValue<Int32>(0));
+		PInvokeAssert.Equal(default, pointer.GetReadOnlyValuePointer<Int32>(0));
+		PInvokeAssert.Equal(default, pointer.GetValuePointer<Int32>(0));
 	}
 	[Fact]
 	public void InvalidTransformationTest() => FixedPointerValueListPtrTest.RejectManaged();
@@ -56,16 +57,22 @@ public sealed class FixedPointerValueListPtrTest
 			PInvokeAssert.Equal(values, block.GetReadOnlySpan<Int32>().ToArray());
 			PInvokeAssert.Equal(10, block.GetUnsafe<Int32>());
 			PInvokeAssert.Equal(values, pointer.GetReadOnlySpan<Int32>(0).ToArray());
-			PInvokeAssert.Equal(10, pointer.GetValue<Int32>(0));
+			PInvokeAssert.Equal(10, pointer.GetReadOnlyValuePointer<Int32>(0).Reference);
 			if (readOnly)
 			{
 				PInvokeAssert.Equal(0, pointer.GetSpan<Int32>(0).Length);
 				PInvokeAssert.Throws<NullReferenceException>(() => FixedPointerValueListPtrTest.RejectWrite(pointer));
+				PInvokeAssert.Equal(default, pointer.GetValuePointer<Int32>(0));
 				return;
 			}
 
 			pointer.GetSpan<Int32>(0)[1] = 21;
 			PInvokeAssert.Equal(21, values[1]);
+			ValPtr<Int32> valPtr = pointer.GetValuePointer<Int32>(0);
+			PInvokeAssert.Equal(pointer[0].Pointer, valPtr.Pointer);
+			PInvokeAssert.Equal(values[0], valPtr.Reference);
+			valPtr.Reference = 123;
+			PInvokeAssert.Equal(123, values[0]);
 		}
 	}
 	private static void RejectWrite(FixedPointerValueListPtr pointer) => pointer[0].SetUnsafe(1);

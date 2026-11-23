@@ -7,7 +7,7 @@ namespace Rxmxnx.PInvoke.Internal;
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
-internal abstract unsafe partial class Utf8Comparator
+internal abstract partial class Utf8Comparator
 {
 	/// <summary>
 	/// Retrieves the string representation of <paramref name="source"/>.

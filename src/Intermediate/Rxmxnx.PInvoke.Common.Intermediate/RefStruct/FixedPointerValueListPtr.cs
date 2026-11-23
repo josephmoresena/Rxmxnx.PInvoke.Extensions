@@ -91,13 +91,39 @@ public readonly unsafe struct FixedPointerValueListPtr
 	}
 
 	/// <summary>
-	/// Returns the first <typeparamref name="T"/> value of the block at <paramref name="index"/>.
+	/// Returns the first <see cref="ReadOnlyValPtr{T}"/> value of the block at <paramref name="index"/>.
 	/// </summary>
 	/// <typeparam name="T">Type of the value to read.</typeparam>
 	/// <param name="index">The zero-based block index.</param>
-	/// <returns>The first value, or the default value when the block is empty.</returns>
+	/// <returns>The first read-only value, or the default value when the block is empty or incompatible.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public T GetValue<T>(Int32 index) => this._ptr == default ? default! : this[index].GetUnsafe<T>();
+	public ReadOnlyValPtr<T> GetReadOnlyValuePointer<T>(Int32 index)
+	{
+		if (this._ptr == default && (index <= 0 || index >= this.Count))
+			return default;
+		ReadOnlyFixedReferenceValue<T> result = default;
+		FixedPointerValueList.ItemValue item = this[index];
+		if (item.Value.IsValidTransformation<T>())
+			result = (ReadOnlyFixedReferenceValue<T>)item.Value;
+		return result.ValuePointer;
+	}
+	/// <summary>
+	/// Returns the first <see cref="ValPtr{T}"/> value of the block at <paramref name="index"/>.
+	/// </summary>
+	/// <typeparam name="T">Type of the value to read.</typeparam>
+	/// <param name="index">The zero-based block index.</param>
+	/// <returns>The first value pointer, or the default value when the block is empty, read-only or incompatible.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public ValPtr<T> GetValuePointer<T>(Int32 index)
+	{
+		if (this._ptr == default && (index <= 0 || index >= this.Count))
+			return default;
+		FixedReferenceValue<T> result = default;
+		FixedPointerValueList.ItemValue item = this[index];
+		if (item.Value.IsValidTransformation<T>(false))
+			result = (FixedReferenceValue<T>)item.Value;
+		return result.ValuePointer;
+	}
 	/// <summary>
 	/// Returns a read-only <typeparamref name="T"/> span over the block at <paramref name="index"/>.
 	/// </summary>

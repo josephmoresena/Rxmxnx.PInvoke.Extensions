@@ -25,7 +25,7 @@ runtimes already understand, not a general-purpose native pointer on every host.
 | `IsZero`      | Whether the pointer is null.         |
 | `Reference`   | `ref T` to the value at the address. |
 
-Use `Reference` to read or write without an `unsafe` block in your code. The write is as dangerous as any native store:
+Use `Reference` to read or write without an `unsafe` block in your code. Any write is as dangerous as any native store:
 the address must be valid and writable.
 
 On .NET 7.0+, `[NativeMarshalling]` sends this type across P/Invoke as a pointer to `T`.
@@ -66,7 +66,7 @@ FuncPtr<QueryFullProcessPath> query =
 Int32 result = query.Invoke(hProcess, 0, pathPtr, lengthPtr);
 ```
 
-On .NET 7.0+, this type also participates in source-generated marshalling.
+On .NET 7.0+, this type also participates in source-generated marshaling.
 
 ## Pointers to ref structs
 
@@ -79,11 +79,11 @@ On .NET 9.0 and later, `ValPtr<Span<T>>` and `ReadOnlyValPtr<ReadOnlySpan<T>>` r
 `SpanPtr<T>` and `ReadOnlySpanPtr<T>` stay in the assembly and are hidden from editors. Convert forward with the
 implicit operator and back with the explicit operator. `FixedPointerValueListPtr` stays available on every TFM.
 
-| Type                       | Points at                          | What you call                                                                                                  |
-|----------------------------|------------------------------------|----------------------------------------------------------------------------------------------------------------|
-| `SpanPtr<T>`               | A `Span<T>` variable               | `GetSpan`                                                                                                      |
-| `ReadOnlySpanPtr<T>`       | A `ReadOnlySpan<T>` variable       | `GetSpan`                                                                                                      |
-| `FixedPointerValueListPtr` | A `FixedPointerValueList` variable | `Count`, `IsEmpty`, `IsReadOnly`, the indexer (`ItemValue`), `GetValue<T>`, `GetReadOnlySpan<T>`, `GetSpan<T>` |
+| Type                       | Points at                          | What you call                                                                                                                                       |
+|----------------------------|------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `SpanPtr<T>`               | A `Span<T>` variable               | `GetSpan`                                                                                                                                           |
+| `ReadOnlySpanPtr<T>`       | A `ReadOnlySpan<T>` variable       | `GetSpan`                                                                                                                                           |
+| `FixedPointerValueListPtr` | A `FixedPointerValueList` variable | `Count`, `IsEmpty`, `IsReadOnly`, the indexer (`ItemValue`), `GetReadOnlyValuePointer<T>`, `GetValuePointer<T>`, `GetReadOnlySpan<T>`, `GetSpan<T>` |
 
 `ItemValue` is the block at that index. It is still a ref struct, so a caller that cannot store it uses
 `GetReadOnlySpan<T>` and `GetSpan<T>` on the list pointer. Those methods rebuild the list and apply the same

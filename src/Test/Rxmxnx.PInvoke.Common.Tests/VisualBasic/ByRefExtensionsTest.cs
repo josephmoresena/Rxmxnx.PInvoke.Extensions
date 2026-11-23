@@ -4,7 +4,7 @@ namespace Rxmxnx.PInvoke.Tests.VisualBasic;
 
 [TestFixture]
 [ExcludeFromCodeCoverage]
-public sealed class ByRefExtensionsTest
+public sealed unsafe class ByRefExtensionsTest
 {
 	[Fact]
 	public void SpanGetSetTest() => ByRefExtensionsTest.ExerciseSpan();
@@ -39,7 +39,7 @@ public sealed class ByRefExtensionsTest
 		PInvokeAssert.Throws<NullReferenceException>(() => readOnly.GetUnsafe());
 	}
 	[Fact]
-	public unsafe void UnsafeCopyToTest()
+	public void UnsafeCopyToTest()
 	{
 		Int32[] source = [1, 2, 3,];
 		IDisposable disposable = NativeUtilities.UnsafeHeapAlloc(source.Length, out ValPtr<Int32> valPtr);
@@ -66,12 +66,17 @@ public sealed class ByRefExtensionsTest
 	public void ReferenceUnsafeCopyToTest()
 	{
 		String[] destination = new String[3];
-		ValPtr<String> valPtr = NativeUtilities.GetUnsafeValPtrFromRef(ref destination[0]);
-		ReadOnlySpan<String> source = ["a", "b", "c",];
-		source.UnsafeCopyTo(valPtr);
-		PInvokeAssert.Equal("a", valPtr.GetUnsafe());
-		PInvokeAssert.Equal("b", destination[1]);
-		PInvokeAssert.Equal("c", destination[2]);
+#pragma warning disable CS8500
+		fixed (String* src = destination)
+#pragma warning restore CS8500
+		{
+			ValPtr<String> valPtr = src;
+			ReadOnlySpan<String> source = ["a", "b", "c",];
+			source.UnsafeCopyTo(valPtr);
+			PInvokeAssert.Equal("a", valPtr.GetUnsafe());
+			PInvokeAssert.Equal("b", destination[1]);
+			PInvokeAssert.Equal("c", destination[2]);
+		}
 	}
 	[Fact]
 	public void UnsafeCopyFromTest()
@@ -99,12 +104,17 @@ public sealed class ByRefExtensionsTest
 	public void ReferenceUnsafeCopyFromTest()
 	{
 		String[] source = ["a", "b", "c",];
-		ValPtr<String> valPtr = NativeUtilities.GetUnsafeValPtrFromRef(ref source[0]);
-		String[] destination = new String[source.Length];
-		destination.AsSpan().UnsafeCopyFrom(valPtr);
-		PInvokeAssert.Equal("a", destination[0]);
-		PInvokeAssert.Equal("b", destination[1]);
-		PInvokeAssert.Equal("c", destination[2]);
+#pragma warning disable CS8500
+		fixed (String* src = source)
+#pragma warning restore CS8500
+		{
+			ValPtr<String> valPtr = src;
+			String[] destination = new String[source.Length];
+			destination.AsSpan().UnsafeCopyFrom(valPtr);
+			PInvokeAssert.Equal("a", destination[0]);
+			PInvokeAssert.Equal("b", destination[1]);
+			PInvokeAssert.Equal("c", destination[2]);
+		}
 	}
 	[Fact]
 	public void EmptyUnsafeCopyFromTest()
