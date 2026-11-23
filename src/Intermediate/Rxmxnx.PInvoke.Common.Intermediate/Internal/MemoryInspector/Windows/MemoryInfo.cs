@@ -4,11 +4,13 @@ internal partial class MemoryInspector
 {
 	private sealed partial class Windows
 	{
+		[StructLayout(LayoutKind.Sequential)]
+#if !NET5_0_OR_GREATER
+		[Preserve(AllMembers = true, Conditional = true)]
+#endif
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4487)]
 #endif
-		[StructLayout(LayoutKind.Sequential)]
-		[Preserve(AllMembers = true, Conditional = true)]
 		private unsafe struct MemoryInfo
 		{
 			public static readonly UIntPtr Size = (UIntPtr)sizeof(MemoryInfo);

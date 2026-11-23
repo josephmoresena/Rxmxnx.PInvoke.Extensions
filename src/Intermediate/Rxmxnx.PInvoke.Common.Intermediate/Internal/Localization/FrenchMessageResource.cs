@@ -42,11 +42,15 @@ internal sealed class FrenchMessageResource : IMessageResource
 	String IMessageResource.LargerThanSequenceLength => "Ne peut pas être plus grand que la longueur de la séquence.";
 	String IMessageResource.IndexOutOfSequence
 		=> "L'index et la longueur doivent faire référence à un emplacement dans la séquence.";
+#if !PACKAGE || !UAP10_0
 	String IMessageResource.MissingMemoryInspector
 		=> "L'inspection de la mémoire n'est pas prise en charge sur la plateforme actuelle.";
-	String IMessageResource.ReflectionDisabled => "Cette fonctionnalité nécessite le mode réflexion complète.";
+#endif
 	String IMessageResource.InvalidSpanLayout
 		=> "Impossible d'identifier le champ pouvant être épinglé dans la disposition de Span<T>.";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
+	String IMessageResource.ReflectionDisabled => "Cette fonctionnalité nécessite le mode réflexion complète.";
+#endif
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"L'objet doit être de type {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)
@@ -72,10 +76,14 @@ internal sealed class FrenchMessageResource : IMessageResource
 		=> $"Impossible de récupérer les métadonnées pour le tampon {bufferType}.";
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Impossible de créer un tampon pour {itemType} comportant {size} éléments.";
+#if !PACKAGE || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Type de jeton inattendu : {currentToken}. Type de jeton attendu : {expectedToken}.";
+#endif
 	String IMessageResource.NotObjectType(Type type)
 		=> $"{type} est une ref struct ; la boxing d'objet n'est pas autorisée.";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type)
 		=> $"Un tampon de type {bufferType} ne peut pas être converti en tampon de type {type}.";
+#endif
 }

@@ -24,10 +24,28 @@ internal sealed class StringConcatenator : BinaryConcatenator<String>
 	/// Initializes a new instance of the <see cref="StringConcatenator"/> class
 	/// without a specified separator.
 	/// </summary>
+	public StringConcatenator() : this(default) { }
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+	/// <summary>
+	/// Initializes a new instance of the <see cref="StringConcatenator"/> class
+	/// with a specified separator string.
+	/// </summary>
+	/// <param name="separator">The string to use as a separator in the concatenation.</param>
+	public StringConcatenator(String? separator) : base(separator)
+	{
+		this._ignoreEmpty = !String.IsNullOrEmpty(separator);
+		// Mono Framework requires positive buffer size.
+		this._writer = new(this.Stream, Encoding.UTF8, 1024, true) { AutoFlush = true, };
+	}
+#else
+	/// <summary>
+	/// Initializes a new instance of the <see cref="StringConcatenator"/> class
+	/// without a specified separator.
+	/// </summary>
 	/// <param name="cancellationToken">
 	/// The token to monitor for cancellation requests. The default value is <see cref="CancellationToken.None"/>.
 	/// </param>
-	public StringConcatenator(CancellationToken cancellationToken = default) : this(default, cancellationToken) { }
+	public StringConcatenator(CancellationToken cancellationToken) : this(default, cancellationToken) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="StringConcatenator"/> class
 	/// with a specified separator string.
@@ -48,6 +66,7 @@ internal sealed class StringConcatenator : BinaryConcatenator<String>
 		this._writer = new(this.Stream, Encoding.UTF8, 1024, true) { AutoFlush = true, };
 #endif
 	}
+#endif
 
 	/// <inheritdoc/>
 	protected override Boolean IsEmpty(String? value) => String.IsNullOrEmpty(value) && !this._ignoreEmpty;

@@ -7,7 +7,9 @@ public partial class CStringBuilder
 		/// <summary>
 		/// Structure containing metadata required to allocate chunks for an insertion.
 		/// </summary>
+#if !NET5_0_OR_GREATER
 		[Preserve(AllMembers = true, Conditional = true)]
+#endif
 		private struct InsertInfo
 		{
 			/// <summary>

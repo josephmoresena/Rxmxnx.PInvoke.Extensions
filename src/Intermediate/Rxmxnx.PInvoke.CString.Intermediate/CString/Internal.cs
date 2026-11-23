@@ -133,6 +133,7 @@ public partial class CString
 		CancellationToken cancellationToken = default)
 		=> await this.GetWriteTask(strm, startIndex, count, cancellationToken).ConfigureAwait(false);
 #endif
+#if !PACKAGE || !NET7_0_OR_GREATER
 	/// <summary>
 	/// Creates a new instance of the <see cref="CString"/> class using a <typeparamref name="TState"/> instance.
 	/// </summary>
@@ -152,6 +153,7 @@ public partial class CString
 		ValueRegion<Byte> data = ValueRegion<Byte>.Create(state, getSpan);
 		return new(data, true, false, length);
 	}
+#endif
 	/// <summary>
 	/// Allocates a new byte buffer of the specified length.
 	/// </summary>

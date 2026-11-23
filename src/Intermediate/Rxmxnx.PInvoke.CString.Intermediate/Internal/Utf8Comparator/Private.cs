@@ -170,7 +170,7 @@ internal partial class Utf8Comparator<TChar>
 	[SecuritySafeCritical]
 #endif
 	private Int32 OrdinalCompare(ReadOnlySpan<Byte> textA, ReadOnlySpan<TChar> textB, String? stringB)
-#if UAP
+#if UAP10_0
 		=> this._ignoreCase ?
 			this.Compare(this._culture.CompareInfo, CompareOptions.OrdinalIgnoreCase, textA, textB, stringB) :
 			String.CompareOrdinal(Utf8Comparator.GetStringFromUtf8(textA), stringB ?? this.GetString(textB));

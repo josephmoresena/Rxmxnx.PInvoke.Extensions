@@ -38,9 +38,13 @@ internal sealed class JapaneseMessageResource : IMessageResource
 	String IMessageResource.IndexOutOfString => "インデックスと長さは文字列内の位置を参照する必要があります。";
 	String IMessageResource.LargerThanSequenceLength => "シーケンスの長さを超えることはできません。";
 	String IMessageResource.IndexOutOfSequence => "インデックスと長さはシーケンス内の位置を参照する必要があります。";
+#if !PACKAGE || !UAP10_0
 	String IMessageResource.MissingMemoryInspector => "現在のプラットフォームではメモリ検査はサポートされていません。";
-	String IMessageResource.ReflectionDisabled => "この機能を使用するにはフルリフレクションモードが必要です。";
+#endif
 	String IMessageResource.InvalidSpanLayout => "Span<T> のレイアウト内で固定可能なフィールドを特定できません。";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
+	String IMessageResource.ReflectionDisabled => "この機能を使用するにはフルリフレクションモードが必要です。";
+#endif
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"オブジェクトは {requiredTypeName} 型である必要があります。";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf) => $"現在のインスタンスは、{typeOf} 型の値を含むには不十分です。";
@@ -63,9 +67,13 @@ internal sealed class JapaneseMessageResource : IMessageResource
 	String IMessageResource.MissingBufferMetadataException(Type bufferType) => $"{bufferType} バッファーのメタデータを取得できません。";
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"{itemType} の {size} アイテム用のバッファを作成できません。";
+#if !PACKAGE || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"予期しないトークンの種類: {currentToken}。期待されるトークンの種類: {expectedToken}。";
+#endif
 	String IMessageResource.NotObjectType(Type type) => $"{type} は ref struct です。オブジェクトのボックス化は許可されていません。";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type)
 		=> $"{bufferType} バッファーを {type} バッファーにキャストできません。";
+#endif
 }

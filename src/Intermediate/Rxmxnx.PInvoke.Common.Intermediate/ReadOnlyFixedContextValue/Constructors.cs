@@ -28,9 +28,7 @@ public unsafe ref partial struct ReadOnlyFixedContextValue<T>
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		this.Values = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(ptr), count);
 #else
-		this.Values = typeof(T).IsPrimitive ?
-			new(ptr, count) :
-			MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(ptr, count);
+		this.Values = MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(ptr, count);
 #endif
 	}
 	/// <summary>
@@ -62,9 +60,7 @@ public unsafe ref partial struct ReadOnlyFixedContextValue<T>
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		this.Values = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef<T>(handle.Pointer), count);
 #else
-		this.Values = typeof(T).IsPrimitive ?
-			new(handle.Pointer, count) :
-			MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(handle.Pointer, count);
+		this.Values = MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(handle.Pointer, count);
 #endif
 	}
 	/// <summary>
@@ -93,9 +89,7 @@ public unsafe ref partial struct ReadOnlyFixedContextValue<T>
 		};
 		disposable = this._value.Handle;
 #if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
-		this.Values = typeof(T).IsPrimitive ?
-			new(valPtr.Pointer.ToPointer(), count) :
-			MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(valPtr.Pointer.ToPointer(), count);
+		this.Values = MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(valPtr.Pointer.ToPointer(), count);
 #elif !NET8_0_OR_GREATER
 		this.Values = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(in valPtr.Reference), count);
 #else
@@ -117,9 +111,7 @@ public unsafe ref partial struct ReadOnlyFixedContextValue<T>
 		ref T refT = ref Unsafe.AsRef<T>(value.Pointer.ToPointer());
 		this.Values = MemoryMarshal.CreateReadOnlySpan(ref refT, count);
 #else
-		this.Values = typeof(T).IsPrimitive ?
-			new(value.Pointer.ToPointer(), count) :
-			MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(value.Pointer.ToPointer(), count);
+		this.Values = MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(value.Pointer.ToPointer(), count);
 #endif
 	}
 
@@ -142,9 +134,7 @@ public unsafe ref partial struct ReadOnlyFixedContextValue<T>
 			Type = typeof(T),
 		};
 #if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
-		this.Values = typeof(T).IsPrimitive ?
-			new(valPtr.Pointer.ToPointer(), count) :
-			MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(valPtr.Pointer.ToPointer(), count);
+		this.Values = MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(valPtr.Pointer.ToPointer(), count);
 #elif !NET8_0_OR_GREATER
 		this.Values = MemoryMarshal.CreateReadOnlySpan(ref Unsafe.AsRef(in valPtr.Reference), count);
 #else

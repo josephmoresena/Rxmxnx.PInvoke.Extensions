@@ -7,7 +7,9 @@ namespace Rxmxnx.PInvoke.Internal;
 #if NETFRAMEWORK || NETSTANDARD2_0
 [SecurityCritical]
 #endif
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
@@ -47,9 +49,7 @@ internal abstract unsafe class ManagedMemoryManager<T> : MemoryManager<T>
 #endif
 	public override Span<T> GetSpan()
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-		=> this._count.HasValue ?
-			MemoryMarshal.CreateSpan(ref this.GetMemoryReference(out _), this._count.Value) :
-			default;
+		=> this._count.HasValue ? MemoryMarshal.CreateSpan(ref this.GetMemoryReference(), this._count.Value) : default;
 #else
 	{
 		if (!this._count.HasValue) return default;
@@ -116,10 +116,19 @@ internal abstract unsafe class ManagedMemoryManager<T> : MemoryManager<T>
 	/// This <see cref="GCHandle"/> must be released with <see cref="GCHandle.Free()"/> when it is no longer needed.
 	/// </returns>
 	protected abstract GCHandle AllocPinned();
+#if !NET6_0_OR_GREATER
 	/// <summary>
 	/// Returns a reference to the 0th element of the current memory.
 	/// </summary>
 	/// <param name="pinnable">Output. Current pinnable instance.</param>
 	/// <returns>The managed reference to the 0th element of the current memory.</returns>
 	protected abstract ref T GetMemoryReference(out Pinnable<T>? pinnable);
+#endif
+#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+	/// <summary>
+	/// Returns a reference to the 0th element of the current memory.
+	/// </summary>
+	/// <returns>The managed reference to the 0th element of the current memory.</returns>
+	protected abstract ref T GetMemoryReference();
+#endif
 }

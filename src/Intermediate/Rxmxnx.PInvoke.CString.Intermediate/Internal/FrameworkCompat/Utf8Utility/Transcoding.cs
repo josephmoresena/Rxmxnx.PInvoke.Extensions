@@ -25,8 +25,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Blc.Memory 10.0.8
+// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Bcl.Memory 10.0.8
 // (System.text.Unicode.Utf8Utility)
+
+// ReSharper disable ConvertGotoToBreakOrContinue
 
 #if !NETCOREAPP3_0_OR_GREATER && !NET462_OR_GREATER
 namespace System.Text.Unicode;
@@ -356,8 +358,7 @@ internal static unsafe partial class Utf8Utility
 		inputLength =
 			(Int32)(void*)Unsafe.ByteOffset(ref *pInputBuffer, ref *pFinalPosWhereCanReadDWordFromInputBuffer) + 4;
 
-		ProcessInputOfLessThanDWordSize:
-		while (inputLength > 0)
+		ProcessInputOfLessThanDWordSize: while (inputLength > 0)
 		{
 			UInt32 firstByte = pInputBuffer[0];
 			if (firstByte <= 0x7Fu)

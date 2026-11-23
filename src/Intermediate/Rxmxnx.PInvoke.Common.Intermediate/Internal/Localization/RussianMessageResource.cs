@@ -40,9 +40,13 @@ internal sealed class RussianMessageResource : IMessageResource
 	String IMessageResource.LargerThanSequenceLength => "Не может быть больше длины последовательности.";
 	String IMessageResource.IndexOutOfSequence
 		=> "Индекс и длина должны указывать на местоположение внутри последовательности.";
+#if !PACKAGE || !UAP10_0
 	String IMessageResource.MissingMemoryInspector => "Проверка памяти не поддерживается на текущей платформе.";
-	String IMessageResource.ReflectionDisabled => "Эта функция требует режима полной рефлексии.";
+#endif
 	String IMessageResource.InvalidSpanLayout => "Не удалось определить закрепляемое поле в структуре Span<T>.";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
+	String IMessageResource.ReflectionDisabled => "Эта функция требует режима полной рефлексии.";
+#endif
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"Объект должен быть типа {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)
@@ -68,9 +72,13 @@ internal sealed class RussianMessageResource : IMessageResource
 		=> $"Не удалось получить метаданные для буфера {bufferType}.";
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Невозможно создать буфер для {itemType} с {size} элементами.";
+#if !PACKAGE || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Неожиданный тип токена: {currentToken}. Ожидаемый тип токена: {expectedToken}.";
+#endif
 	String IMessageResource.NotObjectType(Type type) => $"{type} — это ref struct; упаковка объекта не допускается.";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type)
 		=> $"Буфер типа {bufferType} не может быть преобразован в буфер типа {type}.";
+#endif
 }

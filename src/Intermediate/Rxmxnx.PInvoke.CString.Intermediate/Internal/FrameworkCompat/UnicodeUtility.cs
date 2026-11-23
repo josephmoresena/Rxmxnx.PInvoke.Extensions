@@ -25,7 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Blc.Memory 10.0.8
+// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Bcl.Memory 10.0.8
 // (System.Text.UnicodeUtility)
 
 #if !NETCOREAPP3_0_OR_GREATER
@@ -44,6 +44,7 @@ internal static class UnicodeUtility
 	/// </summary>
 	public const UInt32 ReplacementChar = 0xFFFD;
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Returns the Unicode plane (0 through 16, inclusive) which contains this code point.
 	/// </summary>
@@ -65,6 +66,7 @@ internal static class UnicodeUtility
 		value >>= 24;
 		return (Int32)value;
 	}
+#endif
 
 	/// <summary>
 	/// Decomposes an astral Unicode scalar into UTF-16 high and low surrogate code units.
@@ -77,6 +79,7 @@ internal static class UnicodeUtility
 		lowSurrogateCodePoint = (Char)((value & 0x3FFu) + 0xDC00u);
 	}
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Given a Unicode scalar value, gets the number of UTF-8 code units required to represent this value.
 	/// </summary>
@@ -89,6 +92,7 @@ internal static class UnicodeUtility
 		value >>= 24;
 		return (Int32)value + a * 2;
 	}
+#endif
 
 	/// <summary>
 	/// Returns <see langword="true"/> iff <paramref name="value"/> is an ASCII
@@ -108,28 +112,12 @@ internal static class UnicodeUtility
 	public static Boolean IsBmpCodePoint(UInt32 value) => value <= 0xFFFFu;
 
 	/// <summary>
-	/// Returns <see langword="true"/> iff <paramref name="value"/> is a UTF-16 high surrogate code point,
-	/// i.e., is in [ U+D800..U+DBFF ], inclusive.
-	/// </summary>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static Boolean IsHighSurrogateCodePoint(UInt32 value)
-		=> UnicodeUtility.IsInRangeInclusive(value, 0xD800U, 0xDBFFU);
-
-	/// <summary>
 	/// Returns <see langword="true"/> iff <paramref name="value"/> is between
 	/// <paramref name="lowerBound"/> and <paramref name="upperBound"/>, inclusive.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Boolean IsInRangeInclusive(UInt32 value, UInt32 lowerBound, UInt32 upperBound)
 		=> value - lowerBound <= upperBound - lowerBound;
-
-	/// <summary>
-	/// Returns <see langword="true"/> iff <paramref name="value"/> is a UTF-16 low surrogate code point,
-	/// i.e., is in [ U+DC00..U+DFFF ], inclusive.
-	/// </summary>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static Boolean IsLowSurrogateCodePoint(UInt32 value)
-		=> UnicodeUtility.IsInRangeInclusive(value, 0xDC00U, 0xDFFFU);
 
 	/// <summary>
 	/// Returns <see langword="true"/> iff <paramref name="value"/> is a UTF-16 surrogate code point,
@@ -139,12 +127,32 @@ internal static class UnicodeUtility
 	public static Boolean IsSurrogateCodePoint(UInt32 value)
 		=> UnicodeUtility.IsInRangeInclusive(value, 0xD800U, 0xDFFFU);
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
+	/// <summary>
+	/// Returns <see langword="true"/> iff <paramref name="value"/> is a UTF-16 high surrogate code point,
+	/// i.e., is in [ U+D800..U+DBFF ], inclusive.
+	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Boolean IsHighSurrogateCodePoint(UInt32 value)
+		=> UnicodeUtility.IsInRangeInclusive(value, 0xD800U, 0xDBFFU);
+
+	/// <summary>
+	/// Returns <see langword="true"/> iff <paramref name="value"/> is a UTF-16 low surrogate code point,
+	/// i.e., is in [ U+DC00..U+DFFF ], inclusive.
+	/// </summary>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static Boolean IsLowSurrogateCodePoint(UInt32 value)
+		=> UnicodeUtility.IsInRangeInclusive(value, 0xDC00U, 0xDFFFU);
+#endif
+
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Returns <see langword="true"/> iff <paramref name="codePoint"/> is a valid Unicode code
 	/// point, i.e., is in [ U+0000..U+10FFFF ], inclusive.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static Boolean IsValidCodePoint(UInt32 codePoint) => codePoint <= 0x10FFFFU;
+#endif
 
 	/// <summary>
 	/// Returns <see langword="true"/> iff <paramref name="value"/> is a valid Unicode scalar

@@ -4,7 +4,9 @@ namespace Rxmxnx.PInvoke.Internal;
 /// Represents a non-generic wrapper around an <see cref="IFixedContextAction{T}"/> implementation.
 /// </summary>
 /// <typeparam name="T">Type of the fixed context.</typeparam>
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 internal readonly struct NonGenericFixedContextAction<T> : IFixedContextAction<T>
 {
 	/// <summary>
@@ -49,7 +51,9 @@ internal readonly struct NonGenericFixedContextAction<T> : IFixedContextAction<T
 /// </summary>
 /// <typeparam name="T">Type of the fixed context.</typeparam>
 /// <typeparam name="TResult">The type of the value returned by the function.</typeparam>
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS2436)]
 #endif

@@ -10,17 +10,12 @@ public static class ArrayCompat
 internal static class ArrayCompat
 #endif
 {
+#if !NETSTANDARD1_3_OR_GREATER && !NETCOREAPP && !NET46_OR_GREATER && !UAP10_0
 	/// <summary>
 	/// Returns an empty array.
 	/// </summary>
 	/// <typeparam name="T">The type of the elements of the array.</typeparam>
 	/// <returns>Returns an empty <see cref="Array"/>.</returns>
-#if NETSTANDARD1_3_OR_GREATER || NETCOREAPP || NET46_OR_GREATER || UAP10_0
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	public static T[] Empty<T>() => [];
-#else
 	public static T[] Empty<T>() => Generic<T>.EmptyArray;
 
 	/// <summary>
@@ -35,6 +30,7 @@ internal static class ArrayCompat
 		public static readonly T[] EmptyArray = [];
 	}
 #endif
+
 	/// <summary>
 	/// Retrieves a read-only span of lower bounds for each array dimension.
 	/// </summary>

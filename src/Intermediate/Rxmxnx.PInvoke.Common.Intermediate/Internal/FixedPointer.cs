@@ -79,39 +79,6 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	}
 
 	/// <summary>
-	/// Constructs a new FixedPointer instance pointing to a fixed memory block.
-	/// </summary>
-	/// <param name="ptr">The pointer to a fixed memory block.</param>
-	/// <param name="binaryLength">The size of the memory block in bytes.</param>
-	/// <param name="isReadOnly">A Boolean value indicating whether the memory block is read-only.</param>
-	/// <remarks>
-	/// This constructor sets the validity of the instance to true by default.
-	/// </remarks>
-	protected FixedPointer(void* ptr, Int32 binaryLength, Boolean isReadOnly)
-	{
-		this._ptr = ptr;
-		this._binaryLength = binaryLength;
-		this._handle = new();
-		this.IsReadOnly = isReadOnly;
-	}
-	/// <summary>
-	/// Constructs a new FixedPointer instance pointing to a fixed memory block with specified validity.
-	/// </summary>
-	/// <param name="ptr">The pointer to a fixed memory block.</param>
-	/// <param name="binaryLength">The size of the memory block in bytes.</param>
-	/// <param name="isReadOnly">A Boolean value indicating whether the memory block is read-only.</param>
-	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
-	/// <remarks>
-	/// This constructor allows setting the validity of the instance during the construction of the object.
-	/// </remarks>
-	protected FixedPointer(void* ptr, Int32 binaryLength, Boolean isReadOnly, FixedValueHandle handle)
-	{
-		this._ptr = ptr;
-		this._binaryLength = binaryLength;
-		this._handle = handle;
-		this.IsReadOnly = isReadOnly;
-	}
-	/// <summary>
 	/// Constructs a new <see cref="FixedPointer"/> instance using another instance as a template.
 	/// </summary>
 	/// <param name="pointer">The <see cref="FixedPointer"/> instance to copy data from.</param>
@@ -144,6 +111,41 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 		this._handle = pointer._handle;
 		this.IsReadOnly = pointer.IsReadOnly;
 	}
+	/// <summary>
+	/// Constructs a new FixedPointer instance pointing to a fixed memory block.
+	/// </summary>
+	/// <param name="ptr">The pointer to a fixed memory block.</param>
+	/// <param name="binaryLength">The size of the memory block in bytes.</param>
+	/// <param name="isReadOnly">A Boolean value indicating whether the memory block is read-only.</param>
+	/// <remarks>
+	/// This constructor sets the validity of the instance to true by default.
+	/// </remarks>
+	protected FixedPointer(void* ptr, Int32 binaryLength, Boolean isReadOnly)
+	{
+		this._ptr = ptr;
+		this._binaryLength = binaryLength;
+		this._handle = new();
+		this.IsReadOnly = isReadOnly;
+	}
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
+	/// <summary>
+	/// Constructs a new FixedPointer instance pointing to a fixed memory block with specified validity.
+	/// </summary>
+	/// <param name="ptr">The pointer to a fixed memory block.</param>
+	/// <param name="binaryLength">The size of the memory block in bytes.</param>
+	/// <param name="isReadOnly">A Boolean value indicating whether the memory block is read-only.</param>
+	/// <param name="handle">A <see cref="FixedValueHandle"/> instance.</param>
+	/// <remarks>
+	/// This constructor allows setting the validity of the instance during the construction of the object.
+	/// </remarks>
+	protected FixedPointer(void* ptr, Int32 binaryLength, Boolean isReadOnly, FixedValueHandle handle)
+	{
+		this._ptr = ptr;
+		this._binaryLength = binaryLength;
+		this._handle = handle;
+		this.IsReadOnly = isReadOnly;
+	}
+#endif
 
 	/// <summary>
 	/// Creates a reference of a <typeparamref name="T"/> value over the memory block.
@@ -163,7 +165,7 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	{
 		this.ValidateOperation();
 		this.ValidateReferenceSize(typeof(T), sizeof(T));
-		this.ValidateTransformation(typeof(T), !RuntimeHelpers.IsReferenceOrContainsReferences<T>());
+		this.ValidateTransformation(typeof(T), !RuntimeHelpers.IsReferenceOrContainsReferences<T>(), false);
 		return ref Unsafe.AsRef<T>(this._ptr);
 	}
 	/// <summary>
@@ -368,11 +370,13 @@ internal abstract unsafe partial class FixedPointer : IFixedPointer
 	/// </summary>
 	/// <param name="type">Destination type.</param>
 	/// <param name="unmanagedType">Indicates whether <paramref name="type"/> is unmanaged.</param>
+	/// <param name="isReadOnlyOperation">Indicates whether the current transformation operation is read-only.</param>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	protected void ValidateTransformation(Type type, Boolean unmanagedType)
+	protected void ValidateTransformation(Type type, Boolean unmanagedType, Boolean isReadOnlyOperation = true)
 	{
 		if (type == this.Type) return;
-		ValidationUtilities.ThrowIfInvalidTransformation(this.Type, this.IsUnmanaged, type, unmanagedType);
+		ValidationUtilities.ThrowIfInvalidTransformation(this.Type, this.IsUnmanaged, type, unmanagedType,
+		                                                 isReadOnlyOperation);
 	}
 	/// <summary>
 	/// Retrieves the number of <paramref name="sizeOf"/> items that can be

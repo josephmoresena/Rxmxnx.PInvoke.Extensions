@@ -1,4 +1,8 @@
-﻿namespace Rxmxnx.PInvoke;
+﻿#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER && !UAP10_0_16299
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
+namespace Rxmxnx.PInvoke;
 
 /// <summary>
 /// Provides a set of utilities for exchange data within the P/Invoke context.
@@ -19,7 +23,9 @@ public static unsafe partial class NativeUtilities
 	/// <typeparam name="T"><see cref="ValueType"/> of <see langword="unmanaged"/> value.</typeparam>
 	/// <returns>Size of <typeparamref name="T"/> structure.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static Int32 SizeOf<T>() where T : unmanaged => sizeof(T);
+#pragma warning disable CS8500
+	public static Int32 SizeOf<T>() => sizeof(T);
+#pragma warning restore CS8500
 
 	/// <summary>
 	/// Creates a <see cref="FuncPtr{TDelegate}"/> from a memory reference to a <typeparamref name="TDelegate"/> delegate
@@ -91,10 +97,10 @@ public static unsafe partial class NativeUtilities
 
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="IntPtr"/> pointer from a read-only reference to a
-	/// <typeparamref name="T"/> <see langword="unmanaged"/> value.
+	/// <typeparamref name="T"/> value.
 	/// </summary>
-	/// <typeparam name="T"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> value.</typeparam>
-	/// <param name="value">A read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</param>
+	/// <typeparam name="T">The type of the managed reference.</typeparam>
+	/// <param name="value">A read-only reference to a <typeparamref name="T"/> value.</param>
 	/// <returns><see cref="IntPtr"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
@@ -105,17 +111,20 @@ public static unsafe partial class NativeUtilities
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static IntPtr GetUnsafeIntPtr<T>(in T value) where T : unmanaged
+	public static IntPtr GetUnsafeIntPtr<T>(in T value)
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
 	{
 		ref T refValue = ref Unsafe.AsRef(in value);
 		return (IntPtr)Unsafe.AsPointer(ref refValue);
 	}
 	/// <summary>
 	/// Retrieves an <see langword="unsafe"/> <see cref="UIntPtr"/> pointer from a read-only reference to a
-	/// <typeparamref name="T"/> <see langword="unmanaged"/> value.
+	/// <typeparamref name="T"/> value.
 	/// </summary>
-	/// <typeparam name="T"><see cref="ValueType"/> of the referenced <see langword="unmanaged"/> value.</typeparam>
-	/// <param name="value">Read-only reference to a <typeparamref name="T"/> <see langword="unmanaged"/> value.</param>
+	/// <typeparam name="T">The type of the managed reference.</typeparam>
+	/// <param name="value">A read-only reference to a <typeparamref name="T"/> value.</param>
 	/// <returns><see cref="UIntPtr"/> pointer.</returns>
 	/// <remarks>
 	/// The pointer obtained is "unsafe" as it doesn't guarantee that the referenced value
@@ -126,7 +135,10 @@ public static unsafe partial class NativeUtilities
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static UIntPtr GetUnsafeUIntPtr<T>(in T value) where T : unmanaged
+	public static UIntPtr GetUnsafeUIntPtr<T>(in T value)
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
 	{
 		ref T refValue = ref Unsafe.AsRef(in value);
 		return (UIntPtr)Unsafe.AsPointer(ref refValue);
@@ -210,8 +222,10 @@ public static unsafe partial class NativeUtilities
 	[SecuritySafeCritical]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static Byte[] ToBytes<TSource>(in TSource value) where TSource : unmanaged
+	public static Byte[] ToBytes<TSource>(in TSource value) where TSource : struct
 	{
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<TSource>())
+			return NativeUtilities.ArrayEmpty<Byte>();
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ref TSource refValue = ref Unsafe.AsRef(in value);
 		ReadOnlySpan<TSource> intermediateSpan = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
@@ -224,8 +238,10 @@ public static unsafe partial class NativeUtilities
 		bytes.CopyTo(result);
 		return result;
 #else
+#pragma warning disable CS8500
 		fixed (TSource* valuePtr = &value)
 			return new ReadOnlySpan<Byte>(valuePtr, sizeof(TSource)).ToArray();
+#pragma warning restore CS8500
 #endif
 	}
 	/// <summary>
@@ -246,17 +262,20 @@ public static unsafe partial class NativeUtilities
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void CopyBytes<TSource>(in TSource value, Span<Byte> destination, Int32 offset = 0)
-		where TSource : unmanaged
+		where TSource : struct
 	{
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		ValidationUtilities.ThrowIfInvalidCopyType(value, destination, offset, out ReadOnlySpan<Byte> bytes);
 		bytes.CopyTo(destination[offset..]);
 #else
+		ValidationUtilities.ThrowIfNotUnmanagedType<TSource>();
+#pragma warning disable CS8500
 		fixed (TSource* valuePtr = &value)
 		{
 			ValidationUtilities.ThrowIfInvalidCopyType(valuePtr, destination, offset, out ReadOnlySpan<Byte> bytes);
 			bytes.CopyTo(destination[offset..]);
 		}
+#pragma warning restore CS8500
 #endif
 	}
 	/// <summary>
@@ -300,7 +319,7 @@ public static unsafe partial class NativeUtilities
 	[ExcludeFromCodeCoverage]
 #endif
 	public static IDisposable GetValuesFixedContext<TEnum>(out ReadOnlyFixedContextValue<TEnum> fixedContext)
-		where TEnum : unmanaged, Enum
+		where TEnum : struct, Enum
 	{
 		fixedContext = new(EnumValueHelper<TEnum>.Pin(), EnumValueHelper<TEnum>.Count, true, out IDisposable result);
 		return result;
@@ -329,7 +348,7 @@ public static unsafe partial class NativeUtilities
 	/// Allocates a native memory block for <paramref name="count"/> values of type <typeparamref name="T"/> and exposes
 	/// it through a <see cref="FixedContextValue{T}"/> instance.
 	/// </summary>
-	/// <typeparam name="T">The unmanaged value type stored in the allocated memory block.</typeparam>
+	/// <typeparam name="T">The value type stored in the allocated memory block.</typeparam>
 	/// <param name="count">The number of values of type <typeparamref name="T"/> to allocate.</param>
 	/// <param name="fixedContext">
 	/// Output. The <see cref="FixedContextValue{T}"/> instance representing the pinned memory.
@@ -344,9 +363,45 @@ public static unsafe partial class NativeUtilities
 	/// The allocated memory is not initialized.
 	/// Consumers should use a <see langword="using"/> statement or otherwise dispose the returned object.
 	/// </remarks>
-	public static IDisposable HeapAlloc<T>(Int32 count, out FixedContextValue<T> fixedContext) where T : unmanaged
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static IDisposable HeapAlloc<T>(Int32 count, out FixedContextValue<T> fixedContext) where T : struct
 	{
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+		{
+			fixedContext = default;
+			return FixedPointerValue.UnsafeDisposable;
+		}
 		ValidationUtilities.ThrowIfInvalidLength(count);
 		return NativeMemoryOwner.CreateContext(count, out fixedContext);
+	}
+	/// <summary>
+	/// Allocates a native memory block for <paramref name="count"/> values of type <typeparamref name="T"/> and exposes
+	/// it through a <see cref="ValPtr{T}"/> pointer.
+	/// </summary>
+	/// <typeparam name="T">The value type stored in the allocated memory block.</typeparam>
+	/// <param name="count">The number of values of type <typeparamref name="T"/> to allocate.</param>
+	/// <param name="valPtr">Output. An unsafe pointer to representing the pinned memory.</param>
+	/// <returns>An <see cref="IDisposable"/> instance representing the allocated memory releasing.</returns>
+	/// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="count"/> is negative.</exception>
+	/// <exception cref="OverflowException">
+	/// Thrown when the requested allocation size exceeds <see cref="Int32.MaxValue"/>.
+	/// </exception>
+	/// <remarks>
+	/// The native memory is released when the returning object is disposed. The pointer is unsafe because it
+	/// addresses the allocated memory only at the moment this method was called.
+	/// <see cref="ValPtr{T}"/> is not a ref struct, so it can be stored where the language does not allow one.
+	/// </remarks>
+	public static IDisposable UnsafeHeapAlloc<T>(Int32 count, out ValPtr<T> valPtr) where T : struct
+	{
+		if (count == 0 || RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+		{
+			valPtr = default;
+			return FixedPointerValue.UnsafeDisposable;
+		}
+		ValidationUtilities.ThrowIfInvalidLength(count);
+		Unsafe.SkipInit(out valPtr);
+#pragma warning disable CS8500
+		return new NativeMemoryOwner(count, sizeof(T), out Unsafe.As<ValPtr<T>, IntPtr>(ref valPtr));
+#pragma warning restore CS8500
 	}
 }

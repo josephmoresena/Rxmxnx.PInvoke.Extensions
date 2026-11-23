@@ -5,11 +5,13 @@ internal partial class MemoryInspector
 {
 	private sealed partial class Mac
 	{
+		[StructLayout(LayoutKind.Sequential, Pack = 4)]
+#if !NET5_0_OR_GREATER
+		[Preserve(AllMembers = true, Conditional = true)]
+#endif
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4487)]
 #endif
-		[StructLayout(LayoutKind.Sequential, Pack = 4)]
-		[Preserve(AllMembers = true, Conditional = true)]
 		private readonly struct MemoryInfo
 		{
 			public static readonly UInt32 Flavor = MemoryInfo.SupportsFlavor64() ? 9u : 1u;

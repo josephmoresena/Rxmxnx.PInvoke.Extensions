@@ -16,6 +16,15 @@ internal sealed unsafe class NativeMemoryOwner : FixedValueHandle
 	/// <summary>
 	/// Constructor.
 	/// </summary>
+	/// <param name="count">Number of elements.</param>
+	/// <param name="sizeOf">Size of the element type.</param>
+	/// <param name="pointer">Output. Current memory pointer.</param>
+	public NativeMemoryOwner(Int32 count, Int32 sizeOf, out IntPtr pointer) : this(checked(count * sizeOf))
+		=> pointer = this._pointer;
+
+	/// <summary>
+	/// Constructor.
+	/// </summary>
 	/// <param name="byteLength">Allocation size in bytes.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecurityCritical]
@@ -92,14 +101,17 @@ internal sealed unsafe class NativeMemoryOwner : FixedValueHandle
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
-	public static IDisposable CreateContext<T>(Int32 count, out FixedContextValue<T> fixedContext) where T : unmanaged
+	public static IDisposable CreateContext<T>(Int32 count, out FixedContextValue<T> fixedContext) where T : struct
 	{
+		Debug.Assert(ValPtr<T>.IsUnmanaged);
 		if (count == 0)
 		{
 			fixedContext = default;
 			return FixedValueHandle.EmptyDisposable;
 		}
+#pragma warning disable CS8500
 		Int32 byteLength = checked(count * sizeof(T));
+#pragma warning restore CS8500
 		NativeMemoryOwner owner = new(byteLength);
 		return FixedContextValue<T>.CreateDisposable((ValPtr<T>)owner._pointer, count, owner, out fixedContext);
 	}

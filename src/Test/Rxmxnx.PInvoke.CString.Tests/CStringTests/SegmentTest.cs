@@ -147,7 +147,6 @@ public sealed class SegmentTests
 			result.Add(length);
 			length += consumed;
 		}
-
 #if NET5_0_OR_GREATER
 		return CollectionsMarshal.AsSpan(result);
 #else

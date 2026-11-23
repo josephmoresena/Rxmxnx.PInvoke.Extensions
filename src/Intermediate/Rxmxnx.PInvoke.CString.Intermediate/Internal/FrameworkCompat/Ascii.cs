@@ -25,7 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Blc.Memory 10.0.8
+// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Bcl.Memory 10.0.8
 // (System.text.Ascii)
 
 #if !NETCOREAPP3_0_OR_GREATER && !NET462_OR_GREATER
@@ -75,125 +75,6 @@ internal static unsafe class Ascii
 	private static Boolean FirstCharInUInt32IsAscii(UInt32 value)
 		=> (BitConverter.IsLittleEndian && (value & 0xFF80u) == 0) ||
 			(!BitConverter.IsLittleEndian && (value & 0xFF800000u) == 0);
-
-	/// <summary>
-	/// Returns the index in <paramref name="pBuffer"/> where the first non-ASCII byte is found.
-	/// Returns <paramref name="bufferLength"/> if the buffer is empty or all-ASCII.
-	/// </summary>
-	/// <returns>An ASCII byte is defined as 0x00 - 0x7F, inclusive.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static UIntPtr GetIndexOfFirstNonAsciiByte(Byte* pBuffer, UIntPtr bufferLength)
-		=> Ascii.GetIndexOfFirstNonAsciiByte_Vector(pBuffer, bufferLength);
-
-	private static UIntPtr GetIndexOfFirstNonAsciiByte_Vector(Byte* pBuffer, UIntPtr bufferLength)
-	{
-		Byte* pOriginalBuffer = pBuffer;
-		UInt32 currentUInt32;
-		for (; bufferLength >= 8; bufferLength -= 8)
-		{
-			currentUInt32 = Unsafe.ReadUnaligned<UInt32>(pBuffer);
-			UInt32 nextUInt32 = Unsafe.ReadUnaligned<UInt32>(pBuffer + 4);
-
-			if (!Ascii.AllBytesInUInt32AreAscii(currentUInt32 | nextUInt32))
-			{
-				if (Ascii.AllBytesInUInt32AreAscii(currentUInt32))
-				{
-					currentUInt32 = nextUInt32;
-					pBuffer += 4;
-				}
-
-				goto FoundNonAsciiData;
-			}
-
-			pBuffer += 8;
-		}
-
-		if ((bufferLength & 4) != 0)
-		{
-			currentUInt32 = Unsafe.ReadUnaligned<UInt32>(pBuffer);
-			if (!Ascii.AllBytesInUInt32AreAscii(currentUInt32)) goto FoundNonAsciiData;
-
-			pBuffer += 4;
-		}
-
-		if ((bufferLength & 2) != 0)
-		{
-			currentUInt32 = Unsafe.ReadUnaligned<UInt16>(pBuffer);
-			if (!Ascii.AllBytesInUInt32AreAscii(currentUInt32))
-			{
-				if (!BitConverter.IsLittleEndian) currentUInt32 <<= 16;
-				goto FoundNonAsciiData;
-			}
-
-			pBuffer += 2;
-		}
-		if ((bufferLength & 1) != 0 && *(SByte*)pBuffer >= 0)
-			pBuffer++;
-
-		Finish:
-
-		UIntPtr totalNumBytesRead = (UIntPtr)pBuffer - (UIntPtr)pOriginalBuffer;
-		return totalNumBytesRead;
-
-		FoundNonAsciiData:
-		pBuffer += Ascii.CountNumberOfLeadingAsciiBytesFromUInt32WithSomeNonAsciiData(currentUInt32);
-		goto Finish;
-	}
-
-	/// <summary>
-	/// Returns the index in <paramref name="pBuffer"/> where the first non-ASCII char is found.
-	/// Returns <paramref name="bufferLength"/> if the buffer is empty or all-ASCII.
-	/// </summary>
-	/// <returns>An ASCII char is defined as 0x0000 - 0x007F, inclusive.</returns>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	internal static UIntPtr GetIndexOfFirstNonAsciiChar(Char* pBuffer, UIntPtr bufferLength)
-		=> Ascii.GetIndexOfFirstNonAsciiChar_Vector(pBuffer, bufferLength);
-
-	private static UIntPtr GetIndexOfFirstNonAsciiChar_Vector(Char* pBuffer, UIntPtr bufferLength)
-	{
-		Char* pOriginalBuffer = pBuffer;
-		UInt32 currentUInt32;
-
-		for (; bufferLength >= 4; bufferLength -= 4)
-		{
-			currentUInt32 = Unsafe.ReadUnaligned<UInt32>(pBuffer);
-			UInt32 nextUInt32 = Unsafe.ReadUnaligned<UInt32>(pBuffer + 4 / sizeof(Char));
-
-			if (!Ascii.AllCharsInUInt32AreAscii(currentUInt32 | nextUInt32))
-			{
-				if (Ascii.AllCharsInUInt32AreAscii(currentUInt32))
-				{
-					currentUInt32 = nextUInt32;
-					pBuffer += 2;
-				}
-
-				goto FoundNonAsciiData;
-			}
-
-			pBuffer += 4;
-		}
-
-		if ((bufferLength & 2) != 0)
-		{
-			currentUInt32 = Unsafe.ReadUnaligned<UInt32>(pBuffer);
-			if (!Ascii.AllCharsInUInt32AreAscii(currentUInt32)) goto FoundNonAsciiData;
-
-			pBuffer += 2;
-		}
-
-		if ((bufferLength & 1) != 0 && *pBuffer <= 0x007F)
-			pBuffer++;
-
-		Finish:
-
-		UIntPtr totalNumBytesRead = (UIntPtr)pBuffer - (UIntPtr)pOriginalBuffer;
-		return totalNumBytesRead / sizeof(Char);
-
-		FoundNonAsciiData:
-		if (Ascii.FirstCharInUInt32IsAscii(currentUInt32)) pBuffer++;
-
-		goto Finish;
-	}
 
 	/// <summary>
 	/// Given a QWORD which represents a buffer of 4 ASCII chars in machine-endian order,
@@ -467,6 +348,7 @@ internal static unsafe class Ascii
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	internal static Boolean AllBytesInUInt32AreAscii(UInt32 value) => (value & Ascii.uInt32HighBitsOnlyMask) == 0;
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Given a DWORD which represents a four-byte buffer read in machine endianness, and which
 	/// the caller has asserted contains a non-ASCII byte *somewhere* in the data, counts the
@@ -495,5 +377,124 @@ internal static unsafe class Ascii
 
 		return numAsciiBytes;
 	}
+
+	/// <summary>
+	/// Returns the index in <paramref name="pBuffer"/> where the first non-ASCII byte is found.
+	/// Returns <paramref name="bufferLength"/> if the buffer is empty or all-ASCII.
+	/// </summary>
+	/// <returns>An ASCII byte is defined as 0x00 - 0x7F, inclusive.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static UIntPtr GetIndexOfFirstNonAsciiByte(Byte* pBuffer, UIntPtr bufferLength)
+		=> Ascii.GetIndexOfFirstNonAsciiByte_Vector(pBuffer, bufferLength);
+
+	private static UIntPtr GetIndexOfFirstNonAsciiByte_Vector(Byte* pBuffer, UIntPtr bufferLength)
+	{
+		Byte* pOriginalBuffer = pBuffer;
+		UInt32 currentUInt32;
+		for (; bufferLength >= 8; bufferLength -= 8)
+		{
+			currentUInt32 = Unsafe.ReadUnaligned<UInt32>(pBuffer);
+			UInt32 nextUInt32 = Unsafe.ReadUnaligned<UInt32>(pBuffer + 4);
+
+			if (!Ascii.AllBytesInUInt32AreAscii(currentUInt32 | nextUInt32))
+			{
+				if (Ascii.AllBytesInUInt32AreAscii(currentUInt32))
+				{
+					currentUInt32 = nextUInt32;
+					pBuffer += 4;
+				}
+
+				goto FoundNonAsciiData;
+			}
+
+			pBuffer += 8;
+		}
+
+		if ((bufferLength & 4) != 0)
+		{
+			currentUInt32 = Unsafe.ReadUnaligned<UInt32>(pBuffer);
+			if (!Ascii.AllBytesInUInt32AreAscii(currentUInt32)) goto FoundNonAsciiData;
+
+			pBuffer += 4;
+		}
+
+		if ((bufferLength & 2) != 0)
+		{
+			currentUInt32 = Unsafe.ReadUnaligned<UInt16>(pBuffer);
+			if (!Ascii.AllBytesInUInt32AreAscii(currentUInt32))
+			{
+				if (!BitConverter.IsLittleEndian) currentUInt32 <<= 16;
+				goto FoundNonAsciiData;
+			}
+
+			pBuffer += 2;
+		}
+		if ((bufferLength & 1) != 0 && *(SByte*)pBuffer >= 0)
+			pBuffer++;
+
+		Finish:
+
+		UIntPtr totalNumBytesRead = (UIntPtr)pBuffer - (UIntPtr)pOriginalBuffer;
+		return totalNumBytesRead;
+
+		FoundNonAsciiData:
+		pBuffer += Ascii.CountNumberOfLeadingAsciiBytesFromUInt32WithSomeNonAsciiData(currentUInt32);
+		goto Finish;
+	}
+
+	/// <summary>
+	/// Returns the index in <paramref name="pBuffer"/> where the first non-ASCII char is found.
+	/// Returns <paramref name="bufferLength"/> if the buffer is empty or all-ASCII.
+	/// </summary>
+	/// <returns>An ASCII char is defined as 0x0000 - 0x007F, inclusive.</returns>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	internal static UIntPtr GetIndexOfFirstNonAsciiChar(Char* pBuffer, UIntPtr bufferLength)
+		=> Ascii.GetIndexOfFirstNonAsciiChar_Vector(pBuffer, bufferLength);
+	private static UIntPtr GetIndexOfFirstNonAsciiChar_Vector(Char* pBuffer, UIntPtr bufferLength)
+	{
+		Char* pOriginalBuffer = pBuffer;
+		UInt32 currentUInt32;
+
+		for (; bufferLength >= 4; bufferLength -= 4)
+		{
+			currentUInt32 = Unsafe.ReadUnaligned<UInt32>(pBuffer);
+			UInt32 nextUInt32 = Unsafe.ReadUnaligned<UInt32>(pBuffer + 4 / sizeof(Char));
+
+			if (!Ascii.AllCharsInUInt32AreAscii(currentUInt32 | nextUInt32))
+			{
+				if (Ascii.AllCharsInUInt32AreAscii(currentUInt32))
+				{
+					currentUInt32 = nextUInt32;
+					pBuffer += 2;
+				}
+
+				goto FoundNonAsciiData;
+			}
+
+			pBuffer += 4;
+		}
+
+		if ((bufferLength & 2) != 0)
+		{
+			currentUInt32 = Unsafe.ReadUnaligned<UInt32>(pBuffer);
+			if (!Ascii.AllCharsInUInt32AreAscii(currentUInt32)) goto FoundNonAsciiData;
+
+			pBuffer += 2;
+		}
+
+		if ((bufferLength & 1) != 0 && *pBuffer <= 0x007F)
+			pBuffer++;
+
+		Finish:
+
+		UIntPtr totalNumBytesRead = (UIntPtr)pBuffer - (UIntPtr)pOriginalBuffer;
+		return totalNumBytesRead / sizeof(Char);
+
+		FoundNonAsciiData:
+		if (Ascii.FirstCharInUInt32IsAscii(currentUInt32)) pBuffer++;
+
+		goto Finish;
+	}
+#endif
 }
 #endif

@@ -25,7 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Blc.Memory 10.0.8
+// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Bcl.Memory 10.0.8
 // (System.text.Unicode.Utf8Utility)
 
 #if !NETCOREAPP3_0_OR_GREATER && !NET462_OR_GREATER
@@ -264,12 +264,14 @@ internal static partial class Utf8Utility
 		=> (BitConverter.IsLittleEndian && UnicodeUtility.IsInRangeInclusive(value, 0x0080_0000u, 0x07FF_FFFFu)) ||
 			(!BitConverter.IsLittleEndian && ((value - 0x0080u) & 0xFFFFu) < 0x0780u);
 
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// Returns <see langword="true"/> iff <paramref name="value"/> is a UTF-8 continuation byte;
 	/// i.e., has binary representation 10xxxxxx, where x is any bit.
 	/// </summary>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	private static Boolean IsUtf8ContinuationByte(in Byte value) => (SByte)value < -64;
+#endif
 	/// <summary>
 	/// Given a 32-bit integer that represents two packed UTF-16 characters, all in machine-endian order,
 	/// returns true iff the two characters represent a well-formed UTF-16 surrogate pair.

@@ -1,4 +1,4 @@
-#if !PACKAGE || !NET6_0_OR_GREATER
+#if !NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal;
 
 // ReSharper disable once ClassCannotBeInstantiated
@@ -88,7 +88,7 @@ internal partial class ArrayMemoryManager<T>
 #endif
 		return span;
 	}
-#if !UAP || UAP10_0_16299
+#if !UAP10_0 || UAP10_0_16299
 	/// <inheritdoc cref="MemoryManager{T}.GetSpan()"/>
 	/// <param name="array">An <see cref="Array"/> instance.</param>
 #if NETFRAMEWORK || NETSTANDARD2_0

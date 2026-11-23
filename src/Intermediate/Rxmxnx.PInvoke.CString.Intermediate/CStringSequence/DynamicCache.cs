@@ -5,7 +5,9 @@ public partial class CStringSequence
 	/// <summary>
 	/// Dynamic <see cref="CString"/> cache.
 	/// </summary>
+#if !NET5_0_OR_GREATER
 	[Preserve(AllMembers = true, Conditional = true)]
+#endif
 	private sealed class DynamicCache : CStringCacheBase
 	{
 		/// <summary>

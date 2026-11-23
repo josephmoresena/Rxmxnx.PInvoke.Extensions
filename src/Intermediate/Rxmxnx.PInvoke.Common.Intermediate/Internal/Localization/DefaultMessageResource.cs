@@ -39,9 +39,13 @@ internal sealed class DefaultMessageResource : IMessageResource
 	String IMessageResource.IndexOutOfString => "Index and length must refer to a location within the string.";
 	String IMessageResource.LargerThanSequenceLength => "Cannot be larger than length of sequence.";
 	String IMessageResource.IndexOutOfSequence => "Index and length must refer to a location within the sequence.";
+#if !PACKAGE || !UAP10_0
 	String IMessageResource.MissingMemoryInspector => "Memory inspection is not supported on the current platform.";
-	String IMessageResource.ReflectionDisabled => "This feature requires reflection-full mode";
+#endif
 	String IMessageResource.InvalidSpanLayout => "Unable to identify the pinnable field in the Span<T> layout.";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
+	String IMessageResource.ReflectionDisabled => "This feature requires reflection-full mode";
+#endif
 
 	String IMessageResource.InvalidType(String requiredTypeName) => $"Object must be of type {requiredTypeName}.";
 	String IMessageResource.InvalidRefTypePointer(Type typeOf)
@@ -66,9 +70,13 @@ internal sealed class DefaultMessageResource : IMessageResource
 		=> $"Unable to retrieve metadata for {bufferType} buffer.";
 	String IMessageResource.MissingBufferMetadataException(Type itemType, UInt16 size)
 		=> $"Unable to create buffer for {itemType} {size} items.";
+#if !PACKAGE || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	String IMessageResource.InvalidToken(String currentToken, String expectedToken)
 		=> $"Unexpected token type: {currentToken}. Expected token type: {expectedToken}.";
+#endif
 	String IMessageResource.NotObjectType(Type type) => $"{type} is a ref struct; object boxing is not allowed.";
+#if !PACKAGE || NESTED_BUFFER_FEATURE
 	String IMessageResource.InvalidNestedBuffer(Type bufferType, Type type)
 		=> $"A {bufferType} buffer of cannot be casted to a {type} buffer.";
+#endif
 }

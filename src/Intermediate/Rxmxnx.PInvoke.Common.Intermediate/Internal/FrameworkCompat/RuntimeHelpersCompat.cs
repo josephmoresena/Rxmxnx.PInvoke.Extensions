@@ -1,3 +1,4 @@
+#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER && !UAP10_0_16299
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 /// <summary>
@@ -8,18 +9,6 @@ namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 #endif
 internal static class RuntimeHelpersCompat
 {
-	/// <summary>
-	/// Returns a value that indicates whether the specified type is a reference type or a value type that contains references.
-	/// </summary>
-	/// <typeparam name="T">The type.</typeparam>
-	/// <returns>
-	/// <see langword="true"/> if the given type is a reference type or value type that contains references; otherwise,
-	/// <see langword="false"/>.
-	/// </returns>
-#if NETSTANDARD2_1 || NETCOREAPP2_0_OR_GREATER || UAP10_0_16299
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static Boolean IsReferenceOrContainsReferences<T>() => RuntimeHelpers.IsReferenceOrContainsReferences<T>();
-#else
 	public static Boolean IsReferenceOrContainsReferences<T>() => !Info<T>.IsUnmanaged;
 
 	/// <summary>
@@ -69,5 +58,5 @@ internal static class RuntimeHelpersCompat
 		/// </summary>
 		public static readonly Boolean IsUnmanaged = !RuntimeHelpersCompat.IsReferenceOrContainsReferences(typeof(T));
 	}
-#endif
 }
+#endif

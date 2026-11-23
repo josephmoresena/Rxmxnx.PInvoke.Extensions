@@ -25,7 +25,7 @@ public sealed class UnicodeConstructor
 			CString c0 = new(text[0], i);
 			CString c1 = new(text[0], text[1], i);
 
-			PInvokeAssert.Equal(new(Enumerable.Repeat(text[0], i).ToArray()), c0.ToString());
+			PInvokeAssert.Equal(new([.. Enumerable.Repeat(text[0], i),]), c0.ToString());
 			PInvokeAssert.Equal(String.Concat(Enumerable.Repeat($"{text[0]}{text[1]}", i)), c1.ToString());
 		}
 	}

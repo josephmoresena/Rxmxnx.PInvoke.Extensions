@@ -1,11 +1,9 @@
+#if !NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal;
 
 /// <summary>
 /// Internal storage for array data offset.
 /// </summary>
-#if !PACKAGE && NET5_0_OR_GREATER
-[ExcludeFromCodeCoverage]
-#endif
 [StructLayout(LayoutKind.Sequential)]
 internal struct ArrayOffsets
 {
@@ -149,9 +147,10 @@ internal struct ArrayOffsets
 	public static ArrayOffsets Create()
 #if NETSTANDARD2_0_OR_GREATER || NETCOREAPP || NETFRAMEWORK || UAP10_0_16299
 		=> new();
-#elif !UAP
+#elif !UAP10_0
 		=> new() { _array = new IntPtr?[31], };
 #else
 		=> new() { _array = new IntPtr?[4], };
 #endif
 }
+#endif

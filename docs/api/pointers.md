@@ -25,7 +25,7 @@ runtimes already understand, not a general-purpose native pointer on every host.
 | `IsZero`      | Whether the pointer is null.         |
 | `Reference`   | `ref T` to the value at the address. |
 
-Use `Reference` to read or write without an `unsafe` block in your code. The write is as dangerous as any native store:
+Use `Reference` to read or write without an `unsafe` block in your code. Any write is as dangerous as any native store:
 the address must be valid and writable.
 
 On .NET 7.0+, `[NativeMarshalling]` sends this type across P/Invoke as a pointer to `T`.
@@ -66,7 +66,33 @@ FuncPtr<QueryFullProcessPath> query =
 Int32 result = query.Invoke(hProcess, 0, pathPtr, lengthPtr);
 ```
 
-On .NET 7.0+, this type also participates in source-generated marshalling.
+On .NET 7.0+, this type also participates in source-generated marshaling.
+
+## Pointers to ref structs
+
+`Span<T>`, `ReadOnlySpan<T>`, and `FixedPointerValueList` are ref structs. Visual Basic cannot store one in a
+variable, and neither can C# before 7.2. A caller that can store the ref struct takes its address and passes an
+ordinary struct. These types live in `Rxmxnx.PInvoke.VisualBasic`, with the other helpers for that caller. They are
+not exclusive to Visual Basic: a C# caller uses the same pointer when it must hand the address to code that cannot
+store the ref struct. There is no public constructor: use `CreateUnsafePtr`. The variable must stay alive while the
+pointer is used. A zero pointer returns the default value.
+
+On .NET 9.0 and later, `ValPtr<Span<T>>` and `ReadOnlyValPtr<ReadOnlySpan<T>>` replace the span pointers.
+`SpanPtr<T>` and `ReadOnlySpanPtr<T>` stay in the assembly and are hidden from editors. Convert forward with the
+implicit operator and back with the explicit operator. `FixedPointerValueListPtr` stays available on every TFM.
+
+| Type                       | Points at                          | What you call                                                                                                                                       |
+|----------------------------|------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `SpanPtr<T>`               | A `Span<T>` variable               | `GetSpan`                                                                                                                                           |
+| `ReadOnlySpanPtr<T>`       | A `ReadOnlySpan<T>` variable       | `GetSpan`                                                                                                                                           |
+| `FixedPointerValueListPtr` | A `FixedPointerValueList` variable | `Count`, `IsEmpty`, `IsReadOnly`, the indexer (`ItemValue`), `GetReadOnlyValuePointer<T>`, `GetValuePointer<T>`, `GetReadOnlySpan<T>`, `GetSpan<T>` |
+
+`ItemValue` is the block at that index. It is still a ref struct. `GetReadOnlyValuePointer<T>` and
+`GetValuePointer<T>` return a `ReadOnlyValPtr<T>` or a `ValPtr<T>` to the first value, because the pointer is what
+the caller keeps. They return the default pointer when the block cannot hold one `T` value.
+`GetReadOnlySpan<T>` and `GetSpan<T>` cover the whole block, or return empty when the transformation is not allowed.
+A write of a reference type is allowed only for the same type or `System.Object`. A write of a read-only block is
+not allowed. Unmanaged types can still be viewed as each other when the block is large enough.
 
 ## Creating pointers
 

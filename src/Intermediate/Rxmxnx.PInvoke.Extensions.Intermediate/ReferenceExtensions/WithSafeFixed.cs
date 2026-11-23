@@ -13,7 +13,7 @@ public static partial class ReferenceExtensions
 	/// <param name="action">An action to be performed on the fixed reference.</param>
 	/// <remarks>The location is fixed until the action completes.</remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T>(this ref T refValue, FixedReferenceAction<T> action) where T : unmanaged
+	public static void WithSafeFixed<T>(this ref T refValue, FixedReferenceAction<T> action) where T : struct
 		=> NativeUtilities.WithSafeFixed(ref refValue, action);
 	/// <summary>
 	/// Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes
@@ -24,7 +24,7 @@ public static partial class ReferenceExtensions
 	/// <param name="action">A read-only action to be performed on the fixed reference.</param>
 	/// <remarks>The location is fixed until the action completes.</remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void WithSafeFixed<T>(this ref T refValue, ReadOnlyFixedReferenceAction<T> action) where T : unmanaged
+	public static void WithSafeFixed<T>(this ref T refValue, ReadOnlyFixedReferenceAction<T> action) where T : struct
 		=> NativeUtilities.WithSafeReadOnlyFixed(ref refValue, action);
 
 	/// <summary>
@@ -39,7 +39,7 @@ public static partial class ReferenceExtensions
 	/// <remarks>The location is fixed until the action completes.</remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(this ref T refValue, TArg arg, FixedReferenceAction<T, TArg> action)
-		where T : unmanaged
+		where T : struct
 #if NET9_0_OR_GREATER
 		where TArg : allows ref struct
 #endif
@@ -56,7 +56,7 @@ public static partial class ReferenceExtensions
 	/// <remarks>The location is fixed until the action completes.</remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void WithSafeFixed<T, TArg>(this ref T refValue, TArg arg,
-		ReadOnlyFixedReferenceAction<T, TArg> action) where T : unmanaged
+		ReadOnlyFixedReferenceAction<T, TArg> action) where T : struct
 #if NET9_0_OR_GREATER
 		where TArg : allows ref struct
 #endif
@@ -74,7 +74,7 @@ public static partial class ReferenceExtensions
 	/// <remarks>The location is fixed until the function completes.</remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TResult>(this ref T refValue, FixedReferenceFunc<T, TResult> func)
-		where T : unmanaged
+		where T : struct
 		=> NativeUtilities.WithSafeFixed(ref refValue, func);
 	/// <summary>
 	/// Temporarily fixes the location of a reference by preventing the garbage collector from moving it and executes a
@@ -88,7 +88,7 @@ public static partial class ReferenceExtensions
 	/// <remarks>The location is fixed until the function completes.</remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TResult>(this ref T refValue, ReadOnlyFixedReferenceFunc<T, TResult> func)
-		where T : unmanaged
+		where T : struct
 		=> NativeUtilities.WithSafeReadOnlyFixed(ref refValue, func);
 
 	/// <summary>
@@ -105,7 +105,7 @@ public static partial class ReferenceExtensions
 	/// <remarks>The location is fixed until the function completes.</remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TArg, TResult>(this ref T refValue, TArg arg,
-		FixedReferenceFunc<T, TArg, TResult> func) where T : unmanaged
+		FixedReferenceFunc<T, TArg, TResult> func) where T : struct
 #if NET9_0_OR_GREATER
 		where TArg : allows ref struct
 #endif
@@ -124,7 +124,7 @@ public static partial class ReferenceExtensions
 	/// <remarks>The location is fixed until the function completes.</remarks>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static TResult WithSafeFixed<T, TArg, TResult>(this ref T refValue, TArg arg,
-		ReadOnlyFixedReferenceFunc<T, TArg, TResult> func) where T : unmanaged
+		ReadOnlyFixedReferenceFunc<T, TArg, TResult> func) where T : struct
 #if NET9_0_OR_GREATER
 		where TArg : allows ref struct
 #endif

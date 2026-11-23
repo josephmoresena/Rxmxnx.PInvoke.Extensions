@@ -11,7 +11,7 @@ public sealed class FixedDelegateTest : FixedMemoryTestsBase
 		String str2 = FixedMemoryTestsBase.Fixture.Create<String>();
 #if NETCOREAPP
 		Byte[] bytes = FixedMemoryTestsBase.Fixture.Create<Byte[]>();
-		Guid[] guids = FixedMemoryTestsBase.Fixture.CreateMany<Guid>(10).ToArray();
+		Guid[] guids = [.. FixedMemoryTestsBase.Fixture.CreateMany<Guid>(10),];
 #endif
 		Object obj = new();
 		Boolean called = false;

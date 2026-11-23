@@ -3,7 +3,9 @@ namespace Rxmxnx.PInvoke.Internal;
 /// <summary>
 /// Represents a non-generic wrapper around an <see cref="IFixedAction"/> implementation.
 /// </summary>
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 internal readonly struct NonGenericFixedAction : IFixedAction
 {
 	/// <summary>
@@ -47,7 +49,9 @@ internal readonly struct NonGenericFixedAction : IFixedAction
 /// Represents a non-generic wrapper around an <see cref="IFixedFunction{TResult}"/> implementation.
 /// </summary>
 /// <typeparam name="TResult">The type of the value returned by the function.</typeparam>
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 internal readonly struct NonGenericFixedFunction<TResult> : IFixedFunction<TResult>
 {
 	/// <summary>

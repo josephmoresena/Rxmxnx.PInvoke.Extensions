@@ -20,7 +20,9 @@ internal partial class MemoryInspector
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
+#if !NET5_0_OR_GREATER
 		[Preserve(AllMembers = true, Conditional = true)]
+#endif
 #if !PACKAGE
 		[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS4487)]
 #endif

@@ -64,12 +64,14 @@ public sealed class ConcatTest
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(String.Concat(strings[..2]),
 #else
+		// ReSharper disable once UseCollectionExpression
 		PInvokeAssert.Equal(String.Concat(strings.AsSpan()[..2].ToArray()),
 #endif
 		                    CString.Concat(TestSet.GetSpan(indices[0]), TestSet.GetSpan(indices[1])).ToString());
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(String.Concat(strings[..3]),
 #else
+		// ReSharper disable once UseCollectionExpression
 		PInvokeAssert.Equal(String.Concat(strings.AsSpan()[..3].ToArray()),
 #endif
 		                    CString.Concat(TestSet.GetSpan(indices[0]), TestSet.GetSpan(indices[1]),
@@ -77,6 +79,7 @@ public sealed class ConcatTest
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(String.Concat(strings[..4]),
 #else
+		// ReSharper disable once UseCollectionExpression
 		PInvokeAssert.Equal(String.Concat(strings.AsSpan()[..4].ToArray()),
 #endif
 		                    CString.Concat(TestSet.GetSpan(indices[0]), TestSet.GetSpan(indices[1]),
@@ -84,6 +87,7 @@ public sealed class ConcatTest
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(String.Concat(strings[..5]),
 #else
+		// ReSharper disable once UseCollectionExpression
 		PInvokeAssert.Equal(String.Concat(strings.AsSpan()[..5].ToArray()),
 #endif
 		                    CString.Concat(TestSet.GetSpan(indices[0]), TestSet.GetSpan(indices[1]),
@@ -92,6 +96,7 @@ public sealed class ConcatTest
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(String.Concat(strings[..6]),
 #else
+		// ReSharper disable once UseCollectionExpression
 		PInvokeAssert.Equal(String.Concat(strings.AsSpan()[..6].ToArray()),
 #endif
 		                    CString.Concat(TestSet.GetSpan(indices[0]), TestSet.GetSpan(indices[1]),
@@ -100,6 +105,7 @@ public sealed class ConcatTest
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 		PInvokeAssert.Equal(String.Concat(strings[..7]),
 #else
+		// ReSharper disable once UseCollectionExpression
 		PInvokeAssert.Equal(String.Concat(strings.AsSpan()[..7].ToArray()),
 #endif
 		                    CString.Concat(TestSet.GetSpan(indices[0]), TestSet.GetSpan(indices[1]),

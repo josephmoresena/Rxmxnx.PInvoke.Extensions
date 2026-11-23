@@ -25,9 +25,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Blc.Memory 10.0.8
+// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Bcl.Memory 10.0.8
 // (System.text.Unicode.Utf8Utility)
 
+// ReSharper disable ConvertGotoToBreakOrContinue
 #if !NETCOREAPP3_0_OR_GREATER && !NET462_OR_GREATER
 // ReSharper disable OutParameterValueIsAlwaysDiscarded.Local
 namespace System.Text.Unicode;
@@ -44,6 +45,7 @@ using IntPtr = nint;
 #endif
 internal static unsafe partial class Utf8Utility
 {
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	// Returns &inputBuffer[inputLength] if the input buffer is valid.
 	/// <summary>
 	/// Given an input buffer <paramref name="pInputBuffer"/> of byte length <paramref name="inputLength"/>,
@@ -361,5 +363,6 @@ internal static unsafe partial class Utf8Utility
 		scalarCountAdjustment = tempScalarCountAdjustment;
 		return pInputBuffer;
 	}
+#endif
 }
 #endif

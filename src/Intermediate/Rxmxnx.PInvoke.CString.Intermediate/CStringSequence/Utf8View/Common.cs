@@ -8,7 +8,9 @@ public partial class CStringSequence
 		/// <summary>
 		/// Enumerates the UTF-8 segments within a <see cref="CStringSequence"/>.
 		/// </summary>
+#if !NET5_0_OR_GREATER
 		[Preserve(AllMembers = true, Conditional = true)]
+#endif
 		public ref partial struct Enumerator
 		{
 			/// <summary>

@@ -15,11 +15,27 @@ internal sealed class CStringConcatenator : BinaryConcatenator<CString>
 	/// Initializes a new instance of the <see cref="CStringConcatenator"/> class
 	/// without a specified separator.
 	/// </summary>
+	public CStringConcatenator() : this(default) { }
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CStringConcatenator"/> class
+	/// with a specified separator.
+	/// </summary>
+	/// <param name="separator">
+	/// The <see cref="CString"/> to use as a separator in the concatenation.
+	/// </param>
+	public CStringConcatenator(CString? separator) : base(separator)
+		=> this._ignoreEmpty = !CString.IsNullOrEmpty(separator);
+#else
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CStringConcatenator"/> class
+	/// without a specified separator.
+	/// </summary>
 	/// <param name="cancellationToken">
 	/// The token to monitor for cancellation requests.
 	/// The default value is <see cref="CancellationToken.None"/>.
 	/// </param>
-	public CStringConcatenator(CancellationToken cancellationToken = default) : this(default, cancellationToken) { }
+	public CStringConcatenator(CancellationToken cancellationToken) : this(default, cancellationToken) { }
 	/// <summary>
 	/// Initializes a new instance of the <see cref="CStringConcatenator"/> class
 	/// with a specified separator.
@@ -34,6 +50,7 @@ internal sealed class CStringConcatenator : BinaryConcatenator<CString>
 	public CStringConcatenator(CString? separator, CancellationToken cancellationToken = default) :
 		base(separator, cancellationToken)
 		=> this._ignoreEmpty = !CString.IsNullOrEmpty(separator);
+#endif
 
 	/// <inheritdoc/>
 	protected override void WriteValue(CString? value) => value?.Write(this.Stream, false);

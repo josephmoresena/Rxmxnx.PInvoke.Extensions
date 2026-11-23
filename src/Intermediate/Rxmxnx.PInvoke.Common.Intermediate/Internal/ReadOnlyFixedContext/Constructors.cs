@@ -6,6 +6,7 @@ namespace Rxmxnx.PInvoke.Internal;
 internal unsafe partial class ReadOnlyFixedContext<T>
 #pragma warning disable CS8500
 {
+#if !PACKAGE || NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a fixed memory block,
 	/// and a count of items.
@@ -13,6 +14,8 @@ internal unsafe partial class ReadOnlyFixedContext<T>
 	/// <param name="ptr">The pointer to the fixed memory block.</param>
 	/// <param name="count">The number of items of type <typeparamref name="T"/> in the memory block.</param>
 	public ReadOnlyFixedContext(void* ptr, Int32 count) : base(ptr, count * sizeof(T), true) => this.Count = count;
+#endif
+#if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using a pointer to a fixed memory block,
 	/// a count of items, and a validity wrapper.
@@ -23,6 +26,7 @@ internal unsafe partial class ReadOnlyFixedContext<T>
 	public ReadOnlyFixedContext(void* ptr, Int32 count, FixedValueHandle handle) : base(
 		ptr, count * sizeof(T), true, handle)
 		=> this.Count = count;
+#endif
 	/// <summary>
 	/// Constructs a new <see cref="ReadOnlyFixedContext{T}"/> instance using an offset and a fixed memory instance.
 	/// </summary>

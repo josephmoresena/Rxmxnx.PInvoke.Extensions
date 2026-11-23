@@ -7,7 +7,9 @@ public partial class CStringBuilder
 		/// <summary>
 		/// Structure containing metadata required to copy chunks.
 		/// </summary>
+#if !NET5_0_OR_GREATER
 		[Preserve(AllMembers = true, Conditional = true)]
+#endif
 		public readonly struct CopyInfo
 		{
 			public Chunk Chunk

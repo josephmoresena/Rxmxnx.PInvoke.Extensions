@@ -254,7 +254,7 @@ public sealed class FixedMemoryListTest
 		this.ActionFullTest(fml);
 		Byte[][] result = new Byte[fml.Count][];
 		for (Int32 i = 0; i < fml.Count; i++)
-			result[i] = fml[i].Bytes.ToArray();
+			result[i] = [.. fml[i].Bytes,];
 		return result;
 	}
 	[Obsolete]
@@ -263,7 +263,7 @@ public sealed class FixedMemoryListTest
 		this.ActionTest(fml, false);
 		Byte[][] result = new Byte[fml.Count][];
 		for (Int32 i = 0; i < fml.Count; i++)
-			result[i] = fml[i].Bytes.ToArray();
+			result[i] = [.. fml[i].Bytes,];
 		return result;
 	}
 	[Obsolete]
@@ -272,7 +272,7 @@ public sealed class FixedMemoryListTest
 		this.ActionTest(fml, true);
 		Byte[][] result = new Byte[fml.Count][];
 		for (Int32 i = 0; i < fml.Count; i++)
-			result[i] = fml[i].Bytes.ToArray();
+			result[i] = [.. fml[i].Bytes,];
 		return result;
 	}
 	private void ArrayTest(Byte[][] bytes)

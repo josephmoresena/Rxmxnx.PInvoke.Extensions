@@ -9,7 +9,9 @@ public partial class CStringSequence
 	/// <summary>
 	/// A stack-only view over the UTF-8 items on a <see cref="CStringSequence"/>, with control over empty entries.
 	/// </summary>
+#if !NET5_0_OR_GREATER
 	[Preserve(AllMembers = true)]
+#endif
 	[DebuggerDisplay("Count = {Count}")]
 	[DebuggerTypeProxy(typeof(CStringSequenceDebugView))]
 	[StructLayout(LayoutKind.Sequential)]

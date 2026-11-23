@@ -6,7 +6,9 @@
 /// </summary>
 /// <typeparam name="T">The type of elements in the sequence.</typeparam>
 /// <typeparam name="TEnumerable">The type of the current enumerable.</typeparam>
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 internal sealed class SequenceEnumerator<T, TEnumerable> : IEnumerator<T> where TEnumerable : IEnumerableSequence<T>
 #if NET9_0_OR_GREATER
 	where T : allows ref struct

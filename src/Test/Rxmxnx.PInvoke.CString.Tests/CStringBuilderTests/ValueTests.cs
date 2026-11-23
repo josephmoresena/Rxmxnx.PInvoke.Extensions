@@ -277,7 +277,7 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		];
 		T?[] valuesNull =
 		[
-			.. nullableValues.OrderBy(i => new Guid()),
+			.. nullableValues.OrderBy(_ => new Guid()),
 		];
 		StringBuilder strBuild = new();
 		CStringBuilder cstrBuild = new();
@@ -304,7 +304,7 @@ public sealed class ValueTests : CStringBuilderTestsBase
 		];
 		T?[] valuesNull =
 		[
-			.. nullableValues.OrderBy(i => new Guid()),
+			.. nullableValues.OrderBy(_ => new Guid()),
 		];
 		String? seed = TestSet.GetString(TestSet.GetIndices(1).FirstOrDefault(), true);
 		StringBuilder strBuild = new(seed);

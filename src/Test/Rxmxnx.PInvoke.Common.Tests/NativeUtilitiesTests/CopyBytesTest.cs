@@ -8,6 +8,15 @@ public sealed class CopyBytesTest
 	private static readonly IFixture fixture = new Fixture();
 
 	[Fact]
+	public void ManagedTest() => PInvokeAssert.Throws<ArgumentException>(CopyBytesTest.CopyManaged);
+
+	private static void CopyManaged()
+	{
+		Span<Byte> bytes = stackalloc Byte[8];
+		NativeUtilities.CopyBytes(default(KeyValuePair<Int32, String>), bytes);
+	}
+
+	[Fact]
 	public void ExceptionTest()
 	{
 		PInvokeAssert.Throws<InsufficientMemoryException>(() =>

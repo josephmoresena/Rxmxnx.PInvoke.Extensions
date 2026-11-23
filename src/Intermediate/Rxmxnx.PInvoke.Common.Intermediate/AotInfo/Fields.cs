@@ -6,7 +6,7 @@ public static partial class AotInfo
 	/// Indicates whether the current runtime is ahead-of-time.
 	/// </summary>
 	private static readonly Boolean isAotRuntime =
-#if UAP
+#if UAP10_0
 		// .NET Native -> Empty non-literal and SharedLibrary.McgInterop assembly.
 		!MemoryInspector.Instance.IsLiteral(TrimInfo.EmptyUt8Text()) && AppDomain.CurrentDomain.GetAssemblies()
 			.Any(a => a.FullName.Contains("SharedLibrary.McgInterop"));

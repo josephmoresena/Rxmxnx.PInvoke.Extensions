@@ -215,22 +215,19 @@ public sealed class WithSafeFixedTest
 	private T[] FuncTest<T>(in IFixedContext<T> ctx) where T : unmanaged
 	{
 		this.ActionTest(ctx);
-		// ReSharper disable once UseCollectionExpression
-		return ctx.Values.ToArray();
+		return [.. ctx.Values,];
 	}
 	[Obsolete]
 	private T[] FuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
 	{
 		this.ActionReadOnlyTest(ctx);
-		// ReSharper disable once UseCollectionExpression
-		return ctx.Values.ToArray();
+		return [.. ctx.Values,];
 	}
 	[Obsolete]
 	private T[] ReadOnlyFuncReadOnlyTest<T>(in IReadOnlyFixedContext<T> ctx) where T : unmanaged
 	{
 		this.ReadOnlyActionReadOnlyTest(ctx);
-		// ReSharper disable once UseCollectionExpression
-		return ctx.Values.ToArray();
+		return [.. ctx.Values,];
 	}
 
 	[Obsolete]

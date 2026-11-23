@@ -25,7 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Blc.Memory 10.0.8
+// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Bcl.Memory 10.0.8
 // (System.text.Unicode.Utf8Utility)
 
 #if !NETCOREAPP3_0_OR_GREATER && !NET462_OR_GREATER
@@ -42,6 +42,7 @@ namespace System.Text.Unicode;
 #endif
 internal static partial class Utf8Utility
 {
+#if !PACKAGE || USE_COMPLETE_BLC_CODE
 	/// <summary>
 	/// The maximum number of bytes that can result from UTF-8 transcoding
 	/// any Unicode scalar value.
@@ -184,5 +185,6 @@ internal static partial class Utf8Utility
 			2;
 		return (valueA | letterMaskA) == (valueB | letterMaskB);
 	}
+#endif
 }
 #endif

@@ -74,6 +74,7 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 		this.BufferMetadata = bufferTypeMetadata;
 		this._array = default;
 	}
+#if !PACKAGE
 	/// <summary>
 	/// Internal constructor.
 	/// </summary>
@@ -86,6 +87,7 @@ public sealed unsafe class VbScopedBuffer<T> : IEnumerableSequence<T>
 		this.BufferMetadata = default;
 		this._pointer = default;
 	}
+#endif
 
 	T IEnumerableSequence<T>.GetItem(Int32 index) => this[index];
 	Int32 IEnumerableSequence<T>.GetSize() => this.Length;

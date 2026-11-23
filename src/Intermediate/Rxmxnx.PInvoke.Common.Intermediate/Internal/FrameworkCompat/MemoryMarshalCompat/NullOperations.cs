@@ -1,3 +1,4 @@
+#if !PACKAGE || !NET6_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 #if !PACKAGE
@@ -21,22 +22,12 @@ internal static unsafe partial class MemoryMarshalCompat
 #endif
 	public static ReadOnlySpan<Byte> CreateReadOnlySpanFromNullTerminated(Byte* value)
 	{
-#if !PACKAGE || !NET6_0_OR_GREATER
 		if (value == IntPtr.Zero.ToPointer())
 			return default;
 
 		ref Byte ref0 = ref *value;
 		Int32 length = MemoryMarshalCompat.IndexOfNull(ref ref0);
-		return length >= 0 ?
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-			MemoryMarshal.CreateReadOnlySpan(ref ref0, length) :
-#else
-			new(value, length) :
-#endif
-			throw new ArgumentException(null, nameof(value));
-#else
-		return MemoryMarshal.CreateReadOnlySpanFromNullTerminated(value);
-#endif
+		return length >= 0 ? new(value, length) : throw new ArgumentException(null, nameof(value));
 	}
 	/// <summary>
 	/// Creates a new read-only span for a null-terminated string.
@@ -52,24 +43,14 @@ internal static unsafe partial class MemoryMarshalCompat
 #endif
 	public static ReadOnlySpan<Char> CreateReadOnlySpanFromNullTerminated(Char* value)
 	{
-#if !PACKAGE || !NET6_0_OR_GREATER
 		if (value == IntPtr.Zero.ToPointer())
 			return default;
 
 		ref Char ref0 = ref *value;
 		Int32 length = MemoryMarshalCompat.IndexOfNull(ref ref0);
-		return length >= 0 ?
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-			MemoryMarshal.CreateReadOnlySpan(ref ref0, length) :
-#else
-			new(value, length) :
-#endif
-			throw new ArgumentException(null, nameof(value));
-#else
-		return MemoryMarshal.CreateReadOnlySpanFromNullTerminated(value);
-#endif
+		return length >= 0 ? new(value, length) : throw new ArgumentException(null, nameof(value));
 	}
-#if !PACKAGE || !NET6_0_OR_GREATER
+#if !PACKAGE || !NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Retrieves the index of the first null occurrence in the buffer represented by <paramref name="buffer"/>.
 	/// </summary>
@@ -97,3 +78,4 @@ internal static unsafe partial class MemoryMarshalCompat
 	}
 #endif
 }
+#endif

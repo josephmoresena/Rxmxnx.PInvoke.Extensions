@@ -2,6 +2,10 @@
 using Array = Rxmxnx.PInvoke.Internal.FrameworkCompat.ArrayCompat;
 #endif
 
+#if !NETSTANDARD2_1 && !NETCOREAPP2_0_OR_GREATER && !UAP10_0_16299
+using RuntimeHelpers = Rxmxnx.PInvoke.Internal.FrameworkCompat.RuntimeHelpersCompat;
+#endif
+
 // ReSharper disable ConvertToExtensionBlock
 
 namespace Rxmxnx.PInvoke;
@@ -29,7 +33,12 @@ public static class UnmanagedValueExtensions
 	/// <paramref name="value"/>,
 	/// or <see langword="null"/> if no such constant is found.
 	/// </returns>
-	public static String? GetName<TEnum>(this TEnum value) where TEnum : struct, Enum => EnumCompat.GetName(value);
+	public static String? GetName<TEnum>(this TEnum value) where TEnum : struct, Enum
+#if !NET5_0_OR_GREATER
+		=> EnumCompat.GetName(value);
+#else
+		=> Enum.GetName(value);
+#endif
 #if NETSTANDARD2_1 || NETCOREAPP3_0_OR_GREATER
 	/// <summary>
 	/// Rents and pins an array of minimum <paramref name="count"/> elements from <paramref name="arrayPool"/>,
@@ -100,7 +109,7 @@ public static class UnmanagedValueExtensions
 	/// <param name="value">The value to convert.</param>
 	/// <returns>An array of bytes that represent the input value.</returns>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static Byte[] ToBytes<T>(this T value) where T : unmanaged => NativeUtilities.ToBytes(value);
+	public static Byte[] ToBytes<T>(this T value) where T : struct => NativeUtilities.ToBytes(value);
 	/// <summary>
 	/// Converts an array of <see langword="unmanaged"/> values of type <typeparamref name="TSource"/> into an array
 	/// of <see cref="Byte"/>.
@@ -119,10 +128,16 @@ public static class UnmanagedValueExtensions
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	[return: NotNullIfNotNull(nameof(array))]
-	public static Byte[]? ToBytes<TSource>(this TSource[]? array) where TSource : unmanaged
-		=> array is not null ?
-			UnmanagedValueExtensions.ToArray(MemoryMarshal.AsBytes(array.AsReadOnlySpan())) :
-			default;
+	public static Byte[]? ToBytes<TSource>(this TSource[]? array) where TSource : struct
+	{
+		if (array is null)
+			return default;
+		// ReSharper disable once ConvertIfStatementToReturnStatement
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<TSource>())
+			// ReSharper disable once UseCollectionExpression
+			return Array.Empty<Byte>();
+		return UnmanagedValueExtensions.ToArray(array.AsReadOnlySpan().AsValues<TSource, Byte>());
+	}
 
 	/// <summary>
 	/// Converts an array of <see langword="unmanaged"/> values of type <typeparamref name="TSource"/> into an array
@@ -148,10 +163,17 @@ public static class UnmanagedValueExtensions
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	[return: NotNullIfNotNull(nameof(array))]
 	public static TDestination[]? ToValues<TSource, TDestination>(this TSource[]? array)
-		where TSource : unmanaged where TDestination : unmanaged
-		=> array is not null ?
-			UnmanagedValueExtensions.ToArray(array.AsReadOnlySpan().AsValues<TSource, TDestination>()) :
-			default;
+		where TSource : struct where TDestination : struct
+	{
+		if (array is null)
+			return default;
+		// ReSharper disable once ConvertIfStatementToReturnStatement
+		if (RuntimeHelpers.IsReferenceOrContainsReferences<TSource>() ||
+		    RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>())
+			// ReSharper disable once UseCollectionExpression
+			return Array.Empty<TDestination>();
+		return UnmanagedValueExtensions.ToArray(array.AsReadOnlySpan().AsValues<TSource, TDestination>());
+	}
 	/// <summary>
 	/// Converts an array of <see langword="unmanaged"/> values of type <typeparamref name="TSource"/> into an array
 	/// of another <see langword="unmanaged"/> value type <typeparamref name="TDestination"/>.
@@ -219,7 +241,7 @@ public static class UnmanagedValueExtensions
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
-	private static T[] ToArray<T>(ReadOnlySpan<T> span) where T : unmanaged
+	private static T[] ToArray<T>(ReadOnlySpan<T> span) where T : struct
 	{
 		// ReSharper disable once UseCollectionExpression
 		if (span.IsEmpty) return Array.Empty<T>();
@@ -236,7 +258,7 @@ public static class UnmanagedValueExtensions
 	[ExcludeFromCodeCoverage]
 #endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	private static T[] CreateValueArray<T>(Int32 length) where T : unmanaged
+	private static T[] CreateValueArray<T>(Int32 length) where T : struct
 	{
 #if NET5_0_OR_GREATER
 		return GC.AllocateUninitializedArray<T>(length);

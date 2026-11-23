@@ -41,7 +41,7 @@ https://raw.githubusercontent.com/Cyan4973/xxHash/5c174cfa4e45a42f94082dc0d4539b
 
 */
 
-// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Blc.HashCode 1.0.0
+// Adopted and adapted by Joseph Moreno in 2026 based on code from Microsoft.Bcl.HashCode 1.0.0
 // (System.HashCode)
 
 // ReSharper disable ConvertIfStatementToSwitchStatement

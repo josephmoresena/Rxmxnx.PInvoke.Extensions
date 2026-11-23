@@ -55,10 +55,8 @@ public sealed class ValueTest
 		IReferenceableWrapper<T> value = WrapperFactory.CreateReadOnlyReferenceable(ValueTest.fixture.Create<T>());
 #endif
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
-		Byte[] bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref Unsafe.AsRef(in value.Reference), 1))
-		                            .ToArray();
+		Byte[] bytes = [.. MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref Unsafe.AsRef(in value.Reference), 1)),];
 #else
-
 		Byte[] bytes = NativeUtilities.ToBytes(in value.Reference);
 #endif
 
@@ -144,7 +142,7 @@ public sealed class ValueTest
 #else
 				PInvokeAssert.Equal(bytes, fRef2.Bytes.ToArray());
 			else
-				PInvokeAssert.Equal(bytes, fRef2.Bytes.ToArray().Concat(residual.Bytes.ToArray()));
+				PInvokeAssert.Equal(bytes, fRef2.Bytes.ToArray().Concat([.. residual.Bytes,]));
 
 			PInvokeAssert.Equal(sizeof(T) == sizeof(T2), residual.Bytes.IsEmpty);
 			PInvokeAssert.Equal(sizeof(T) == sizeof(T2), ctxR.Bytes.IsEmpty);

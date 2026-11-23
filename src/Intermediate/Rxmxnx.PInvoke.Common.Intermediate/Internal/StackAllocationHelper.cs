@@ -10,6 +10,7 @@ internal static class StackAllocationHelper
 	/// </summary>
 	internal const Int32 StackallocByteThreshold = 256;
 
+#if !UAP10_0
 	/// <summary>
 	/// Threshold for stackalloc usage in bytes.
 	/// </summary>
@@ -42,6 +43,19 @@ internal static class StackAllocationHelper
 		stackConsumed += stackRequired; // Update the consumed bytes.
 		return true;
 	}
+	/// <summary>
+	/// Releases previously consumed stack bytes.
+	/// </summary>
+	/// <param name="stackConsumed">The number of consumed stack bytes to release.</param>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ReleaseStackBytes(Int32 stackConsumed)
+	{
+		if (stackConsumed <= 0) return; // No bytes to release, return.
+		StackAllocationHelper.stackallocByteConsumed -= stackConsumed;
+		if (StackAllocationHelper.stackallocByteConsumed < 0)
+			StackAllocationHelper.stackallocByteConsumed = 0; // Prevent negative consumption.
+	}
+#endif
 	/// <summary>
 	/// Indicates whether if the required size is allocatable on the current stack.
 	/// </summary>
@@ -85,18 +99,6 @@ internal static class StackAllocationHelper
 	{
 		if (tArray is not null)
 			ArrayPool<T>.Shared.Return(tArray);
-	}
-	/// <summary>
-	/// Releases previously consumed stack bytes.
-	/// </summary>
-	/// <param name="stackConsumed">The number of consumed stack bytes to release.</param>
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void ReleaseStackBytes(Int32 stackConsumed)
-	{
-		if (stackConsumed <= 0) return; // No bytes to release, return.
-		StackAllocationHelper.stackallocByteConsumed -= stackConsumed;
-		if (StackAllocationHelper.stackallocByteConsumed < 0)
-			StackAllocationHelper.stackallocByteConsumed = 0; // Prevent negative consumption.
 	}
 	/// <summary>
 	/// Determines whether a buffer of size <paramref name="bufferLength"/> can be reused to store a UTF-8 encoded

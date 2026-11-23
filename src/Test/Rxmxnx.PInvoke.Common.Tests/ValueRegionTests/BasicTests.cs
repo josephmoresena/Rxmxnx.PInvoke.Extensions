@@ -61,7 +61,7 @@ public sealed class BasicTests : ValueRegionTestBase
 	{
 		BasicTests.Test<String>();
 		ValueRegion<String> region =
-			ValueRegion<String>.Create(ValueRegionTestBase.Fixture.CreateMany<String>(10).ToArray());
+			ValueRegion<String>.Create([.. ValueRegionTestBase.Fixture.CreateMany<String>(10),]);
 		Assert.False(region.TryAlloc(GCHandleType.Pinned, out _));
 	}
 #endif

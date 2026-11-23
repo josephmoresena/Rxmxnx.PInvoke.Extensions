@@ -117,24 +117,6 @@ internal static class BuffersHelper
 #endif
 	}
 	/// <summary>
-	/// Retrieves the binary capacity for <paramref name="count"/>.
-	/// </summary>
-	/// <param name="count">Number of items in the binary space.</param>
-	/// <returns>The amount of the binary capacity.</returns>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
-#endif
-	public static UInt16 GetCapacityFor(UInt16 count)
-	{
-		Debug.Assert(count > 0);
-		UInt32 value = count;
-		value |= value >> 1;
-		value |= value >> 2;
-		value |= value >> 4;
-		value |= value >> 8;
-		return (UInt16)value;
-	}
-	/// <summary>
 	/// Retrieves the component sizes for given <paramref name="count"/>.
 	/// </summary>
 	/// <param name="components">Components buffer.</param>
@@ -153,6 +135,7 @@ internal static class BuffersHelper
 		}
 		return components[..found];
 	}
+#if !PACKAGE || !NET7_0_OR_GREATER
 	/// <summary>
 	/// Retrieves the static metadata required for a buffer of <typeparamref name="TBuffer"/> type.
 	/// </summary>
@@ -176,6 +159,7 @@ internal static class BuffersHelper
 		return IManagedBuffer<T>.GetMetadata<TBuffer>();
 #endif
 	}
+#endif
 	/// <summary>
 	/// Element count of <see cref="Composite{TBufferA,TBufferB,T}"/>.
 	/// </summary>
@@ -215,6 +199,7 @@ internal static class BuffersHelper
 #pragma warning restore CS8500
 		return sizeA <= sizeB && (sizeB & (sizeB - 1)) == 0;
 	}
+#if !PACKAGE || !NET7_0_OR_GREATER
 	/// <summary>
 	/// Retrieves metadata required for a buffer of <typeparamref name="TBuffer"/> type.
 	/// </summary>
@@ -233,6 +218,7 @@ internal static class BuffersHelper
 #endif
 		return BuffersHelper.GetStaticMetadata<T, TBuffer>();
 	}
+#endif
 #if !PACKAGE
 	/// <summary>
 	/// Retrieves metadata required for a buffer of <paramref name="bufferType"/> type.

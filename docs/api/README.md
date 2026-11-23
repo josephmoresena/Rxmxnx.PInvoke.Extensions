@@ -42,5 +42,7 @@ complete member-level contract.
 
 ## Namespaces
 
-Almost everything lives in `Rxmxnx.PInvoke`. Visual Basic helpers live in `Rxmxnx.PInvoke.VisualBasic`. Buffer types
-that you register or compose live in `Rxmxnx.PInvoke.Buffers` as well as the root namespace.
+Almost everything lives in `Rxmxnx.PInvoke`. Visual Basic and pre-C# 7.0 helpers live in `Rxmxnx.PInvoke.VisualBasic`,
+including the ordinary structs that point at a `Span<T>`, a `ReadOnlySpan<T>`, or a `FixedPointerValueList`.
+Buffer types that you register or compose live in
+`Rxmxnx.PInvoke.Buffers` as well as the root namespace.

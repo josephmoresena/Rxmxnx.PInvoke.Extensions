@@ -67,9 +67,7 @@ public partial class ValueRegion<T>
 			ref T refValue = ref Unsafe.AsRef<T>(this.Pointer.ToPointer());
 			return MemoryMarshal.CreateReadOnlySpan(ref refValue, this._length);
 #else
-			return typeof(T).IsPrimitive ?
-				new(this.Pointer.ToPointer(), this._length) :
-				MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(this.Pointer.ToPointer(), this._length);
+			return MemoryMarshalCompat.CreateUnsafeReadOnlySpan<T>(this.Pointer.ToPointer(), this._length);
 #endif
 		}
 		/// <inheritdoc/>

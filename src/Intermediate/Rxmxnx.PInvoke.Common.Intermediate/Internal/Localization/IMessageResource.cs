@@ -73,18 +73,22 @@ internal interface IMessageResource
 	/// Message for index out of sequence exception.
 	/// </summary>
 	String IndexOutOfSequence { get; }
+#if !PACKAGE || !UAP10_0
 	/// <summary>
 	/// Message for missing memory inspector.
 	/// </summary>
 	String MissingMemoryInspector { get; }
-	/// <summary>
-	/// Message for reflection disabled.
-	/// </summary>
-	String ReflectionDisabled { get; }
+#endif
 	/// <summary>
 	/// Message for an invalid three-field span layout.
 	/// </summary>
 	String InvalidSpanLayout { get; }
+#if !PACKAGE || NESTED_BUFFER_FEATURE
+	/// <summary>
+	/// Message for reflection disabled.
+	/// </summary>
+	String ReflectionDisabled { get; }
+#endif
 
 	/// <summary>
 	/// Message for an invalid pointer value exception.
@@ -142,16 +146,20 @@ internal interface IMessageResource
 	/// Message for missing buffer metadata exception.
 	/// </summary>
 	String MissingBufferMetadataException(Type bufferType);
+#if !PACKAGE || NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	/// <summary>
 	/// Message for an invalid string token exception.
 	/// </summary>
 	String InvalidToken(String currentToken, String expectedToken);
+#endif
 	/// <summary>
 	/// Message for a not object type.
 	/// </summary>
 	String NotObjectType(Type type);
+#if !PACKAGE || NESTED_BUFFER_FEATURE
 	/// <summary>
 	/// Message for an invalid nested buffer type operation.
 	/// </summary>
 	String InvalidNestedBuffer(Type bufferType, Type type);
+#endif
 }

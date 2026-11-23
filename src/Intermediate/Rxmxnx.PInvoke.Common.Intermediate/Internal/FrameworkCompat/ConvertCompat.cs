@@ -29,6 +29,7 @@ SOFTWARE.
 // Adopted and adapted by Joseph Moreno in 2025 based on code from .NET 6.0 CoreCLR
 // (System.Convert / System.HexConverter )
 
+#if !PACKAGE || !NET5_0_OR_GREATER
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
 
 /// <summary>
@@ -51,7 +52,6 @@ internal static class ConvertCompat
 #endif
 	public static unsafe String ToHexString(ReadOnlySpan<Byte> bytes)
 	{
-#if !PACKAGE || !NET5_0_OR_GREATER
 #if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
 		fixed (Byte* bytesPtr = &MemoryMarshal.GetReference(bytes))
 		{
@@ -74,9 +74,6 @@ internal static class ConvertCompat
 		}
 		return chars.ToString();
 #endif
-#else
-		return Convert.ToHexString(bytes);
-#endif
 	}
 
 #if !PACKAGE || !NET5_0_OR_GREATER
@@ -98,3 +95,4 @@ internal static class ConvertCompat
 
 #endif
 }
+#endif

@@ -7,7 +7,9 @@ namespace Rxmxnx.PInvoke;
 /// <remarks>
 /// This list can be used for safe operations with fixed blocks of memory using pointers.
 /// </remarks>
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 #if OBSOLETE_FIXED_INTERFACES && !GITHUB_ACTIONS
 [EditorBrowsable(EditorBrowsableState.Never)]
 [Obsolete(ObsoleteConstants.ObsoleteFixedMemoryList, ObsoleteConstants.ErrorFixedInterface)]
@@ -110,7 +112,9 @@ public readonly ref struct FixedMemoryList
 	/// <summary>
 	/// Enumerates the elements of a <see cref="FixedMemoryList"/>.
 	/// </summary>
+#if !NET5_0_OR_GREATER
 	[Preserve(AllMembers = true, Conditional = true)]
+#endif
 	public ref struct Enumerator
 	{
 		/// <summary>

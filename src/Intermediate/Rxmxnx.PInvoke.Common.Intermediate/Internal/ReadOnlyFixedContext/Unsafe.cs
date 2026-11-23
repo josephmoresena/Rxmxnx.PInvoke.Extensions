@@ -28,6 +28,7 @@ internal unsafe partial class ReadOnlyFixedContext<T>
 		ReadOnlyFixedContext<T> ctx = new(valPtr, count);
 		return ctx.ToDisposable(disposable);
 	}
+#if !PACKAGE || !NET5_0_OR_GREATER
 	/// <summary>
 	/// Creates a new <see cref="ReadOnlyFixedMemory"/> instance.
 	/// </summary>
@@ -40,6 +41,7 @@ internal unsafe partial class ReadOnlyFixedContext<T>
 #endif
 	public static ReadOnlyFixedMemory CreateInstance(IntPtr ptr, Int32 count, FixedValueHandle handle)
 		=> new ReadOnlyFixedContext<T>(ptr.ToPointer(), count, handle);
+#endif
 #if NET5_0_OR_GREATER
 	/// <summary>
 	/// Creates a new <see cref="ReadOnlyFixedMemory"/> instance.

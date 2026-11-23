@@ -1,3 +1,4 @@
+#if !NET5_0_OR_GREATER
 // ReSharper disable NotAccessedField.Global
 
 namespace Rxmxnx.PInvoke.Internal.FrameworkCompat;
@@ -36,3 +37,4 @@ internal sealed class PreserveAttribute : Attribute
 	// ReSharper disable once UnusedParameter.Local
 	public PreserveAttribute(Type type) { }
 }
+#endif

@@ -3,7 +3,9 @@
 /// <summary>
 /// Represents a list of <see cref="FixedPointerValue"/> instances.
 /// </summary>
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
@@ -126,7 +128,9 @@ public readonly ref struct FixedPointerValueList
 	/// <summary>
 	/// <see cref="FixedPointerValueList"/> item value.
 	/// </summary>
+#if !NET5_0_OR_GREATER
 	[Preserve(AllMembers = true, Conditional = true)]
+#endif
 	public readonly ref struct ItemValue
 #if NET9_0_OR_GREATER
 		: IFixedPointer, IWrapper.IBase<FixedPointerValue>
@@ -169,7 +173,9 @@ public readonly ref struct FixedPointerValueList
 	/// <summary>
 	/// Enumerates the elements of a <see cref="FixedPointerValueList"/>.
 	/// </summary>
+#if !NET5_0_OR_GREATER
 	[Preserve(AllMembers = true, Conditional = true)]
+#endif
 	public ref struct Enumerator
 	{
 		/// <summary>

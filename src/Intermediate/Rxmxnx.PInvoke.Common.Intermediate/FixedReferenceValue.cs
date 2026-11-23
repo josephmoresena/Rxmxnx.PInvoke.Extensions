@@ -8,7 +8,9 @@ namespace Rxmxnx.PInvoke;
 /// Ref-struct representing a fixed reference to a <typeparamref name="T"/> value.
 /// </summary>
 /// <typeparam name="T">Type of the referenced value.</typeparam>
+#if !NET5_0_OR_GREATER
 [Preserve(AllMembers = true)]
+#endif
 #if !PACKAGE
 [SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS6640)]
 #endif
@@ -139,7 +141,7 @@ public readonly unsafe ref partial struct FixedReferenceValue<T>
 	{
 		this._value.ValidateOperation();
 		this._value.ValidateTransformation(typeof(TDestination),
-		                                   !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>());
+		                                   !RuntimeHelpers.IsReferenceOrContainsReferences<TDestination>(), false);
 		Int32 sizeOf = sizeof(TDestination);
 		this._value.ValidateReferenceSize(typeof(TDestination), sizeOf);
 		residual = this._value.CreateOffset(sizeOf);
@@ -166,7 +168,7 @@ public readonly unsafe ref partial struct FixedReferenceValue<T>
 	public static explicit operator FixedReferenceValue<T>(FixedPointerValue value)
 	{
 		value.ValidateOperation();
-		value.ValidateTransformation(typeof(T), !RuntimeHelpers.IsReferenceOrContainsReferences<T>());
+		value.ValidateTransformation(typeof(T), !RuntimeHelpers.IsReferenceOrContainsReferences<T>(), false);
 		value.ValidateReferenceSize(typeof(T), sizeof(T));
 		return new(value);
 	}

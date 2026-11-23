@@ -1,4 +1,4 @@
-﻿#if NETCOREAPP && !NET5_0_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
+﻿#if !NETSTANDARD2_0_OR_GREATER && !NET5_0_OR_GREATER && (!NETFRAMEWORK || NET461_OR_GREATER)
 using Enum = Rxmxnx.PInvoke.Internal.FrameworkCompat.EnumCompat;
 #endif
 
@@ -312,6 +312,8 @@ internal static unsafe class ValidationUtilities
 	}
 #endif
 
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+#pragma warning disable CS8500
 	/// <summary>
 	/// Validates if the binary span <paramref name="destination"/> is sufficient to contain the binary
 	/// information of <paramref name="valuePtr"/>.
@@ -329,19 +331,17 @@ internal static unsafe class ValidationUtilities
 #if NETFRAMEWORK || NETSTANDARD2_0
 	[SecuritySafeCritical]
 #endif
-#if !PACKAGE && (NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER)
-	[ExcludeFromCodeCoverage]
-#endif
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidCopyType<TValue>(TValue* valuePtr, Span<Byte> destination, Int32 offset,
-		out ReadOnlySpan<Byte> bytes) where TValue : unmanaged
+		out ReadOnlySpan<Byte> bytes) where TValue : struct
 	{
+		Debug.Assert(ValPtr<TValue>.IsUnmanaged);
 		bytes = new(valuePtr, sizeof(TValue));
 		if (destination.Length - offset >= bytes.Length) return;
 		String message = MessageResource.GetInstance().InvalidCopyUnmanagedType(nameof(destination), nameof(valuePtr));
 		throw new InsufficientMemoryException(message);
 	}
-#if NETSTANDARD2_1 || NETCOREAPP2_1_OR_GREATER
+#else
 	/// <summary>
 	/// Validates if the binary span <paramref name="destination"/> is sufficient to contain the binary
 	/// information of <paramref name="value"/>.
@@ -358,7 +358,7 @@ internal static unsafe class ValidationUtilities
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public static void ThrowIfInvalidCopyType<TValue>(in TValue value, Span<Byte> destination, Int32 offset,
-		out ReadOnlySpan<Byte> bytes) where TValue : unmanaged
+		out ReadOnlySpan<Byte> bytes) where TValue : struct
 	{
 		ref TValue refValue = ref Unsafe.AsRef(in value);
 		ReadOnlySpan<TValue> intermediateSpan = MemoryMarshal.CreateReadOnlySpan(ref refValue, 1);
@@ -368,6 +368,7 @@ internal static unsafe class ValidationUtilities
 		throw new InsufficientMemoryException(message);
 	}
 #endif
+#pragma warning restore CS8500
 
 	/// <summary>
 	/// Validates the length or index value.
@@ -558,6 +559,22 @@ internal static unsafe class ValidationUtilities
 		String message = MessageResource.GetInstance().NotUnmanagedType(type);
 		throw new InvalidOperationException(message);
 	}
+#if !NETSTANDARD2_1 && !NETCOREAPP2_1_OR_GREATER
+	/// <summary>
+	/// Throws the <c>System.Memory></c> exception when <typeparamref name="T"/> contains references.
+	/// </summary>
+	/// <typeparam name="T">The value type to check.</typeparam>
+	/// <remarks>
+	/// <see cref="ValPtr{T}.IsUnmanaged"/> is checked first. Pointer types are unmanaged, and
+	/// <c>MemoryMarshal.AsBytes</c> rejects them.
+	/// </remarks>
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNotUnmanagedType<T>() where T : struct
+	{
+		if (!ValPtr<T>.IsUnmanaged)
+			MemoryMarshal.AsBytes(ReadOnlySpan<T>.Empty);
+	}
+#endif
 	/// <summary>
 	/// Throws an exception if <paramref name="type"/> is not a reference type.
 	/// </summary>
@@ -580,19 +597,28 @@ internal static unsafe class ValidationUtilities
 	/// <param name="unmanagedSource">Indicates whether <paramref name="sourceType"/> is unmanaged.</param>
 	/// <param name="destinationType">Destination type.</param>
 	/// <param name="unmanagedDestination">Indicates whether <paramref name="destinationType"/> is unmanaged.</param>
+	/// <param name="isReadOnlyOperation">Indicates whether the current transformation operation is read-only.</param>
 	/// <exception cref="InvalidOperationException">
 	/// Throws an exception if transformation from <paramref name="sourceType"/> to
 	/// <paramref name="destinationType"/> is not allowed.
 	/// </exception>
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+#if !PACKAGE
+	[SuppressMessage(SuppressMessageConstants.CSharpSquid, SuppressMessageConstants.CheckIdS3776)]
+#endif
 	public static void ThrowIfInvalidTransformation(Type? sourceType, Boolean unmanagedSource, Type destinationType,
-		Boolean unmanagedDestination)
+		Boolean unmanagedDestination, Boolean isReadOnlyOperation)
 	{
 		IMessageResource resource = MessageResource.GetInstance();
 		if (!destinationType.IsValueType)
 		{
 			if (sourceType is null || sourceType.IsValueType)
 				throw new InvalidOperationException(resource.NotValueType(destinationType));
+			if (sourceType == typeof(Object) || destinationType == typeof(Object))
+				// For System.Object, any transformation is allowed.
+				return;
+			if (!isReadOnlyOperation || !destinationType.IsAssignableFrom(sourceType))
+				throw new InvalidOperationException(resource.NotType(sourceType, destinationType));
 		}
 		else if (!unmanagedSource)
 		{
@@ -633,6 +659,7 @@ internal static unsafe class ValidationUtilities
 		if (!String.IsNullOrEmpty(message))
 			throw new InvalidOperationException(message);
 	}
+#if !PACKAGE || !NET7_0_OR_GREATER
 	/// <summary>
 	/// Throws an exception if buffer metadata is null.
 	/// </summary>
@@ -649,6 +676,7 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = MessageResource.GetInstance();
 		throw new InvalidOperationException(resource.MissingBufferMetadataException(bufferType));
 	}
+#endif
 	/// <summary>
 	/// Throws an exception if buffer metadata is null.
 	/// </summary>
@@ -666,6 +694,7 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = MessageResource.GetInstance();
 		throw new InvalidOperationException(resource.MissingBufferMetadataException(itemType, size));
 	}
+#if !UAP10_0
 	/// <summary>
 	/// Throws an exception if <see cref="MemoryInspector"/> is not supported on the current platform.
 	/// </summary>
@@ -683,39 +712,7 @@ internal static unsafe class ValidationUtilities
 		IMessageResource resource = MessageResource.GetInstance();
 		throw new PlatformNotSupportedException(resource.MissingMemoryInspector);
 	}
-	/// <summary>
-	/// Throws an exception if the current runtime does not support reflection.
-	/// </summary>
-	/// <exception cref="PlatformNotSupportedException">
-	/// Throws an exception if the current runtime does not support reflection.
-	/// </exception>
-#if !PACKAGE
-	[ExcludeFromCodeCoverage]
 #endif
-	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public static void ThrowIfNoReflection()
-	{
-		if (!AotInfo.IsReflectionDisabled) return;
-		IMessageResource resource = MessageResource.GetInstance();
-		throw new PlatformNotSupportedException(resource.ReflectionDisabled);
-	}
-	/// <summary>
-	/// Throws an exception a sequence of buffer instance cannot be treated as a nested buffer of the specified type.
-	/// </summary>
-	/// <param name="bufferType">Type of the managed buffer.</param>
-	/// <param name="type">Type of the element.</param>
-	/// <param name="size">Size of the buffer.</param>
-	/// <param name="sizeOfBuffer">Size of the Buffer type.</param>
-	/// <param name="sizeOf">Size of the type.</param>
-	/// <exception cref="ArgumentException">
-	/// Throws an exception a sequence of buffer instance cannot be treated as a nested buffer of the specified type.
-	/// </exception>
-	public static void ThrowIfNotNestedBuffer(Type bufferType, Type type, UInt16 size, Int32 sizeOfBuffer, Int32 sizeOf)
-	{
-		if (sizeOfBuffer / sizeOf == size) return;
-		IMessageResource resource = MessageResource.GetInstance();
-		throw new ArgumentException(resource.InvalidNestedBuffer(bufferType, type));
-	}
 #if NETCOREAPP2_1_OR_GREATER || NET461_OR_GREATER || UAP10_0_16299
 	/// <summary>
 	/// Throws an exception if the current token type is invalid for a string type.
@@ -776,6 +773,45 @@ internal static unsafe class ValidationUtilities
 		String tokenTypeName = Enum.GetName(tokenType) ?? $"{tokenType}";
 		String message = resource.InvalidToken(tokenTypeName, expectedToken);
 		throw new JsonException(message);
+	}
+#endif
+#if !PACKAGE || NESTED_BUFFER_FEATURE
+	/// <summary>
+	/// Throws an exception if the current runtime does not support reflection.
+	/// </summary>
+	/// <exception cref="PlatformNotSupportedException">
+	/// Throws an exception if the current runtime does not support reflection.
+	/// </exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNoReflection()
+	{
+		if (!AotInfo.IsReflectionDisabled) return;
+		IMessageResource resource = MessageResource.GetInstance();
+		throw new PlatformNotSupportedException(resource.ReflectionDisabled);
+	}
+	/// <summary>
+	/// Throws an exception a sequence of buffer instance cannot be treated as a nested buffer of the specified type.
+	/// </summary>
+	/// <param name="bufferType">Type of the managed buffer.</param>
+	/// <param name="type">Type of the element.</param>
+	/// <param name="size">Size of the buffer.</param>
+	/// <param name="sizeOfBuffer">Size of the Buffer type.</param>
+	/// <param name="sizeOf">Size of the type.</param>
+	/// <exception cref="ArgumentException">
+	/// Throws an exception a sequence of buffer instance cannot be treated as a nested buffer of the specified type.
+	/// </exception>
+#if !PACKAGE
+	[ExcludeFromCodeCoverage]
+#endif
+	[MethodImpl(MethodImplOptions.AggressiveInlining)]
+	public static void ThrowIfNotNestedBuffer(Type bufferType, Type type, UInt16 size, Int32 sizeOfBuffer, Int32 sizeOf)
+	{
+		if (sizeOfBuffer / sizeOf == size) return;
+		IMessageResource resource = MessageResource.GetInstance();
+		throw new ArgumentException(resource.InvalidNestedBuffer(bufferType, type));
 	}
 #endif
 }

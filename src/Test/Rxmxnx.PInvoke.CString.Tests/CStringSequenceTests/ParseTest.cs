@@ -13,7 +13,7 @@ public sealed class ParseTest
 	{
 		PInvokeAssert.Null(CStringSequence.Parse(null));
 
-		String nullString = new(Enumerable.Repeat('\0', PInvokeRandom.Shared.Next(0, Byte.MaxValue)).ToArray());
+		String nullString = new([.. Enumerable.Repeat('\0', PInvokeRandom.Shared.Next(0, Byte.MaxValue)),]);
 		CStringSequence seq0 = CStringSequence.Parse(String.Empty);
 		CStringSequence seq1 = CStringSequence.Create(Array.Empty<Char>());
 		CStringSequence seq2 = CStringSequence.Parse(nullString);
@@ -139,7 +139,7 @@ public sealed class ParseTest
 	private static void ExactParseTest(CString[] values, String buffer)
 	{
 		String nullEndBuffer = buffer +
-			new String(Enumerable.Repeat('\0', PInvokeRandom.Shared.Next(0, Byte.MaxValue)).ToArray());
+			new String([.. Enumerable.Repeat('\0', PInvokeRandom.Shared.Next(0, Byte.MaxValue)),]);
 		CStringSequence seq0 = CStringSequence.Parse(buffer);
 		CStringSequence seq1 = CStringSequence.Parse(nullEndBuffer);
 		CStringSequence seq2 = CStringSequence.Create(buffer);
